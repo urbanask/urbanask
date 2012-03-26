@@ -1,0 +1,12 @@
+release .41
+
+bug - can't +1 if multi-line question
+new - removed "answer question" & "asked question" reputation action
+new - added phone number to answers (with calling)
+new - added website to answers (with viewing in safari)
+new - jump to google maps from answer map
+
+
+
+
+

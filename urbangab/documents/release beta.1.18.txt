@@ -1,0 +1,12 @@
+beta 1.18
+
+new - cleaner version updating (will notice on next update)
+new - auto login when run inside of Facebook 
+new - improved Facebook login/connection process
+
+bug - answer textbox doesn't highlight at first
+bug - Facebook app doesn't work in Chrome/OS X
+bug - landscape mode has issues (made it inaccessible) 
+
+
+

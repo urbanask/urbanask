@@ -1,0 +1,12 @@
+beta 1.13
+
+new - more obvious account edit button
+new - images load faster on leaderboard
+
+bug - dialog overflow if text too long
+bug - save question button not always working
+bug - issue login out
+bug - fixed zoom level on map after adding an answer
+
+
+

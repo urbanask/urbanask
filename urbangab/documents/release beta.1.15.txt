@@ -1,0 +1,13 @@
+beta 1.15
+
+new - more questions visible on home page
+new - when viewing your own profile, you see all your unresolved questions with 1+ answers
+new - switching regions updates questions and top users
+new - remember location of questions list when going back
+new - remember location of user page when going back
+new - indication that you've already voted on an answer/question
+
+bug - reputation not paid on older bounties
+bug - reputation not paid on older answers 
+bug - reputation not paid on older resolved questions
+bug - doesn't scroll up when switching views on leaderboard
