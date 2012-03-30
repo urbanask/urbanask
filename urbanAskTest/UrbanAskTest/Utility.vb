@@ -39,6 +39,7 @@ Public NotInheritable Class Utility
 
             'Driver = New Chrome.ChromeDriver()
             Driver = New IE.InternetExplorerDriver()
+            'Driver = New Firefox.FirefoxDriver()
             WebDriverUtility = New UrbanAsk.Utility.WebDriverUtility(Driver)
 
         End If
