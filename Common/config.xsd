@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vs="http://schemas.microsoft.com/Visual-Studio-Intellisense" elementFormDefault="qualified" attributeFormDefault="unqualified" vs:helpNamespace="http://schemas.microsoft.com/.NetConfiguration/v2.0">
+  <xs:element name="Parameters">
+    <xs:complexType>
+      <xs:choice minOccurs="1" maxOccurs="unbounded">
+        <xs:any namespace="##local" processContents="skip" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="applicationSettings">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:any namespace="##local" processContents="skip" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="microsoft.web.services3">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:any namespace="##local" processContents="skip" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
