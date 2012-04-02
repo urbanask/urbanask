@@ -1,7 +1,0 @@
-beta 1.10
-
-
-bug - "10 answers", "10 questions", "10 notes" badges not posting properly in some cases
-bug - total reputation on user page not clickable
-new - answers click through to question on user page
-

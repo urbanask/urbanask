@@ -1,6 +1,0 @@
-beta 1.12
-
-bug - vote reputation only paying once for multiple votes
-bug - 10 notes badge incorrectly earned
-bug - updates not always refreshing
-

@@ -1,6 +1,0 @@
-beta 1.8
-
-bug - after invite goes to blank white screen
-new silver badge "25 Upvoted Questions"
-new gold badge "100 Upvoted Questions"
-new diamond badge "500 Upvoted Questions"

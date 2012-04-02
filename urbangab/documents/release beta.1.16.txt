@@ -1,9 +1,0 @@
-beta 1.16
-
-new - tap/click status bar to scroll to top
-
-bug - sometimes auth on login never returns
-bug - questions disappear after asking (should see this *less*)
-bug - screen shifts up on desktop on user page when clicking tabs
-bug - editing account changes username/tagline to '[object HTMLInputElement]'
-

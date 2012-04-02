@@ -1,6 +1,0 @@
-Y:\Dropbox\Projects\urbangab\urbangab\bin\urbangab.dll
-Y:\Dropbox\Projects\urbangab\urbangab\obj\Release\ResolveAssemblyReference.cache
-Y:\Dropbox\Projects\urbangab\urbangab\obj\Release\urbangab.Resources.resources
-Y:\Dropbox\Projects\urbangab\urbangab\obj\Release\GenerateResource.read.1.tlog
-Y:\Dropbox\Projects\urbangab\urbangab\obj\Release\GenerateResource.write.1.tlog
-Y:\Dropbox\Projects\urbangab\urbangab\obj\Release\urbangab.dll
