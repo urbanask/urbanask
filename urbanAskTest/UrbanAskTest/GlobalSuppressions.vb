@@ -10,6 +10,7 @@
 ' "In Project Suppression File".
 ' You do not need to add suppressions to this file manually.
 
+<Assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA2210:AssembliesShouldHaveValidStrongNames")> 
 <Assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Scope:="namespace", Target:="Urbanask.Test.UrbanAskTest")> 
 <Assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Scope:="namespace", Target:="UrbanAsk.Test.UrbanAskTest")> 
 

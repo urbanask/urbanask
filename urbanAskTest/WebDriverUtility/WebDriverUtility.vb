@@ -161,6 +161,22 @@ Public Class WebDriverUtility
 
     End Sub
 
+    Public Overloads Sub ClickAndEnter(
+        ByVal id As String)
+
+        Me.ClickAndEnter(By.Id(id))
+
+    End Sub
+
+    Public Overloads Sub ClickAndEnter(
+       ByVal by As OpenQA.Selenium.By)
+
+        Dim element As OpenQA.Selenium.IWebElement = Me.WaitForElementPresent(by)
+        element.Click()
+        element.SendKeys(Keys.Enter)
+
+    End Sub
+
     Public Overloads Sub Type(
         ByVal id As String, _
         ByVal text As String)
@@ -173,7 +189,7 @@ Public Class WebDriverUtility
         ByVal by As OpenQA.Selenium.By, _
         ByVal text As String)
 
-        Dim element As OpenQA.Selenium.IWebElement = WaitForElementPresent(by)
+        Dim element As OpenQA.Selenium.IWebElement = Me.WaitForElementPresent(by)
         element.Clear()
         element.SendKeys(text)
 
@@ -196,6 +212,20 @@ Public Class WebDriverUtility
         element.SendKeys(Keys.Enter)
 
     End Sub
+
+    Public Overloads Function GetText(
+        ByVal id As String) As String
+
+        Return Me.GetText(By.Id(id))
+
+    End Function
+
+    Public Overloads Function GetText(
+        ByVal by As OpenQA.Selenium.By) As String
+
+        Return Me.WaitForElementPresent(by).Text
+
+    End Function
 
     Public Sub AssertTitle(
         ByVal title As String)
@@ -260,12 +290,12 @@ Public Class WebDriverUtility
     End Sub
 
     Public Sub WaitForBodyText(
-        ByVal text As String)
+        ByVal bodyText As String)
 
         Me.ResetTimeout()
 
         Dim xpath As String = "*[contains(.,""{0}"")]"
-        xpath = String.Format(_culture, xpath, text)
+        xpath = String.Format(_culture, xpath, bodyText)
         Dim elements As ObjectModel.ReadOnlyCollection(Of OpenQA.Selenium.IWebElement) = Nothing
 
         Dim valid As Boolean = False
@@ -277,7 +307,7 @@ Public Class WebDriverUtility
 
         Loop
 
-        Assert.AreEqual(valid, True, String.Format(_culture, "Body text not found: ""{0}"".", text))
+        Assert.AreEqual(valid, True, String.Format(_culture, "Body text not found: ""{0}"".", bodyText))
 
     End Sub
 

@@ -30,7 +30,7 @@ Public Class Startup
     Public Shared Sub MyAssemblyInitialize(
         ByVal testContext As UnitTesting.TestContext)
 
-        Utility.InitializeDriver()
+        Utility.Initialize()
 
     End Sub
 
@@ -38,7 +38,7 @@ Public Class Startup
     <UnitTesting.AssemblyCleanup()>
     Public Shared Sub MyAssemblyCleanup()
 
-        Utility.CleanupDriver()
+        Utility.Cleanup()
 
     End Sub
 

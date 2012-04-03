@@ -24,6 +24,8 @@ Public Class FacebookIntegration
 
     Private _testContext As UnitTesting.TestContext
     Private _culture As Globalization.CultureInfo = Globalization.CultureInfo.CurrentCulture()
+    Private _utility As UrbanAsk.Utility.WebDriverUtility = WebDriverUtility
+    Private _configurationFile As String = ConfigurationFile
 
 #End Region
 
@@ -46,49 +48,67 @@ Public Class FacebookIntegration
 #Region "    tests "
 
     <UnitTesting.TestMethod()>
-    Public Sub TestMethod1()
+    Public Sub CreateAccount()
 
-        WebDriverUtility.NavigateTo(New System.Uri("http://facebook.com"), "Facebook")
+        Me.GoToFacebook()
+        Me.VerifyLogin()
+        Me.RemoveUrbanAsk()
+        Me.AddUrbanAsk()
 
-        If WebDriverUtility.IsElementPresent("email") Then
+    End Sub
 
-            'TODO: put in .config
-            Dim email As String = "facebooktest1@urbanask.com"
-            Dim password As String = "hooba%stank1"
-            Dim urbanAskFacebookID As String = "267603823260704"
-            Dim applicationsPage As String = "https://www.facebook.com/settings/?tab=applications"
-            Dim urbanAskPermissionPage As String = "http://www.facebook.com/connect/uiserver.php?app_id=267603823260704&method=permissions.request&redirect_uri=http%3A%2F%2Fapps.facebook.com%2Furbanask%2F%3Fref%3Dts&response_type=none&display=page&perms=email%2Cpublish_stream%2Cpublish_actions&auth_referral=1"
+    Private Sub GoToFacebook()
 
-            'not logged in
-            WebDriverUtility.Type("email", email)
-            WebDriverUtility.TypeAndEnter("pass", password)
-            WebDriverUtility.Click("loginbutton")
-            WebDriverUtility.WaitForTitle("Facebook")
-            WebDriverUtility.NavigateTo(New System.Uri(applicationsPage), "App Settings")
+        Dim facebookUrl As String = Parameters.Parameter.GetValue("FacebookUrl", _configurationFile)
+        _utility.NavigateTo(New System.Uri(facebookUrl), "Facebook")
 
-            'remove ua if it exists
-            Dim elementID As String = String.Format(_culture, "application-li-{0}", urbanAskFacebookID)
+    End Sub
 
-            If WebDriverUtility.IsElementPresent(elementID) Then
+    Private Sub VerifyLogin()
 
-                WebDriverUtility.Click(By.CssSelector(String.Format(_culture, "#{0} .fbsettingslistitemedit", elementID)))
-                WebDriverUtility.Click(By.ClassName("fbSettingsExpandedDelete"))
-                WebDriverUtility.Click(By.Name("remove"))
-                Threading.Thread.Sleep(1000)
-                WebDriverUtility.AssertElementNotPresent(elementID)
+        Dim testUserLoggedIn As Boolean = False
+
+        If Me.IsLoggedIn Then
+
+            If Me.IsTestUser Then
+
+                testUserLoggedIn = True
+
+            Else
+
+                Me.Logout()
 
             End If
 
-            WebDriverUtility.NavigateTo(New System.Uri(urbanAskPermissionPage), "Facebook")
-            WebDriverUtility.Click("grant_required_clicked")
-            WebDriverUtility.WaitForBodyText("urbanAsk would also like permission to")
-            WebDriverUtility.Click("grant_clicked")
-            WebDriverUtility.WaitForTitle("urbanAsk on Facebook")
+        End If
 
-        ElseIf WebDriverUtility.IsElementPresent("userNavigationLabel") Then
+        If (Not testUserLoggedIn) Then
 
-            'logged in
-            WebDriverUtility.Click("userNavigationLabel")
+            Me.LogIn()
+
+        End If
+
+    End Sub
+
+    Private Sub Logout()
+
+        _utility.Click("userNavigationLabel")
+        _utility.Click(By.XPath("//input[@value='Log Out']"))
+        _utility.WaitForElementPresent("email")
+
+    End Sub
+
+    Private Sub LogIn()
+
+        If _utility.IsElementPresent("email") Then
+
+            Dim email As String = Parameters.Parameter.GetValue("FacebookUser1Email", _configurationFile)
+            Dim password As String = Parameters.Parameter.GetValue("FacebookUser1Password", _configurationFile)
+
+            _utility.Type("email", email)
+            _utility.TypeAndEnter("pass", password)
+            _utility.Click("loginbutton")
+            _utility.WaitForTitle("Facebook")
 
         Else
 
@@ -96,8 +116,65 @@ Public Class FacebookIntegration
 
         End If
 
+    End Sub
+
+    Private Sub RemoveUrbanAsk()
+
+        Dim applicationsPageUrl As String = Parameters.Parameter.GetValue("FacebookApplicationsPageUrl", _configurationFile)
+        _utility.NavigateTo(New System.Uri(applicationsPageUrl), "App Settings")
+
+        'remove ua if it exists
+        Dim applicationID As String = Parameters.Parameter.GetValue("FacebookApplicationID", _configurationFile)
+        Dim elementID As String = String.Format(_culture, "application-li-{0}", applicationID)
+
+        If _utility.IsElementPresent(elementID) Then
+
+            _utility.Click(By.CssSelector(String.Format(_culture, "#{0} .fbsettingslistitemedit", elementID)))
+            _utility.Click(By.ClassName("fbSettingsExpandedDelete"))
+            _utility.Click(By.Name("remove"))
+            Threading.Thread.Sleep(1000)
+            _utility.AssertElementNotPresent(elementID)
+
+        End If
 
     End Sub
+
+    Private Sub AddUrbanAsk()
+
+        Dim urbanAskPermissionPage As String = Parameters.Parameter.GetValue("FacebookPermissionPageUrl", _configurationFile)
+        _utility.NavigateTo(New System.Uri(urbanAskPermissionPage), "Facebook")
+        _utility.Click("grant_required_clicked")
+        _utility.WaitForBodyText("urbanAsk would also like permission to")
+        _utility.Click("grant_clicked")
+        _utility.WaitForTitle("urbanAsk on Facebook")
+
+    End Sub
+
+#End Region
+
+#Region "    properties "
+
+    Private ReadOnly Property IsLoggedIn() As Boolean
+
+        Get
+
+            Return _utility.IsElementPresent("userNavigationLabel")
+
+        End Get
+
+    End Property
+
+    Private ReadOnly Property IsTestUser() As Boolean
+
+        Get
+
+            Dim currentUser As String = _utility.GetText(By.ClassName("headerTinymanName"))
+            Dim facebookUser1Name As String = Parameters.Parameter.GetValue("FacebookUser1Name", _configurationFile)
+            Return (currentUser = facebookUser1Name)
+
+        End Get
+
+    End Property
 
 #End Region
 
