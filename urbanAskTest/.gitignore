@@ -1,0 +1,9 @@
+TestResults/*
+UrbanAskTest/bin/Debug/*
+UrbanAskTest/bin/Release/*
+UrbanAskTest/obj/Debug/*
+UrbanAskTest/obj/Release/*
+WebDriverUtility/bin/Debug/*
+WebDriverUtility/bin/Release/*
+WebDriverUtility/obj/Debug/*
+WebDriverUtility/obj/Release/*
