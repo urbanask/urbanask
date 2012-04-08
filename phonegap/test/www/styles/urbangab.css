@@ -1,0 +1,357 @@
+﻿html
+{
+-webkit-tap-highlight-color: rgba(0,0,0,0); 
+-webkit-text-size-adjust: none;
+-webkit-user-select: none;
+}
+
+body
+{
+font-family: Helvetica, Verdana, Tahoma, Andale Mono, Monaco, Courier New;
+height: 100%;
+margin: 0;
+position: relative;
+}
+@media only screen and (max-device-width: 480px) { 
+body
+{
+width: 320px;
+}}
+@media only screen and (min-device-width: 481px) {
+body
+{
+margin: 0 auto;
+width: 600px;
+}}
+
+.viewport
+{
+position: relative;
+}
+@media only screen and (max-device-width: 480px) { 
+.viewport
+{
+height: 100%;
+width: 320px;
+}}
+@media only screen and (min-device-width: 481px) {
+.viewport
+{
+height: 460px;
+width: 320px;
+}}
+
+header
+{
+background-color: black;
+background-image: -webkit-gradient(
+    linear, 0% 0%, 0% 100%, 
+    from(rgba(255,255,255,.5)), /* .15 */
+    color-stop(0.5, rgba(255,255,255,.10)), 
+    color-stop(0.505, rgba(255,255,255,.0)), 
+    to(rgba(255,255,255,.0)));
+color: white;
+font-family: Monaco;
+font-weight: normal;
+letter-spacing: -1px;font-size: 20px;
+line-height: 45px;
+position: absolute;
+text-align: center;
+top: 0;
+width: 100%;
+}
+@media only screen and (max-device-width: 480px) { 
+header
+{
+height: 45px;
+text-shadow: 0 -1px 0 #575757;
+}}
+@media only screen and (min-device-width: 481px) {
+header
+{
+height: 45px;
+}}
+
+.ask
+{
+border: 1px solid black;
+height: 35px;
+position: relative;
+top: 49px;
+}
+@media only screen and (max-device-width: 480px) { 
+.ask
+{
+-webkit-appearance: none;
+margin: 0 4px 0 4px;
+}}
+@media only screen and (min-device-width: 481px) {
+.ask
+{
+margin: 0;
+}}
+
+.ask-text
+{
+border: 0;
+font-size: 15px;
+height: 20px;
+line-height: 20px;
+outline: none;
+position: absolute;
+}
+@media only screen and (max-device-width: 480px) { 
+.ask-text
+{
+-webkit-appearance: none;
+top: 5px;
+}}
+@media only screen and (min-device-width: 481px) {
+.ask-text
+{
+top: 7px;
+}}
+
+.ask-button
+{
+background-color: black;
+border: 1px solid black;
+color: white;
+height: 35px;
+outline: none;
+position: absolute;
+right: 0;
+width: 58px;
+}
+
+.ask-button img
+{
+height: 24px;
+}
+
+.view
+{
+bottom: 46px;
+-webkit-overflow-scrolling: touch;
+overflow-y: scroll;
+position: absolute;
+-webkit-user-select: none;
+top: 90px;
+width: 100%;
+}
+
+footer
+{
+background-color: black;
+background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(255,255,255,.5)), color-stop(0.5, rgba(255,255,255,.10)), color-stop(0.505, rgba(255,255,255,.0)), to(rgba(255,255,255,.0)));
+border-top: 1px solid rgba(255, 255, 255, .35);
+bottom: 0;
+/*-webkit-box-shadow: 0 -1px 0 rgba(0,0,0,0.9);
+box-shadow: 0 -1px 0 rgba(0,0,0,0.9);*/
+position: absolute;
+text-align: center;
+width: 100%;
+}
+@media only screen and (max-device-width: 480px) { 
+footer
+{
+height: 45px;
+}}
+@media only screen and (min-device-width: 481px) {
+footer
+{
+height: 45px;
+}}
+
+footer ul
+{
+margin: 0;
+padding: 0;
+}
+
+footer li
+{
+border-radius: 3px;
+color: white;
+display: inline-block;
+font-size: 10px;
+height: 43px;
+line-height: 43px;
+margin-top: 1px;
+vertical-align: top;
+width: 75px;
+}
+
+@media only screen and (min-device-width: 481px) {
+footer li:hover
+{
+background-color: darkgray;
+cursor: pointer;
+}}
+
+footer img
+{
+display: inline-block;
+height: 24px;
+margin-top: 8px;
+}
+
+.questions
+{
+position: relative;
+width: 100%;
+}
+
+.profile
+{
+height: 100%;
+overflow-x: hidden;
+overflow-y: scroll;
+position: relative;
+width: 100%;
+}
+
+.question
+{
+border-bottom: 1px solid lightgray;
+overflow: hidden;
+position: relative;
+width: 100%;
+}
+@media only screen and (max-device-width: 480px) { 
+.question
+{
+font-size: 15px;
+height: 45px;
+}}
+@media only screen and (min-device-width: 481px) {
+.question
+{
+font-size: 15px;
+height: 45px;
+}}
+
+.question div
+{
+position: absolute;
+}
+
+.answers
+{
+background-color: black;
+color: white;
+overflow: hidden;
+}
+@media only screen and (max-device-width: 480px) { 
+.answers
+{
+border-radius: 20px;
+font-size: 30px;
+height: 40px;
+left: 2px;
+line-height: 40px;
+top: 2px;
+width: 40px;
+}}
+@media only screen and (min-device-width: 481px) {
+.answers
+{
+border-radius: 20px;
+font-size: 30px;
+height: 40px;
+left: 2px;
+line-height: 40px;
+top: 2px;
+width: 40px;
+}}
+
+.answers div
+{
+height: 100%;
+text-align: center;
+width: 100%;
+}
+
+.resolved
+{
+position: absolute;
+}
+@media only screen and (max-device-width: 480px) { 
+.resolved
+{
+height: 40px;
+left: 2px;
+top: 2px;
+-webkit-touch-callout: none;
+width: 40px;
+}}
+@media only screen and (min-device-width: 481px) {
+.resolved
+{
+height: 40px;
+left: 2px;
+top: 2px;
+width: 40px;
+}}
+
+.question-header
+{
+color: gray;
+top: 3px;
+}
+
+.radius
+{
+display: block;
+height: 16px;
+opacity: .75;
+position: absolute;
+top: 2px;
+width: 28px;
+}
+@media only screen and (max-device-width: 480px) { 
+.radius
+{
+left: 290px;
+}}
+@media only screen and (min-device-width: 481px) {
+.radius
+{
+left: 290px;
+}}
+
+@media only screen and (max-device-width: 480px) { 
+.age
+{
+left: 235px;
+}}
+@media only screen and (min-device-width: 481px) {
+.age
+{
+left: 235px;
+}}
+
+@media only screen and (max-device-width: 480px) { 
+.username
+{
+left: 45px;
+}}
+@media only screen and (min-device-width: 481px) {
+.username
+{
+left: 45px;
+}}
+
+@media only screen and (max-device-width: 480px) { 
+.body
+{
+left: 45px;
+top: 21px;
+}}
+@media only screen and (min-device-width: 481px) {
+.body
+{
+left: 45px;
+top: 21px;
+}}
+
