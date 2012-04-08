@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="ServerAppBase">
+</Property><Property Name="Solution File" Value="Y:\Dropbox\Projects\ServerAppBase\ServerAppBase.sln">
+</Property><Property Name="User Options File" Value="Y:\Dropbox\Projects\ServerAppBase\ServerAppBase.suo">
+</Property><Property Name="Date" Value="Tuesday, September 06, 2011">
+</Property><Property Name="Time" Value="16:05 PM">
+</Property><Property Name="Log Number" Value="2">
+</Property></Properties><Event ErrorLevel="0" Project="" Source="ServerAppBase.sln" Description="File successfully backed up as Y:\Dropbox\Projects\ServerAppBase\Backup1\ServerAppBase.sln">
+</Event><Event ErrorLevel="0" Project="" Source="ServerAppBase.suo" Description="File successfully backed up as Y:\Dropbox\Projects\ServerAppBase\Backup1\ServerAppBase.suo">
+</Event><Event ErrorLevel="0" Project="ServerAppBase" Source="ServerAppBase\ServerAppBase.vbproj" Description="Project file successfully backed up as Y:\Dropbox\Projects\ServerAppBase\Backup1\ServerAppBase\ServerAppBase.vbproj">
+</Event><Event ErrorLevel="0" Project="ServerAppBase" Source="ServerAppBase\ServerAppBase.vbproj.user" Description="Project user file successfully backed up as Y:\Dropbox\Projects\ServerAppBase\Backup1\ServerAppBase\ServerAppBase.vbproj.user">
+</Event><Event ErrorLevel="0" Project="ServerAppBase" Source="ServerAppBase\Classes\Resources.vb" Description="File successfully backed up as Y:\Dropbox\Projects\ServerAppBase\Backup1\ServerAppBase\Classes\Resources.vb">
+</Event><Event ErrorLevel="0" Project="ServerAppBase" Source="ServerAppBase\Classes\ServerAppBase.vb" Description="File successfully backed up as Y:\Dropbox\Projects\ServerAppBase\Backup1\ServerAppBase\Classes\ServerAppBase.vb">
+</Event><Event ErrorLevel="0" Project="ServerAppBase" Source="ServerAppBase\Classes\Wait.vb" Description="File successfully backed up as Y:\Dropbox\Projects\ServerAppBase\Backup1\ServerAppBase\Classes\Wait.vb">
+</Event><Event ErrorLevel="0" Project="ServerAppBase" Source="ServerAppBase\My Project\AssemblyInfo.vb" Description="File successfully backed up as Y:\Dropbox\Projects\ServerAppBase\Backup1\ServerAppBase\My Project\AssemblyInfo.vb">
+</Event><Event ErrorLevel="0" Project="ServerAppBase" Source="ServerAppBase\Classes\ServerAppBase.resx" Description="File successfully backed up as Y:\Dropbox\Projects\ServerAppBase\Backup1\ServerAppBase\Classes\ServerAppBase.resx">
+</Event><Event ErrorLevel="0" Project="ServerAppBase" Source="ServerAppBase\Resources\Disabled.ICO" Description="File successfully backed up as Y:\Dropbox\Projects\ServerAppBase\Backup1\ServerAppBase\Resources\Disabled.ICO">
+</Event><Event ErrorLevel="0" Project="ServerAppBase" Source="ServerAppBase\Resources\Green.ICO" Description="File successfully backed up as Y:\Dropbox\Projects\ServerAppBase\Backup1\ServerAppBase\Resources\Green.ICO">
+</Event><Event ErrorLevel="0" Project="ServerAppBase" Source="ServerAppBase\Resources\Red.ICO" Description="File successfully backed up as Y:\Dropbox\Projects\ServerAppBase\Backup1\ServerAppBase\Resources\Red.ICO">
+</Event><Event ErrorLevel="0" Project="ServerAppBase" Source="ServerAppBase\Resources\Yellow.ICO" Description="File successfully backed up as Y:\Dropbox\Projects\ServerAppBase\Backup1\ServerAppBase\Resources\Yellow.ICO">
+</Event><Event ErrorLevel="1" Project="ServerAppBase" Source="ServerAppBase\ServerAppBase.vbproj" Description="Your project is targeting .NET Framework 2.0 or 3.0. If your project uses assemblies requiring a newer .NET Framework, your project will fail to build. You can change the .NET Framework version by clicking Properties on the project menu and then selecting a new version in the '.NET Framework' dropdown box. (In Visual Basic, this is located on the Compile tab by clicking the 'Advanced Compiler Options...' button.)">
+</Event><Event ErrorLevel="0" Project="ServerAppBase" Source="ServerAppBase\ServerAppBase.vbproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="ServerAppBase" Source="ServerAppBase\ServerAppBase.vbproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="TestServerApp" Source="TestServerApp\TestServerApp.vbproj" Description="Project file successfully backed up as Y:\Dropbox\Projects\ServerAppBase\Backup1\TestServerApp\TestServerApp.vbproj">
+</Event><Event ErrorLevel="0" Project="TestServerApp" Source="TestServerApp\TestServerApp.vbproj.user" Description="Project user file successfully backed up as Y:\Dropbox\Projects\ServerAppBase\Backup1\TestServerApp\TestServerApp.vbproj.user">
+</Event><Event ErrorLevel="0" Project="TestServerApp" Source="TestServerApp\Classes\ServerApp.vb" Description="File successfully backed up as Y:\Dropbox\Projects\ServerAppBase\Backup1\TestServerApp\Classes\ServerApp.vb">
+</Event><Event ErrorLevel="0" Project="TestServerApp" Source="TestServerApp\My Project\AssemblyInfo.vb" Description="File successfully backed up as Y:\Dropbox\Projects\ServerAppBase\Backup1\TestServerApp\My Project\AssemblyInfo.vb">
+</Event><Event ErrorLevel="0" Project="TestServerApp" Source="TestServerApp\App.config" Description="File successfully backed up as Y:\Dropbox\Projects\ServerAppBase\Backup1\TestServerApp\App.config">
+</Event><Event ErrorLevel="1" Project="TestServerApp" Source="TestServerApp\TestServerApp.vbproj" Description="Your project is targeting .NET Framework 2.0 or 3.0. If your project uses assemblies requiring a newer .NET Framework, your project will fail to build. You can change the .NET Framework version by clicking Properties on the project menu and then selecting a new version in the '.NET Framework' dropdown box. (In Visual Basic, this is located on the Compile tab by clicking the 'Advanced Compiler Options...' button.)">
+</Event><Event ErrorLevel="0" Project="TestServerApp" Source="TestServerApp\TestServerApp.vbproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="TestServerApp" Source="TestServerApp\TestServerApp.vbproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="" Source="ServerAppBase.sln" Description="Solution converted successfully">
+</Event><Event ErrorLevel="3" Project="" Source="ServerAppBase.sln" Description="Converted">
+</Event><Event ErrorLevel="0" Project="ServerAppBase" Source="ServerAppBase\ServerAppBase.vbproj" Description="Scan complete: Upgrade not required for project files.">
+</Event><Event ErrorLevel="0" Project="TestServerApp" Source="TestServerApp\TestServerApp.vbproj" Description="Scan complete: Upgrade not required for project files.">
+</Event></UpgradeLog>
