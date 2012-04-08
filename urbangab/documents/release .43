@@ -1,0 +1,29 @@
+
+release .43
+
+bug - can't see negative reputation amounts
+bug - quotes in notes prevents load
+new - main toolbar on user page
+new - question and answer flagging
+bug - error loading some users
+bug - fixed highlight on scroll
+new - shows all badges on user page
+new - badge description on click
+new badge - silver: nice question - 10+ upvotes
+new badge - gold: good question - 25+ upvotes
+new badge - diamond: great question - 100+ upvotes
+new badge - silver: nice answer - 10+ upvotes
+new badge - gold: good answer - 25+ upvotes
+new badge - diamond: great answer - 25+ upvotes
+new badge - silver: 10 answer notes
+badge change - first upvote changed to 10 upvotes
+new badge - silver: 10 answers
+new badge - silver: first downvote
+new badge - gold: beta
+new badge - silver: first flag
+new badge - silver: 25+ selected
+new badge - gold: 100+ selected
+new badge - diamond: 500+ selected
+
+
+

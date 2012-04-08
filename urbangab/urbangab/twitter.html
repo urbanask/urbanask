@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+
+    <title>Anywhere Sample</title>
+
+
+
+    <script src="http://platform.twitter.com/anywhere.js?id=LYmBn0COBIkkcRXpImTAJA&v=1" type="text/javascript"></script>
+
+
+
+</head>
+
+<body>
+
+    <span id="twitter-connect-placeholder"></span><span id="login"></span>
+
+
+
+    <script type="text/javascript">
+
+
+
+        twttr.anywhere( function ( T ) {
+
+            T( "#login" ).connectButton( {
+
+                size: "large",
+
+                authComplete: function ( user ) {
+
+
+
+                    var currentUser,
+
+                    screenName,
+
+                    profileImage,
+
+                    profileImageTag;
+
+
+
+                    currentUser = T.currentUser;
+
+                    screenName = currentUser.data( 'screen_name' );
+
+                    profileImage = currentUser.data( 'profile_image_url' );
+
+                    profileImageTag = "<img src='" + profileImage + "'/>";
+
+                    $( '#twitter-connect-placeholder' ).append( "Logged in as " + profileImageTag + " " + screenName );
+
+
+
+                },
+
+                signOut: function () {
+
+                    // triggered when user logs out
+
+                }
+
+            } );
+
+        } );
+
+ 
+
+    </script>
+
+
+
+</body>
+
+</html>
+
+

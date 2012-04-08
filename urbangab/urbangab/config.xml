@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<widget 
+    xmlns = "http://www.w3.org/ns/widgets"
+    xmlns:gap = "http://phonegap.com/ns/1.0"
+    id        = "com.urbanask"
+    versionCode="10"
+    version   = "1.0.0">
+
+    <name>urbanAsk</name>
+    <description>Find it. Share it.</description>
+
+    <author href="https://urbanask.com" email="support@urbanask.com">urbanAsk Inc.</author>
+
+    <preference name="fullscreen" value="false" />
+    <preference name="stay-in-webview" value="true" />
+    <preference name="orientation" value="portrait" />
+    <icon src="images/icon.png" />
+    <gap:splash src="images/splash.png" />
+    <feature name="http://api.phonegap.com/1.0/geolocation" />
+    <feature name="http://api.phonegap.com/1.0/network" />
+    <access origin="*" />
+    
+</widget>
+

@@ -1,0 +1,9 @@
+beta 1.17
+
+new - badge class - bronze
+new - badge - inquisitive - asked 1st question
+
+bug - bounty payout
+bug - quotes in answers cuts off
+bug - clicking on toolbar in top users selects user (happens less now)
+
