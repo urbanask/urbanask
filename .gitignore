@@ -3,3 +3,8 @@ api/sharp/*
 */*/bin/*
 */*/obj/*
 backup/*
+Code/*
+Collections/Backup/*
+mssccprj.scc
+UpgradeLog.XML
+vssver2.scc
