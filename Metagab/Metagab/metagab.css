@@ -1,0 +1,78 @@
+﻿h2
+{
+font-family: Courier New, monospace;
+}
+
+h2:after
+{
+content: "\2122";
+}
+
+.lines
+{
+border: 1px dashed black;
+left: 0;
+position: absolute;
+top: 0;
+z-index: -1;
+}
+
+.circle
+{
+background-color: black;
+border-radius: 75px;
+cursor: pointer;
+height: 150px;
+overflow: hidden;
+position: absolute;
+top: 150px;
+width: 150px; 
+}
+
+.circle div
+{
+/* h=radius, a=h/sqrt(2), height=width=2a, left=top=h-a */
+color: white;
+font-family: Courier New, monospace;
+font-size: 16px;
+line-height: 16px;
+position: relative;
+top: 150px;
+}
+
+.m
+{
+    left: 100px;
+
+}
+
+.e
+{
+    left: 260px;
+}
+
+.t
+{
+    left: 420px;
+}
+
+.a
+{
+    left: 580px;
+}
+
+.g
+{
+    left: 740px;
+}
+
+.a2
+{
+    left: 900px;
+}
+
+.b
+{
+    left: 1060px;
+}
+
