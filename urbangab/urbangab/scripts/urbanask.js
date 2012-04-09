@@ -1054,6 +1054,32 @@
 
         };
 
+        function getRandomLatitude() {
+
+            //.0001894 miles = 1 ft
+            //lat: .0002741
+            //lon: .00035736
+            //69.1 * ( lat2 - lat1 )
+            //53.0 * ( lon2 - lon1 )
+
+            var distance = Math.floor( Math.random() * 200 ) + 1, //200 feet
+                negative = ( Math.floor( Math.random() * 2 ) ? 1 : -1 ),
+                latitudeModifier = .000002741;
+
+            return distance * latitudeModifier * negative;
+
+        };
+
+        function getRandomLongitude() {
+
+            var distance = Math.floor( Math.random() * 200 ) + 1, //200 feet
+                negative = ( Math.floor( Math.random() * 2 ) ? 1 : -1 ),
+                longitudeModifier = .0000035736;
+
+            return distance * longitudeModifier  * negative;
+
+        };
+
         function getReputation() {
 
             if ( _userQuestions.length ) {
@@ -3142,7 +3168,9 @@
                 if ( _currentLocation.latitude ) {
 
                     var questionText = document.getElementById( 'ask-text' ).value.trim(),
-                        message = _currentLocation.latitude + "~" + _currentLocation.longitude + "~" + questionText,
+                        latitude = _currentLocation.latitude + getRandomLatitude(),
+                        longitude = _currentLocation.longitude + getRandomLongitude(),
+                        message = latitude + "~" + longitude + "~" + questionText,
                         resource = '/messaging/questions',
                         session = getSession( resource );
 
@@ -3167,8 +3195,8 @@
                             question[QUESTION_COLUMNS.reputation] = formatNumber( getReputation() );
                             question[QUESTION_COLUMNS.question] = questionText;
                             question[QUESTION_COLUMNS.link] = '';
-                            question[QUESTION_COLUMNS.latitude] = _currentLocation.latitude;
-                            question[QUESTION_COLUMNS.longitude] = _currentLocation.longitude;
+                            question[QUESTION_COLUMNS.latitude] = latitude;
+                            question[QUESTION_COLUMNS.longitude] = longitude;
                             question[QUESTION_COLUMNS.timestamp] = new window.Date();
                             question[QUESTION_COLUMNS.resolved] = 0;
                             question[QUESTION_COLUMNS.expired] = 0;
@@ -4295,7 +4323,8 @@
 
             var mapCanvas = document.getElementById( 'answer-map-canvas' ),
                 currentLocation = new google.maps.LatLng( _currentLocation.latitude, _currentLocation.longitude ),
-                answerLocation = new google.maps.LatLng( answer[ANSWER_COLUMNS.latitude], answer[ANSWER_COLUMNS.longitude] ),
+                answerLocation = new google.maps.LatLng( _currentLocation.latitude + getRandomLatitude(), _currentLocation.longitude + getRandomLongitude() ),
+                //answerLocation = new google.maps.LatLng( answer[ANSWER_COLUMNS.latitude], answer[ANSWER_COLUMNS.longitude] ),
                 options = {
 
                     zoom: 13,
@@ -4729,7 +4758,9 @@
             options = options || {};
 
             var viewport = document.getElementById( 'viewport' ),
-                previousPage = viewport.getDataset( 'page' );
+                previousPage = viewport.getDataset( 'page' ),
+                answer,
+                question;
 
             viewport.setDataset( 'page', page );
             addEventListeners( page, previousPage );
@@ -4742,13 +4773,13 @@
                     if ( back ) {
 
                         options = _pages.last().options;
-                        var answer = options.object,
-                            question = options.question;
+                        answer = options.object;
+                        question = options.question;
 
                     } else {
 
-                        var answer = options.object,
-                            question = options.question;
+                        answer = options.object;
+                        question = options.question;
 
                         _pages.add( 
                             page,
@@ -4802,7 +4833,7 @@
                     if ( back ) {
 
                         options = _pages.last().options;
-                        var question = options.object;
+                        question = options.object;
 
                         showQuestion( question );
                         initializeQuestionPage( question, page, previousPage );
@@ -5903,7 +5934,7 @@
 
                     case 'vote-down-answer-button':
 
-                        var answer = _pages.last().options.object;
+                        answer = _pages.last().options.object;
                         question = _pages.last().options.question;
                         answerItem = document.getElementById( 'answer-view' ).getElementsByClassName( 'answer-item' )[0];
 
@@ -5912,7 +5943,7 @@
 
                     case 'vote-up-answer-button':
 
-                        var answer = _pages.last().options.object;
+                        answer = _pages.last().options.object;
                         question = _pages.last().options.question;
                         answerItem = document.getElementById( 'answer-view' ).getElementsByClassName( 'answer-item' )[0];
 
