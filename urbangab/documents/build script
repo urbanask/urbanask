@@ -1,0 +1,1 @@
+copy /A /Y Page.js+Pages.js script.js

@@ -1,0 +1,38 @@
+<!doctype html />
+<html lang="en">
+    <head>
+        <title>urbangab</title>
+        
+        <meta name="apple-mobile-web-app-capable"           content="yes" />
+        <meta name="viewport"                               content="width=320, user-scalable=0" />
+        <meta name="apple-mobile-web-app-status-bar-style"  content="black" />
+        <link rel="apple-touch-startup-image"               href="images/splash.png" /> 
+        <link rel="apple-touch-icon"                        href="images/resolved.png" />
+        <link rel="stylesheet"                              href="styles/urbangab.css" />
+        
+    </head>
+    <body>
+        <div class="viewport">
+            
+            <header>urbangab</header>
+            
+            <form class="ask">
+                <input class="ask-text" title="Send" type="text" value="" placeholder="I want..." />
+                <button class="ask-button" type="submit"><img alt="ask" src="images/question.png" /></button>
+            </form>
+            
+            <div id="view" class="view"></div>
+        
+            <footer>
+                <ul><!----><li data-tab="questions"><img alt="questions" src="images/question.png" /></li><!----><li data-tab="map">map</li><!----><li data-tab="top"><img alt="top" src="images/top.png" /></li><!----><li data-tab="profile"><img alt="profile" src="images/profile.png" /></li><!----></ul>
+            </footer>
+            
+        </div>
+        
+        <script src="scripts/jquery.js"></script>
+        <script src="scripts/scrollability.min.js"></script>
+        <script src="scripts/urbangab.js"></script>
+        
+    </body>
+</html>
+

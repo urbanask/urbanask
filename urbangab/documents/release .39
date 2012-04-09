@@ -1,0 +1,16 @@
+release .39
+
+- bug: blank spaces in question
+- new: lowered bounties to 20 min intervals from 60
+- new: message when trying answer if already answered
+- bug: previous and next enabled
+- new: up vote questions
+- new: +5 rep for upvoting answer that then gets selected
+- new: lowered rep for a few things
+- new: bounty to selected answer or first answer with at least two votes
+- new: reputation recalc - everyone went up
+
+rep:
+
+asked a question - 1answered a question - 1upvoted an answer - 1resolved a question - 2answer was selected - 20edited a question - 2answer was upvoted - 10upvoted an answer, then answer was selected - 5earned a bounty - bounty amountupvoted a question - 1question was upvoted - 10
+

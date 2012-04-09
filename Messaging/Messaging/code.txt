@@ -1,0 +1,17 @@
+﻿        Dim response As HttpResponse = context.Response
+
+
+        response.Write("<html>")
+        response.Write("<body>")
+        response.Write("<div>ApplicationPath:" & context.Request.ApplicationPath & "</div>")
+        response.Write("<div>AppRelativeCurrentExecutionFilePath:" & context.Request.AppRelativeCurrentExecutionFilePath & "</div>")
+        response.Write("<div>CurrentExecutionFilePath:" & context.Request.CurrentExecutionFilePath & "</div>")
+        response.Write("<div>CurrentExecutionFilePathExtension:" & context.Request.CurrentExecutionFilePathExtension & "</div>")
+        response.Write("<div>FilePath:" & context.Request.FilePath & "</div>")
+        response.Write("<div>Path:" & context.Request.Path & "</div>")
+        response.Write("<div>PathInfo:" & context.Request.PathInfo & "</div>")
+        response.Write("<div>RawUrl:" & context.Request.RawUrl & "</div>")
+        response.Write("<div>RequestType:" & context.Request.RequestType & "</div>")
+        response.Write("<div>Url.AbsolutePath:" & context.Request.Url.AbsolutePath & "</div>")
+        response.Write("</body>")
+        response.Write("</html>")

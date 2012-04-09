@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<publishData>
+  <publishProfile publishUrl="C:\inetpub\wwwroot\messaging" deleteExistingFiles="True" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Windows7" publishMethod="FileSystem" replaceMatchingFiles="False" userName="" savePWD="False" userPWD="" SelectedForPublish="False">
+    <file relUrl="bin/Messaging.pdb" publishTime="02/05/2012 01:21:20" />
+    <file relUrl="web.config" publishTime="10/10/2011 04:29:22" />
+    <file relUrl="Posting.htm" publishTime="10/12/2011 00:50:34" />
+    <file relUrl="bin/removeHttpHeaders.dll" publishTime="09/16/2011 17:42:14" />
+    <file relUrl="bin/removeHttpHeaders.pdb" publishTime="09/16/2011 17:42:14" />
+    <file relUrl="bin/Messaging.dll" publishTime="02/05/2012 01:21:20" />
+  </publishProfile>
+  <publishProfile publishUrl="http://server2008" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="Default Web Site/messaging" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="False" msdeployMarkAsApp="True" profileName="server2008" publishMethod="MSDeploy" replaceMatchingFiles="True" userName="Administrator" savePWD="True" userPWD="AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAmuRNkqdzZkWZ2Gz7QSpuQQAAAAACAAAAAAAQZgAAAAEAACAAAAD47WS0JB5v8GUcn6vDLDcgshk5hC7JQJrXkfPMyBApmAAAAAAOgAAAAAIAACAAAAA6IO5FBVNCYovcIGc37F8TQicVGejVsX30QCIF4hnvAyAAAAAc5KF53S+/qyRi3hbr4hwnZDpX0PhbIml4hBZLqD8JxEAAAAAuB76Md4FnGp8lEmqnNlieYb69Pg30zrFDZkCW+oJA1BV2HIJTjIJTJKN4Bk6xEdiF1WRjhkXLJMQQWyqIzeGO" SelectedForPublish="False" />
+  <publishProfile publishUrl="https://web713.discountasp.net:8172/MsDeploy.axd" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="urbanask.com/messaging" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="True" msdeploySkipExtraFilesOnServer="False" msdeployMarkAsApp="True" profileName="urbanAsk.com" publishMethod="MSDeploy" replaceMatchingFiles="True" userName="urbanaskcom" savePWD="True" userPWD="AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAj+r2ZPH7/ky8qnZ+xMyeKwAAAAACAAAAAAAQZgAAAAEAACAAAABz6ruZ27qXhpCCZV9lllA8nIQDiwOdrA6EjXEJ3Zi30gAAAAAOgAAAAAIAACAAAABa84FG9mtjSl8RDJmzaj+TqEwzQICkzj6rtbOIaADTWjAAAABD2tzTls/2weP6YnXBhmA7eTUchX+jTkkx6RPnFVn+Z/VIWfg7bpkL0VR/KX7jTKJAAAAAJ+pzzKdFRKmnOS0jgKkUeQvsCGAyAeUEJr28Aevk1GMWi+6pLPlXA1ArU1jOH+6RTxm08GCENBsgY+UyMJ2JRQ==" SelectedForPublish="True" />
+</publishData>

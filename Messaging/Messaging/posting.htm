@@ -1,0 +1,221 @@
+﻿<!doctype html />
+<html lang="en">
+<head>
+    <title>Posting</title>
+    <style>
+    input
+    {
+    width: 800px;
+    display: block; 
+    }
+    #questionErrors, #answerErrors
+    {
+    width: 800px;
+    height: 80px;
+    overflow: auto;
+    }
+    </style>
+</head>
+<body>
+
+<form id="question" method="POST" enctype="text/plain" action="/">
+<input id="questionCount" type="text" value="110" />
+<input id="questionData" type="text" value="my message" />
+<input id="questionAuth" type="text" name="auth" value="677814a9-1e60-4715-bdd1-0a34b82075a0:YLXjSxMJzcuA-g6lNnJ1QvM9Ogg" />
+<button id="questionSend" type="submit">send</button>
+<button id="questionStop" type="button">stop</button>
+</form>
+<div>success: <span id="questionSuccess">0</span></div>
+<div>error: <span id="questionError">0</span></div>
+<div>complete: <span id="questionComplete">0</span></div>
+<div id="questionErrors"></div>
+
+<form id="answer" method="POST" enctype="text/plain" action="/">
+<input id="answerCount" type="text" value="110" />
+<input id="answerData" type="text" value="Macy's" />
+<input id="answerAuth" type="text" name="auth" value="677814a9-1e60-4715-bdd1-0a34b82075a0:6fW9pXyPHHwYbU7ga2h8vSRaVCg" />
+<button id="answerSend" type="submit">send</button>
+<button id="answerStop" type="button">stop</button>
+</form>
+<div>success: <span id="answerSuccess">0</span></div>
+<div>error: <span id="answerError">0</span></div>
+<div>complete: <span id="answerComplete">0</span></div>
+<div id="answerErrors"></div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script>
+    var questionInterval;
+    var answerInterval;
+    
+    function sendQuestions()
+    {
+
+        var data = $( "#questionData" ).val(),
+            count = Number( $( "#questionCount" ).val() );
+
+        for ( var index = 0; index < count; index++ )
+        {
+
+            //38.375 -121.583333
+            //-121.033333,38.85
+            var lat = ( Math.random() * ( 38.85 - 38.375 + 1 ) + 38.375 ).toString().substr( 0, 9 ),
+                lon = ( Math.random() * ( -121.033333 - -121.583333 + 1 ) + -121.583333 ).toString().substr( 0, 11 ),
+                message = "1~" + lat + "~" + lon + "~" + data + Math.random();
+
+            $.ajax( "http://" + window.location.hostname + ":" + window.location.port + "/messaging/questions",
+            {
+                "type": "POST",
+                "data": message,
+                "headers": { "x-session": $( "#questionAuth" ).val() },
+                "success": function ( data, status )
+                {
+
+
+                },
+                "complete": function ( obj, status )
+                {
+
+
+                },
+                "error": function ( obj, status, error )
+                {
+
+                    $( "#questionError" ).html( Number( $( "#questionError" ).html() ) + 1 );
+                    $( "#questionErrors" ).append( error + "<br />" );
+
+                }
+
+            } );
+
+        };
+
+        $( "#questionComplete" ).html( Number( $( "#questionComplete" ).html() ) + index );
+        $( "#questionSuccess" ).html( Number( $( "#questionComplete" ).html() ) - Number( $( "#questionError" ).html() ) );
+
+    };
+
+
+
+    function sendAnswers()
+    {
+
+        var count = Number( $( "#answerCount" ).val() ),
+            locations = 
+                [
+                "Macy's", "Nordstrom", "Del Taco", "Gap", "Momiji", "AT&T", "Tuli's Bistro", "Shine", "Ace Hardware", "Starbuck's",
+                "Noah's", "Sugar Shack", "Shady Lady", "Burgers & Brew", "Plush", "Bows & Arrows", "A&B Electronics",
+                "Big Brother Comics", "Downtown Plaza", "Agile Development", "Newsbeat", "Office Max", "Astrobeat", "Records",
+                "City Bicycle Works", "urbanhive", "Aaron Brothers", "Merchant Bank", "Master Locks", "Broadway Bait & Tackle", 
+                "Tower Theatre", "Crest Theatre", "Kinko's"
+                ]
+            // userid, questionid, location, latitude, longitude, reasonId
+
+        for ( var index = 0; index < count; index++ )
+        {
+
+            var userId = Math.floor( ( Math.random() * 100000 ) + 1 ).toString(),
+                questionId = Math.floor( ( Math.random() * 2000000 ) ).toString(),
+                location = locations[Math.floor( Math.random() * locations.length )],
+                lat = ( Math.random() * ( 38.85 - 38.375 + 1 ) + 38.375 ).toString().substr( 0, 9 ),
+                lon = ( Math.random() * ( -121.033333 - -121.583333 + 1 ) + -121.583333 ).toString().substr( 0, 11 ),
+                reasonId = Math.floor( ( Math.random() * 3 ) + 1 ),
+                message = questionId + "~" + location + "~" + lat + "~" + lon + "~" + reasonId;
+
+            $.ajax( "http://" + window.location.hostname + ":" + window.location.port + "/messaging/answers",
+            {
+
+                "type": "POST",
+                "data": message,
+                "headers": { "x-session": $( "#answerAuth" ).val() },
+                "success": function ( data, status )
+                {
+
+
+                },
+                "complete": function ( obj, status )
+                {
+
+
+                },
+                "error": function ( obj, status, error )
+                {
+
+                    $( "#answerError" ).html( Number( $( "#answerError" ).html() ) + 1 );
+                    $( "#answerErrors" ).append( error + "<br />" );
+
+                }
+
+            } );
+
+        };
+
+        $( "#answerComplete" ).html( Number( $( "#answerComplete" ).html() ) + index );
+        $( "#answerSuccess" ).html( Number( $( "#answerComplete" ).html() ) - Number( $( "#answerError" ).html() ) );
+
+    };
+
+
+
+    $( function ()
+    {
+
+        $( "#question" ).submit( function ()
+        {
+
+            $( "#questionSend" ).attr( "disabled", "disabled" );
+
+            $( "#questionSuccess" ).html( "0" );
+            $( "#questionComplete" ).html( "0" );
+            $( "#questionError" ).html( "0" );
+            $( "#questionErrors" ).empty();
+
+            questionInterval = setInterval( sendQuestions, 1000 );
+
+            return false;
+            
+        } );
+
+
+
+        $( "#questionStop" ).click( function ()
+        {
+
+            clearInterval( questionInterval );
+            $( "#questionSend" ).removeAttr( "disabled" );
+
+        } );
+
+
+
+        $( "#answer" ).submit( function ()
+        {
+
+            $( "#answerSend" ).attr( "disabled", "disabled" );
+
+            $( "#answerSuccess" ).html( "0" );
+            $( "#answerComplete" ).html( "0" );
+            $( "#answerError" ).html( "0" );
+            $( "#answerErrors" ).empty();
+
+            answerInterval = setInterval( sendAnswers, 1000 );
+
+            return false;
+
+        } );
+
+
+
+        $( "#answerStop" ).click( function ()
+        {
+
+            clearInterval( answerInterval );
+            $( "#answerSend" ).removeAttr( "disabled" );
+
+        } );
+
+
+
+    } );
+    </script>
+</body>
+</html>
