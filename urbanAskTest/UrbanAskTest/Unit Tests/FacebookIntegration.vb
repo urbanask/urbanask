@@ -48,12 +48,21 @@ Public Class FacebookIntegration
 #Region "    tests "
 
     <UnitTesting.TestMethod()>
-    Public Sub CreateAccount()
+    Public Sub A_CreateAccount() 'force to run first
 
         Me.GoToFacebook()
         Me.VerifyLogin()
         Me.RemoveUrbanAsk()
         Me.AddUrbanAsk()
+
+    End Sub
+
+    <UnitTesting.TestMethod()>
+    Public Sub TestActivity()
+
+        Me.PostQuestion()
+        Me.VerifyActivity()
+        Me.DeleteActivity()
 
     End Sub
 
@@ -147,6 +156,19 @@ Public Class FacebookIntegration
         _utility.WaitForBodyText("urbanAsk would also like permission to")
         _utility.Click("grant_clicked")
         _utility.WaitForTitle("urbanAsk on Facebook")
+        _utility.WaitForBodyText("Sacramento")
+
+    End Sub
+
+    Private Sub PostQuestion()
+
+    End Sub
+
+    Private Sub VerifyActivity()
+
+    End Sub
+
+    Private Sub DeleteActivity()
 
     End Sub
 
