@@ -1,1 +1,17 @@
 .DS_Store
+api/sharp/*
+*/*/bin/*
+*/*/obj/*
+backup/*
+Code/*
+Collections/Backup/*
+mssccprj.scc
+UpgradeLog.XML
+vssver2.scc
+iphone images/*
+NotFlicks/*
+StiffPiTheme/*
+Tumblr/*
+TumblrPost/*
+VSMacros80/*
+webView/*
