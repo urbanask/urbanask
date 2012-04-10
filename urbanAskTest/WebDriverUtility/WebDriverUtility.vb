@@ -22,7 +22,7 @@ Public Class WebDriverUtility
 
 #Region "    constants "
 
-    Private _timeout As New System.TimeSpan(0, 0, 5) '5 seconds
+    Private _timeout As New System.TimeSpan(0, 0, 10) '5 seconds
     Private _sleep As New System.TimeSpan(0, 0, 0, 0, 100) '.1 seconds
 
 #End Region
@@ -95,8 +95,11 @@ Public Class WebDriverUtility
 
         Try
 
-            _driver.FindElement(by)
-            returnValue = True
+            If _driver.FindElement(by).Displayed Then
+
+                returnValue = True
+
+            End If
 
         Catch exception As Selenium.NoSuchElementException
 
@@ -128,6 +131,12 @@ Public Class WebDriverUtility
 
                 returnValue = _driver.FindElement(by)
 
+                If (Not returnValue.Displayed) Then
+
+                    returnValue = Nothing
+
+                End If
+
             Catch exception As Selenium.NoSuchElementException
 
                 returnValue = Nothing
@@ -144,6 +153,59 @@ Public Class WebDriverUtility
         End If
 
         Return returnValue
+
+    End Function
+
+    Public Overloads Function AssertElementNotPresent(
+        ByVal id As String) As Selenium.IWebElement
+
+        Return Me.AssertElementNotPresent(By.Id(id))
+
+    End Function
+
+    Public Overloads Function AssertElementNotPresent(
+        ByVal by As OpenQA.Selenium.By) As Selenium.IWebElement
+
+        Dim element As Selenium.IWebElement = Nothing
+        Dim present As Boolean = True
+        Me.ResetTimeout()
+
+        Do
+
+            Try
+
+                element = _driver.FindElement(by)
+
+                Try
+
+                    If (Not element.Displayed) Then
+
+                        present = False
+
+                    End If
+
+                Catch exception As Selenium.StaleElementReferenceException
+
+                    present = False
+
+                End Try
+
+            Catch exception As Selenium.NoSuchElementException
+
+                present = False
+
+            End Try
+
+        Loop Until (Me.Timeout Or (Not present))
+
+        If present Then
+
+            Dim message As String = "Element {0} is present"
+            UnitTesting.Assert.Fail(String.Format(_culture, message, by))
+
+        End If
+
+        Return element
 
     End Function
 
@@ -243,27 +305,6 @@ Public Class WebDriverUtility
 
             Dim message As String = String.Format(_culture, "Title does not contain '{0}'", text)
             UnitTesting.Assert.Fail(message)
-
-        End If
-
-    End Sub
-
-    Public Overloads Sub AssertElementNotPresent(
-        ByVal id As String)
-
-        Me.AssertElementNotPresent(By.Id(id))
-
-    End Sub
-
-    Public Overloads Sub AssertElementNotPresent(
-        ByVal by As OpenQA.Selenium.By)
-
-        Dim elements As ObjectModel.ReadOnlyCollection(Of OpenQA.Selenium.IWebElement) = _driver.FindElements(by)
-
-        If (elements.Count > 0) Then
-
-            Dim message As String = "Element {0} not present"
-            UnitTesting.Assert.Fail(String.Format(_culture, message, by))
 
         End If
 

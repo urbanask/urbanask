@@ -26,6 +26,7 @@ Public Class FacebookIntegration
     Private _culture As Globalization.CultureInfo = Globalization.CultureInfo.CurrentCulture()
     Private _utility As UrbanAsk.Utility.WebDriverUtility = WebDriverUtility
     Private _configurationFile As String = ConfigurationFile
+    Private _driver As Selenium.IWebDriver = Driver
 
 #End Region
 
@@ -141,7 +142,6 @@ Public Class FacebookIntegration
             _utility.Click(By.CssSelector(String.Format(_culture, "#{0} .fbsettingslistitemedit", elementID)))
             _utility.Click(By.ClassName("fbSettingsExpandedDelete"))
             _utility.Click(By.Name("remove"))
-            Threading.Thread.Sleep(1000)
             _utility.AssertElementNotPresent(elementID)
 
         End If
@@ -156,11 +156,30 @@ Public Class FacebookIntegration
         _utility.WaitForBodyText("urbanAsk would also like permission to")
         _utility.Click("grant_clicked")
         _utility.WaitForTitle("urbanAsk on Facebook")
+
+        Threading.Thread.Sleep(2000)
+        _driver.SwitchTo().Frame("iframe_canvas")
+
+        If _utility.IsElementPresent("save-edit") Then
+
+            _utility.Click("save-edit")
+            _utility.AssertElementNotPresent("save-edit")
+
+        End If
+
         _utility.WaitForBodyText("Sacramento")
 
     End Sub
 
     Private Sub PostQuestion()
+
+        Dim questions As Collections.ArrayList = Parameters.Parameter.GetValues("Questions", _configurationFile)
+        Dim count As Int32 = questions.Count
+        Dim random As New System.Random()
+        Dim index As Int32 = random.Next(0, count - 1)
+        Dim question As String = questions(index).ToString()
+        _utility.TypeAndEnter(By.CssSelector("#ask input"), question)
+        _utility.WaitForBodyText("question posted")
 
     End Sub
 
