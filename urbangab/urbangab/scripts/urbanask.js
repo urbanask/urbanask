@@ -1057,8 +1057,8 @@
         function getRandomLatitude() {
 
             //.0001894 miles = 1 ft
-            //lat: .0002741
-            //lon: .00035736
+            //lat: .000002741
+            //lon: .0000035736
             //69.1 * ( lat2 - lat1 )
             //53.0 * ( lon2 - lon1 )
 
@@ -1076,7 +1076,7 @@
                 negative = ( Math.floor( Math.random() * 2 ) ? 1 : -1 ),
                 longitudeModifier = .0000035736;
 
-            return distance * longitudeModifier  * negative;
+            return distance * longitudeModifier * negative;
 
         };
 
@@ -1568,9 +1568,9 @@
 
                 } else {
 
-                    //                    alert( 'start app' );
-                    //                    window.setLocalStorage( 'sessionId', 'c04273d1-949d-46e5-a7c7-efe53cf8344c' );
-                    //                    window.setLocalStorage( 'sessionKey', 'e4b87f40-349e-4bab-8dca-4a592eac4e70' );
+                    //  alert( 'start app' );
+                    //  window.setLocalStorage( 'sessionId', 'c04273d1-949d-46e5-a7c7-efe53cf8344c' );
+                    //  window.setLocalStorage( 'sessionKey', 'e4b87f40-349e-4bab-8dca-4a592eac4e70' );
 
                     initializeTrackingCode();
                     addDefaultEventListeners();
@@ -4323,8 +4323,7 @@
 
             var mapCanvas = document.getElementById( 'answer-map-canvas' ),
                 currentLocation = new google.maps.LatLng( _currentLocation.latitude, _currentLocation.longitude ),
-                answerLocation = new google.maps.LatLng( _currentLocation.latitude + getRandomLatitude(), _currentLocation.longitude + getRandomLongitude() ),
-                //answerLocation = new google.maps.LatLng( answer[ANSWER_COLUMNS.latitude], answer[ANSWER_COLUMNS.longitude] ),
+                answerLocation = new google.maps.LatLng( answer[ANSWER_COLUMNS.latitude], answer[ANSWER_COLUMNS.longitude] ),
                 options = {
 
                     zoom: 13,
@@ -4742,14 +4741,23 @@
 
             };
 
+            notification.addEventListener( 'click', close, false );
             notification.removeClass( 'hide' );
             window.setTimeout( function () { notification.removeClass( 'fade' ); }, 50 );
-            window.setTimeout( function () {
+            window.setTimeout( function () { close(); }, 3000 );
 
-                notification.addClass( 'fade' );
-                window.setTimeout( function () { notification.addClass( 'hide' ); }, 1000 );
+            function close() {
 
-            }, 3000 );
+                notification.removeEventListener( 'click', close, false );
+
+                if ( !notification.hasClass( 'fade' ) ) {
+
+                    notification.addClass( 'fade' );
+                    window.setTimeout( function () { notification.addClass( 'hide' ); }, 1000 );
+
+                };
+
+            };
 
         };
 
@@ -5183,19 +5191,9 @@
             share.removeClass( 'hide' );
             window.setTimeout( function () { share.addClass( 'question-share-slide' ); }, 20 );
 
-            share.addEventListener( 'close', close, false );
+//            share.style.bottom = '100px';
 
-            facebook.addEventListener( 'click', postToFacebook, false );
-            facebook.addEventListener( 'touchstart', selectButton, false );
-            facebook.addEventListener( 'touchend', unselectButton, false );
-            facebook.addEventListener( 'mousedown', selectButton, false );
-            facebook.addEventListener( 'mouseup', unselectButton, false );
-
-            twitter.addEventListener( 'click', postToTwitter, false );
-            twitter.addEventListener( 'touchstart', selectButton, false );
-            twitter.addEventListener( 'touchend', unselectButton, false );
-            twitter.addEventListener( 'mousedown', selectButton, false );
-            twitter.addEventListener( 'mouseup', unselectButton, false );
+            addListeners();
 
             function postToFacebook() {
 
@@ -5251,6 +5249,24 @@
 
             };
 
+            function addListeners() {
+
+                share.addEventListener( 'close', close, false );
+
+                facebook.addEventListener( 'click', postToFacebook, false );
+                facebook.addEventListener( 'touchstart', selectButton, false );
+                facebook.addEventListener( 'touchend', unselectButton, false );
+                facebook.addEventListener( 'mousedown', selectButton, false );
+                facebook.addEventListener( 'mouseup', unselectButton, false );
+
+                twitter.addEventListener( 'click', postToTwitter, false );
+                twitter.addEventListener( 'touchstart', selectButton, false );
+                twitter.addEventListener( 'touchend', unselectButton, false );
+                twitter.addEventListener( 'mousedown', selectButton, false );
+                twitter.addEventListener( 'mouseup', unselectButton, false );
+
+            };
+
         };
 
         function showSocialButtons() {
@@ -5263,7 +5279,7 @@
                         + '<div class="g-plusone-frame"><div class="g-plusone" data-size="tall" data-href="http://urbanAsk.com"></div></div>'
                         + '<a href="https://twitter.com/share" class="twitter-share-button" data-url="http://urbanAsk.com" data-text="urbanAsk - The addicting game of helping people find things." data-count="vertical">Tweet</a>'
                         + '<div id="fb-root"></div>'
-                        + '</div>'
+                        + '</div>';
 
                 document.getElementById( 'viewport' ).insertAdjacentHTML( 'beforeEnd', html );
 
@@ -5446,48 +5462,61 @@
 
             window.setTimeout( function () {
 
-                var topTypeId = window.parseInt( document.getElementById( 'top-type' ).getDataset( 'id' ) ),
-                    intervalId = window.parseInt( document.getElementById( 'top-interval' ).getDataset( 'id' ) ),
-                    topUsers = document.getElementById( 'top-users' ),
-                    html = '';
+                var noTopUsers = document.getElementById( 'no-top-users' ),
+                    topUsers = document.getElementById( 'top-users' );
 
-                scrollUp();
+                if ( _cache.topUsers.length() ) {
 
-                for ( var index = 0, rank = 0; index < _cache.topUsers.length(); index++ ) {
+                    var topTypeId = window.parseInt( document.getElementById( 'top-type' ).getDataset( 'id' ) ),
+                        intervalId = window.parseInt( document.getElementById( 'top-interval' ).getDataset( 'id' ) ),
+                        html = '';
 
-                    if ( _cache.topUsers.data[index][TOP_USER_COLUMNS.topTypeId] == topTypeId
-                        && _cache.topUsers.data[index][TOP_USER_COLUMNS.intervalId] == intervalId ) {
+                    scrollUp();
 
-                        rank++;
-                        html += getTopUserItem( topTypeId, _cache.topUsers.data[index], rank );
+                    for ( var index = 0, rank = 0; index < _cache.topUsers.length(); index++ ) {
+
+                        if ( _cache.topUsers.data[index][TOP_USER_COLUMNS.topTypeId] == topTypeId
+                            && _cache.topUsers.data[index][TOP_USER_COLUMNS.intervalId] == intervalId ) {
+
+                            rank++;
+                            html += getTopUserItem( topTypeId, _cache.topUsers.data[index], rank );
+
+                        };
 
                     };
 
-                };
+                    topUsers.innerHTML = html;
 
-                topUsers.innerHTML = html;
-                var noTopUsers = document.getElementById( 'no-top-users' );
+                    if ( html.length ) {
 
-                if ( html.length ) {
+                        noTopUsers.addClass( 'hide' );
+                        topUsers.removeClass( 'hide' );
 
-                    noTopUsers.addClass( 'hide' );
-                    topUsers.removeClass( 'hide' );
+                    } else {
+
+                        noTopUsers.innerHTML = STRINGS.topUsers.noTopUsers
+                            .replace( "%1", STRINGS.topUsers.noTopUsersType[topTypeId - 1] )
+                            .replace( "%2", STRINGS.topUsers.noTopUsersInterval[intervalId] );
+                        noTopUsers.removeClass( 'hide' );
+                        topUsers.addClass( 'hide' );
+
+                    };
+
+                    window.setTimeout( function () {
+
+                        if ( _cache.topUsers.isExpired() ) { loadTopUsers(); };
+
+                    }, 1500 );
 
                 } else {
 
-                    noTopUsers.innerHTML = STRINGS.noTopUsers
-                        .replace( "%1", STRINGS.noTopUsersType[topTypeId - 1] )
-                        .replace( "%2", STRINGS.noTopUsersInterval[intervalId] );
+                    noTopUsers.innerHTML = STRINGS.topUsers.loading;
                     noTopUsers.removeClass( 'hide' );
                     topUsers.addClass( 'hide' );
 
+                    loadTopUsers();
+
                 };
-
-                window.setTimeout( function () {
-
-                    if ( _cache.topUsers.isExpired() ) { loadTopUsers(); };
-
-                }, 1500 );
 
             }, 10 );
 

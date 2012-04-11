@@ -4,24 +4,21 @@
     <title>urbanAsk</title>
 
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="viewport" content="initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-    <meta property="og:title" content="urbanAsk" />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="urbanAsk" />
-    <meta property="og:description" content="The exciting new way to find things locally and help others do the same." />
-    <meta property="og:image" content="http://urbanAsk.com/images/icon-large.png"/>
+    <meta name="viewport"                   content="initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+
+    <meta property="og:title"               content="urbanAsk" />
+    <meta property="og:type"                content="website" />
+    <meta property="og:site_name"           content="urbanAsk" />
+    <meta property="og:description"         content="The exciting new way to find things locally and help others do the same." />
+    <meta property="og:image"               content="http://urbanAsk.com/images/icon-large.png"/>
+
+    <link rel="stylesheet"                  href="styles/urbanask.css" />
 
     <style>
 
-         body {
-            background-color: black;
-            font-family: Helvetica Neue, Helvetica, Verdana, Tahoma, Andale Mono, Monaco, Courier New;
+        body {
             height: 480px;
-            margin: 0 auto;
-            overflow: hidden;
-            position: relative;
             text-align: center;
-            width: 320px;
         }
 
         .fb-button {
@@ -41,21 +38,12 @@
             width: 180px;  
         }
         
-        #logo {
-            margin-top: 5px;
-            width: 50%;
-        }
-
         @media only screen and (min-device-width: 481px) { 
             .fb_dialog {
                 left: -100px !important;
             }
         }
 
-        .hide {
-            display: none !important;
-        }
-        
     </style>
 
 </head>
@@ -80,9 +68,11 @@
                 SOURCE_URL = 'http://75.144.228.69:55555',
                 FILE_URL = 'file://',
                 REDIRECT_URL = 'http://75.144.228.69:55555/urbanask-alpha/index.html',
+                APP_PAGE = 'index.html',
                 APP_ID = '267603823260704',
                 _initialized = false;
 
+            initializeEnvironment();
             window.addEventListener( "message", onMessage, false );
 
             var script = document.createElement( 'script' );
@@ -105,7 +95,16 @@
                 if ( window.localStorage.getItem( 'facebook-login' ) ) {
 
                     window.localStorage.removeItem( 'facebook-login' );
-                    window.location.href = REDIRECT_URL;
+
+                    if ( window.iOSDevice && window.iOSDeviceMode == 'webview' ) {
+
+                        window.location.href = APP_PAGE;
+
+                    } else {
+
+                        window.location.href = REDIRECT_URL;
+
+                    };
 
                 };
 
@@ -477,9 +476,9 @@
             window.location.queryString = function () {
 
                 var result = {},
-                queryString = location.search.substring( 1 ),
-                re = /([^&=]+)=([^&]*)/g,
-                m;
+                    queryString = location.search.substring( 1 ),
+                    re = /([^&=]+)=([^&]*)/g,
+                    m;
 
                 while ( m = re.exec( queryString ) ) {
 
@@ -502,6 +501,31 @@
                 };
 
                 return result;
+
+            };
+
+            function initializeEnvironment() {
+
+                if ( window.navigator.userAgent.indexOf( 'iPhone' ) > -1
+                || window.navigator.userAgent.indexOf( 'iPod' ) > -1 ) {
+
+                    window.iOSDevice = true
+
+                    if ( !window.navigator.standalone && window.navigator.userAgent.indexOf( 'Safari' ) > -1 ) {
+
+                        window.iOSDeviceMode = 'browser';
+
+                    } else if ( window.navigator.standalone && window.navigator.userAgent.indexOf( 'Safari' ) == -1 ) {
+
+                        window.iOSDeviceMode = 'standalone';
+
+                    } else if ( !window.navigator.standalone && window.navigator.userAgent.indexOf( 'Safari' ) == -1 ) {
+
+                        window.iOSDeviceMode = 'webview';
+
+                    };
+
+                };
 
             };
 

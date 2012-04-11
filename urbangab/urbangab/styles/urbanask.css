@@ -1099,6 +1099,11 @@ html {
     background-size: 32px 32px;
 }
 
+#logo {
+    margin-top: 5px;
+    width: 50%;
+}
+
 #logout {
     display: block;
 }
@@ -1992,8 +1997,13 @@ rgba(0,0,0,.74);
     opacity: 1;
     position: absolute; 
     top: 0;
+    transition:             opacity 500ms ease;
+        -moz-transition:    opacity 500ms ease;
+        -ms-transition:     opacity 500ms ease;
+        -o-transition:      opacity 500ms ease;
+        -webkit-transition: opacity 500ms ease;
     width: 320px;
-    z-index: 99;
+    z-index: 9999;
 }
 
 #title {

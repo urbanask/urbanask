@@ -12,11 +12,12 @@ SELECT * FROM userBadge WHERE userId < 100
 SELECT * FROM reputation WHERE userId < 100
 
 /*
-DELETE FROM question WHERE questionId = 1105486
-DELETE FROM answer WHERE answerId = 1105486
-UPDATE question SET question = 'Voice changing Darth Vader helmet' WHERE questionId = 1105688
+DELETE FROM question WHERE questionId = 1105898
+DELETE FROM answer WHERE questionId = 1105843
+UPDATE question SET question = 'Used Marshall cab' WHERE questionId = 1105852
 SELECT username, authtypeId FROM [user] WHERE userId < 100
-SELECT * FROM userFacebook WHERE userId IN (46)
+SELECT * FROM answer WHERE questionId = 1105843
+SELECT * FROM reputation WHERE itemId = 1105843
 UPDATE [user] SET 
 hash='bFxydZg4GPGQqojigQxzbIcQw62jD3C4WeyXvB0fpB+1YHMSgAh1PIPHvpOsqqpT+gxTKG2hRl30kVhumuRuQg==',
 salt='7iJyqg==',
