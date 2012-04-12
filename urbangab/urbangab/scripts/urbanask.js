@@ -314,7 +314,23 @@
             refreshButton.addEventListener( 'click', refresh, false );
             title.addEventListener( 'click', scrollUp, false );
 
+            title.addEventListener( 'click', function () {
+
+                alert( 'click' );
+
+                initializePhoneGap( function ( complete ) {
+
+                    console.log( 'child: ' + window.plugins );
+                    window.plugins.childBrowser.showWebPage( 'http://www.google.com' );
+                    window.setTimeout( function () { complete(); }, 5000 );
+
+                }, { childBrowser: true } );
+
+            }, false );
+
+
             window.addEventListener( 'orientationchange', orientationChange, false );
+            //window.addEventListener( 'popstate', browserBack, false );
 
             if ( hasTouch() ) {
 
@@ -667,6 +683,17 @@
             if ( badge ) {
 
                 showMessage( badge.getDataset( 'description' ) );
+
+            };
+
+        };
+
+        function browserBack( event ) {
+
+            if ( !document.getElementById( 'back-button' ).hasClass( 'hide' ) ) {
+
+                event.preventDefault();
+                goBack();
 
             };
 
@@ -1632,21 +1659,68 @@
 
         };
 
-        function initializePhoneGap( complete ) {
+        function initializePhoneGap( initialized, options ) {
+
+            console.log( 'initphonegap: ' );
 
             function onPhoneGapReady() {
 
+                window.phoneGapReady = true;
+
+                console.log( 'onPhoneGapReady: ' );
+
                 document.removeEventListener( 'deviceready', onPhoneGapReady, false );
-                complete();
+
+                initialized( function () {
+
+                    console.log( 'initialized: ' );
+
+                    var frame = document.querySelector( 'iframe' ),
+                        phonegap = document.getElementById( 'phone-gap' ),
+                        childBrowser = document.getElementById( 'child-browswer' );
+
+                    frame.parentNode.removeChild( frame );
+                    document.body.removeChild( phonegap );
+                    if ( childBrowser ) { document.body.removeChild( childBrowser ); };
+
+                    console.log( 'complete: ' + document.querySelectorAll( 'iframe' ).length );
+
+                } );
 
             };
 
-            document.addEventListener( 'deviceready', onPhoneGapReady, false );
+            if ( window.phoneGapReady ) {
+
+                console.log( 'add iframe' );
+                document.body.insertAdjacentHTML( 'beforeEnd', '<iframe style="display:none;" height="0px" width="0px" frameborder="0" src="gap://ready"></iframe>' );
+                onPhoneGapReady();
+
+            } else {
+
+                console.log( 'devicereadhandler' );
+                document.addEventListener( 'deviceready', onPhoneGapReady, false );
+
+            };
+
+            console.log( 'phonegap.js' );
 
             var script = document.createElement( 'script' );
             script.id = 'phone-gap';
             script.src = 'phonegap.js';
             document.body.appendChild( script );
+
+            console.log( 'options.childBrowser: ' + options.childBrowser );
+
+            if ( options.childBrowser ) {
+
+                script = document.createElement( 'script' );
+                script.id = 'child-browser';
+                script.src = 'childbrowser.js';
+                document.body.appendChild( script );
+
+                console.log( 'script - child: ' + window.plugins );
+
+            };
 
         };
 
@@ -3558,15 +3632,11 @@
 
                 if ( window.iOSDeviceMode == 'webview' ) {
 
-                    initializePhoneGap( function () {
+                    initializePhoneGap( function ( complete ) {
 
                         watch( function () {
 
-                            var frame = document.querySelector( 'iframe' ),
-                                script = document.getElementById( 'phone-gap' );
-
-                            frame.parentNode.removeChild( frame );
-                            document.body.removeChild( script );
+                            complete();
 
                         } );
 
@@ -5191,7 +5261,7 @@
             share.removeClass( 'hide' );
             window.setTimeout( function () { share.addClass( 'question-share-slide' ); }, 20 );
 
-//            share.style.bottom = '100px';
+            //            share.style.bottom = '100px';
 
             addListeners();
 
@@ -5769,6 +5839,7 @@
                 if ( window.location.queryString()['question-id'] ) {
 
                     showPage( 'question-page', { id: window.location.queryString()['question-id'] } );
+                    window.history.replaceState( '', '', window.location.pathname );
 
                 } else {
 

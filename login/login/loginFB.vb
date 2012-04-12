@@ -131,6 +131,8 @@ Public Class loginFB : Implements System.Web.IHttpHandler
 
                     Else
 
+                        'newaccount = true
+
                         Dim hash As New Hashing.hash(
                             username,
                             password)
@@ -183,7 +185,7 @@ Public Class loginFB : Implements System.Web.IHttpHandler
 
                     End If
 
-                        loadSession(sessionConnection, createSession, context, userId)
+                    loadSession(sessionConnection, createSession, context, userId)
 
                 End Using
 
