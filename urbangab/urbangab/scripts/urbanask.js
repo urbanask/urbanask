@@ -90,6 +90,7 @@
             FACEBOOK_AUTH_URL = 'http://urbanask.com',
             FACEBOOK_LOGIN_URL = 'http://urbanask.com/fb-login.html',
             FACEBOOK_POST_URL = 'http://urbanask.com/fb-login.html',
+            FACEBOOK_REDIRECT_URL = 'http://75.144.228.69:55555/urbanask-alpha/index.html',
             INTERVALS = {
 
                 "all": 0,
@@ -313,21 +314,6 @@
             toolbar.addEventListener( 'click', toolbarClick, false );
             refreshButton.addEventListener( 'click', refresh, false );
             title.addEventListener( 'click', scrollUp, false );
-
-            title.addEventListener( 'click', function () {
-
-                alert( 'click' );
-
-                initializePhoneGap( function ( complete ) {
-
-                    console.log( 'child: ' + window.plugins );
-                    window.plugins.childBrowser.showWebPage( 'http://www.google.com' );
-                    window.setTimeout( function () { complete(); }, 5000 );
-
-                }, { childBrowser: true } );
-
-            }, false );
-
 
             window.addEventListener( 'orientationchange', orientationChange, false );
             //window.addEventListener( 'popstate', browserBack, false );
@@ -1579,6 +1565,7 @@
         function initialize() {
 
             initializeEnvironment();
+            initializePhoneGap();
 
             if ( window.location.queryString()['logout'] ) {
 
@@ -1595,7 +1582,6 @@
 
                 } else {
 
-                    //  alert( 'start app' );
                     //  window.setLocalStorage( 'sessionId', 'c04273d1-949d-46e5-a7c7-efe53cf8344c' );
                     //  window.setLocalStorage( 'sessionKey', 'e4b87f40-349e-4bab-8dca-4a592eac4e70' );
 
@@ -1659,66 +1645,97 @@
 
         };
 
-        function initializePhoneGap( initialized, options ) {
+        function initializePhoneGap() {
 
-            console.log( 'initphonegap: ' );
+            if ( window.iOSDevice && window.iOSDeviceMode == 'webview' ) {
 
-            function onPhoneGapReady() {
+                var script;
 
-                window.phoneGapReady = true;
+                function onPhoneGapReady() {
 
-                console.log( 'onPhoneGapReady: ' );
+                    document.removeEventListener( 'deviceready', onPhoneGapReady, false );
 
-                document.removeEventListener( 'deviceready', onPhoneGapReady, false );
+                    window.phoneGapReady = true;
 
-                initialized( function () {
+                    script = document.createElement( 'script' );
+                    script.id = 'child-browser';
+                    script.src = 'childbrowser.js';
+                    document.body.appendChild( script );
 
-                    console.log( 'initialized: ' );
+                    initializeChildBrowser();
 
-                    var frame = document.querySelector( 'iframe' ),
-                        phonegap = document.getElementById( 'phone-gap' ),
-                        childBrowser = document.getElementById( 'child-browswer' );
+                };
 
-                    frame.parentNode.removeChild( frame );
-                    document.body.removeChild( phonegap );
-                    if ( childBrowser ) { document.body.removeChild( childBrowser ); };
+                document.addEventListener( 'deviceready', onPhoneGapReady, false );
 
-                    console.log( 'complete: ' + document.querySelectorAll( 'iframe' ).length );
-
-                } );
+                script = document.createElement( 'script' );
+                script.id = 'phone-gap';
+                script.src = 'phonegap.js';
+                document.body.appendChild( script );
 
             };
+
+        };
+
+        function usePhoneGap( ready ) {
 
             if ( window.phoneGapReady ) {
 
-                console.log( 'add iframe' );
-                document.body.insertAdjacentHTML( 'beforeEnd', '<iframe style="display:none;" height="0px" width="0px" frameborder="0" src="gap://ready"></iframe>' );
-                onPhoneGapReady();
+                var html = '<iframe style="display:none;" height="0px" width="0px" frameborder="0" src="gap://ready"></iframe>';
+                document.body.insertAdjacentHTML( 'beforeEnd', html );
 
-            } else {
+                window.setTimeout( function () {
 
-                console.log( 'devicereadhandler' );
-                document.addEventListener( 'deviceready', onPhoneGapReady, false );
+                    ready( function () {
+
+                        closePhoneGap();
+
+                    } );
+
+                }, 200 );
 
             };
 
-            console.log( 'phonegap.js' );
+        };
 
-            var script = document.createElement( 'script' );
-            script.id = 'phone-gap';
-            script.src = 'phonegap.js';
-            document.body.appendChild( script );
+        function initializeChildBrowser() {
 
-            console.log( 'options.childBrowser: ' + options.childBrowser );
+            var timer = window.setInterval( function () {
 
-            if ( options.childBrowser ) {
+                if ( window.plugins && window.plugins.childBrowser ) {
 
-                script = document.createElement( 'script' );
-                script.id = 'child-browser';
-                script.src = 'childbrowser.js';
-                document.body.appendChild( script );
+                    window.clearInterval( timer );
 
-                console.log( 'script - child: ' + window.plugins );
+                    window.plugins.childBrowser.onClose = function () {
+
+                        closePhoneGap();
+
+                    };
+
+                    window.plugins.childBrowser.onLocationChange = function ( url ) {
+
+                        if ( url == FACEBOOK_REDIRECT_URL ) {
+
+                            window.plugins.childBrowser.close();
+                            showPage( 'login-page' );
+
+                        };
+
+                    };
+
+                };
+
+            }, 200 );
+
+        };
+
+        function closePhoneGap() {
+
+            var frames = document.querySelectorAll( 'iframe' );
+
+            for ( var index = 0; index < frames.length; index++ ) {
+
+                frames[index].parentNode.removeChild( frames[index] );
 
             };
 
@@ -2160,7 +2177,19 @@
 
             } else {
 
+                //                if ( window.iOSDeviceMode == 'webview' ) {
+
+                //                    usePhoneGap( function ( complete ) {
+
+                //                        window.plugins.childBrowser.showWebPage( FACEBOOK_LOGIN_URL + '?button=login' );
+
+                //                    } );
+
+                //                } else {
+
                 window.location.href = FACEBOOK_LOGIN_URL + '?button=login';
+
+                //                };
 
             };
 
@@ -3632,7 +3661,7 @@
 
                 if ( window.iOSDeviceMode == 'webview' ) {
 
-                    initializePhoneGap( function ( complete ) {
+                    usePhoneGap( function ( complete ) {
 
                         watch( function () {
 
@@ -3661,15 +3690,19 @@
                 },
                 function ( error ) {
 
-                    showMessage( STRINGS.error.geoLocation );
+                    if ( !( window.iOSDevice && window.iOSDeviceMode == 'webview' ) ) {
+
+                        showMessage( STRINGS.error.geoLocation );
+
+                    };
 
                 },
                 { maximumAge: 60000, enableHighAccuracy: true } ); //must be valid within a minute
 
                 window.setTimeout( function () {
 
-                    if ( complete ) { complete() };
                     window.navigator.geolocation.clearWatch( geo )
+                    if ( complete ) { complete() };
 
                 }, 5000 );
 
@@ -4392,7 +4425,9 @@
         function showAnswerMap( answer, travelMode ) {
 
             var mapCanvas = document.getElementById( 'answer-map-canvas' ),
-                currentLocation = new google.maps.LatLng( _currentLocation.latitude, _currentLocation.longitude ),
+                currentLatitude = ( _currentLocation.latitude ? _currentLocation.latitude : answer[ANSWER_COLUMNS.latitude] ),
+                currentLongitude = ( _currentLocation.longitude ? _currentLocation.longitude : answer[ANSWER_COLUMNS.longitude] ),
+                currentLocation = new google.maps.LatLng( currentLatitude, currentLongitude ),
                 answerLocation = new google.maps.LatLng( answer[ANSWER_COLUMNS.latitude], answer[ANSWER_COLUMNS.longitude] ),
                 options = {
 
@@ -4558,12 +4593,24 @@
 
                 if ( answer[ANSWER_COLUMNS.link] ) {
 
-                    var a = document.createElement( 'a' );
-                    a.setAttribute( 'href', answer[ANSWER_COLUMNS.link] );
-                    a.setAttribute( 'target', '_blank' );
-                    var event = document.createEvent( 'HTMLEvents' )
-                    event.initEvent( 'click', true, true );
-                    a.dispatchEvent( event );
+                    if ( window.iOSDevice && window.iOSDeviceMode == 'webview' ) {
+
+                        usePhoneGap( function ( complete ) {
+
+                            window.plugins.childBrowser.showWebPage( answer[ANSWER_COLUMNS.link] );
+
+                        } );
+
+                    } else {
+
+                        var a = document.createElement( 'a' );
+                        a.setAttribute( 'href', answer[ANSWER_COLUMNS.link] );
+                        a.setAttribute( 'target', '_blank' );
+                        var event = document.createEvent( 'HTMLEvents' )
+                        event.initEvent( 'click', true, true );
+                        a.dispatchEvent( event );
+
+                    };
 
                 };
 
@@ -4573,11 +4620,25 @@
 
                 close();
 
-                var url = 'http://maps.google.com/?saddr='
-                        + _currentLocation.latitude + ',' + _currentLocation.longitude
+                var currentLatitude = ( _currentLocation.latitude ? _currentLocation.latitude : answer[ANSWER_COLUMNS.latitude] ),
+                    currentLongitude = ( _currentLocation.longitude ? _currentLocation.longitude : answer[ANSWER_COLUMNS.longitude] ),
+                    url = 'http://maps.google.com/?saddr='
+                        + currentLatitude + ',' + currentLongitude
                         + '&daddr=' + answer[ANSWER_COLUMNS.latitude] + ',' + answer[ANSWER_COLUMNS.longitude];
 
-                window.open( url );
+                if ( window.iOSDevice && window.iOSDeviceMode == 'webview' ) {
+
+                    usePhoneGap( function ( complete ) {
+
+                        window.plugins.childBrowser.showWebPage( url );
+
+                    } );
+
+                } else {
+
+                    window.open( url );
+
+                };
 
             };
 
@@ -6610,7 +6671,6 @@ i]; else { var n = a[i - 3] ^ a[i - 8] ^ a[i - 14] ^ a[i - 16]; a[i] = n << 1 | 
             }; a._blocksize = 16; a._digestsize = 20
         } )();
         (function () { var d = window.Crypto, m = d.util, f = d.charenc, b = f.UTF8, c = f.Binary; d.HMAC = function ( a, d, e, h ) { d.constructor == String && ( d = b.stringToBytes( d ) ); e.constructor == String && ( e = b.stringToBytes( e ) ); e.length > 4 * a._blocksize && ( e = a( e, { asBytes: !0 } ) ); for ( var f = e.slice( 0 ), e = e.slice( 0 ), g = 0; g < 4 * a._blocksize; g++ ) f[g] ^= 92, e[g] ^= 54; a = a( f.concat( a( e.concat( d ), { asBytes: !0 } ) ), { asBytes: !0 } ); return h && h.asBytes ? a : h && h.asString ? c.bytesToString( a ) : m.bytesToHex( a ) } } )();
-
 
         window.setTimeout( initialize, 200 );
 

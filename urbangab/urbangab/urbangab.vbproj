@@ -79,6 +79,9 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="fb-login.html" />
+    <Content Include="images\icon-114.png" />
+    <Content Include="images\icon-57.png" />
+    <Content Include="images\icon-72.png" />
     <Content Include="images\icon-large.png" />
     <Content Include="images\share-logo.png" />
     <Content Include="images\splash-fullscreen.png" />

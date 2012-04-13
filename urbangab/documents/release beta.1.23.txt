@@ -1,6 +1,11 @@
 beta 1.23
 
+new - iOS - website and Google Maps link opens in child window
+new - iOS - submitted for app store approval
+
+bug - maps don't display if GPS disabled
 bug - fixed url when viewing question from FB
 bug - iOS - question share not working
+bug - iOS - GPS fails intermittently
 
 
