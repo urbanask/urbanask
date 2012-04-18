@@ -1,0 +1,3 @@
+#!/bin/bash
+/Applications/Developer/android-sdk-macosx/tools/zipalign -f -v 4 /Users/Matt/Downloads/urbanAsk-release.apk /Users/Matt/Downloads/urbanAsk.apk
+

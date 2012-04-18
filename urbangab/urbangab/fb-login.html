@@ -50,11 +50,13 @@
 
 <body>
 
-    <img id="logo" alt="" src="images/logo.png" />
-    <button id="fb-login" class="fb-button hide">Login</button>
-    <button id="fb-invite" class="fb-button hide">Invite Friends</button>
-    <button id="fb-post" class="fb-button hide">Post</button>
-    <button id="fb-post-question" class="fb-button hide">Post Question</button>
+    <div id="viewport">
+        <img id="logo" alt="" src="images/logo.png" />
+        <button id="fb-login" class="fb-button hide">Login</button>
+        <button id="fb-invite" class="fb-button hide">Invite Friends</button>
+        <button id="fb-post" class="fb-button hide">Post</button>
+        <button id="fb-post-question" class="fb-button hide">Post Question</button>
+    </div>
 
     <div id="fb-root"></div>
 
@@ -67,6 +69,7 @@
                 QUESTION_URL = 'https://urbanask.com/questions.aspx',
                 SOURCE_URL = 'http://75.144.228.69:55555',
                 FILE_URL = 'file://',
+                LOCALHOST_URL = 'http://localhost',
                 REDIRECT_URL = 'http://75.144.228.69:55555/urbanask-alpha/index.html',
                 APP_PAGE = 'index.html',
                 APP_ID = '267603823260704',
@@ -120,7 +123,7 @@
                     FB.login( 
                         complete,
                         {
-                            scope: 'email,publish_stream,publish_actions',
+                            scope: 'email,publish_actions',
                             redirect_uri: window.location.href,
                             cancel_url: window.location.href
                         }
@@ -131,7 +134,7 @@
                     FB.login( 
                         complete,
                         {
-                            scope: 'email,publish_stream,publish_actions'
+                            scope: 'email,publish_actions'
                         }
                     );
 
@@ -345,6 +348,7 @@
                 if ( event.origin == SOURCE_URL
                     || event.origin == ROOT_URL
                     || event.origin == ROOT_HTTPS_URL
+                    || event.origin == LOCALHOST_URL
                     || event.origin == FILE_URL ) {
 
                     var message = window.JSON.parse( event.data );

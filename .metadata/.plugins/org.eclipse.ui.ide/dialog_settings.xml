@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<list key="installedFeatures">
+		<item value="org.eclipse.cvs:1.2.0.v20100427-7B77FKs8sF7B77SDX4GW85"/>
+		<item value="org.eclipse.epp.mpc:1.0.0.v20100611-0430"/>
+		<item value="org.eclipse.epp.package.javascript.feature:1.3.0.20100618-0515"/>
+		<item value="org.eclipse.help:1.2.0.v20100427-7e7jEKFEx2XlnZinYPtgz03"/>
+		<item value="org.eclipse.platform:3.6.0.v20100602-9gF78GpqFt6trOGhL60z0oEx3fz-JKNwxPY"/>
+		<item value="org.eclipse.rcp:3.6.0.v20100519-9OArFKvFtsd7WLUKh-DcYTS"/>
+		<item value="org.eclipse.wst.common.fproj:3.2.0.v201005290030-377A78s73533D5L355B"/>
+		<item value="org.eclipse.wst.jsdt.feature:1.2.0.v201005270528-7C78FGDF9JgLWLMBWz-Ose6"/>
+		<item value="org.eclipse.wst.web_ui.feature:3.2.0.v201005241510-7O7CFb3EMf84nP-FHuc10NTz--M3"/>
+		<item value="org.eclipse.wst.xml.xpath2.processor.feature:1.1.3.v201006151143-67K0BgJ9DIATEXATHP"/>
+		<item value="org.eclipse.wst.xml_ui.feature:3.2.0.v201005241510-7H7AFUIDxumQGOb7ocjUR2Pvz-28"/>
+		<item value="org.eclipse.wst.xsl.feature:1.1.0.v201005241600-7S7WFAKFIpS---NRIS1pbfYBUIQ"/>
+	</list>
+</section>

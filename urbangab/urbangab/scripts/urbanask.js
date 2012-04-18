@@ -14,10 +14,14 @@
 
             if ( window.applicationCache.status == window.applicationCache.UPDATEREADY ) {
 
-                showNotification( STRINGS.notification.newVersion, { footer: STRINGS.notification.downloading, size: 'tiny' } );
-                window.applicationCache.swapCache();
+                window.setTimeout( function () {
 
-                window.setTimeout( function () { window.location.reload(); }, 3000 );
+                    showNotification( STRINGS.notification.newVersion, { footer: STRINGS.notification.downloading, size: 'tiny' } );
+                    window.applicationCache.swapCache();
+
+                    window.setTimeout( function () { window.location.reload(); }, 3000 );
+
+                }, 2000 );
 
             };
 
@@ -26,6 +30,13 @@
         if ( window.applicationCache ) window.applicationCache.addEventListener( 'updateready', updateVersion, false );
 
         var _currentLocation = {},
+            _dimensions = {
+
+                "questionMapWidth": 308,
+                "questionMapFullWidth": 320,
+                "questionMapFullHeight": 372
+
+            },
             _session = {},
             _account = [],
             _userQuestions = [],
@@ -316,9 +327,10 @@
             title.addEventListener( 'click', scrollUp, false );
 
             window.addEventListener( 'orientationchange', orientationChange, false );
+            window.addEventListener( 'resize', orientationChange, false );
             //window.addEventListener( 'popstate', browserBack, false );
 
-            if ( hasTouch() ) {
+            if ( window.hasTouch ) {
 
                 var viewport = document.getElementById( 'viewport' );
                 viewport.addEventListener( 'touchmove', onTouchMove, false );
@@ -357,7 +369,7 @@
                     backButton = document.getElementById( 'back-button' );
                     backButton.addEventListener( 'click', goBack, false );
 
-                    if ( hasTouch() ) {
+                    if ( window.hasTouch ) {
 
                         backButton.addEventListener( 'touchstart', selectButton, false );
                         backButton.addEventListener( 'touchend', unselectButton, false );
@@ -381,7 +393,7 @@
 
                     window.addEventListener( 'message', authorizeFacebook, false );
 
-                    if ( hasTouch() ) {
+                    if ( window.hasTouch ) {
 
                         loginButton.addEventListener( 'touchstart', selectButton, false );
                         loginButton.addEventListener( 'touchend', unselectButton, false );
@@ -412,7 +424,7 @@
 
                     document.getElementById( 'question-map' ).addEventListener( 'click', questionItemClick, false );
 
-                    if ( hasTouch() ) {
+                    if ( window.hasTouch ) {
 
                         questionView.addEventListener( 'touchstart', selectItem, false );
                         questionView.addEventListener( 'touchend', unselectItem, false );
@@ -442,7 +454,7 @@
                     backButton = document.getElementById( 'back-button' );
                     backButton.addEventListener( 'click', goBack, false );
 
-                    if ( hasTouch() ) {
+                    if ( window.hasTouch ) {
 
                         backButton.addEventListener( 'touchstart', selectButton, false );
                         backButton.addEventListener( 'touchend', unselectButton, false );
@@ -469,7 +481,7 @@
                     var ask = document.getElementById( 'ask' );
                     ask.addEventListener( 'submit', saveQuestion, false );
 
-                    if ( hasTouch() ) {
+                    if ( window.hasTouch ) {
 
                         //ask.addEventListener( 'touchstart', selectAskText, false );
 
@@ -495,7 +507,7 @@
                     var topType = document.getElementById( 'top-type' ),
                         topInterval = document.getElementById( 'top-interval' );
 
-                    if ( hasTouch() ) {
+                    if ( window.hasTouch ) {
 
                         topType.addEventListener( 'touchstart', topTypeClick, false );
                         topInterval.addEventListener( 'touchstart', topIntervalClick, false );
@@ -544,7 +556,7 @@
                     var editAccount = document.getElementById( 'edit-account' );
                     editAccount.addEventListener( 'click', showAccountPage, false );
 
-                    if ( hasTouch() ) {
+                    if ( window.hasTouch ) {
 
                         totalReputation.addEventListener( 'touchstart', selectElement, false );
                         totalReputation.addEventListener( 'touchend', unselectElement, false );
@@ -1215,12 +1227,6 @@
 
         };
 
-        function hasTouch() {
-
-            return ( typeof Touch == "object" );
-
-        }
-
         function hideAccountPage() {
 
             var account = document.getElementById( 'account-page' ),
@@ -1565,16 +1571,17 @@
         function initialize() {
 
             initializeEnvironment();
+            initializeDimensions();
             initializePhoneGap();
 
-            if ( window.location.queryString()['logout'] ) {
+            if ( window.location.queryString()['logout'] ) { //for debugging
 
                 hideSplashPage();
                 logoutApp();
 
             } else {
 
-                if ( window.iOSDeviceMode == 'browser' ) {
+                if ( window.deviceInfo.brand == 'ios' && window.deviceInfo.mode == 'browser' ) {
 
                     hideSplashPage();
                     hideAddressBar();
@@ -1588,7 +1595,6 @@
                     initializeTrackingCode();
                     addDefaultEventListeners();
                     initializeInterface();
-                    localizeStrings();
                     loadCachedData();
                     hideSplashPage();
                     checkLogin()
@@ -1618,36 +1624,149 @@
 
         };
 
+        function initializeDimensions() {
+
+            var viewport = document.getElementById( 'viewport' ),
+                viewportWidth = ( window.innerWidth ? window.innerWidth : 320 ),
+                viewportHeight = ( window.innerHeight ? window.innerHeight : 460 ),
+                view = document.getElementById( 'view' ),
+                MARGIN = 6,
+                BORDER = 1;
+
+            if ( window.deviceInfo.mobile ) {
+
+                viewport.style.width = viewportWidth + 'px';
+                viewport.style.height = viewportHeight + 'px';
+
+            } else {
+
+                document.body.addClass( 'body-desktop' );
+                viewport.addClass( 'viewport-desktop' );
+
+            };
+
+            var topSlideTop = viewportHeight + 1,
+                styles =
+                    '.top-slide {'
+                        + 'top: ' + topSlideTop + 'px !important;'
+                    + '}';
+            document.head.insertAdjacentHTML( 'beforeEnd', '<style>' + styles + '</style>' );
+
+            var questionsViewHeight = view.clientHeight - 45;
+            document.getElementById( 'questions-view' ).style.height = questionsViewHeight + 'px';
+
+            _dimensions.questionMapWidth = view.clientWidth - ( 2 * MARGIN );
+            document.getElementById( 'question-map' ).style.width = _dimensions.questionMapWidth + 'px';
+
+            _dimensions.questionMapFullWidth = view.clientWidth;
+            _dimensions.questionMapFullHeight = view.clientHeight;
+            document.getElementById( 'question-map-full' ).style.width = _dimensions.questionMapFullWidth + 'px';
+            document.getElementById( 'question-map-full' ).style.height = _dimensions.questionMapFullHeight + 'px';
+
+            var topUsersViewHeight = view.clientHeight - 88;
+            document.getElementById( 'top-users-view' ).style.height = topUsersViewHeight + 'px';
+
+            var userInfoViewHeight = view.clientHeight - 117;
+            document.getElementById( 'user-info-view' ).style.height = userInfoViewHeight + 'px';
+
+            var answerMapCanvasWidth = view.clientWidth - ( 2 * MARGIN );
+            document.getElementById( 'answer-map-canvas' ).style.width = answerMapCanvasWidth + 'px';
+
+            var directionsPageWidth = view.clientWidth - ( 2 * MARGIN );
+            document.getElementById( 'directions-page' ).style.width = directionsPageWidth + 'px';
+
+            var askTextWidth = view.clientWidth - 78;
+            document.getElementById( 'ask-text' ).style.width = askTextWidth + 'px';
+
+            var answerTextWidth = view.clientWidth - 72;
+            document.getElementById( 'answer-text' ).style.width = answerTextWidth + 'px';
+
+            var locationsViewHeight = viewportHeight - 45;
+            document.getElementById( 'locations-view' ).style.height = locationsViewHeight + 'px';
+
+            var loginPageLeft = ( view.clientWidth - 320 ) / 2;
+            document.getElementById( 'login-page' ).style.left = loginPageLeft + 'px';
+
+        };
+
         function initializeEnvironment() {
 
             window.checkLocalStorage();
+            window.previousInnerWidth = window.innerWidth;
+            var userAgent = window.navigator.userAgent.toLowerCase();
+            window.deviceInfo = {};
 
-            if ( window.navigator.userAgent.indexOf( 'iPhone' ) > -1
-                || window.navigator.userAgent.indexOf( 'iPod' ) > -1 ) {
+            //window.deviceInfo.type - handheld, tablet, desktop
+            //window.deviceInfo.brand - ios, android, microsoft, webos, blackberry
+            //window.deviceInfo.mode - browser, standalone, webview
 
-                window.iOSDevice = true
+            //window.deviceInfo.mobile - window.deviceInfo.type == handheld || window.deviceInfo.type == tablet
+            //window.deviceInfo.phonegap - ( window.deviceInfo.type == ios || android ) && window.deviceInfo.mode == webview
 
-                if ( !window.navigator.standalone && window.navigator.userAgent.indexOf( 'Safari' ) > -1 ) {
+            if ( /ipad/.test( userAgent ) || ( /android/.test( userAgent ) && !/mobile/.test( userAgent ) ) ) {
 
-                    window.iOSDeviceMode = 'browser';
+                window.deviceInfo.type = 'tablet';
 
-                } else if ( window.navigator.standalone && window.navigator.userAgent.indexOf( 'Safari' ) == -1 ) {
+            } else if ( /iphone|ipod|webos|blackberry|android/.test( userAgent ) ) {
 
-                    window.iOSDeviceMode = 'standalone';
+                window.deviceInfo.type = 'handheld';
 
-                } else if ( !window.navigator.standalone && window.navigator.userAgent.indexOf( 'Safari' ) == -1 ) {
+            } else {
 
-                    window.iOSDeviceMode = 'webview';
+                window.deviceInfo.type = 'desktop';
+
+            };
+
+            if ( /iphone|ipod|ipad/.test( userAgent ) ) {
+
+                var safari = /safari/.test( userAgent );
+
+                window.deviceInfo.brand = 'ios';
+
+                if ( window.navigator.standalone ) {
+
+                    window.deviceInfo.mode = 'standalone';
+
+                } else if ( safari ) {
+
+                    window.deviceInfo.mode = 'browser';
+
+                } else if ( !safari ) {
+
+                    window.deviceInfo.mode = 'webview';
 
                 };
 
+            } else if ( /android/.test( userAgent ) ) {
+
+                window.deviceInfo.brand = 'android';
+                window.deviceInfo.mode = 'browser';
+
+            } else if ( /webos/.test( userAgent ) ) {
+
+                window.deviceInfo.brand = 'webos';
+                window.deviceInfo.mode = 'browser';
+
+            } else if ( /blackberry/.test( userAgent ) ) {
+
+                window.deviceInfo.brand = 'blackberry';
+                window.deviceInfo.mode = 'browser';
+
+            } else {
+
+                window.deviceInfo.brand = 'unknown';
+                window.deviceInfo.mode = 'browser';
+
             };
+
+            window.deviceInfo.mobile = ( window.deviceInfo.type == 'handheld' || window.deviceInfo.type == 'tablet' );
+            window.deviceInfo.phonegap = ( window.deviceInfo.brand == 'ios' && window.deviceInfo.mode == 'webview' );
 
         };
 
         function initializePhoneGap() {
 
-            if ( window.iOSDevice && window.iOSDeviceMode == 'webview' ) {
+            if ( window.deviceInfo.mode == 'webview' ) {
 
                 var script;
 
@@ -1743,6 +1862,8 @@
 
         function initializeInterface() {
 
+            localizeStrings();
+
             document.getElementById( 'top-type' ).setDataset( 'id', TOP_TYPES.reputation );
             document.getElementById( 'top-interval' ).setDataset( 'id', INTERVALS.all );
             document.querySelectorAll( '#top-type .toggle-button[data-id="' + TOP_TYPES.reputation + '"]' )[0].addClass( 'toggle-button-selected' );
@@ -1755,7 +1876,7 @@
 
         function initializeTrackingCode() {
 
-            if ( !hasTouch() ) {
+            if ( !window.deviceInfo.mobile ) {
 
                 var script = document.createElement( 'script' ),
                     html =
@@ -1920,7 +2041,7 @@
 
         function loadTopUsers() {
 
-            showLoading( 175, 144 );
+            showLoading( 'center', 'center' );
 
             window.setTimeout( function () {
 
@@ -2121,9 +2242,10 @@
 
         function initializeFacebook( options ) {
 
-            showLoading( 46, 245 );
-
             var login = document.getElementById( 'fb-login' );
+
+            showLoading( 'center', 209, login );
+
             login.innerHTML = STRINGS.facebook.authenticatingCaption;
             login.removeAttribute( 'data-facebook-id' );
             login.removeAttribute( 'data-username' );
@@ -2177,7 +2299,7 @@
 
             } else {
 
-                //                if ( window.iOSDeviceMode == 'webview' ) {
+                //                if ( window.deviceInfo.mode == 'webview' ) {
 
                 //                    usePhoneGap( function ( complete ) {
 
@@ -2327,7 +2449,8 @@
 
                     if ( status != "error" ) {
 
-                        var session = response.getResponseHeader( 'x-session' ).split( ':' );
+                        var session = response.getResponseHeader( 'x-session' ).split( ':' ),
+                            newAccount = window.JSON.parse( response.responseText ).newAccount;
 
                         _session.id = session[0];
                         _session.key = session[1];
@@ -2336,7 +2459,7 @@
 
                         startApp( function () {
 
-                            showAccountPage();
+                            if ( newAccount ) { showAccountPage(); };
 
                         } );
 
@@ -2396,34 +2519,10 @@
 
         function orientationChange() {
 
-            var splash = document.getElementById( 'splash' );
+            if ( window.innerWidth != window.previousInnerWidth ) {
 
-            switch ( window.orientation ) {
-                case 0:
-
-                    splash.removeClass( 'rotate-right' ).removeClass( 'rotate-left' );
-                    hideSplashPage();
-                    break;
-
-                case -90:
-
-                    splash
-                        .addClass( 'rotate-right' )
-                        .removeClass( 'fadeable-500' )
-                        .removeClass( 'fade' )
-                        .removeClass( 'hide' )
-                        .addClass( 'fadeable-500' );
-                    break;
-
-                case 90:
-
-                    splash
-                        .addClass( 'rotate-left' )
-                        .removeClass( 'fadeable-500' )
-                        .removeClass( 'fade' )
-                        .removeClass( 'hide' )
-                        .addClass( 'fadeable-500' );
-                    break;
+                window.previousInnerWidth = window.innerWidth;
+                initializeDimensions();
 
             };
 
@@ -2683,7 +2782,7 @@
                     backButton = document.getElementById( 'back-button' );
                     backButton.removeEventListener( 'click', goBack, false );
 
-                    if ( hasTouch() ) {
+                    if ( window.hasTouch ) {
 
                         backButton.removeEventListener( 'touchstart', selectButton, false );
                         backButton.removeEventListener( 'touchend', unselectButton, false );
@@ -2707,7 +2806,7 @@
 
                     window.removeEventListener( 'message', authorizeFacebook, false );
 
-                    if ( hasTouch() ) {
+                    if ( window.hasTouch ) {
 
                         loginButton.removeEventListener( 'touchstart', selectButton, false );
                         loginButton.removeEventListener( 'touchend', unselectButton, false );
@@ -2740,7 +2839,7 @@
 
                     document.getElementById( 'question-map' ).removeEventListener( 'click', questionItemClick, false );
 
-                    if ( hasTouch() ) {
+                    if ( window.hasTouch ) {
 
                         questionView.removeEventListener( 'touchstart', selectItem, false );
                         questionView.removeEventListener( 'touchend', unselectItem, false );
@@ -2770,7 +2869,7 @@
                     backButton = document.getElementById( 'back-button' );
                     backButton.removeEventListener( 'click', goBack, false );
 
-                    if ( hasTouch() ) {
+                    if ( window.hasTouch ) {
 
                         backButton.removeEventListener( 'touchstart', selectButton, false );
                         backButton.removeEventListener( 'touchend', unselectButton, false );
@@ -2798,7 +2897,7 @@
                     ask.removeEventListener( 'submit', saveQuestion, false );
 
 
-                    if ( hasTouch() ) {
+                    if ( window.hasTouch ) {
 
                         //ask.removeEventListener( 'touchstart', selectAskText, false );
 
@@ -2824,7 +2923,7 @@
                     var topType = document.getElementById( 'top-type' ),
                         topInterval = document.getElementById( 'top-interval' );
 
-                    if ( hasTouch() ) {
+                    if ( window.hasTouch ) {
 
                         topType.removeEventListener( 'touchstart', topTypeClick, false );
                         topInterval.removeEventListener( 'touchstart', topIntervalClick, false );
@@ -2873,7 +2972,7 @@
                     var editAccount = document.getElementById( 'edit-account' );
                     editAccount.removeEventListener( 'click', showAccountPage, false );
 
-                    if ( hasTouch() ) {
+                    if ( window.hasTouch ) {
 
                         totalReputation.removeEventListener( 'touchstart', selectElement, false );
                         totalReputation.removeEventListener( 'touchend', unselectElement, false );
@@ -3659,7 +3758,7 @@
 
             if ( _session.id ) { //logged in
 
-                if ( window.iOSDeviceMode == 'webview' ) {
+                if ( window.deviceInfo.mode == 'webview' ) {
 
                     usePhoneGap( function ( complete ) {
 
@@ -3690,7 +3789,7 @@
                 },
                 function ( error ) {
 
-                    if ( !( window.iOSDevice && window.iOSDeviceMode == 'webview' ) ) {
+                    if ( window.deviceInfo.mode != 'webview' ) {
 
                         showMessage( STRINGS.error.geoLocation );
 
@@ -4049,7 +4148,7 @@
 
             answerText.focus();
 
-            if ( window.iOSDevice() ) {
+            if ( window.deviceInfo.brand = 'ios' && window.deviceInfo.type == 'handheld' ) {
 
                 window.scrollTo( 0, 0 );
 
@@ -4142,7 +4241,7 @@
 
                 document.getElementById( 'answer' ).removeEventListener( 'submit', answerSubmit, false );
 
-                if ( !hasTouch() ) {
+                if ( !window.hasTouch ) {
 
                     locations.removeEventListener( 'mouseover', hoverItem, false );
                     locations.removeEventListener( 'mouseout', unhoverItem, false );
@@ -4163,7 +4262,7 @@
 
                 document.getElementById( 'answer' ).addEventListener( 'submit', answerSubmit, false );
 
-                if ( !hasTouch() ) {
+                if ( !window.hasTouch ) {
 
                     locations.addEventListener( 'mouseover', hoverItem, false );
                     locations.addEventListener( 'mouseout', unhoverItem, false );
@@ -4280,9 +4379,12 @@
                     ok = document.getElementById( 'answer-confirm-ok' ),
                     cancel = document.getElementById( 'answer-confirm-cancel' ),
                     note = document.getElementById( 'location-note' ),
+                    viewport = document.getElementById( 'viewport' ),
                     mapUrl = 'http://maps.google.com/maps/api/staticmap?center='
                         + question.latitude + ',' + question.longitude
-                        + '&size=260x150&maptype=roadmap&sensor=true&style=hue:blue&markers=color:black|size:mid|'
+                        + '&size=260x150'
+                        + ( window.deviceInfo.mobile ? '&scale=2' : '' )
+                        + '&maptype=roadmap&sensor=true&style=hue:blue&markers=color:black|size:mid|'
                         + question.latitude + ',' + question.longitude
                         + '&markers=color:gray|size:mid|' + locationItem.getDataset( 'latitude' ) + "," + locationItem.getDataset( 'longitude' );
 
@@ -4294,6 +4396,8 @@
                 map.setAttribute( 'src', mapUrl );
 
                 answerConfirm.removeClass( 'hide' );
+                answerConfirm.style.top = ( ( viewport.clientHeight - answerConfirm.clientHeight ) / 2 ) + 'px';
+                answerConfirm.style.left = ( ( viewport.clientWidth - answerConfirm.clientWidth ) / 2 ) + 'px';
                 window.setTimeout( function () { answerConfirm.removeClass( 'fade' ); }, 50 );
 
                 addListeners();
@@ -4396,27 +4500,23 @@
 
             var answerId = answer[ANSWER_COLUMNS.answerId],
                 mapCanvas = document.getElementById( 'answer-map-canvas' ),
-                directions = document.getElementById( 'directions-page' );
+                directions = document.getElementById( 'directions-page' ),
+                answerView = document.getElementById( 'answer-view' ),
+                view = document.getElementById( 'view' ),
+                BORDER = 1,
+                MARGIN = 6;
 
             document.getElementById( 'answer-page' ).setDataset( 'id', answerId );
-            document.getElementById( 'answer-view' ).innerHTML = getAnswerItem( answer, question, { letter: letter } );
+            answerView.innerHTML = getAnswerItem( answer, question, { letter: letter } );
 
-            if ( answer[ANSWER_COLUMNS.note] && ( answer[ANSWER_COLUMNS.phone] || answer[ANSWER_COLUMNS.link] ) ) {
+            var mapCanvasTop = answerView.clientHeight + MARGIN + BORDER + BORDER,
+                mapCanvasHeight = view.clientHeight - mapCanvasTop - ( MARGIN + MARGIN + BORDER + BORDER );
 
-                mapCanvas.removeClass( 'answer-map-canvas-medium' ).removeClass( 'answer-map-canvas-tall' ).addClass( 'answer-map-canvas-short' );
-                directions.removeClass( 'directions-page-medium' ).removeClass( 'directions-page-tall' ).addClass( 'directions-page-short' );
+            mapCanvas.style.top = mapCanvasTop + 'px';
+            mapCanvas.style.height = mapCanvasHeight + 'px';
 
-            } else if ( answer[ANSWER_COLUMNS.note] || answer[ANSWER_COLUMNS.phone] || answer[ANSWER_COLUMNS.link] ) {
-
-                mapCanvas.removeClass( 'answer-map-canvas-short' ).removeClass( 'answer-map-canvas-tall' ).addClass( 'answer-map-canvas-medium' );
-                directions.removeClass( 'directions-page-short' ).removeClass( 'directions-page-tall' ).addClass( 'directions-page-medium' );
-
-            } else {
-
-                mapCanvas.removeClass( 'answer-map-canvas-short' ).removeClass( 'answer-map-canvas-medium' ).addClass( 'answer-map-canvas-tall' );
-                directions.removeClass( 'directions-page-short' ).removeClass( 'directions-page-medium' ).addClass( 'directions-page-tall' );
-
-            };
+            directions.style.top = mapCanvasTop + 'px';
+            directions.style.height = mapCanvasHeight + 'px';
 
             setTravelMode( document.getElementById( 'travel-mode-drive' ) );
 
@@ -4593,7 +4693,7 @@
 
                 if ( answer[ANSWER_COLUMNS.link] ) {
 
-                    if ( window.iOSDevice && window.iOSDeviceMode == 'webview' ) {
+                    if ( window.deviceInfo.mode == 'webview' ) {
 
                         usePhoneGap( function ( complete ) {
 
@@ -4626,7 +4726,7 @@
                         + currentLatitude + ',' + currentLongitude
                         + '&daddr=' + answer[ANSWER_COLUMNS.latitude] + ',' + answer[ANSWER_COLUMNS.longitude];
 
-                if ( window.iOSDevice && window.iOSDeviceMode == 'webview' ) {
+                if ( window.deviceInfo.mode == 'webview' ) {
 
                     usePhoneGap( function ( complete ) {
 
@@ -4749,12 +4849,34 @@
 
         };
 
-        function showLoading( top, left ) {
+        function showLoading( top, left, element ) {
 
             var loading = document.getElementById( 'loading' );
+
+            element = ( element ? element : document.getElementById( 'view' ) );
+            loading.removeClass( 'hide' );
+
+            switch ( top ) {
+                case 'center':
+
+                    top = ( element.clientHeight - loading.clientHeight ) / 2;
+                    break;
+
+            };
+
+            switch ( left ) {
+                case 'center':
+
+                    left = ( element.clientWidth - loading.clientWidth ) / 2;
+                    break;
+
+            };
+
+            left += element.offsetLeft;
+            top += element.offsetTop;
+
             loading.style.top = top + 'px';
             loading.style.left = left + 'px';
-            loading.removeClass( 'hide' );
 
         };
 
@@ -4769,6 +4891,7 @@
             body.innerHTML = text;
             message.removeClass( 'hide' );
             message.style.top = ( ( view.clientHeight - message.clientHeight ) / 2 ) + 'px';
+            message.style.left = ( ( view.clientWidth - message.clientWidth ) / 2 ) + 'px';
 
             if ( callback ) {
 
@@ -4836,7 +4959,8 @@
 
             var notification = document.getElementById( 'notification' ),
                 body = document.getElementById( 'notification-body' ),
-                footer = document.getElementById( 'notification-footer' );
+                footer = document.getElementById( 'notification-footer' ),
+                view = document.getElementById( 'view' );
 
             options.tight ? notification.addClass( 'notification-tight' ) : notification.removeClass( 'notification-tight' );
 
@@ -4874,6 +4998,8 @@
 
             notification.addEventListener( 'click', close, false );
             notification.removeClass( 'hide' );
+            notification.style.top = ( ( view.clientHeight - notification.clientHeight ) / 2 ) + 'px';
+            notification.style.left = ( ( view.clientWidth - notification.clientWidth ) / 2 ) + 'px';
             window.setTimeout( function () { notification.removeClass( 'fade' ); }, 50 );
             window.setTimeout( function () { close(); }, 3000 );
 
@@ -5200,24 +5326,36 @@
             var markers = '',
                 html = '',
                 zoom = '',
+                MARGIN = 6,
+                BORDER = 1,
+                view = document.getElementById( 'view' ),
                 questionView = document.getElementById( 'question-view' ),
                 answersView = document.getElementById( 'answers-view' ),
                 answers = document.getElementById( 'answers' ),
-                noAnswers = document.getElementById( 'no-answers' );
+                noAnswers = document.getElementById( 'no-answers' ),
+                questionMap = document.getElementById( 'question-map' );
 
             if ( question[QUESTION_COLUMNS.question].length > 25 ) {
 
                 questionView.innerHTML = getQuestionItem( question, { full: true } );
                 questionView.removeClass( 'question-view-normal' ).addClass( 'question-view-full' );
-                answersView.removeClass( 'answers-view-normal' ).addClass( 'answers-view-full' );
 
             } else {
 
                 questionView.innerHTML = getQuestionItem( question );
                 questionView.removeClass( 'question-view-full' ).addClass( 'question-view-normal' );
-                answersView.removeClass( 'answers-view-full' ).addClass( 'answers-view-normal' );
 
             };
+
+            window.setTimeout( function () {
+
+                var answersViewTop = questionView.clientHeight + questionMap.clientHeight + ( 3 * MARGIN ) + ( 4 * BORDER ),
+                    answersViewHeight = view.clientHeight - answersViewTop + MARGIN;
+
+                answersView.style.top = answersViewTop + 'px';
+                answersView.style.height = answersViewHeight + 'px';
+
+            }, 10 );
 
             if ( question[QUESTION_COLUMNS.answers].length ) {
 
@@ -5253,14 +5391,16 @@
 
             };
 
-            document.getElementById( 'answers' ).innerHTML = html;
+            answers.innerHTML = html;
 
             var mapUrl = 'http://maps.google.com/maps/api/staticmap?center='
                     + question.latitude + ',' + question.longitude
-                    + '&size=308x140&maptype=roadmap&sensor=true&style=hue:blue' + zoom + '&markers=color:black|size:mid|'
+                    + '&size=' + _dimensions.questionMapWidth + 'x140'
+                    + ( window.deviceInfo.mobile ? '&scale=2' : '' )
+                    + '&maptype=roadmap&sensor=true&style=hue:blue' + zoom + '&markers=color:black|size:mid|'
                     + question.latitude + ',' + question.longitude
                     + markers;
-            document.getElementById( 'question-map' ).setAttribute( 'src', mapUrl );
+            questionMap.setAttribute( 'src', mapUrl );
 
         };
 
@@ -5271,7 +5411,7 @@
                 end = mapUrl.indexOf( '&', start ),
                 size = mapUrl.substring( start, end );
 
-            mapUrl = mapUrl.replace( size, '320x372' );
+            mapUrl = mapUrl.replace( size, _dimensions.questionMapFullWidth + 'x' + _dimensions.questionMapFullHeight );
             document.getElementById( 'question-map-full' ).setAttribute( 'src', mapUrl );
 
         };
@@ -5402,7 +5542,7 @@
 
         function showSocialButtons() {
 
-            if ( !hasTouch() ) {
+            if ( !window.deviceInfo.mobile ) {
 
                 var html =
                           '<div id="social-buttons" class="fadeable fade">'
@@ -5441,7 +5581,7 @@
 
         function showExternalFooter() {
 
-            if ( !hasTouch() ) {
+            if ( !window.deviceInfo.mobile ) {
 
                 var html = '<div id="external-footer" class="fadeable fade">' + STRINGS.externalFooter + '</div>';
 
@@ -5655,7 +5795,7 @@
 
         function showUser( user ) {
 
-            showLoading( 14, 14 );
+            showLoading( 'center', 'center', $( '#user-picture' ) );
 
             $( '#username' ).textContent = user[USER_COLUMNS.username];
             $( '#member-since' ).textContent = getMemberSince( user );
@@ -6394,6 +6534,8 @@
             return this;
 
         };
+
+        window.hasTouch = ( typeof Touch == "object" );
 
         Element.prototype.closestByClassName = function ( className ) {
 

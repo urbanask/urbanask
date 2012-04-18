@@ -140,7 +140,6 @@ Public MustInherit Class messageHandler : Implements System.Web.IHttpHandler
 
         End If
 
-
     End Sub
 
     Protected Sub sendErrorResponse(

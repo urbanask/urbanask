@@ -101,6 +101,7 @@
     <Content Include="styles\urbanask.css">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="support.html" />
     <Content Include="tos.html" />
     <Content Include="twitter.html" />
     <Content Include="web.config" />

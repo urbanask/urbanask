@@ -1,0 +1,9 @@
+beta 1.25
+
+new - added landscape orientation to Android and iOS native apps
+new - support page and forum at http://getsatisfaction.com/urbanask
+
+bug - orientation changes not working on Android
+bug - question map too narrow on iPad
+bug - question map flickers on load
+

@@ -95,7 +95,8 @@ Public Class loginFB : Implements System.Web.IHttpHandler
 
                     checkAuthorization.ExecuteNonQuery()
 
-                    Dim userId As Int32
+                    Dim userId As Int32,
+                        newAccount As Boolean = False
 
                     If System.Convert.ToInt32(checkAuthorization.Parameters("@userId").Value) > 0 Then
 
@@ -131,11 +132,9 @@ Public Class loginFB : Implements System.Web.IHttpHandler
 
                     Else
 
-                        'newaccount = true
+                        Dim hash As New Hashing.hash(username, password)
 
-                        Dim hash As New Hashing.hash(
-                            username,
-                            password)
+                        newAccount = True
 
                         createUser.CommandType = Data.CommandType.StoredProcedure
                         createUser.CommandTimeout = COMMAND_TIMEOUT
@@ -185,7 +184,7 @@ Public Class loginFB : Implements System.Web.IHttpHandler
 
                     End If
 
-                    loadSession(sessionConnection, createSession, context, userId)
+                    loadSession(sessionConnection, createSession, context, userId, newAccount)
 
                 End Using
 
@@ -207,7 +206,8 @@ Public Class loginFB : Implements System.Web.IHttpHandler
         sessionConnection As Data.SqlClient.SqlConnection, _
         createSession As Data.SqlClient.SqlCommand,
         context As Web.HttpContext,
-        userId As Int32)
+        userId As Int32,
+        newAccount As Boolean)
 
         sessionConnection.Open()
 
@@ -223,7 +223,8 @@ Public Class loginFB : Implements System.Web.IHttpHandler
         sendSuccessResponse(
             context,
             createSession.Parameters("@sessionId").Value.ToString(),
-            createSession.Parameters("@sessionKey").Value.ToString())
+            createSession.Parameters("@sessionKey").Value.ToString(),
+            newAccount)
 
     End Sub
 
@@ -250,11 +251,23 @@ Public Class loginFB : Implements System.Web.IHttpHandler
     Private Sub sendSuccessResponse(
         context As Web.HttpContext,
         session As String,
-        key As String)
+        key As String,
+        newAccount As Boolean)
 
         context.Response.Headers.Remove("Server")
         context.Response.Headers.Add("x-session", String.Concat(session, ":", key))
-        'context.Response.Headers.Add("Content-Length", response.Length.ToString())
+
+        Dim response As String = "{""newAccount"":" & newAccount.ToString().ToLower() & "}"
+
+        context.Response.Headers.Add("Content-Length", response.Length.ToString())
+
+#If CONFIG <> "Debug" Then
+
+            context.Response.ContentType = "application/json"
+
+#End If
+
+        context.Response.Write(response)
 
     End Sub
 

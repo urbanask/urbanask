@@ -6,7 +6,7 @@ Option Compare Binary
 
 #End Region
 
-Public Class session : Implements System.Web.IHttpHandler
+Public Class _session : Implements System.Web.IHttpHandler
 
 #Region "constants"
 
