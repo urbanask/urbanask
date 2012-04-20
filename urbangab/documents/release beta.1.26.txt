@@ -1,0 +1,6 @@
+beta 1.26
+
+
+
+bug - iOS/Android native apps. FB auth hangs on logout
+bug - back button cleared when clicking on your own profile

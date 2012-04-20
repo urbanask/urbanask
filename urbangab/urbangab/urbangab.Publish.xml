@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <publishData>
   <publishProfile publishUrl="C:\inetpub\wwwroot\urbangab" deleteExistingFiles="True" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Windows7" publishMethod="FileSystem" replaceMatchingFiles="False" userName="" savePWD="False" userPWD="" SelectedForPublish="False">
-    <file relUrl="images/logo.png" publishTime="03/02/2012 14:34:24" />
-    <file relUrl="scripts/urbanask.js" publishTime="04/13/2012 18:13:50" />
     <file relUrl="tos.html" publishTime="04/03/2012 21:17:10" />
-    <file relUrl="images/icon-72.png" publishTime="04/13/2012 00:49:03" />
+    <file relUrl="scripts/urbanask.js" publishTime="04/13/2012 18:13:50" />
+    <file relUrl="config.xml" publishTime="04/13/2012 00:51:32" />
     <file relUrl="images/install-safari.png" publishTime="02/24/2012 18:35:34" />
     <file relUrl="fb-login.html" publishTime="04/13/2012 19:48:25" />
     <file relUrl="scripts/strings-en.js" publishTime="04/10/2012 18:16:02" />
+    <file relUrl="images/logo.png" publishTime="03/02/2012 14:34:24" />
     <file relUrl="images/install-homescreen.png" publishTime="02/24/2012 18:01:05" />
     <file relUrl="images/share-logo.png" publishTime="03/05/2012 13:08:30" />
     <file relUrl="index.html" publishTime="04/13/2012 19:52:04" />
-    <file relUrl="config.xml" publishTime="04/13/2012 00:51:32" />
+    <file relUrl="images/icon-72.png" publishTime="04/13/2012 00:49:03" />
     <file relUrl="images/icon-large.png" publishTime="04/12/2012 23:54:13" />
     <file relUrl="images/splash-fullscreen.png" publishTime="04/10/2012 18:16:02" />
     <file relUrl="images/install-share.png" publishTime="01/24/2012 16:33:11" />

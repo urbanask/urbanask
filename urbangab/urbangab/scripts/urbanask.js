@@ -330,7 +330,7 @@
             window.addEventListener( 'resize', orientationChange, false );
             //window.addEventListener( 'popstate', browserBack, false );
 
-            if ( window.hasTouch ) {
+            if ( window.deviceInfo.mobile ) {
 
                 var viewport = document.getElementById( 'viewport' );
                 viewport.addEventListener( 'touchmove', onTouchMove, false );
@@ -369,7 +369,7 @@
                     backButton = document.getElementById( 'back-button' );
                     backButton.addEventListener( 'click', goBack, false );
 
-                    if ( window.hasTouch ) {
+                    if ( window.deviceInfo.mobile ) {
 
                         backButton.addEventListener( 'touchstart', selectButton, false );
                         backButton.addEventListener( 'touchend', unselectButton, false );
@@ -393,7 +393,7 @@
 
                     window.addEventListener( 'message', authorizeFacebook, false );
 
-                    if ( window.hasTouch ) {
+                    if ( window.deviceInfo.mobile ) {
 
                         loginButton.addEventListener( 'touchstart', selectButton, false );
                         loginButton.addEventListener( 'touchend', unselectButton, false );
@@ -424,7 +424,7 @@
 
                     document.getElementById( 'question-map' ).addEventListener( 'click', questionItemClick, false );
 
-                    if ( window.hasTouch ) {
+                    if ( window.deviceInfo.mobile ) {
 
                         questionView.addEventListener( 'touchstart', selectItem, false );
                         questionView.addEventListener( 'touchend', unselectItem, false );
@@ -454,7 +454,7 @@
                     backButton = document.getElementById( 'back-button' );
                     backButton.addEventListener( 'click', goBack, false );
 
-                    if ( window.hasTouch ) {
+                    if ( window.deviceInfo.mobile ) {
 
                         backButton.addEventListener( 'touchstart', selectButton, false );
                         backButton.addEventListener( 'touchend', unselectButton, false );
@@ -481,7 +481,7 @@
                     var ask = document.getElementById( 'ask' );
                     ask.addEventListener( 'submit', saveQuestion, false );
 
-                    if ( window.hasTouch ) {
+                    if ( window.deviceInfo.mobile ) {
 
                         //ask.addEventListener( 'touchstart', selectAskText, false );
 
@@ -507,7 +507,7 @@
                     var topType = document.getElementById( 'top-type' ),
                         topInterval = document.getElementById( 'top-interval' );
 
-                    if ( window.hasTouch ) {
+                    if ( window.deviceInfo.mobile ) {
 
                         topType.addEventListener( 'touchstart', topTypeClick, false );
                         topInterval.addEventListener( 'touchstart', topIntervalClick, false );
@@ -556,7 +556,7 @@
                     var editAccount = document.getElementById( 'edit-account' );
                     editAccount.addEventListener( 'click', showAccountPage, false );
 
-                    if ( window.hasTouch ) {
+                    if ( window.deviceInfo.mobile ) {
 
                         totalReputation.addEventListener( 'touchstart', selectElement, false );
                         totalReputation.addEventListener( 'touchend', unselectElement, false );
@@ -1581,7 +1581,9 @@
 
             } else {
 
-                if ( window.deviceInfo.brand == 'ios' && window.deviceInfo.mode == 'browser' ) {
+                if ( window.deviceInfo.brand == 'ios'
+                    && window.deviceInfo.type == 'handheld'
+                    && window.deviceInfo.mode == 'browser' ) {
 
                     hideSplashPage();
                     hideAddressBar();
@@ -1627,14 +1629,16 @@
         function initializeDimensions() {
 
             var viewport = document.getElementById( 'viewport' ),
-                viewportWidth = ( window.innerWidth ? window.innerWidth : 320 ),
-                viewportHeight = ( window.innerHeight ? window.innerHeight : 460 ),
                 view = document.getElementById( 'view' ),
+                viewportWidth,
+                viewportHeight,
                 MARGIN = 6,
                 BORDER = 1;
 
             if ( window.deviceInfo.mobile ) {
 
+                viewportWidth = window.innerWidth;
+                viewportHeight = window.innerHeight;
                 viewport.style.width = viewportWidth + 'px';
                 viewport.style.height = viewportHeight + 'px';
 
@@ -1642,6 +1646,8 @@
 
                 document.body.addClass( 'body-desktop' );
                 viewport.addClass( 'viewport-desktop' );
+                viewportWidth = viewport.clientWidth;
+                viewportHeight = viewport.clientHeight;
 
             };
 
@@ -1969,6 +1975,17 @@
             if ( questions ) _questions = window.JSON.parse( questions );
             if ( userQuestions ) _userQuestions = window.JSON.parse( userQuestions );
 
+
+            var latitude = window.getLocalStorage( 'current-latitude' ),
+                longitude = window.getLocalStorage( 'current-longitude' );
+
+            if ( latitude ) {
+
+                _currentLocation.latitude = latitude;
+                _currentLocation.longitude = longitude;
+
+            };
+
             _session.id = window.getLocalStorage( 'sessionId' );
             _session.key = window.getLocalStorage( 'sessionKey' );
 
@@ -2264,20 +2281,9 @@
 
             window.setTimeout( function () {
 
-                var frame = document.getElementById( 'fb-frame' );
+                setFacebookButtonUnauthorized();
 
-                if ( frame && login.disabled ) {
-
-                    deleteFacebookFrame();
-                    createFacebookFrame( function ( frame ) {
-
-                        frame.contentWindow.postMessage( '{"type": "authorize"}', FACEBOOK_AUTH_URL );
-
-                    } );
-
-                };
-
-            }, 20000 );
+            }, 10000 );
 
         };
 
@@ -2384,12 +2390,7 @@
 
                     case 'unauthorized':
 
-                        hideLoading();
-
-                        login.innerHTML = STRINGS.facebook.linkCaption;
-                        login.disabled = false;
-                        login.removeClass( 'fb-login-disabled' );
-
+                        setFacebookButtonUnauthorized();
                         break;
 
                     case 'not-ready':
@@ -2406,6 +2407,18 @@
                 };
 
             };
+
+        };
+
+        function setFacebookButtonUnauthorized() {
+
+            hideLoading();
+
+            var login = document.getElementById( 'fb-login' );
+
+            login.innerHTML = STRINGS.facebook.linkCaption;
+            login.disabled = false;
+            login.removeClass( 'fb-login-disabled' );
 
         };
 
@@ -2431,48 +2444,68 @@
 
         function loadSessionFacebook( facebookId, username, password, location, email ) {
 
-            var resource = '/logins/loginFB',
-                data = 'location=' + location
-                    + '&email=' + email
-                    + '&accessToken=' + password,
-                authorization = window.Crypto.util.bytesToBase64( 
-                    window.Crypto.charenc.UTF8.stringToBytes( facebookId + ':' + username + ':' + password ) );
-
             deleteFacebookFrame();
 
-            ajax( API_URL + resource, {
+            if ( _currentLocation.latitude ) {
 
-                "type": "GET",
-                "headers": { "x-authorization": authorization },
-                "data": data,
-                "complete": function ( response, status ) {
+                loadSession();
 
-                    if ( status != "error" ) {
+            } else {
 
-                        var session = response.getResponseHeader( 'x-session' ).split( ':' ),
+                getGeolocation( function () {
+
+                    loadSession();
+
+                }, { quick: true } );
+
+            };
+
+            function loadSession() {
+
+                var resource = '/logins/loginFB',
+                    data = 'location=' + location
+                        + '&email=' + email
+                        + '&accessToken=' + password
+                        + ( _currentLocation.latitude ? '&latitude=' + _currentLocation.latitude : '' )
+                        + ( _currentLocation.longitude ? '&longitude=' + _currentLocation.longitude : '' ),
+                    authorization = window.Crypto.util.bytesToBase64( 
+                        window.Crypto.charenc.UTF8.stringToBytes( facebookId + ':' + username + ':' + password ) );
+
+                ajax( API_URL + resource, {
+
+                    "type": "GET",
+                    "headers": { "x-authorization": authorization },
+                    "data": data,
+                    "complete": function ( response, status ) {
+
+                        if ( status != "error" ) {
+
+                            var session = response.getResponseHeader( 'x-session' ).split( ':' ),
                             newAccount = window.JSON.parse( response.responseText ).newAccount;
 
-                        _session.id = session[0];
-                        _session.key = session[1];
-                        window.setLocalStorage( 'sessionId', _session.id );
-                        window.setLocalStorage( 'sessionKey', _session.key );
+                            _session.id = session[0];
+                            _session.key = session[1];
+                            window.setLocalStorage( 'sessionId', _session.id );
+                            window.setLocalStorage( 'sessionKey', _session.key );
 
-                        startApp( function () {
+                            startApp( function () {
 
-                            if ( newAccount ) { showAccountPage(); };
+                                if ( newAccount ) { showAccountPage(); };
 
-                        } );
+                            } );
 
-                    };
+                        };
 
-                },
-                "error": function ( response, status, error ) {
+                    },
+                    "error": function ( response, status, error ) {
 
-                    document.getElementById( 'login-error' ).innerHTML = error;
+                        document.getElementById( 'login-error' ).innerHTML = error;
 
-                }
+                    }
 
-            } );
+                } );
+
+            };
 
         };
 
@@ -2782,7 +2815,7 @@
                     backButton = document.getElementById( 'back-button' );
                     backButton.removeEventListener( 'click', goBack, false );
 
-                    if ( window.hasTouch ) {
+                    if ( window.deviceInfo.mobile ) {
 
                         backButton.removeEventListener( 'touchstart', selectButton, false );
                         backButton.removeEventListener( 'touchend', unselectButton, false );
@@ -2806,7 +2839,7 @@
 
                     window.removeEventListener( 'message', authorizeFacebook, false );
 
-                    if ( window.hasTouch ) {
+                    if ( window.deviceInfo.mobile ) {
 
                         loginButton.removeEventListener( 'touchstart', selectButton, false );
                         loginButton.removeEventListener( 'touchend', unselectButton, false );
@@ -2839,7 +2872,7 @@
 
                     document.getElementById( 'question-map' ).removeEventListener( 'click', questionItemClick, false );
 
-                    if ( window.hasTouch ) {
+                    if ( window.deviceInfo.mobile ) {
 
                         questionView.removeEventListener( 'touchstart', selectItem, false );
                         questionView.removeEventListener( 'touchend', unselectItem, false );
@@ -2869,7 +2902,7 @@
                     backButton = document.getElementById( 'back-button' );
                     backButton.removeEventListener( 'click', goBack, false );
 
-                    if ( window.hasTouch ) {
+                    if ( window.deviceInfo.mobile ) {
 
                         backButton.removeEventListener( 'touchstart', selectButton, false );
                         backButton.removeEventListener( 'touchend', unselectButton, false );
@@ -2897,7 +2930,7 @@
                     ask.removeEventListener( 'submit', saveQuestion, false );
 
 
-                    if ( window.hasTouch ) {
+                    if ( window.deviceInfo.mobile ) {
 
                         //ask.removeEventListener( 'touchstart', selectAskText, false );
 
@@ -2923,7 +2956,7 @@
                     var topType = document.getElementById( 'top-type' ),
                         topInterval = document.getElementById( 'top-interval' );
 
-                    if ( window.hasTouch ) {
+                    if ( window.deviceInfo.mobile ) {
 
                         topType.removeEventListener( 'touchstart', topTypeClick, false );
                         topInterval.removeEventListener( 'touchstart', topIntervalClick, false );
@@ -2972,7 +3005,7 @@
                     var editAccount = document.getElementById( 'edit-account' );
                     editAccount.removeEventListener( 'click', showAccountPage, false );
 
-                    if ( window.hasTouch ) {
+                    if ( window.deviceInfo.mobile ) {
 
                         totalReputation.removeEventListener( 'touchstart', selectElement, false );
                         totalReputation.removeEventListener( 'touchend', unselectElement, false );
@@ -3754,25 +3787,37 @@
 
         };
 
-        function getGeolocation() {
+        function getGeolocation( complete, options ) {
 
-            if ( _session.id ) { //logged in
+            if ( window.deviceInfo.mode == 'webview' ) {
 
-                if ( window.deviceInfo.mode == 'webview' ) {
+                usePhoneGap( function ( complete ) {
 
-                    usePhoneGap( function ( complete ) {
+                    watch( function () {
 
-                        watch( function () {
+                        complete();
 
-                            complete();
+                    } );
 
-                        } );
+                } );
+
+            } else {
+
+                if ( options && options.quick ) {
+
+                    get( function () {
+
+                        if ( complete ) { complete() };
 
                     } );
 
                 } else {
 
-                    watch();
+                    watch( function () {
+
+                        if ( complete ) { complete() };
+
+                    } );
 
                 };
 
@@ -3800,10 +3845,42 @@
 
                 window.setTimeout( function () {
 
+                    window.setLocalStorage( 'current-latitude', _currentLocation.latitude ),
+                    window.setLocalStorage( 'current-longitude', _currentLocation.longitude );
+
                     window.navigator.geolocation.clearWatch( geo )
                     if ( complete ) { complete() };
 
                 }, 5000 );
+
+            };
+
+            function get( complete ) {
+
+                var geo = window.navigator.geolocation.getCurrentPosition( function ( position ) {
+
+                    _currentLocation.latitude = position.coords.latitude;
+                    _currentLocation.longitude = position.coords.longitude;
+                    _currentLocation.accuracy = position.coords.accuracy;
+
+                    window.setLocalStorage( 'current-latitude', _currentLocation.latitude ),
+                    window.setLocalStorage( 'current-longitude', _currentLocation.longitude );
+
+                    if ( complete ) { complete() };
+
+                },
+                function ( error ) {
+
+                    if ( window.deviceInfo.mode != 'webview' ) {
+
+                        showMessage( STRINGS.error.geoLocation );
+
+                    };
+
+                    if ( complete ) { complete() };
+
+                },
+                { maximumAge: 60000, enableHighAccuracy: true } ); //must be valid within a minute
 
             };
 
@@ -4148,7 +4225,9 @@
 
             answerText.focus();
 
-            if ( window.deviceInfo.brand = 'ios' && window.deviceInfo.type == 'handheld' ) {
+            if ( window.deviceInfo.brand = 'ios'
+                && window.deviceInfo.type == 'handheld'
+                && window.deviceInfo.mode == 'browser' ) {
 
                 window.scrollTo( 0, 0 );
 
@@ -4241,7 +4320,7 @@
 
                 document.getElementById( 'answer' ).removeEventListener( 'submit', answerSubmit, false );
 
-                if ( !window.hasTouch ) {
+                if ( !window.deviceInfo.mobile ) {
 
                     locations.removeEventListener( 'mouseover', hoverItem, false );
                     locations.removeEventListener( 'mouseout', unhoverItem, false );
@@ -4262,7 +4341,7 @@
 
                 document.getElementById( 'answer' ).addEventListener( 'submit', answerSubmit, false );
 
-                if ( !window.hasTouch ) {
+                if ( !window.deviceInfo.mobile ) {
 
                     locations.addEventListener( 'mouseover', hoverItem, false );
                     locations.addEventListener( 'mouseout', unhoverItem, false );
@@ -5161,7 +5240,7 @@
 
                         loadUser( options.id, function ( user ) {
 
-                            if ( isMe( user ) ) {
+                            if ( options.top ) {
 
                                 _pages.replace( page, { id: options.id, object: user, caption: STRINGS.backButtonUser } );
 
@@ -6169,7 +6248,6 @@
                     case 'question-user-button':
 
                         showPage( 'user-page', { id: item.getDataset( 'user-id' ) } );
-
                         break;
 
                     case 'select-answer-button':
@@ -6213,7 +6291,7 @@
 
                     case 'user-button':
 
-                        showPage( 'user-page', { id: item.getDataset( 'user-id' ) } );
+                        showPage( 'user-page', { id: item.getDataset( 'user-id' ), top: true } );
                         break;
 
                     case 'vote-down-button':
@@ -6534,8 +6612,6 @@
             return this;
 
         };
-
-        window.hasTouch = ( typeof Touch == "object" );
 
         Element.prototype.closestByClassName = function ( className ) {
 

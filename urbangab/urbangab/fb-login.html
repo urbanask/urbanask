@@ -21,6 +21,11 @@
             text-align: center;
         }
 
+        #viewport {
+            height: 480px;
+            width: 320px;
+        }
+        
         .fb-button {
             background-color: #3b5998;   
             background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAAZCAYAAADqrKTxAAABqklEQVQ4y5WTTW8SURSG568bF93owlgX2pWk6qYxMXHR2EVLDR8lbapBNJFBBYQpH0OBgTBw55zHxUyHmYIFTnJzc5PznHPe995rAda6lfnwhVK5gV3v0+qMaPc9urcTrn/erAe+1zr8LwaT2SqQ+9oAQMQgoogqgSgLEwDguKM08OjFGb4xgCIaVlYU0LiT603T0PtPlTBRNbX3bj0+nnzj6LjCwdF1Gspf1cLRVOPaqsKzTIFkXlrPpR3pUYKoS3c45r5u60kmz/5hib2Dz5TtVlQdRA0gDEdTXr4r8vR1nudvCjx+dYrlA2DiUZaiFVVBJUgYAs2uizVdCIgiokmTUqGqBIEA0HB6WAt2i3bPxWoPZ4wmM9zxDH8+X1aPdhMsGEx83PGM6TygXHPSrpyXQvdUFNFQS6c/WHUveTjJ/UhAEkHjh6GzQjW+J5EIcjdA2RQUAMqNu1OnrSF7zXjeBqhYW0K6JZS9+LV7p2zxT/w17qDuJuj84g5ie+i0+Dt8OsZgTOies+lyc1f1ey8PXM9/GHp7bNPsD6k2Xap/e9SdAZeV1gr0D8TTcK2PhdoZAAAAAElFTkSuQmCC);
@@ -99,7 +104,7 @@
 
                     window.localStorage.removeItem( 'facebook-login' );
 
-                    if ( window.iOSDevice && window.iOSDeviceMode == 'webview' ) {
+                    if ( window.deviceInfo.mode == 'webview' ) {
 
                         //window.location.href = APP_PAGE;
                         window.location.href = REDIRECT_URL;
@@ -118,7 +123,7 @@
 
                 window.localStorage.setItem( 'facebook-login', true );
 
-                if ( hasTouch() ) {
+                if ( window.deviceInfo.mobile ) {
 
                     FB.login( 
                         complete,
@@ -153,7 +158,7 @@
 
                 window.localStorage.setItem( 'facebook-login', true );
 
-                if ( hasTouch() ) {
+                if ( window.deviceInfo.mobile ) {
 
                     FB.ui( 
                         {
@@ -191,7 +196,7 @@
 
                 window.localStorage.setItem( 'facebook-login', true );
 
-                if ( hasTouch() ) {
+                if ( window.deviceInfo.mobile ) {
 
                     FB.ui( 
                         {
@@ -232,7 +237,7 @@
 
                 window.localStorage.setItem( 'facebook-login', true );
 
-                if ( hasTouch() ) {
+                if ( window.deviceInfo.mobile ) {
 
                     FB.ui( 
                         {
@@ -428,12 +433,6 @@
 
             };
 
-            function hasTouch() {
-
-                return ( typeof Touch == "object" );
-
-            };
-
             function initialize() {
 
                 var loginButton = document.getElementById( 'fb-login' ),
@@ -511,26 +510,74 @@
 
             function initializeEnvironment() {
 
-                if ( window.navigator.userAgent.indexOf( 'iPhone' ) > -1
-                || window.navigator.userAgent.indexOf( 'iPod' ) > -1 ) {
+                var userAgent = window.navigator.userAgent.toLowerCase();
+                window.deviceInfo = {};
 
-                    window.iOSDevice = true
+                //window.deviceInfo.type - handheld, tablet, desktop
+                //window.deviceInfo.brand - ios, android, microsoft, webos, blackberry
+                //window.deviceInfo.mode - browser, standalone, webview
 
-                    if ( !window.navigator.standalone && window.navigator.userAgent.indexOf( 'Safari' ) > -1 ) {
+                //window.deviceInfo.mobile - window.deviceInfo.type == handheld || window.deviceInfo.type == tablet
+                //window.deviceInfo.phonegap - ( window.deviceInfo.type == ios || android ) && window.deviceInfo.mode == webview
 
-                        window.iOSDeviceMode = 'browser';
+                if ( /ipad/.test( userAgent ) || ( /android/.test( userAgent ) && !/mobile/.test( userAgent ) ) ) {
 
-                    } else if ( window.navigator.standalone && window.navigator.userAgent.indexOf( 'Safari' ) == -1 ) {
+                    window.deviceInfo.type = 'tablet';
 
-                        window.iOSDeviceMode = 'standalone';
+                } else if ( /iphone|ipod|webos|blackberry|android/.test( userAgent ) ) {
 
-                    } else if ( !window.navigator.standalone && window.navigator.userAgent.indexOf( 'Safari' ) == -1 ) {
+                    window.deviceInfo.type = 'handheld';
 
-                        window.iOSDeviceMode = 'webview';
+                } else {
+
+                    window.deviceInfo.type = 'desktop';
+
+                };
+
+                if ( /iphone|ipod|ipad/.test( userAgent ) ) {
+
+                    var safari = /safari/.test( userAgent );
+
+                    window.deviceInfo.brand = 'ios';
+
+                    if ( window.navigator.standalone ) {
+
+                        window.deviceInfo.mode = 'standalone';
+
+                    } else if ( safari ) {
+
+                        window.deviceInfo.mode = 'browser';
+
+                    } else if ( !safari ) {
+
+                        window.deviceInfo.mode = 'webview';
 
                     };
 
+                } else if ( /android/.test( userAgent ) ) {
+
+                    window.deviceInfo.brand = 'android';
+                    window.deviceInfo.mode = 'browser';
+
+                } else if ( /webos/.test( userAgent ) ) {
+
+                    window.deviceInfo.brand = 'webos';
+                    window.deviceInfo.mode = 'browser';
+
+                } else if ( /blackberry/.test( userAgent ) ) {
+
+                    window.deviceInfo.brand = 'blackberry';
+                    window.deviceInfo.mode = 'browser';
+
+                } else {
+
+                    window.deviceInfo.brand = 'unknown';
+                    window.deviceInfo.mode = 'browser';
+
                 };
+
+                window.deviceInfo.mobile = ( window.deviceInfo.type == 'handheld' || window.deviceInfo.type == 'tablet' );
+                window.deviceInfo.phonegap = ( window.deviceInfo.brand == 'ios' && window.deviceInfo.mode == 'webview' );
 
             };
 

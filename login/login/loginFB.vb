@@ -70,7 +70,9 @@ Public Class loginFB : Implements System.Web.IHttpHandler
                     regionId As Int32 = 1,
                     location As String = context.Request.QueryString("location"),
                     email As String = context.Request.QueryString("email"),
-                    accessToken As String = context.Request.QueryString("accessToken")
+                    accessToken As String = context.Request.QueryString("accessToken"),
+                    latitude As String = context.Request.QueryString("latitude"),
+                    longitude As String = context.Request.QueryString("longitude")
 
                 Using gabsConnection As New Data.SqlClient.SqlConnection(GABS_CONNECTION_STRING),
                     sessionConnection As New Data.SqlClient.SqlConnection(SESSION_CONNECTION_STRING),
