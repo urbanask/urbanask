@@ -18,7 +18,8 @@ Public Class loginFB : Implements System.Web.IHttpHandler
         COMMAND_TIMEOUT As Int32 = 60,
         METRIC_DEFAULT As Int32 = 0,
         LANGUAGE_DEFAULT As Int32 = 1,
-        FACEBOOK_AUTH_TYPE As Int32 = 2
+        FACEBOOK_AUTH_TYPE As Int32 = 2,
+        DEFAULT_REGION_ID As Int32 = 2
 
 #If CONFIG = "Release" Then
 
@@ -67,7 +68,6 @@ Public Class loginFB : Implements System.Web.IHttpHandler
                 Dim facebookId As String = credentialSplit(0),
                     username As String = credentialSplit(1),
                     password As String = credentialSplit(2),
-                    regionId As Int32 = 1,
                     location As String = context.Request.QueryString("location"),
                     email As String = context.Request.QueryString("email"),
                     accessToken As String = context.Request.QueryString("accessToken"),
@@ -151,16 +151,22 @@ Public Class loginFB : Implements System.Web.IHttpHandler
                         createUser.Parameters.AddWithValue("@languageId", LANGUAGE_DEFAULT)
                         createUser.Parameters.AddWithValue("@authTypeId", FACEBOOK_AUTH_TYPE)
                         createUser.Parameters.AddWithValue("@facebookId", facebookId)
-                        createUser.Parameters.AddWithValue("@regionId", regionId)
                         createUser.Parameters.AddWithValue("@location", location)
                         createUser.Parameters.AddWithValue("@email", email)
+                        createUser.Parameters.AddWithValue("@defaultRegionId", DEFAULT_REGION_ID)
                         createUser.Parameters.AddWithValue("@accessToken", accessToken)
                         createUser.Parameters.Add("@userId", Data.SqlDbType.Int).Direction = Data.ParameterDirection.Output
+
+                        If latitude IsNot Nothing Then
+
+                            createUser.Parameters.AddWithValue("@latitude", latitude)
+                            createUser.Parameters.AddWithValue("@longitude", longitude)
+
+                        End If
 
                         createUser.ExecuteNonQuery()
 
                         userId = CInt(createUser.Parameters("@userId").Value)
-
                         Dim url As String = "https://graph.facebook.com/" + facebookId + "/picture"
 
                         Using web As New Net.WebClient(),
@@ -184,9 +190,9 @@ Public Class loginFB : Implements System.Web.IHttpHandler
 
                         End Using
 
-                    End If
+                        End If
 
-                    loadSession(sessionConnection, createSession, context, userId, newAccount)
+                        loadSession(sessionConnection, createSession, context, userId, newAccount)
 
                 End Using
 

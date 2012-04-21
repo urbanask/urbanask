@@ -1,6 +1,8 @@
 beta 1.26
 
-
+new - location is auto-selected on account creation
+new - added Oakland and East Bay regions
 
 bug - iOS/Android native apps. FB auth hangs on logout
 bug - back button cleared when clicking on your own profile
+

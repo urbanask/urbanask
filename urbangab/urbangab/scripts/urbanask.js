@@ -2283,7 +2283,7 @@
 
                 setFacebookButtonUnauthorized();
 
-            }, 10000 );
+            }, 15000 );
 
         };
 
@@ -2490,7 +2490,7 @@
 
                             startApp( function () {
 
-                                if ( newAccount ) { showAccountPage(); };
+//                                if ( newAccount ) { showAccountPage(); };
 
                             } );
 
