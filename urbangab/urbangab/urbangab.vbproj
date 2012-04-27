@@ -187,8 +187,10 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>attrib -r $(ProjectDir)scripts\urbanask-test.js
+copy /b $(ProjectDir)scripts\*.js $(ProjectDir)scripts\urbanask-test.js
+if $(ConfigurationName) == Release java -jar $(SolutionDir)..\Common\yuicompressor-2.4.7.jar $(ProjectDir)scripts\urbanask-test.js -o $(ProjectDir)scripts\urbanask-test.js --line-break 300
+</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
