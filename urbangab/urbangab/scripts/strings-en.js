@@ -142,7 +142,8 @@
             "noQuestionsMe": "You have not asked any questions yet. <br /><br />Looking for something?",
             "noQuestionsUser": "%1 has not asked any questions yet.",
             "noReputationMe": "You have not earned any reputation yet. <br /><br />Get started!",
-            "noReputationUser": "%1 has not earned any reputation yet."
+            "noReputationUser": "%1 has not earned any reputation yet.",
+            "notifications": "notifications"
         },
         "usernameLabel": "username",
         "voteDownCaption": "-1",

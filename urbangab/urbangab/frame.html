@@ -1,0 +1,35 @@
+﻿<!doctype html />
+<html lang="en">
+<head>
+    <title>urbanAsk</title>
+
+    <meta name="apple-mobile-web-app-capable"           content="yes" />
+    <meta name="viewport"                               content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+    <meta name="apple-mobile-web-app-status-bar-style"  content="black" />
+
+    <link rel="apple-touch-icon"                        href="images/icon.png" />
+    <link rel="apple-touch-startup-image"               href="images/splash.png" /> 
+    <link rel="icon"                                    type="image/png" href="images/icon.png" />
+    <link rel="stylesheet"                              href="styles/urbanask.css" />
+
+    <style>
+        
+        #frame {
+            border: 0;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+
+    </style>
+
+</head>
+<body>
+<iframe id="frame" src="index.html"></iframe>
+<script>
+    window.history.replaceState( '', '', window.location.pathname );
+</script>
+
+</body>
+</html>

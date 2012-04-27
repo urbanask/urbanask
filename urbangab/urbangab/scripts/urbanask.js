@@ -54,7 +54,8 @@
                 "metricDistances": 4,
                 "languageId": 5,
                 "tagline": 6,
-                "regions": 7
+                "regions": 7,
+                "notifications": 8
 
             },
             ANSWER_COLUMNS = {
@@ -121,6 +122,17 @@
             },
             LOCATION_RADIUS = 50000,
             LOCATION_TYPES = 'establishment',
+            NOTIFICATION_COLUMNS = {
+
+                "userNotificationId": 0,
+                "notification": 1,
+                "objectType": 2,
+                "itemId": 3,
+                "objectDescription": 4,
+                "viewed": 5,
+                "timestamp": 6
+
+            },
             QUESTION_COLUMNS = {
 
                 "questionId": 0,
@@ -168,6 +180,7 @@
 
             },
             ROOT_URL = 'http://urbanask.com',
+            SECOND = 1000,
             TOP_TYPES = {
 
                 "reputation": 1,
@@ -525,6 +538,9 @@
                     break;
 
                 case 'user-page':
+
+                    var notificationItems = document.getElementById( 'user-notifications' );
+                    notificationItems.addEventListener( 'click', notificationItemClick, false );
 
                     var reputationItems = document.getElementById( 'user-reputations' );
                     reputationItems.addEventListener( 'click', reputationItemClick, false );
@@ -1006,6 +1022,20 @@
         function getNoItems( message ) {
 
             return '<li class="no-items">' + message + '</li>';
+
+        };
+
+        function getNotificationItem( notifiction ) {
+
+            return '<li class="notification-item list-item" '
+                + 'data-id="' + notifiction[NOTIFICATION_COLUMNS.userNotificationId] + '" '
+                + 'data-item-id="' + notifiction[NOTIFICATION_COLUMNS.itemId] + '" '
+                + 'data-object="' + notifiction[NOTIFICATION_COLUMNS.objectType] + '">'
+                + '<div class="notification-body">' + notifiction[NOTIFICATION_COLUMNS.objectDescription] + '</div>'
+                + '<ul class="info">'
+                + '<li class="info-item">' + notifiction[NOTIFICATION_COLUMNS.notification] + '</li>'
+                + '</ul>'
+                + '</li>';
 
         };
 
@@ -1572,7 +1602,8 @@
 
             initializeEnvironment();
             initializeDimensions();
-            initializePhoneGap();
+
+            initializePhoneGap( function () { } );
 
             if ( window.location.queryString()['logout'] ) { //for debugging
 
@@ -1770,11 +1801,9 @@
 
         };
 
-        function initializePhoneGap() {
+        function initializePhoneGap( complete ) {
 
             if ( window.deviceInfo.mode == 'webview' ) {
-
-                var script;
 
                 function onPhoneGapReady() {
 
@@ -1782,21 +1811,27 @@
 
                     window.phoneGapReady = true;
 
-                    script = document.createElement( 'script' );
+                    var script = document.createElement( 'script' );
                     script.id = 'child-browser';
                     script.src = 'childbrowser.js';
                     document.body.appendChild( script );
 
                     initializeChildBrowser();
 
+                    complete();
+
                 };
 
                 document.addEventListener( 'deviceready', onPhoneGapReady, false );
 
-                script = document.createElement( 'script' );
+                var script = document.createElement( 'script' );
                 script.id = 'phone-gap';
                 script.src = 'phonegap.js';
                 document.body.appendChild( script );
+
+            } else {
+
+                complete();
 
             };
 
@@ -1804,22 +1839,18 @@
 
         function usePhoneGap( ready ) {
 
-            if ( window.phoneGapReady ) {
+            var html = '<iframe style="display:none;" height="0px" width="0px" frameborder="0" src="gap://ready"></iframe>';
+            document.body.insertAdjacentHTML( 'beforeEnd', html );
 
-                var html = '<iframe style="display:none;" height="0px" width="0px" frameborder="0" src="gap://ready"></iframe>';
-                document.body.insertAdjacentHTML( 'beforeEnd', html );
+            window.setTimeout( function () {
 
-                window.setTimeout( function () {
+                ready( function () {
 
-                    ready( function () {
+                    closePhoneGap();
 
-                        closePhoneGap();
+                } );
 
-                    } );
-
-                }, 200 );
-
-            };
+            }, 200 );
 
         };
 
@@ -1951,8 +1982,13 @@
                 "async": false,
                 "success": function ( data, status ) {
 
+                    var count = _account[ACCOUNT_COLUMNS.notifications]
+                        ? _account[ACCOUNT_COLUMNS.notifications].items( 0, NOTIFICATION_COLUMNS.viewed ).length
+                        : 0;
                     _account = window.JSON.parse( data )[0];
-                    complete();
+                    showNotifications( _account[ACCOUNT_COLUMNS.notifications].length > count );
+
+                    if ( complete ) { complete(); };
 
                 },
                 "error": function ( response, status, error ) {
@@ -2102,7 +2138,7 @@
                 var resource = '/api/users/' + userId,
                     session = getSession( resource );
 
-                showLoading( 14, 14 );
+                showLoading( 'center', 'center', $( '#user-picture' ) );
 
                 ajax( API_URL + resource, {
 
@@ -2283,7 +2319,7 @@
 
                 setFacebookButtonUnauthorized();
 
-            }, 15000 );
+            }, 15 * SECOND );
 
         };
 
@@ -2305,11 +2341,12 @@
 
             } else {
 
-                //                if ( window.deviceInfo.mode == 'webview' ) {
+                //                if ( window.phoneGapReady ) {
 
                 //                    usePhoneGap( function ( complete ) {
 
                 //                        window.plugins.childBrowser.showWebPage( FACEBOOK_LOGIN_URL + '?button=login' );
+                //                          complete();
 
                 //                    } );
 
@@ -2481,7 +2518,7 @@
                         if ( status != "error" ) {
 
                             var session = response.getResponseHeader( 'x-session' ).split( ':' ),
-                            newAccount = window.JSON.parse( response.responseText ).newAccount;
+                                newAccount = window.JSON.parse( response.responseText ).newAccount;
 
                             _session.id = session[0];
                             _session.key = session[1];
@@ -2490,7 +2527,7 @@
 
                             startApp( function () {
 
-//                                if ( newAccount ) { showAccountPage(); };
+                                //                                if ( newAccount ) { showAccountPage(); };
 
                             } );
 
@@ -2506,6 +2543,39 @@
                 } );
 
             };
+
+        };
+
+        function notificationItemClick( event ) {
+
+            selectItem( event );
+
+            window.setTimeout( function () {
+
+                var notificationItem = event.target.closestByClassName( 'notification-item' );
+
+                if ( notificationItem ) {
+
+                    saveNotificationViewed( notificationItem );
+
+                    switch ( notificationItem.getDataset( 'object' ) ) {
+                        case 'question':
+
+                            showPage( 'question-page', { id: notificationItem.getDataset( 'item-id' ) } );
+                            break;
+
+                        case 'badge':
+
+                            showMessage( notificationItem.getElementsByClassName( 'notification-body' )[0].textContent );
+                            break;
+
+                    };
+
+                };
+
+                window.setTimeout( function () { unselectItem( event ); }, 100 );
+
+            }, 100 );
 
         };
 
@@ -2769,6 +2839,7 @@
 
                     _questions.length = 0;
                     loadQuestions();
+                    loadAccount();
 
                 }, REFRESH_QUESTION_RATE );
 
@@ -2974,6 +3045,9 @@
                     break;
 
                 case 'user-page':
+
+                    var notificationItems = document.getElementById( 'user-notifications' );
+                    notificationItems.removeEventListener( 'click', notificationItemClick, false );
 
                     var reputationItems = document.getElementById( 'user-reputations' );
                     reputationItems.removeEventListener( 'click', reputationItemClick, false );
@@ -3394,6 +3468,67 @@
 
         };
 
+        function saveNotificationViewed( notificationItem ) {
+
+            var notifications = _account[ACCOUNT_COLUMNS.notifications].items( 0, NOTIFICATION_COLUMNS.viewed ),
+                itemId = notificationItem.getDataset( 'item-id' ),
+                objectType = notificationItem.getDataset( 'object' ),
+                resource = '/api/account/save',
+                session = getSession( resource );
+
+            for ( var index = 0; index < notifications.length; index++ ) {
+
+                var notification = notifications[index];
+
+                if ( notification[NOTIFICATION_COLUMNS.itemId] == itemId
+                    && notification[NOTIFICATION_COLUMNS.objectType] == objectType ) {
+
+                    var data = 'userNotificationId=' + notification[NOTIFICATION_COLUMNS.userNotificationId];
+
+                    ajax( API_URL + resource, {
+
+                        "type": "GET",
+                        "data": data,
+                        "headers": { "x-session": session },
+                        "success": function ( data, status ) {
+
+                            notification[NOTIFICATION_COLUMNS.viewed] = 1; //true
+                            var notificationItems = document.getElementById( 'user-notifications' ).getElementsByClassName( 'notification-item' );
+
+                            for ( var index = 0; index < notificationItems.length; index++ ) {
+
+                                if ( notificationItems[index].getDataset( 'item-id' ) == itemId
+                                    && notificationItems[index].getDataset( 'object' ) == objectType ) {
+
+                                    notificationItems[index].addClass( 'hide' );
+
+                                };
+
+                            };
+
+                        },
+                        "error": function ( response, status, error ) {
+
+                            if ( error == 'Unauthorized' ) { logoutApp(); };
+
+                        }
+
+                    } );
+
+                };
+
+            };
+
+            if ( !_account[ACCOUNT_COLUMNS.notifications].items( 0, NOTIFICATION_COLUMNS.viewed ).length ) {
+
+                document.getElementById( 'user-notifications' ).addClass( 'hide' );
+
+            };
+
+            showNotificationBadge();
+
+        };
+
         function saveQuestion( event ) {
 
             event.preventDefault();
@@ -3651,7 +3786,7 @@
 
                 case 'user-page':
 
-                    document.getElementById( 'user-page' ).scrollTop = 0;
+                    document.getElementById( 'user-info-view' ).scrollTop = 0;
                     getUsersTop();
 
                     break;
@@ -3782,20 +3917,23 @@
 
         function setupGeolocation() {
 
-            window.setTimeout( getGeolocation, 4000 );
-            _geoTimer = window.setInterval( getGeolocation, 240000 ); //every 4 minutes
+            window.setTimeout( getGeolocation, 4 * SECOND );
+            _geoTimer = window.setInterval( getGeolocation, 4 * 60 * SECOND ); //every 4 minutes
 
         };
 
-        function getGeolocation( complete, options ) {
+        function getGeolocation( geoComplete, options ) {
 
-            if ( window.deviceInfo.mode == 'webview' ) {
+            var geoFunction = ( ( options && options.quick ) ? get : watch );
 
-                usePhoneGap( function ( complete ) {
+            if ( window.phoneGapReady ) {
 
-                    watch( function () {
+                usePhoneGap( function ( phonegapComplete ) {
 
-                        complete();
+                    geoFunction( function () {
+
+                        phonegapComplete();
+                        if ( geoComplete ) { geoComplete() };
 
                     } );
 
@@ -3803,27 +3941,15 @@
 
             } else {
 
-                if ( options && options.quick ) {
+                geoFunction( function () {
 
-                    get( function () {
+                    if ( geoComplete ) { geoComplete() };
 
-                        if ( complete ) { complete() };
-
-                    } );
-
-                } else {
-
-                    watch( function () {
-
-                        if ( complete ) { complete() };
-
-                    } );
-
-                };
+                } );
 
             };
 
-            function watch( complete ) {
+            function watch( watchComplete ) {
 
                 var geo = window.navigator.geolocation.watchPosition( function ( position ) {
 
@@ -3849,13 +3975,13 @@
                     window.setLocalStorage( 'current-longitude', _currentLocation.longitude );
 
                     window.navigator.geolocation.clearWatch( geo )
-                    if ( complete ) { complete() };
+                    watchComplete();
 
                 }, 5000 );
 
             };
 
-            function get( complete ) {
+            function get( getComplete ) {
 
                 var geo = window.navigator.geolocation.getCurrentPosition( function ( position ) {
 
@@ -3866,7 +3992,7 @@
                     window.setLocalStorage( 'current-latitude', _currentLocation.latitude ),
                     window.setLocalStorage( 'current-longitude', _currentLocation.longitude );
 
-                    if ( complete ) { complete() };
+                    getComplete();
 
                 },
                 function ( error ) {
@@ -3877,7 +4003,7 @@
 
                     };
 
-                    if ( complete ) { complete() };
+                    getComplete();
 
                 },
                 { maximumAge: 60000, enableHighAccuracy: true } ); //must be valid within a minute
@@ -4225,7 +4351,7 @@
 
             answerText.focus();
 
-            if ( window.deviceInfo.brand = 'ios'
+            if ( window.deviceInfo.brand == 'ios'
                 && window.deviceInfo.type == 'handheld'
                 && window.deviceInfo.mode == 'browser' ) {
 
@@ -4772,11 +4898,12 @@
 
                 if ( answer[ANSWER_COLUMNS.link] ) {
 
-                    if ( window.deviceInfo.mode == 'webview' ) {
+                    if ( window.phoneGapReady ) {
 
                         usePhoneGap( function ( complete ) {
 
                             window.plugins.childBrowser.showWebPage( answer[ANSWER_COLUMNS.link] );
+                            complete();
 
                         } );
 
@@ -4805,11 +4932,12 @@
                         + currentLatitude + ',' + currentLongitude
                         + '&daddr=' + answer[ANSWER_COLUMNS.latitude] + ',' + answer[ANSWER_COLUMNS.longitude];
 
-                if ( window.deviceInfo.mode == 'webview' ) {
+                if ( window.phoneGapReady ) {
 
                     usePhoneGap( function ( complete ) {
 
                         window.plugins.childBrowser.showWebPage( url );
+                        complete();
 
                     } );
 
@@ -5097,6 +5225,62 @@
 
         };
 
+        function showNotifications( newItems ) {
+
+            var notifications = _account[ACCOUNT_COLUMNS.notifications].items( 0, NOTIFICATION_COLUMNS.viewed );
+
+            if ( notifications.length ) {
+
+                var html = getListItemHeader( STRINGS.user.notifications );
+
+                for ( var index = 0; index < notifications.length; index++ ) {
+
+                    html += getNotificationItem( notifications[index] );
+
+                };
+
+                document.getElementById( 'user-notifications' ).innerHTML = html;
+                document.getElementById( 'user-notifications' ).removeClass( 'hide' );
+
+                if ( newItems && window.phoneGapReady ) {
+
+                    usePhoneGap( function ( phonegapComplete ) {
+
+                        window.navigator.notification.vibrate( SECOND )
+                        phonegapComplete();
+
+                    } );
+
+                };
+
+            } else {
+
+                document.getElementById( 'user-notifications' ).addClass( 'hide' );
+
+            };
+
+            showNotificationBadge();
+
+        };
+
+        function showNotificationBadge() {
+
+            var count = _account[ACCOUNT_COLUMNS.notifications].items( 0, NOTIFICATION_COLUMNS.viewed ).length,
+                badge = document.getElementById( 'notification-badge' );
+
+            if ( count ) {
+
+                badge.textContent = count;
+                badge.removeClass( 'hide' );
+
+            } else {
+
+                badge.addClass( 'hide' );
+
+            };
+
+        };
+
         function showPage( page, options, back ) {
 
             options = options || {};
@@ -5319,6 +5503,7 @@
             } else {
 
                 hideEditAccount();
+                document.getElementById( 'user-notifications' ).addClass( 'hide' );
 
             };
 
@@ -5902,6 +6087,8 @@
                 ? STRINGS.totalBadgesOne
                 : STRINGS.totalBadges;
 
+            showNotifications();
+
             var html = getListItemHeader( STRINGS.reputation );
 
             if ( user[USER_COLUMNS.reputations].length ) {
@@ -6243,6 +6430,7 @@
                     case 'questions-button':
 
                         showPage( 'questions-page' );
+                        scrollUp();
                         break;
 
                     case 'question-user-button':
@@ -6292,6 +6480,7 @@
                     case 'user-button':
 
                         showPage( 'user-page', { id: item.getDataset( 'user-id' ), top: true } );
+                        scrollUp();
                         break;
 
                     case 'vote-down-button':
@@ -6559,6 +6748,26 @@
                 if ( value == this[index][column] ) return this[index];
 
             };
+
+        };
+
+        Array.prototype.items = function ( value, column ) {
+
+            column = column || 0;
+
+            var items = [];
+
+            for ( var index = 0; index < this.length; index++ ) {
+
+                if ( value == this[index][column] ) {
+
+                    items.push( this[index] );
+
+                };
+
+            };
+
+            return items;
 
         };
 

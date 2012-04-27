@@ -1262,7 +1262,7 @@ html {
 }
 
 #message {
-    background-color: rgba( 0, 0, 0, .8 );
+    background-color: rgba( 0, 0, 0, .87 );
     color: white;
     left: 60px;
     min-height: 200px;
@@ -1353,12 +1353,40 @@ html {
     height: 200px;
     left: 60px;
     line-height: 169px;
-    opacity: .8;
+    opacity: .87;
     position: absolute;
     text-align: center;
     top: 86px;
     width: 200px;
     z-index: 100;
+}
+
+#notification-badge {
+    background:             radial-gradient( 1px -11px, circle, white 8%, red 26px );
+        background:    -moz-radial-gradient( 1px -11px, circle, white 8%, red 26px );
+        background:     -ms-radial-gradient( 1px -11px, circle, white 8%, red 26px );
+        background:      -o-radial-gradient( 1px -11px, circle, white 8%, red 26px );
+        background: -webkit-radial-gradient( 1px -11px, circle, white 8%, red 26px );
+    background-color: red;
+    border: 2px solid white;
+    border-radius: 12px;  /*one half of ( (border * 2) + height + padding ) */
+    box-shadow: 1px 1px 1px black;
+    color: white;
+    font: bold 12px/9px Helvetica, Verdana, Tahoma;
+    height: 12px;
+    padding: 2px 3px 0 3px;
+    position: absolute;
+    right: 10px;
+    text-align: center;
+    min-width: 8px;
+}
+
+.notification-body {
+    height: 20px;
+    overflow: hidden;
+    padding: 0 4px 0 4px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 #notification-footer {
@@ -2315,6 +2343,7 @@ html {
     background-color: white;
     border: 1px solid black;
     box-shadow: 2px 2px 3px rgba( 0, 0, 0, .7 );
+    cursor: pointer;
     float: left;
     height: 50px;
     margin-left: 4px;
@@ -2407,6 +2436,10 @@ html {
         background-image: -webkit-radial-gradient( center -12px, circle, white 0, red 38px);
 }
 
+#user-button {
+    position: relative;
+}
+
 #user-button, 
 #answer-user-button, 
 #question-user-button {
@@ -2492,6 +2525,7 @@ html {
     width: 50px;
 }
 
+#user-notifications,
 #users-questions, 
 #user-answers, 
 #user-reputations, 

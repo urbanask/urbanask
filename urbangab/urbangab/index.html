@@ -1,5 +1,5 @@
 ﻿<!doctype html>
-<html lang="en" data-version="0.1.26" manifest="cache.manifest">
+<html lang="en" data-version="0.1.27" manifest="cache.manifest">
 <head>
     <title>urbanAsk</title>
     
@@ -19,7 +19,7 @@
 
     <header id="header">
         <div id="back-button" class="hide"><div id="back-button-arrow"></div><div id="back-button-gradient"></div><div id="back-button-text"></div></div>
-        <h1 id="title">0.1.26</h1>
+        <h1 id="title">0.1.27</h1>
         <div id="refresh-button"><div id="refresh-button-text"></div></div>
     </header>
     
@@ -125,7 +125,8 @@
 
             <div id="user-info-view">
                 <div id="user-info-scroll" class="scroll">
-                    <ul id="user-reputations"></ul><!--
+                    <ul id="user-notifications" class="hide"></ul><!--
+                    --><ul id="user-reputations"></ul><!--
                     --><ul id="users-questions"></ul><!--
                     --><ul id="user-answers"></ul><!--
                     --><ul id="user-badges"></ul>
@@ -194,7 +195,7 @@
         <ul id="toolbar-main" class="toolbar">
                <li class="toolbar-item toolbar-main-item" id="questions-button"></li><!--
             --><li class="toolbar-item toolbar-main-item" id="top-button"></li><!--
-            --><li class="toolbar-item toolbar-main-item" id="user-button"></li>
+            --><li class="toolbar-item toolbar-main-item" id="user-button"><div id="notification-badge" class="hide"></div></li>
         </ul>
 
         <ul id="toolbar-question" class="toolbar hide">

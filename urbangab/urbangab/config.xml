@@ -4,7 +4,7 @@
     xmlns:gap   = "http://phonegap.com/ns/1.0"
     id          = "com.urbanask"
     versionCode = "10"
-    version     = "0.1.26">
+    version     = "0.1.27">
 
     <name>urbanAsk</name>
     <description>Find it. Share it.</description>
@@ -25,6 +25,7 @@
     
     <feature name="http://api.phonegap.com/1.0/geolocation" />
     <feature name="http://api.phonegap.com/1.0/network" />
+    <feature name="http://api.phonegap.com/1.0/notification" />
     <feature name="http://plugins.phonegap.com/ChildBrowser/2.0.0" />
     
     <access origin="*" />
