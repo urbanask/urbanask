@@ -140,7 +140,7 @@ Public Class FacebookIntegration
         If _utility.IsElementPresent(elementID) Then
 
             _utility.Click(By.CssSelector(String.Format(_culture, "#{0} .fbsettingslistitemedit", elementID)))
-            _utility.Click(By.ClassName("fbSettingsExpandedDelete"))
+            _utility.Click(By.LinkText("Remove app"))
             _utility.Click(By.Name("remove"))
             _utility.AssertElementNotPresent(elementID)
 
