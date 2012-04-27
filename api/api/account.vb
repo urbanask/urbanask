@@ -17,6 +17,7 @@ Public Class account : Inherits api.messageHandler
 
     Private Const LOAD_ACCOUNT As String = "Gabs.api.loadAccount",
         SAVE_ACCOUNT As String = "Gabs.api.saveAccount",
+        SAVE_NOTIFICATION_VIEWED As String = "Gabs.api.saveNotificationViewed",
         JSON_ACCOUNT_COLUMNS As String =
               "[" _
             & """userId""," _
@@ -34,7 +35,8 @@ Public Class account : Inherits api.messageHandler
         request As String,
         userId As Int32)
 
-        Dim resource As String = context.Request.PathInfo
+        Dim resource As String = context.Request.PathInfo,
+            queries As Collections.Specialized.NameValueCollection = context.Request.QueryString
 
         Select Case resource
 
@@ -44,7 +46,15 @@ Public Class account : Inherits api.messageHandler
 
             Case "/save" '/api/account/save
 
-                saveAccount(context, connection, userId)
+                If queries("userNotificationId") <> "" Then
+
+                    saveNotificationViewed(context, connection, queries, userId)
+
+                Else
+
+                    saveAccount(context, connection, queries, userId)
+
+                End If
 
             Case "/columns" '/api/account/columns
 
@@ -80,10 +90,10 @@ Public Class account : Inherits api.messageHandler
     Private Sub saveAccount(
         context As Web.HttpContext,
         connection As SqlClient.SqlConnection,
+        queries As Collections.Specialized.NameValueCollection,
         userId As Int32)
 
-        Dim queries As Collections.Specialized.NameValueCollection = context.Request.QueryString,
-            username As String = queries("username"),
+        Dim username As String = queries("username"),
             tagline As String = queries("tagline"),
             regionId As String = queries("regionId")
 
@@ -96,6 +106,28 @@ Public Class account : Inherits api.messageHandler
             command.Parameters.AddWithValue("@username", username)
             command.Parameters.AddWithValue("@tagline", tagline)
             command.Parameters.AddWithValue("@regionId", regionId)
+
+            command.ExecuteNonQuery()
+
+        End Using
+
+    End Sub
+
+    Private Sub saveNotificationViewed(
+        context As Web.HttpContext,
+        connection As SqlClient.SqlConnection,
+        queries As Collections.Specialized.NameValueCollection,
+        userId As Int32)
+
+        Dim userNotificationId As String = queries("userNotificationId")
+
+        Using command As New SqlClient.SqlCommand(SAVE_NOTIFICATION_VIEWED, connection)
+
+            command.CommandType = CommandType.StoredProcedure
+            command.CommandTimeout = COMMAND_TIMEOUT
+
+            command.Parameters.AddWithValue("@userId", userId)
+            command.Parameters.AddWithValue("@userNotificationId", userNotificationId)
 
             command.ExecuteNonQuery()
 
@@ -141,6 +173,34 @@ Public Class account : Inherits api.messageHandler
                                  user("regionId"), ",""",
                                  user("name"), """",
                                  "],")
+
+                        End While
+
+                        response = response.Substring(0, response.Length - 1) 'remove last comma
+
+                    End If
+
+                End If
+
+                response &= "],["
+
+                'notifications
+                If user.NextResult() Then
+
+                    If user.HasRows() Then
+
+                        While (user.Read())
+
+                            response &= String.Concat(
+                                "[",
+                                user("userNotificationId"), ",""",
+                                user("notification"), """,""",
+                                user("objectType"), """,",
+                                user("itemId"), ",""",
+                                MyBase.jsonEncode(CStr(user("objectDescription"))), """,",
+                                user("viewed"), ",""",
+                                user("timestamp"),
+                                """],")
 
                         End While
 
