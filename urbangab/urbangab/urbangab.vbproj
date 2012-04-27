@@ -15,6 +15,7 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <MyType>Custom</MyType>
     <UseIISExpress>false</UseIISExpress>
+    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -194,10 +195,10 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>attrib -r $(ProjectDir)scripts\urbanask-test.js
-copy /b $(ProjectDir)scripts\*.js $(ProjectDir)scripts\urbanask-test.js
-if $(ConfigurationName) == Release java -jar $(SolutionDir)..\Common\yuicompressor-2.4.7.jar $(ProjectDir)scripts\urbanask-test.js -o $(ProjectDir)scripts\urbanask-test.js --line-break 300
-</PostBuildEvent>
+    <PostBuildEvent>cd $(ProjectDir)scripts\
+attrib -r urbanask-compiled.js
+copy /b strings-en.js + urbanask.js urbanask-compiled.js
+if $(ConfigurationName) == Release java -jar $(SolutionDir)..\Common\yuicompressor-2.4.7.jar urbanask-compiled.js -o urbanask-compiled.js --line-break 300</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
