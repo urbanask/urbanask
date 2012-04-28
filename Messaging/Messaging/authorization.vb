@@ -16,8 +16,17 @@ Imports System.Text.Encoding
 Public Class authorization
 
     Private Const CHECK_SESSION_PROC As String = "session.login.checkSession",
-        COMMAND_TIMEOUT As Int32 = 60,
-        CONNECTION_STRING As String = "Server=SERVER2008;Database=session;uid=login;pwd=everythingcarpetandall;Connect Timeout=600;"
+        COMMAND_TIMEOUT As Int32 = 60
+
+#If CONFIG = "Release" Then
+
+    Private Const CONNECTION_STRING As String = "Server=WIN-FKVLOOSI1RO;Database=session;uid=login;pwd=everythingcarpetandall;Connect Timeout=600;"
+
+#Else
+
+    Private Const CONNECTION_STRING As String = "Server=SERVER2008;Database=session;uid=login;pwd=everythingcarpetandall;Connect Timeout=600;"
+
+#End If
 
     Public Sub New(
         context As Web.HttpContext,

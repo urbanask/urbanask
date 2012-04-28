@@ -103,12 +103,11 @@
     <Content Include="images\splash.png" />
     <Content Include="index.html" />
     <Content Include="questions.aspx" />
+    <Content Include="scripts\urbanask-compiled.js" />
     <Content Include="scripts\urbanask.js" />
     <Content Include="scripts\strings-en.js" />
+    <Content Include="styles\urbanask.css" />
     <Content Include="styles\download.css" />
-    <Content Include="styles\urbanask.css">
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="support.html" />
     <Content Include="tos.html" />
     <Content Include="twitter.html" />

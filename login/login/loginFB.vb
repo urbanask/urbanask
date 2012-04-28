@@ -23,8 +23,8 @@ Public Class loginFB : Implements System.Web.IHttpHandler
 
 #If CONFIG = "Release" Then
 
-    Private Const GABS_CONNECTION_STRING As String = "Server=SERVER2008;Database=Gabs;uid=login;pwd=everythingcarpetandall;Connect Timeout=600;"
-    Private Const SESSION_CONNECTION_STRING As String = "Server=SERVER2008;Database=session;uid=login;pwd=everythingcarpetandall;Connect Timeout=600;"
+    Private Const GABS_CONNECTION_STRING As String = "Server=WIN-FKVLOOSI1RO;Database=Gabs;uid=login;pwd=everythingcarpetandall;Connect Timeout=600;",
+        SESSION_CONNECTION_STRING As String = "Server=WIN-FKVLOOSI1RO;Database=session;uid=login;pwd=everythingcarpetandall;Connect Timeout=600;"
 
 #Else
 

@@ -80,7 +80,8 @@
                 "votes": 17
 
             },
-            API_URL = 'http://75.144.228.69:55555',
+            //API_URL = 'http://75.144.228.69:55555',
+            API_URL = 'http://urbanask.com',
             BADGE_CLASSES = {
 
                 "silver": 1,

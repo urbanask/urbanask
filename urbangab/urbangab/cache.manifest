@@ -1,5 +1,5 @@
 ﻿CACHE MANIFEST
-#ver 0.1.27
+#ver 0.1.27.3
 
 CACHE:
 index.html
@@ -12,6 +12,7 @@ styles/urbanask.css
 
 scripts/strings-en.js
 scripts/urbanask.js
+scripts/urbanask-compiled.js
 
 NETWORK:
 api/

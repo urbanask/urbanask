@@ -12,7 +12,7 @@ Public MustInherit Class messageHandler : Implements System.Web.IHttpHandler
 
 #If CONFIG = "Release" Then
 
-    Protected Const CONNECTION_STRING As String = "Server=SERVER2008;Database=Gabs;uid=messaging;pwd=chicogarciassanchez;Connect Timeout=600;"
+    Protected Const CONNECTION_STRING As String = "Server=WIN-FKVLOOSI1RO;Database=Gabs;uid=messaging;pwd=chicogarciassanchez;Connect Timeout=600;"
 
 #Else
 
