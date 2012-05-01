@@ -59,7 +59,8 @@
 
     <script>
 
-        var APP_URL = 'http://75.144.228.69:55555/urbanask-alpha/index.html',
+        var APP_URL = 'http://urbanask.com/index.html',
+        //var APP_URL = 'http://75.144.228.69:55555/urbanask-alpha/index.html',
             postData = '<% =getPostData() %>';
 
         window.onload = function () {

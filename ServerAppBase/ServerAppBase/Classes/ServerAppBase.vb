@@ -240,11 +240,6 @@ Public MustInherit Class ServerAppBase
         _errorMax = 10 'errors per _errorTimeLimit
         _errorTimeLimit = 10 'minutes to allow _errorMax errors
 
-        'default errors
-        _errorMailFrom = "mattwalton@mail.com"
-        _informationMailFrom = "mattwalton@mail.comm"
-        _smtpServer = "mail.thinkingstiff.com"
-
     End Sub
 
     Private Sub InitializeParametersBase()
@@ -259,7 +254,15 @@ Public MustInherit Class ServerAppBase
 
     Private Sub InitializeErrorParameters()
 
+        'default errors
+        _errorMailFrom = "noreply@urbanask.com"
+        _informationMailFrom = "noreply@urbanask.comm"
+        _smtpServer = "smtp.urbanask.com"
+
         _mailTo = Parameters.Parameter.GetValue("ErrorMailTo")
+        _errorMailFrom = If(Parameters.Parameter.GetValue("errorMailFrom", True), _errorMailFrom)
+        _informationMailFrom = If(Parameters.Parameter.GetValue("informationMailFrom", True), _informationMailFrom)
+        _smtpServer = If(Parameters.Parameter.GetValue("smtpServer", True), _smtpServer)
 
     End Sub
 

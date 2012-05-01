@@ -29,7 +29,8 @@
 
         if ( window.applicationCache ) window.applicationCache.addEventListener( 'updateready', updateVersion, false );
 
-        var _currentLocation = {},
+        var _hostname = window.location.hostname,
+            _currentLocation = {},
             _dimensions = {
 
                 "questionMapWidth": 308,
@@ -80,8 +81,9 @@
                 "votes": 17
 
             },
-            //API_URL = 'http://75.144.228.69:55555',
-            API_URL = 'http://urbanask.com',
+        //API_URL = 'http://75.144.228.69:55555',
+            //API_URL = 'http://urbanask.com',
+            API_URL = ( _hostname == '75.144.228.69' ? 'http://75.144.228.69:55555' : 'http://urbanask.com' ),
             BADGE_CLASSES = {
 
                 "silver": 1,
@@ -103,7 +105,7 @@
             FACEBOOK_AUTH_URL = 'http://urbanask.com',
             FACEBOOK_LOGIN_URL = 'http://urbanask.com/fb-login.html',
             FACEBOOK_POST_URL = 'http://urbanask.com/fb-login.html',
-            FACEBOOK_REDIRECT_URL = 'http://75.144.228.69:55555/urbanask-alpha/index.html',
+            FACEBOOK_REDIRECT_URL = 'http://' + ( _href == 'urbanask.com' ? _href : '75.144.228.69:55555/urbanask-alpha' ) + '/index.html',
             INTERVALS = {
 
                 "all": 0,

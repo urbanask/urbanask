@@ -24,7 +24,8 @@ Public Class authorization
 
 #Else
 
-    Private Const CONNECTION_STRING As String = "Server=SERVER2008;Database=session;uid=login;pwd=everythingcarpetandall;Connect Timeout=600;"
+    '    Private Const CONNECTION_STRING As String = "Server=SERVER2008;Database=session;uid=login;pwd=everythingcarpetandall;Connect Timeout=600;"
+    Private Const CONNECTION_STRING As String = "Server=69.65.42.214;Database=session;uid=login;pwd=everythingcarpetandall;Connect Timeout=600;"
 
 #End If
 

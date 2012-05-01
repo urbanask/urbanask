@@ -21,8 +21,10 @@ Public Class login : Implements System.Web.IHttpHandler
 
 #Else
 
-    Private Const GABS_CONNECTION_STRING As String = "Server=SERVER2008;Database=Gabs;uid=login;pwd=everythingcarpetandall;Connect Timeout=600;",
-        SESSION_CONNECTION_STRING As String = "Server=SERVER2008;Database=session;uid=login;pwd=everythingcarpetandall;Connect Timeout=600;"
+    'Private Const GABS_CONNECTION_STRING As String = "Server=SERVER2008;Database=Gabs;uid=login;pwd=everythingcarpetandall;Connect Timeout=600;",
+    '    SESSION_CONNECTION_STRING As String = "Server=SERVER2008;Database=session;uid=login;pwd=everythingcarpetandall;Connect Timeout=600;"
+    Private Const GABS_CONNECTION_STRING As String = "Server=69.65.42.214;Database=Gabs;uid=login;pwd=everythingcarpetandall;Connect Timeout=600;",
+        SESSION_CONNECTION_STRING As String = "Server=69.65.42.214;Database=session;uid=login;pwd=everythingcarpetandall;Connect Timeout=600;"
 
 #End If
 
