@@ -52,11 +52,6 @@
 
 <body>
 
-    <div id="viewport">
-    <img id="splash" alt="" src="images/splash.png" />
-    <section id="install-page" class="hide"></section>
-    </div>
-
     <script>
 
         var APP_URL = 'http://urbanask.com/index.html',
@@ -65,16 +60,9 @@
 
         window.onload = function () {
 
-            initializeEnvironment();
-
             if ( postData ) { //from facebook canvas
 
                 window.location.href = APP_URL;
-
-            } else if ( window.iOSDevice && window.iOSDeviceMode == 'browser' ) {
-
-                hideSplashPage();
-                showInstallPage();
 
             } else {
 
@@ -84,95 +72,10 @@
 
         };
 
-        function showInstallPage() {
-
-            var html =
-                  '<div id="install-view">'
-                + '<header id="install-header">'
-                + '<img src="images/icon.png" />'
-                + '<div>urbanAsk</div>'
-                + '</header>'
-                + '<div>If using Facebook Mobile:</div>'
-                + '<ol id="facebook-steps">'
-                + '<li class="install-item">1. Tap <img src="images/install-share.png" /> above.</li>'
-                + '<li class="install-item">2. Tap <img src="images/install-safari.png" /></li>'
-                + '</ol>'
-                + '<div>If using Mobile Safari:</div>'
-                + '<ol id="install-steps">'
-                + '<li class="install-item">1. Tap <img src="images/install-share.png" /> below.</li>'
-                + '<li class="install-item">2. Tap <img src="images/install-homescreen.png" /></li>'
-                + '<li class="install-item">3. Tap <img src="images/install-add.png" /></li>'
-                + '</ol>'
-                + '</div>';
-
-            document.getElementById( 'install-page' ).innerHTML = html;
-            document.getElementById( 'install-page' ).removeAttribute( 'class' );
-
-        };
-
-        function hideSplashPage() {
-
-            window.setTimeout( function () {
-
-                var splash = document.getElementById( 'splash' );
-                splash.className = 'fade';
-                window.setTimeout( function () { splash.className = 'hide'; }, 500 );
-
-            }, 1 );
-
-        };
-
-        function initializeEnvironment() {
-
-            if ( window.navigator.userAgent.indexOf( 'iPhone' ) > -1
-                || window.navigator.userAgent.indexOf( 'iPod' ) > -1 ) {
-
-                window.iOSDevice = true
-
-                if ( !window.navigator.standalone && window.navigator.userAgent.indexOf( 'Safari' ) > -1 ) {
-
-                    window.iOSDeviceMode = 'browser';
-
-                } else if ( window.navigator.standalone && window.navigator.userAgent.indexOf( 'Safari' ) == -1 ) {
-
-                    window.iOSDeviceMode = 'standalone';
-
-                } else if ( !window.navigator.standalone && window.navigator.userAgent.indexOf( 'Safari' ) == -1 ) {
-
-                    window.iOSDeviceMode = 'webview';
-
-                };
-
-            };
-
-        };
-
     </script>
 
     <script runat="server">
     
-        Private ReadOnly Property getPostData2() As String
-            
-            Get
-                
-                Dim postData As String = Request.Form.Item("signed_request"),
-                    base64Data As String = ""
-                
-                If postData IsNot Nothing AndAlso postData.Length Then
-                
-           
-                    base64Data = postData.Split("."c)(1)
-                    'Dim decodedBytes() As Byte = HttpServerUtility.UrlTokenDecode(base64Data).Length
-                    'Dim decodedString As String = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(base64Data))
-                    
-                End If
-                
-                Return base64Data
-                
-            End Get
-            
-        End Property
-        
         Private ReadOnly Property getPostData() As String
             
             Get

@@ -4,29 +4,45 @@
     xmlns:gap   = "http://phonegap.com/ns/1.0"
     id          = "com.urbanask"
     versionCode = "10"
-    version     = "0.1.27">
+    version     = "0.1.28">
 
     <name>urbanAsk</name>
     <description>Find it. Share it.</description>
-
     <author href="https://urbanask.com" email="support@urbanask.com">urbanAsk Inc.</author>
-
-    <preference name="phonegap-version" value="1.5.0" />
-    <preference name="fullscreen"       value="false" />
-    <preference name="stay-in-webview"  value="true" />
-    <preference name="orientation"      value="default" />
-    <preference name="target-device"    value="handset" />
     
-    <icon src="images/icon-57.png" width="57" height="57"/>
-    <icon src="images/icon-72.png" width="72" height="72"/>
-    <icon src="images/icon-114.png" width="114" height="114"/>
-
+    <preference name="phonegap-version"     value="1.6.1" />
+    <preference name="fullscreen"           value="false" />
+    <preference name="stay-in-webview"      value="true" />
+    <preference name="orientation"          value="default" />
+    <preference name="target-device"        value="handset" />
+    <preference name="ios-statusbarstyle"   value="black-opaque" />
+    <preference name="webviewbounce"        value="false" />
+    
+    <icon gap:platform="ios" src="images/ios/icon-57.png" width="57" height="57" />
+    <icon gap:platform="ios" src="images/ios/icon-72.png" width="72" height="72" />
+    <icon gap:platform="ios" src="images/ios/icon-114.png" width="114" height="114" />
+    <icon gap:platform="android" src="images/android/icon-57.png" width="57" height="57" />
+    <icon gap:platform="blackberry" src="images/blackberry/icon-57.png" width="57" height="57" />
+    <icon gap:platform="winphone" src="images/winphone/icon-114.png.png" />
+    <icon gap:platform="winphone" gap:role="background" src="images/winphone/icon-114.png.png" />
+    <icon gap:platform="webos" src="images/webos/icon-114.png" />
+    <icon gap:platform="webos" gap:role="mini" src="images/webos/icon-57.png" />
+    
     <gap:splash src="images/splash-fullscreen.png" />
-    
+
+    <gap:splash gap:platform="ios" src="images/ios/splash-320x480.png" width="320" height="480" />
+    <gap:splash gap:platform="ios" src="images/ios/splash-640x960.png" width="640" height="960" />
+    <gap:splash gap:platform="ios" src="images/ios/splash-1024x768.png" width="1024" height="768" />
+    <gap:splash gap:platform="ios" src="images/ios/splash-768x1024.png" width="768" height="1024" />
+    <gap:splash gap:platform="android" src="images/ios/splash-320x480.png" width="320" height="480" />
+    <gap:splash gap:platform="blackberry" src="images/blackberry/splash-320x480.png" width="320" height="480" />
+    <gap:splash gap:platform="winphone" src="images/winphone/splash-320x480.jpg" width="320" height="480" />
+    <gap:splash gap:platform="webos" src="images/webos/splash-320x480.jpg" width="320" height="480" />
+
     <feature name="http://api.phonegap.com/1.0/geolocation" />
     <feature name="http://api.phonegap.com/1.0/network" />
     <feature name="http://api.phonegap.com/1.0/notification" />
-    <feature name="http://plugins.phonegap.com/ChildBrowser/2.0.0" />
+    <feature name="http://plugins.phonegap.com/ChildBrowser/2.0.1" />
     
     <access origin="*" />
     

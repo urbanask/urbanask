@@ -12,7 +12,12 @@ Public Class login : Implements System.Web.IHttpHandler
 
     Private Const CREATE_SESSION_PROC As String = "session.login.createSession",
         CHECK_AUTHORIZATION_PROC As String = "Gabs.login.checkAuthorization",
-        COMMAND_TIMEOUT As Int32 = 60
+        CREATE_USER_PROC As String = "Gabs.login.createUser",
+        COMMAND_TIMEOUT As Int32 = 60,
+        METRIC_DEFAULT As Int32 = 0,
+        LANGUAGE_DEFAULT As Int32 = 1,
+        EMAIL_AUTH_TYPE As Int32 = 1,
+        DEFAULT_REGION_ID As Int32 = 2
 
 #If CONFIG = "Release" Then
 
@@ -34,7 +39,8 @@ Public Class login : Implements System.Web.IHttpHandler
         context As Web.HttpContext) _
         Implements System.Web.IHttpHandler.ProcessRequest
 
-        Dim authorization As String = Nothing
+        Dim authorization As String = Nothing,
+            resource As String = context.Request.PathInfo
 
         If context.Request.Headers.Item("x-authorization") IsNot Nothing Then
 
@@ -57,65 +63,103 @@ Public Class login : Implements System.Web.IHttpHandler
             If credentialSplit.Length = 2 Then
 
                 Dim username As String = credentialSplit(0),
-                    password As String = credentialSplit(1)
+                    password As String = credentialSplit(1),
+                    userId As Int32
 
                 Using gabsConnection As New Data.SqlClient.SqlConnection(GABS_CONNECTION_STRING),
                     sessionConnection As New Data.SqlClient.SqlConnection(SESSION_CONNECTION_STRING),
                     checkAuthorization As New Data.SqlClient.SqlCommand(CHECK_AUTHORIZATION_PROC, gabsConnection),
+                    createUser As New Data.SqlClient.SqlCommand(CREATE_USER_PROC, gabsConnection),
                     createSession As New Data.SqlClient.SqlCommand(CREATE_SESSION_PROC, sessionConnection)
 
                     gabsConnection.Open()
 
-                    checkAuthorization.CommandType = Data.CommandType.StoredProcedure
-                    checkAuthorization.CommandTimeout = COMMAND_TIMEOUT
+                    Select Case resource
+                        Case "" '/logins/login
 
-                    checkAuthorization.Parameters.AddWithValue("@username", username)
-                    checkAuthorization.Parameters.Add("@userId", Data.SqlDbType.Int).Direction = Data.ParameterDirection.Output
-                    checkAuthorization.Parameters.Add("@hash", Data.SqlDbType.Char, 88).Direction = Data.ParameterDirection.Output
-                    checkAuthorization.Parameters.Add("@hashType", Data.SqlDbType.VarChar, 10).Direction = Data.ParameterDirection.Output
-                    checkAuthorization.Parameters.Add("@salt", Data.SqlDbType.Char, 8).Direction = Data.ParameterDirection.Output
-                    checkAuthorization.Parameters.Add("@iterations", Data.SqlDbType.Int).Direction = Data.ParameterDirection.Output
+                            checkAuthorization.CommandType = Data.CommandType.StoredProcedure
+                            checkAuthorization.CommandTimeout = COMMAND_TIMEOUT
 
-                    checkAuthorization.ExecuteNonQuery()
+                            checkAuthorization.Parameters.AddWithValue("@username", username)
+                            checkAuthorization.Parameters.Add("@userId", Data.SqlDbType.Int).Direction = Data.ParameterDirection.Output
+                            checkAuthorization.Parameters.Add("@hash", Data.SqlDbType.Char, 88).Direction = Data.ParameterDirection.Output
+                            checkAuthorization.Parameters.Add("@hashType", Data.SqlDbType.VarChar, 10).Direction = Data.ParameterDirection.Output
+                            checkAuthorization.Parameters.Add("@salt", Data.SqlDbType.Char, 8).Direction = Data.ParameterDirection.Output
+                            checkAuthorization.Parameters.Add("@iterations", Data.SqlDbType.Int).Direction = Data.ParameterDirection.Output
 
-                    If System.Convert.ToInt32(checkAuthorization.Parameters("@userId").Value) > 0 Then
+                            checkAuthorization.ExecuteNonQuery()
 
-                        Dim hash As New Hashing.hash(
-                            username,
-                            password,
-                            checkAuthorization.Parameters("@hashType").Value.ToString(),
-                            checkAuthorization.Parameters("@salt").Value.ToString(),
-                            Convert.ToInt32(checkAuthorization.Parameters("@iterations").Value))
+                            If System.Convert.ToInt32(checkAuthorization.Parameters("@userId").Value) > 0 Then
 
-                        If hash.hash = checkAuthorization.Parameters("@hash").Value.ToString() Then
+                                If System.Convert.ToBoolean(checkAuthorization.Parameters("@enabled").Value) Then
 
-                            sessionConnection.Open()
+                                    userId = CInt(checkAuthorization.Parameters("@userId").Value)
 
-                            createSession.CommandType = Data.CommandType.StoredProcedure
-                            createSession.CommandTimeout = COMMAND_TIMEOUT
+                                    Dim hash As New Hashing.hash(
+                                            username,
+                                            password,
+                                            checkAuthorization.Parameters("@hashType").Value.ToString(),
+                                            checkAuthorization.Parameters("@salt").Value.ToString(),
+                                            Convert.ToInt32(checkAuthorization.Parameters("@iterations").Value))
 
-                            createSession.Parameters.AddWithValue("@userId", Convert.ToInt32(checkAuthorization.Parameters("@userId").Value))
-                            createSession.Parameters.Add("@sessionId", Data.SqlDbType.UniqueIdentifier).Direction = Data.ParameterDirection.Output
-                            createSession.Parameters.Add("@sessionKey", Data.SqlDbType.UniqueIdentifier).Direction = Data.ParameterDirection.Output
+                                    If hash.hash = checkAuthorization.Parameters("@hash").Value.ToString() Then
 
-                            createSession.ExecuteNonQuery()
+                                        loadSession(sessionConnection, createSession, context, userId)
 
-                            sendSuccessResponse(
-                                context,
-                                createSession.Parameters("@sessionId").Value.ToString(),
-                                createSession.Parameters("@sessionKey").Value.ToString())
+                                    Else
 
-                        Else
+                                        sendErrorResponse(context)
 
-                            sendErrorResponse(context)
+                                    End If
 
-                        End If
+                                Else
 
-                    Else
+                                    sendErrorResponse(context)
 
-                        sendErrorResponse(context)
+                                End If
 
-                    End If
+                            Else
+
+                                sendErrorResponse(context)
+
+                            End If
+
+                        Case "/add" '/logins/login/add
+
+                            Dim hash As New Hashing.hash(username, password),
+                                email As String = context.Request.QueryString("email"),
+                                latitude As String = context.Request.QueryString("latitude"),
+                                longitude As String = context.Request.QueryString("longitude")
+
+                            createUser.CommandType = Data.CommandType.StoredProcedure
+                            createUser.CommandTimeout = COMMAND_TIMEOUT
+
+                            createUser.Parameters.AddWithValue("@username", username)
+                            createUser.Parameters.AddWithValue("@tagline", "")
+                            createUser.Parameters.AddWithValue("@hash", hash.hash)
+                            createUser.Parameters.AddWithValue("@salt", hash.salt)
+                            createUser.Parameters.AddWithValue("@iterations", hash.iterations)
+                            createUser.Parameters.AddWithValue("@hashType", hash.hashType)
+                            createUser.Parameters.AddWithValue("@metricDistances", METRIC_DEFAULT)
+                            createUser.Parameters.AddWithValue("@languageId", LANGUAGE_DEFAULT)
+                            createUser.Parameters.AddWithValue("@authTypeId", EMAIL_AUTH_TYPE)
+                            createUser.Parameters.AddWithValue("@email", email)
+                            createUser.Parameters.AddWithValue("@defaultRegionId", DEFAULT_REGION_ID)
+                            createUser.Parameters.Add("@userId", Data.SqlDbType.Int).Direction = Data.ParameterDirection.Output
+
+                            If latitude IsNot Nothing Then
+
+                                createUser.Parameters.AddWithValue("@latitude", latitude)
+                                createUser.Parameters.AddWithValue("@longitude", longitude)
+
+                            End If
+
+                            createUser.ExecuteNonQuery()
+
+                            userId = CInt(createUser.Parameters("@userId").Value)
+                            loadSession(sessionConnection, createSession, context, userId)
+
+                    End Select
 
                 End Using
 
@@ -130,6 +174,30 @@ Public Class login : Implements System.Web.IHttpHandler
             sendErrorResponse(context)
 
         End If
+
+    End Sub
+
+    Private Sub loadSession( _
+        sessionConnection As Data.SqlClient.SqlConnection, _
+        createSession As Data.SqlClient.SqlCommand,
+        context As Web.HttpContext,
+        userId As Int32)
+
+        sessionConnection.Open()
+
+        createSession.CommandType = Data.CommandType.StoredProcedure
+        createSession.CommandTimeout = COMMAND_TIMEOUT
+
+        createSession.Parameters.AddWithValue("@userId", userId)
+        createSession.Parameters.Add("@sessionId", Data.SqlDbType.UniqueIdentifier).Direction = Data.ParameterDirection.Output
+        createSession.Parameters.Add("@sessionKey", Data.SqlDbType.UniqueIdentifier).Direction = Data.ParameterDirection.Output
+
+        createSession.ExecuteNonQuery()
+
+        sendSuccessResponse(
+            context,
+            createSession.Parameters("@sessionId").Value.ToString(),
+            createSession.Parameters("@sessionKey").Value.ToString())
 
     End Sub
 
@@ -160,7 +228,17 @@ Public Class login : Implements System.Web.IHttpHandler
 
         context.Response.Headers.Remove("Server")
         context.Response.Headers.Add("x-session", String.Concat(session, ":", key))
-        'context.Response.Headers.Add("Content-Length", response.Length.ToString())
+
+        'Dim response As String = "{""newAccount"":" & newAccount.ToString().ToLower() & "}"
+        '        context.Response.Headers.Add("Content-Length", response.Length.ToString())
+
+        '#If CONFIG <> "Debug" Then
+
+        '            context.Response.ContentType = "application/json"
+
+        '#End If
+
+        '        context.Response.Write(response)
 
     End Sub
 

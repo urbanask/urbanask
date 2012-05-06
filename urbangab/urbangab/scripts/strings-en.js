@@ -27,6 +27,11 @@
         "backButtonUser": "User",
         "cancelButtonCaption": "cancel",
         "checkmark": "&#10004;",
+        "createAccount":
+        {
+            "cancelAccount": "cancel",
+            "saveAccount": "create"
+        },
         "dateFormat": "%m %d, %y",
         "distanceHere": "here",
         "distanceKm": "km",
@@ -39,6 +44,7 @@
             "taglineCaption": "say something about yourself"
         },
         "editAccountCaption": "edit",
+        "emailLabel": "email",
         "error": 
         {
             "alreadyAnswered": "You already answered this question.",

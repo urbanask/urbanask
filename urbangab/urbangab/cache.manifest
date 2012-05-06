@@ -1,9 +1,8 @@
 ﻿CACHE MANIFEST
-#ver 0.1.27.14
+#ver 0.1.28.8
 
 CACHE:
 index.html
-tos.html
 
 images/icon.png
 images/splash.png
@@ -21,4 +20,3 @@ fb-login.html
 index.aspx
 
 *
-

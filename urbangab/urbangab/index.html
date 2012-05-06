@@ -1,5 +1,5 @@
 ﻿<!doctype html>
-<html lang="en" data-version="0.1.27" manifest="cache.manifest">
+<html lang="en" data-version="0.1.28" manifest="cache.manifest">
 <head>
     <title>urbanAsk</title>
     
@@ -19,7 +19,7 @@
 
     <header id="header">
         <div id="back-button" class="hide"><div id="back-button-arrow"></div><div id="back-button-gradient"></div><div id="back-button-text"></div></div>
-        <h1 id="title">0.1.27</h1>
+        <h1 id="title">0.1.28</h1>
         <div id="refresh-button"><div id="refresh-button-text"></div></div>
     </header>
     
@@ -138,14 +138,22 @@
         <section id ="login-page" class="hide">
             <form id="login-view">
                 <button id="fb-login">Login with Facebook</button>
+                <button id="create-email-account">Create Account with Email</button>
                 <div id="section-header-or" class="section-header"></div>
-                <input autocorrect="off" autocapitalize="none" class="login-field" id="login-username" type="text" maxlength="128" />
-                <input class="login-field" id="login-password" type="password" maxlength="128" />
-                <button id="login-button" type="submit"></button>
+                <input autocorrect="off" autocapitalize="none" class="login-field" id="login-username" type="text" maxlength="100" /><!--
+             --><input class="login-field" id="login-password" type="password" maxlength="100" /><!--
+             --><button id="login-button" type="submit"></button>
                 <span id="login-error"></span>
             </form>
+        </section>
+
+        <section id="create-account-page" class="hide">
             <form id="create-account">
-                <input id="new-username" autocorrect="off" autocapitalize="none" class="login-field" type="text" maxlength="128" />
+                <input id="create-username" autocorrect="off" autocapitalize="none" class="login-field" type="text" maxlength="100" />
+                <input id="create-password" autocorrect="off" autocapitalize="none" class="login-field" type="text" maxlength="100" />
+                <input id="create-email" autocorrect="off" autocapitalize="none" class="login-field" type="text" maxlength="256" />
+                <button id="save-account" type="submit"></button>
+                <button id="cancel-account" type="button"></button>
             </form>
         </section>
 
@@ -231,6 +239,8 @@
 
 <script src="http://maps.googleapis.com/maps/api/js?libraries=places,geometry&sensor=true"></script>
 <script src="scripts/urbanask-compiled.js"></script>
+<script src="phonegap.js"></script>
+<script src="childbrowser.js"></script>
 
 </body>
 </html>

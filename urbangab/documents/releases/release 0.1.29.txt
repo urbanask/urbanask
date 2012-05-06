@@ -1,0 +1,4 @@
+0.1.29
+
+new - regions: SF Peninsula, North Bay, San Jose, Stockton, Modesto, Fresno, Bakersfield, Monterey Bay, Los Angeles, San Diego, Portland, Seattle, Austin, New York
+

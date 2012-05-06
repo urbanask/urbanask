@@ -851,6 +851,24 @@ body {
 #fb-login {
     background-color: #3b5998;   
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAAZCAYAAADqrKTxAAABqklEQVQ4y5WTTW8SURSG568bF93owlgX2pWk6qYxMXHR2EVLDR8lbapBNJFBBYQpH0OBgTBw55zHxUyHmYIFTnJzc5PznHPe995rAda6lfnwhVK5gV3v0+qMaPc9urcTrn/erAe+1zr8LwaT2SqQ+9oAQMQgoogqgSgLEwDguKM08OjFGb4xgCIaVlYU0LiT603T0PtPlTBRNbX3bj0+nnzj6LjCwdF1Gspf1cLRVOPaqsKzTIFkXlrPpR3pUYKoS3c45r5u60kmz/5hib2Dz5TtVlQdRA0gDEdTXr4r8vR1nudvCjx+dYrlA2DiUZaiFVVBJUgYAs2uizVdCIgiokmTUqGqBIEA0HB6WAt2i3bPxWoPZ4wmM9zxDH8+X1aPdhMsGEx83PGM6TygXHPSrpyXQvdUFNFQS6c/WHUveTjJ/UhAEkHjh6GzQjW+J5EIcjdA2RQUAMqNu1OnrSF7zXjeBqhYW0K6JZS9+LV7p2zxT/w17qDuJuj84g5ie+i0+Dt8OsZgTOies+lyc1f1ey8PXM9/GHp7bNPsD6k2Xap/e9SdAZeV1gr0D8TTcK2PhdoZAAAAAElFTkSuQmCC);
+    background-position: 14px center;
+    background-repeat: no-repeat;
+    border: 1px solid white;
+    box-shadow: 2px 2px 3px rgba( 0, 0, 0, .7 );
+    color: white;
+    cursor: pointer;
+    display: block;
+    font-size: 17px;
+    height: 45px; 
+    margin: 10px auto 10px auto;
+    padding: 0 10px 0 32px;
+    text-align: center;
+    width: 280px;  
+}
+
+#create-email-account {
+    background-color: black;   
+    background-image: url(data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/4ge4SUNDX1BST0ZJTEUAAQEAAAeoYXBwbAIgAABtbnRyUkdCIFhZWiAH2QACABkACwAaAAthY3NwQVBQTAAAAABhcHBsAAAAAAAAAAAAAAAAAAAAAAAA9tYAAQAAAADTLWFwcGwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAtkZXNjAAABCAAAAG9kc2NtAAABeAAABWxjcHJ0AAAG5AAAADh3dHB0AAAHHAAAABRyWFlaAAAHMAAAABRnWFlaAAAHRAAAABRiWFlaAAAHWAAAABRyVFJDAAAHbAAAAA5jaGFkAAAHfAAAACxiVFJDAAAHbAAAAA5nVFJDAAAHbAAAAA5kZXNjAAAAAAAAABRHZW5lcmljIFJHQiBQcm9maWxlAAAAAAAAAAAAAAAUR2VuZXJpYyBSR0IgUHJvZmlsZQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAbWx1YwAAAAAAAAAeAAAADHNrU0sAAAAoAAABeGhySFIAAAAoAAABoGNhRVMAAAAkAAAByHB0QlIAAAAmAAAB7HVrVUEAAAAqAAACEmZyRlUAAAAoAAACPHpoVFcAAAAWAAACZGl0SVQAAAAoAAACem5iTk8AAAAmAAAComtvS1IAAAAWAAACyGNzQ1oAAAAiAAAC3mhlSUwAAAAeAAADAGRlREUAAAAsAAADHmh1SFUAAAAoAAADSnN2U0UAAAAmAAAConpoQ04AAAAWAAADcmphSlAAAAAaAAADiHJvUk8AAAAkAAADomVsR1IAAAAiAAADxnB0UE8AAAAmAAAD6G5sTkwAAAAoAAAEDmVzRVMAAAAmAAAD6HRoVEgAAAAkAAAENnRyVFIAAAAiAAAEWmZpRkkAAAAoAAAEfHBsUEwAAAAsAAAEpHJ1UlUAAAAiAAAE0GFyRUcAAAAmAAAE8mVuVVMAAAAmAAAFGGRhREsAAAAuAAAFPgBWAWEAZQBvAGIAZQBjAG4A/QAgAFIARwBCACAAcAByAG8AZgBpAGwARwBlAG4AZQByAGkBDQBrAGkAIABSAEcAQgAgAHAAcgBvAGYAaQBsAFAAZQByAGYAaQBsACAAUgBHAEIAIABnAGUAbgDoAHIAaQBjAFAAZQByAGYAaQBsACAAUgBHAEIAIABHAGUAbgDpAHIAaQBjAG8EFwQwBDMEMAQ7BEwEPQQ4BDkAIAQ/BEAEPgREBDAEOQQ7ACAAUgBHAEIAUAByAG8AZgBpAGwAIABnAOkAbgDpAHIAaQBxAHUAZQAgAFIAVgBCkBp1KAAgAFIARwBCACCCcl9pY8+P8ABQAHIAbwBmAGkAbABvACAAUgBHAEIAIABnAGUAbgBlAHIAaQBjAG8ARwBlAG4AZQByAGkAcwBrACAAUgBHAEIALQBwAHIAbwBmAGkAbMd8vBgAIABSAEcAQgAg1QS4XNMMx3wATwBiAGUAYwBuAP0AIABSAEcAQgAgAHAAcgBvAGYAaQBsBeQF6AXVBeQF2QXcACAAUgBHAEIAIAXbBdwF3AXZAEEAbABsAGcAZQBtAGUAaQBuAGUAcwAgAFIARwBCAC0AUAByAG8AZgBpAGwAwQBsAHQAYQBsAOEAbgBvAHMAIABSAEcAQgAgAHAAcgBvAGYAaQBsZm6QGgAgAFIARwBCACBjz4/wZYdO9k4AgiwAIABSAEcAQgAgMNcw7TDVMKEwpDDrAFAAcgBvAGYAaQBsACAAUgBHAEIAIABnAGUAbgBlAHIAaQBjA5MDtQO9A7kDugPMACADwAPBA78DxgOvA7sAIABSAEcAQgBQAGUAcgBmAGkAbAAgAFIARwBCACAAZwBlAG4A6QByAGkAYwBvAEEAbABnAGUAbQBlAGUAbgAgAFIARwBCAC0AcAByAG8AZgBpAGUAbA5CDhsOIw5EDh8OJQ5MACAAUgBHAEIAIA4XDjEOSA4nDkQOGwBHAGUAbgBlAGwAIABSAEcAQgAgAFAAcgBvAGYAaQBsAGkAWQBsAGUAaQBuAGUAbgAgAFIARwBCAC0AcAByAG8AZgBpAGkAbABpAFUAbgBpAHcAZQByAHMAYQBsAG4AeQAgAHAAcgBvAGYAaQBsACAAUgBHAEIEHgQxBEkEOAQ5ACAEPwRABD4ERAQ4BDsETAAgAFIARwBCBkUGRAZBACAGKgY5BjEGSgZBACAAUgBHAEIAIAYnBkQGOQYnBkUARwBlAG4AZQByAGkAYwAgAFIARwBCACAAUAByAG8AZgBpAGwAZQBHAGUAbgBlAHIAZQBsACAAUgBHAEIALQBiAGUAcwBrAHIAaQB2AGUAbABzAGV0ZXh0AAAAAENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVzZXJ2ZWQuAFhZWiAAAAAAAADzUgABAAAAARbPWFlaIAAAAAAAAHRNAAA97gAAA9BYWVogAAAAAAAAWnUAAKxzAAAXNFhZWiAAAAAAAAAoGgAAFZ8AALg2Y3VydgAAAAAAAAABAc0AAHNmMzIAAAAAAAEMQgAABd7///MmAAAHkgAA/ZH///ui///9owAAA9wAAMBs/+EAgEV4aWYAAE1NACoAAAAIAAUBEgADAAAAAQABAAABGgAFAAAAAQAAAEoBGwAFAAAAAQAAAFIBKAADAAAAAQACAACHaQAEAAAAAQAAAFoAAAAAAAAAYAAAAAEAAABgAAAAAQACoAIABAAAAAEAAAAXoAMABAAAAAEAAAAQAAAAAP/bAEMAAgICAgIBAgICAgICAgMDBgQDAwMDBwUFBAYIBwgICAcICAkKDQsJCQwKCAgLDwsMDQ4ODg4JCxARDw4RDQ4ODv/bAEMBAgICAwMDBgQEBg4JCAkODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODv/AABEIABAAFwMBIgACEQEDEQH/xAAfAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgv/xAC1EAACAQMDAgQDBQUEBAAAAX0BAgMABBEFEiExQQYTUWEHInEUMoGRoQgjQrHBFVLR8CQzYnKCCQoWFxgZGiUmJygpKjQ1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4eLj5OXm5+jp6vHy8/T19vf4+fr/xAAfAQADAQEBAQEBAQEBAAAAAAAAAQIDBAUGBwgJCgv/xAC1EQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2gAMAwEAAhEDEQA/APH9A8PeBvDHgjQr1/AfhHxFoMum20l6bnQ7ee8sHaFWeRWdd0sZJZipOeSADtOO2e3+Ckfhf+2pfB/w2OilfMW8XQ7QpICeNp2Y5PQd+gzXy7p3jZdY8J6TaC+hg0eGyhSdzOFN3tRR5I5ysYIO4jlsbflA3NofbfDR1J7hxaSKwJ+zCcC1DHqyxD5Q/wDtdugUdaAPaLvwl4E8S2c97qPw+8KeH9EWINZ6dY6Lb293c/OB50kqKGiGDxGeowTgnAK8Qk8f/wBgaZcW9zqST6QUAjnFyrSREupEbZbLDj5c9F2jJxmigD//2Q==);
     background-position: 10px center;
     background-repeat: no-repeat;
     border: 1px solid white;
@@ -860,10 +878,10 @@ body {
     display: block;
     font-size: 17px;
     height: 45px; 
-    margin: 30px auto 35px auto;
+    margin: 10px auto 10px auto;
     padding: 0 10px 0 32px;
     text-align: center;
-    width: 250px;  
+    width: 280px;  
 }
 
 .fb-like,
@@ -996,42 +1014,6 @@ html {
 
 .info-item:last-child:after {
     content: "";
-}
-
-#install-header {
-    font: normal 35px/35px Monaco;
-    letter-spacing: -1px;
-    margin-bottom: 10px;
-    text-align: center;    
-}
-
-.install-item {
-    display: block;
-    height: 34px;
-    line-height: 34px;
-    margin-left: 20px;
-    vertical-align: top;
-}
-
-#install-page {
-    background-color: black;
-    color: white;
-    height: 100%;
-    left: 0;
-    margin: 0;
-    position: absolute;
-    top: 0;
-    width: 100%;
-}
-
-#install-steps,
-#facebook-steps {
-    margin: 10px 0 0 0;
-    padding: 0;
-}
-
-#install-view {
-    margin: 10px 0 0 30px;
 }
 
 .keyboard-up {
@@ -1199,7 +1181,7 @@ html {
 
 #login-view {
     margin: 0;
-    padding: 10px;
+    padding: 10px 5px 10px 5px;
 }
 
 #login-button {
@@ -1215,11 +1197,12 @@ html {
     border-right: 1px solid black;
     box-shadow: 2px 2px 3px rgba( 0, 0, 0, .7 );
     color: white;
-    float: right;
-    height: 35px;
-    margin-bottom: 40px;
+    display: inline-block;
+    height: 37px;
     outline: none;
-    width: 100px;
+    padding: 0;
+    vertical-align: top;
+    width: 40px;
 }
 
 #login-error {
@@ -1238,14 +1221,15 @@ html {
     border-right: 1px solid black;
     border-radius: 0;
     box-shadow: 2px 2px 3px rgba( 0, 0, 0, .7 );
-    display: block;
+    display: inline-block;
     font-size: 17px;
     height: 35px;
     line-height: 34px;
-    margin: 0 0 5px 0;
+    margin: 0 4px 0 0;
     outline: none;
     padding: 0 2px 0 2px;
-    width: 294px;
+    vertical-align: top;
+    width: 124px;
 }
 
 .marker {

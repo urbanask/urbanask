@@ -1,5 +1,5 @@
 
-SELECT * FROM [user] WHERE userId < 100000
+SELECT * FROM [user] WHERE userId < 100000 ORDER BY userId DESC
 SELECT * FROM [userFacebook] WHERE userId < 100000 ORDER BY [userFacebook].userId
 SELECT * FROM userRegion WHERE userId < 100000
 SELECT * FROM userPicture WHERE userId < 100
@@ -12,12 +12,14 @@ SELECT * FROM userBadge WHERE userId < 100
 SELECT * FROM reputation WHERE userId < 100
 
 /*
+DBCC CHECKIDENT( 'Gabs.dbo.[user]', RESEED, 127 )
 DELETE FROM question WHERE questionId = 1105898
-DELETE FROM answer WHERE questionId = 1105843
+DELETE FROM answer WHERE answerId = 4250081
 UPDATE question SET question = 'Used Marshall cab' WHERE questionId = 1105852
 SELECT username, authtypeId FROM [user] WHERE userId < 100
-SELECT * FROM answer WHERE questionId = 1105843
-SELECT * FROM reputation WHERE itemId = 1105843
+SELECT * FROM question WHERE question = 'edible panties'
+SELECT * FROM reputation WHERE itemId = 1105914
+DELETE FROM question WHERE question = 'edible panties'
 UPDATE [user] SET 
 hash='bFxydZg4GPGQqojigQxzbIcQw62jD3C4WeyXvB0fpB+1YHMSgAh1PIPHvpOsqqpT+gxTKG2hRl30kVhumuRuQg==',
 salt='7iJyqg==',

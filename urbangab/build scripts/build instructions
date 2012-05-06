@@ -5,14 +5,16 @@ iOS
 2. compile Release
 3. zip contents
 4. change PhoneGap key to UrbanAsk App Store
-5. upload zip file to PhoneGap
-6. send binary using Application Loader
+5. Turn off Debug build on PhoneGap
+6. upload zip file to PhoneGap
+7. send binary using Application Loader
 
 Android
 1. change version in config.xml
 2. compile Release
 3. zip contents
-4. upload zip file to PhoneGap
-5. run android zipalign on .apk file
-6. upload to Amazon and Google Play
+4. Turn off Debug build on PhoneGap
+5. upload zip file to PhoneGap
+6. run android zipalign on .apk file
+7. upload to Amazon and Google Play
 

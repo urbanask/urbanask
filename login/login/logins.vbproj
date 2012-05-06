@@ -85,7 +85,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="_session.vb" />
     <Compile Include="login.vb" />
     <Compile Include="loginFB.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />

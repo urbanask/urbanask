@@ -82,7 +82,7 @@
 
             },
         //API_URL = 'http://75.144.228.69:55555',
-            //API_URL = 'http://urbanask.com',
+        //API_URL = 'http://urbanask.com',
             API_URL = ( _hostname == '75.144.228.69' ? 'http://75.144.228.69:55555' : 'http://urbanask.com' ),
             BADGE_CLASSES = {
 
@@ -105,7 +105,7 @@
             FACEBOOK_AUTH_URL = 'http://urbanask.com',
             FACEBOOK_LOGIN_URL = 'http://urbanask.com/fb-login.html',
             FACEBOOK_POST_URL = 'http://urbanask.com/fb-login.html',
-            FACEBOOK_REDIRECT_URL = 'http://' + ( _href == 'urbanask.com' ? _href : '75.144.228.69:55555/urbanask-alpha' ) + '/index.html',
+            FACEBOOK_REDIRECT_URL = 'http://' + ( _hostname == '75.144.228.69' ? '75.144.228.69:55555/urbangab' : _hostname ) + '/index.html',
             INTERVALS = {
 
                 "all": 0,
@@ -407,21 +407,32 @@
                     var facebookButton = document.getElementById( 'fb-login' );
                     facebookButton.addEventListener( 'click', loginFacebook, false );
 
+                    var emailButton = document.getElementById( 'create-email-account' );
+                    emailButton.addEventListener( 'click', showCreateEmailAccount, false );
+
                     window.addEventListener( 'message', authorizeFacebook, false );
 
                     if ( window.deviceInfo.mobile ) {
 
                         loginButton.addEventListener( 'touchstart', selectButton, false );
                         loginButton.addEventListener( 'touchend', unselectButton, false );
+
                         facebookButton.addEventListener( 'touchstart', selectButton, false );
                         facebookButton.addEventListener( 'touchend', unselectButton, false );
+
+                        emailButton.addEventListener( 'touchstart', selectButton, false );
+                        emailButton.addEventListener( 'touchend', unselectButton, false );
 
                     } else {
 
                         loginButton.addEventListener( 'mousedown', selectButton, false );
                         loginButton.addEventListener( 'mouseup', unselectButton, false );
+
                         //                        facebookButton.addEventListener( 'mousedown', selectButton, false );
                         //                        facebookButton.addEventListener( 'mouseup', unselectButton, false );
+
+                        emailButton.addEventListener( 'mousedown', selectButton, false );
+                        emailButton.addEventListener( 'mouseup', unselectButton, false );
 
                     };
 
@@ -1606,27 +1617,14 @@
             initializeEnvironment();
             initializeDimensions();
 
-            initializePhoneGap( function () { } );
+            initializePhoneGap( function () {
 
-            if ( window.location.queryString()['logout'] ) { //for debugging
-
-                hideSplashPage();
-                logoutApp();
-
-            } else {
-
-                if ( window.deviceInfo.brand == 'ios'
-                    && window.deviceInfo.type == 'handheld'
-                    && window.deviceInfo.mode == 'browser' ) {
+                if ( window.location.queryString()['logout'] ) { //for debugging
 
                     hideSplashPage();
-                    hideAddressBar();
-                    showPage( 'install-page' );
+                    logoutApp();
 
                 } else {
-
-                    //  window.setLocalStorage( 'sessionId', 'c04273d1-949d-46e5-a7c7-efe53cf8344c' );
-                    //  window.setLocalStorage( 'sessionKey', 'e4b87f40-349e-4bab-8dca-4a592eac4e70' );
 
                     initializeTrackingCode();
                     addDefaultEventListeners();
@@ -1637,7 +1635,7 @@
 
                 };
 
-            };
+            } );
 
         };
 
@@ -1741,7 +1739,7 @@
             //window.deviceInfo.mode - browser, standalone, webview
 
             //window.deviceInfo.mobile - window.deviceInfo.type == handheld || window.deviceInfo.type == tablet
-            //window.deviceInfo.phonegap - ( window.deviceInfo.type == ios || android ) && window.deviceInfo.mode == webview
+            //window.deviceInfo.phonegap - window.device
 
             if ( /ipad/.test( userAgent ) || ( /android/.test( userAgent ) && !/mobile/.test( userAgent ) ) ) {
 
@@ -1800,37 +1798,41 @@
             };
 
             window.deviceInfo.mobile = ( window.deviceInfo.type == 'handheld' || window.deviceInfo.type == 'tablet' );
-            window.deviceInfo.phonegap = ( window.deviceInfo.brand == 'ios' && window.deviceInfo.mode == 'webview' );
+            window.deviceInfo.phonegap = !!window.device;
 
         };
 
         function initializePhoneGap( complete ) {
 
-            if ( window.deviceInfo.mode == 'webview' ) {
+            if ( window.deviceInfo.phonegap ) {
 
-                function onPhoneGapReady() {
+                //                function onPhoneGapReady() {
 
-                    document.removeEventListener( 'deviceready', onPhoneGapReady, false );
+                //                    document.removeEventListener( 'deviceready', onPhoneGapReady, false );
 
-                    window.phoneGapReady = true;
+                //                    var script = document.createElement( 'script' );
+                //                    script.id = 'child-browser';
+                //                    script.src = 'childbrowser.js';
+                //                    document.body.appendChild( script );
 
-                    var script = document.createElement( 'script' );
-                    script.id = 'child-browser';
-                    script.src = 'childbrowser.js';
-                    document.body.appendChild( script );
+                //                    initializeChildBrowser();
+                //                    complete();
 
-                    initializeChildBrowser();
+                //                };
 
-                    complete();
+                //                document.addEventListener( 'deviceready', onPhoneGapReady, false );
 
-                };
 
-                document.addEventListener( 'deviceready', onPhoneGapReady, false );
+                //                var script = document.createElement( 'script' );
+                //                script.id = 'phone-gap';
+                //                script.src = 'phonegap.js';
+                //                document.body.appendChild( script );
 
-                var script = document.createElement( 'script' );
-                script.id = 'phone-gap';
-                script.src = 'phonegap.js';
-                document.body.appendChild( script );
+
+                initializeChildBrowser();
+                closePhoneGap()
+
+                complete();
 
             } else {
 
@@ -1853,7 +1855,7 @@
 
                 } );
 
-            }, 200 );
+            }, 50 );
 
         };
 
@@ -2085,9 +2087,7 @@
                 },
                 "error": function ( response, status, error ) {
 
-                    error == 'Unauthorized'
-                        ? logoutApp()
-                        : showMessage( STRINGS.error.loadQuestions );
+                    if ( error == 'Unauthorized' ) { logoutApp() };
 
                 }
 
@@ -2128,7 +2128,7 @@
 
                 } );
 
-            }, 50 );
+            }, 10 );
 
         };
 
@@ -2141,7 +2141,7 @@
                 var resource = '/api/users/' + userId,
                     session = getSession( resource );
 
-                showLoading( 'center', 'center', $( '#user-picture' ) );
+                showLoading( 'center', 'center' );
 
                 ajax( API_URL + resource, {
 
@@ -2173,7 +2173,7 @@
 
                 } );
 
-            }, 50 );
+            }, 10 );
 
         };
 
@@ -2216,6 +2216,10 @@
             $( '#answer-text' ).setAttribute( 'placeholder', STRINGS.answerLabel );
             $( '#ask-text' ).setAttribute( 'placeholder', STRINGS.questionLabel );
             $( '#cancel-answer-button' ).setAttribute( 'placeholder', STRINGS.addAnswer.cancel );
+            $( '#cancel-account' ).textContent = STRINGS.createAccount.cancelAccount;
+            $( '#create-email' ).setAttribute( 'placeholder', STRINGS.emailLabel );
+            $( '#create-username' ).setAttribute( 'placeholder', STRINGS.usernameLabel );
+            $( '#create-password' ).setAttribute( 'placeholder', STRINGS.passwordLabel );
             $( '#edit-account-caption' ).innerHTML = STRINGS.editAccountCaption;
             $( '#edit-username' ).setAttribute( 'placeholder', STRINGS.edit.usernameCaption );
             $( '#edit-tagline' ).setAttribute( 'placeholder', STRINGS.edit.taglineCaption );
@@ -2232,6 +2236,7 @@
             $( '#question-share-facebook' ).textContent = STRINGS.facebook.postQuestionToFacebook;
             $( '#question-share-twitter' ).textContent = STRINGS.facebook.postQuestionToTwitter;
             $( '#reputation-caption' ).textContent = STRINGS.reputation;
+            $( '#save-account' ).textContent = STRINGS.createAccount.saveAccount;
             $( '#top-interval-day' ).textContent = STRINGS.intervalDayCaption;
             $( '#top-interval-week' ).textContent = STRINGS.intervalWeekCaption;
             $( '#top-interval-month' ).textContent = STRINGS.intervalMonthCaption;
@@ -2300,7 +2305,7 @@
 
             var login = document.getElementById( 'fb-login' );
 
-            showLoading( 'center', 209, login );
+            showLoading( 'center', 263, login );
 
             login.innerHTML = STRINGS.facebook.authenticatingCaption;
             login.removeAttribute( 'data-facebook-id' );
@@ -2344,7 +2349,7 @@
 
             } else {
 
-                //                if ( window.phoneGapReady ) {
+                //                if ( window.deviceInfo.phonegap ) {
 
                 //                    usePhoneGap( function ( complete ) {
 
@@ -2911,6 +2916,9 @@
                     var facebookButton = document.getElementById( 'fb-login' );
                     facebookButton.removeEventListener( 'click', loginFacebook, false );
 
+                    var emailButton = document.getElementById( 'create-email-account' );
+                    emailButton.removeEventListener( 'click', showCreateEmailAccount, false );
+
                     window.removeEventListener( 'message', authorizeFacebook, false );
 
                     if ( window.deviceInfo.mobile ) {
@@ -2921,6 +2929,9 @@
                         facebookButton.removeEventListener( 'touchstart', selectButton, false );
                         facebookButton.removeEventListener( 'touchend', unselectButton, false );
 
+                        emailButton.removeEventListener( 'touchstart', selectButton, false );
+                        emailButton.removeEventListener( 'touchend', unselectButton, false );
+
                     } else {
 
                         loginButton.removeEventListener( 'mousedown', selectButton, false );
@@ -2928,6 +2939,9 @@
 
                         //                        facebookButton.removeEventListener( 'mousedown', selectButton, false );
                         //                        facebookButton.removeEventListener( 'mouseup', unselectButton, false );
+
+                        emailButton.removeEventListener( 'mousedown', selectButton, false );
+                        emailButton.removeEventListener( 'mouseup', unselectButton, false );
 
                     };
 
@@ -3929,7 +3943,7 @@
 
             var geoFunction = ( ( options && options.quick ) ? get : watch );
 
-            if ( window.phoneGapReady ) {
+            if ( window.deviceInfo.phonegap ) {
 
                 usePhoneGap( function ( phonegapComplete ) {
 
@@ -4901,7 +4915,7 @@
 
                 if ( answer[ANSWER_COLUMNS.link] ) {
 
-                    if ( window.phoneGapReady ) {
+                    if ( window.deviceInfo.phonegap ) {
 
                         usePhoneGap( function ( complete ) {
 
@@ -4935,7 +4949,7 @@
                         + currentLatitude + ',' + currentLongitude
                         + '&daddr=' + answer[ANSWER_COLUMNS.latitude] + ',' + answer[ANSWER_COLUMNS.longitude];
 
-                if ( window.phoneGapReady ) {
+                if ( window.deviceInfo.phonegap ) {
 
                     usePhoneGap( function ( complete ) {
 
@@ -4982,6 +4996,100 @@
                 map.removeEventListener( 'touchend', unselectButton, false );
                 map.removeEventListener( 'mousedown', selectButton, false );
                 map.removeEventListener( 'mouseup', unselectButton, false );
+
+            };
+
+        };
+
+        function showCreateEmailAccount() {
+
+            var createAccount = document.getElementById( 'create-account-page' ),
+                save = document.getElementById( 'save-account' ),
+                cancel = document.getElementById( 'cancel-account' );
+
+            createAccount.removeClass( 'hide' );
+            addEventListeners();
+
+            function saveAccount( event ) {
+
+                event.preventDefault();
+
+                var username = document.getElementById( 'create-username' ).value,
+                    password = document.getElementById( 'create-password' ).value,
+                    email = document.getElementById( 'create-email' ).value;
+
+                if ( username && password && email ) {
+
+                    var resource = '/logins/login',
+                        data = 'email=' + email
+                            + ( _currentLocation.latitude ? '&latitude=' + _currentLocation.latitude : '' )
+                            + ( _currentLocation.longitude ? '&longitude=' + _currentLocation.longitude : '' ),
+                        authorization = window.Crypto.util.bytesToBase64( 
+                            window.Crypto.charenc.UTF8.stringToBytes( username + ':' + password ) );
+
+                    ajax( API_URL + resource, {
+
+                        "type": "GET",
+                        "headers": { "x-authorization": authorization },
+                        "data": data,
+                        "complete": function ( response, status ) {
+
+                            if ( status != "error" ) {
+
+                                var session = response.getResponseHeader( 'x-session' ).split( ':' ),
+                                    newAccount = window.JSON.parse( response.responseText ).newAccount;
+
+
+                            };
+
+                        },
+                        "error": function ( response, status, error ) {
+
+                            document.getElementById( 'login-error' ).innerHTML = error;
+
+                        }
+
+                    } );
+
+                };
+
+            };
+
+            function close() {
+
+                removeEventListeners();
+
+            };
+
+            function addEventListeners() {
+
+                save.addEventListener( 'click', saveAccount, false );
+                save.addEventListener( 'touchstart', selectButton, false );
+                save.addEventListener( 'touchend', unselectButton, false );
+                save.addEventListener( 'mousedown', selectButton, false );
+                save.addEventListener( 'mouseup', unselectButton, false );
+
+                cancel.addEventListener( 'click', close, false );
+                cancel.addEventListener( 'touchstart', selectButton, false );
+                cancel.addEventListener( 'touchend', unselectButton, false );
+                cancel.addEventListener( 'mousedown', selectButton, false );
+                cancel.addEventListener( 'mouseup', unselectButton, false );
+
+            };
+
+            function removeEventListeners() {
+
+                save.removeEventListener( 'click', saveAccount, false );
+                save.removeEventListener( 'touchstart', selectButton, false );
+                save.removeEventListener( 'touchend', unselectButton, false );
+                save.removeEventListener( 'mousedown', selectButton, false );
+                save.removeEventListener( 'mouseup', unselectButton, false );
+
+                cancel.removeEventListener( 'click', close, false );
+                cancel.removeEventListener( 'touchstart', selectButton, false );
+                cancel.removeEventListener( 'touchend', unselectButton, false );
+                cancel.removeEventListener( 'mousedown', selectButton, false );
+                cancel.removeEventListener( 'mouseup', unselectButton, false );
 
             };
 
@@ -5034,31 +5142,6 @@
 
         };
 
-        function showInstallPage() {
-
-            var html =
-                  '<div id="install-view">'
-                + '<header id="install-header">'
-                + '<img src="images/icon.png" />'
-                + '<div>urbanAsk</div>'
-                + '</header>'
-                + '<div>If using Facebook Mobile:</div>'
-                + '<ol id="facebook-steps">'
-                + '<li class="install-item">1. Tap <img src="images/install-share.png" /> above.</li>'
-                + '<li class="install-item">2. Tap <img src="images/install-safari.png" /></li>'
-                + '</ol>'
-                + '<div>If using Mobile Safari:</div>'
-                + '<ol id="install-steps">'
-                + '<li class="install-item">1. Tap <img src="images/install-share.png" /> below.</li>'
-                + '<li class="install-item">2. Tap <img src="images/install-homescreen.png" /></li>'
-                + '<li class="install-item">3. Tap <img src="images/install-add.png" /></li>'
-                + '</ol>'
-                + '</div>';
-
-            document.getElementById( 'install-page' ).innerHTML = html;
-
-        };
-
         function showLoading( top, left, element ) {
 
             var loading = document.getElementById( 'loading' );
@@ -5069,7 +5152,7 @@
             switch ( top ) {
                 case 'center':
 
-                    top = ( element.clientHeight - loading.clientHeight ) / 2;
+                    top = Math.round( ( element.clientHeight - loading.clientHeight ) / 2 );
                     break;
 
             };
@@ -5077,7 +5160,7 @@
             switch ( left ) {
                 case 'center':
 
-                    left = ( element.clientWidth - loading.clientWidth ) / 2;
+                    left = Math.round( ( element.clientWidth - loading.clientWidth ) / 2 );
                     break;
 
             };
@@ -5245,7 +5328,7 @@
                 document.getElementById( 'user-notifications' ).innerHTML = html;
                 document.getElementById( 'user-notifications' ).removeClass( 'hide' );
 
-                if ( newItems && window.phoneGapReady ) {
+                if ( newItems && window.deviceInfo.phonegap ) {
 
                     usePhoneGap( function ( phonegapComplete ) {
 
@@ -5333,17 +5416,6 @@
                     initializeBackButton();
                     document.getElementById( 'directions-page' ).addClass( 'top-slide' );
                     showToolbar( 'answer', { question: question, answer: answer } );
-
-                    break;
-
-                case 'install-page':
-
-                    _pages.clear();
-
-                    slidePage( page, previousPage );
-                    setView( 'fullscreen' );
-                    initializeBackButton();
-                    showInstallPage();
 
                     break;
 
@@ -5452,13 +5524,16 @@
 
                     slidePage( page, previousPage );
 
-                    hideAccountPage();
-                    resetUsersTop();
-                    setQuestionsTop();
-                    setView( 'normal' );
-                    initializeBackButton();
-                    showToolbar( 'main' );
+                    window.setTimeout( function () {
 
+                        hideAccountPage();
+                        resetUsersTop();
+                        setQuestionsTop();
+                        setView( 'normal' );
+                        initializeBackButton();
+                        showToolbar( 'main' );
+
+                    }, 10 );
 
                     break;
 
@@ -5998,71 +6073,67 @@
 
         function showTopUsers() {
 
-            window.setTimeout( function () {
+            var noTopUsers = document.getElementById( 'no-top-users' ),
+                topUsers = document.getElementById( 'top-users' );
 
-                var noTopUsers = document.getElementById( 'no-top-users' ),
-                    topUsers = document.getElementById( 'top-users' );
+            if ( _cache.topUsers.length() ) {
 
-                if ( _cache.topUsers.length() ) {
+                var topTypeId = window.parseInt( document.getElementById( 'top-type' ).getDataset( 'id' ) ),
+                    intervalId = window.parseInt( document.getElementById( 'top-interval' ).getDataset( 'id' ) ),
+                    html = '';
 
-                    var topTypeId = window.parseInt( document.getElementById( 'top-type' ).getDataset( 'id' ) ),
-                        intervalId = window.parseInt( document.getElementById( 'top-interval' ).getDataset( 'id' ) ),
-                        html = '';
+                scrollUp();
 
-                    scrollUp();
+                for ( var index = 0, rank = 0; index < _cache.topUsers.length(); index++ ) {
 
-                    for ( var index = 0, rank = 0; index < _cache.topUsers.length(); index++ ) {
+                    if ( _cache.topUsers.data[index][TOP_USER_COLUMNS.topTypeId] == topTypeId
+                        && _cache.topUsers.data[index][TOP_USER_COLUMNS.intervalId] == intervalId ) {
 
-                        if ( _cache.topUsers.data[index][TOP_USER_COLUMNS.topTypeId] == topTypeId
-                            && _cache.topUsers.data[index][TOP_USER_COLUMNS.intervalId] == intervalId ) {
-
-                            rank++;
-                            html += getTopUserItem( topTypeId, _cache.topUsers.data[index], rank );
-
-                        };
+                        rank++;
+                        html += getTopUserItem( topTypeId, _cache.topUsers.data[index], rank );
 
                     };
-
-                    topUsers.innerHTML = html;
-
-                    if ( html.length ) {
-
-                        noTopUsers.addClass( 'hide' );
-                        topUsers.removeClass( 'hide' );
-
-                    } else {
-
-                        noTopUsers.innerHTML = STRINGS.topUsers.noTopUsers
-                            .replace( "%1", STRINGS.topUsers.noTopUsersType[topTypeId - 1] )
-                            .replace( "%2", STRINGS.topUsers.noTopUsersInterval[intervalId] );
-                        noTopUsers.removeClass( 'hide' );
-                        topUsers.addClass( 'hide' );
-
-                    };
-
-                    window.setTimeout( function () {
-
-                        if ( _cache.topUsers.isExpired() ) { loadTopUsers(); };
-
-                    }, 1500 );
-
-                } else {
-
-                    noTopUsers.innerHTML = STRINGS.topUsers.loading;
-                    noTopUsers.removeClass( 'hide' );
-                    topUsers.addClass( 'hide' );
-
-                    loadTopUsers();
 
                 };
 
-            }, 10 );
+                topUsers.innerHTML = html;
+
+                if ( html.length ) {
+
+                    noTopUsers.addClass( 'hide' );
+                    topUsers.removeClass( 'hide' );
+
+                } else {
+
+                    noTopUsers.innerHTML = STRINGS.topUsers.noTopUsers
+                        .replace( "%1", STRINGS.topUsers.noTopUsersType[topTypeId - 1] )
+                        .replace( "%2", STRINGS.topUsers.noTopUsersInterval[intervalId] );
+                    noTopUsers.removeClass( 'hide' );
+                    topUsers.addClass( 'hide' );
+
+                };
+
+                window.setTimeout( function () {
+
+                    if ( _cache.topUsers.isExpired() ) { loadTopUsers(); };
+
+                }, 1500 );
+
+            } else {
+
+                noTopUsers.innerHTML = STRINGS.topUsers.loading;
+                noTopUsers.removeClass( 'hide' );
+                topUsers.addClass( 'hide' );
+
+                loadTopUsers();
+
+            };
 
         };
 
         function showUser( user ) {
 
-            showLoading( 'center', 'center', $( '#user-picture' ) );
+            showLoading( 'center', 'center' );
 
             $( '#username' ).textContent = user[USER_COLUMNS.username];
             $( '#member-since' ).textContent = getMemberSince( user );
@@ -7102,7 +7173,7 @@ i]; else { var n = a[i - 3] ^ a[i - 8] ^ a[i - 14] ^ a[i - 16]; a[i] = n << 1 | 
         } )();
         (function () { var d = window.Crypto, m = d.util, f = d.charenc, b = f.UTF8, c = f.Binary; d.HMAC = function ( a, d, e, h ) { d.constructor == String && ( d = b.stringToBytes( d ) ); e.constructor == String && ( e = b.stringToBytes( e ) ); e.length > 4 * a._blocksize && ( e = a( e, { asBytes: !0 } ) ); for ( var f = e.slice( 0 ), e = e.slice( 0 ), g = 0; g < 4 * a._blocksize; g++ ) f[g] ^= 92, e[g] ^= 54; a = a( f.concat( a( e.concat( d ), { asBytes: !0 } ) ), { asBytes: !0 } ); return h && h.asBytes ? a : h && h.asString ? c.bytesToString( a ) : m.bytesToHex( a ) } } )();
 
-        window.setTimeout( initialize, 200 );
+        window.setTimeout( initialize, 100 );
 
     };
 

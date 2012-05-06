@@ -132,6 +132,8 @@ Public Class loginFB : Implements System.Web.IHttpHandler
 
                             End If
 
+                            loadSession(sessionConnection, createSession, context, userId, newAccount)
+
                         End If
 
                     Else
@@ -192,9 +194,9 @@ Public Class loginFB : Implements System.Web.IHttpHandler
 
                         End Using
 
-                        End If
-
                         loadSession(sessionConnection, createSession, context, userId, newAccount)
+
+                    End If
 
                 End Using
 
