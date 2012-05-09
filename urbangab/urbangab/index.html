@@ -1,5 +1,5 @@
 ﻿<!doctype html>
-<html lang="en" data-version="0.1.28" manifest="cache.manifest">
+<html lang="en" data-version="0.1.29" manifest="cache.manifest">
 <head>
     <title>urbanAsk</title>
     
@@ -19,7 +19,7 @@
 
     <header id="header">
         <div id="back-button" class="hide"><div id="back-button-arrow"></div><div id="back-button-gradient"></div><div id="back-button-text"></div></div>
-        <h1 id="title">0.1.28</h1>
+        <h1 id="title">0.1.29</h1>
         <div id="refresh-button"><div id="refresh-button-text"></div></div>
     </header>
     
@@ -149,11 +149,12 @@
 
         <section id="create-account-page" class="hide">
             <form id="create-account">
-                <input id="create-username" autocorrect="off" autocapitalize="none" class="login-field" type="text" maxlength="100" />
-                <input id="create-password" autocorrect="off" autocapitalize="none" class="login-field" type="text" maxlength="100" />
-                <input id="create-email" autocorrect="off" autocapitalize="none" class="login-field" type="text" maxlength="256" />
-                <button id="save-account" type="submit"></button>
-                <button id="cancel-account" type="button"></button>
+                <input id="create-username" class="create-account-input" autocorrect="off" autocapitalize="none" class="login-field" type="text" maxlength="100" />
+                <input id="create-password" class="create-account-input" autocorrect="off" autocapitalize="none" class="login-field" type="text" maxlength="100" />
+                <input id="create-email" class="create-account-input" autocorrect="off" autocapitalize="none" class="login-field" type="text" maxlength="256" />
+                <button id="save-account" class="button" type="submit"></button>
+                <span id="create-error"></span>
+                <div id="create-account-cancel"></div>
             </form>
         </section>
 

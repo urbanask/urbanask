@@ -28,6 +28,9 @@ Public MustInherit Class messageHandler : Implements System.Web.IHttpHandler
     Protected MustOverride Function isValid(
         context As Web.HttpContext,
         request As String) As Boolean
+    Protected MustOverride Function isAuthorized(
+        context As Web.HttpContext,
+        ByRef userId As Int32) As Boolean
     Protected MustOverride Sub process(
         connection As System.Data.SqlClient.SqlConnection,
         context As Web.HttpContext,
@@ -38,11 +41,9 @@ Public MustInherit Class messageHandler : Implements System.Web.IHttpHandler
         context As Web.HttpContext) _
         Implements System.Web.IHttpHandler.ProcessRequest
 
-        Dim isAuthorized As Boolean,
-            userId As Integer,
-            auth As New authorization(context, isAuthorized, userId)
+        Dim userId As Integer
 
-        If isAuthorized Then
+        If isAuthorized(context, userId) Then
 
             Dim request As String = getRequest(context)
 

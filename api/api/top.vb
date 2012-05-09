@@ -175,6 +175,17 @@ Public Class top : Inherits api.messageHandler
 
     End Property
 
+    Protected Overrides Function isAuthorized(
+        context As System.Web.HttpContext,
+        ByRef userId As Int32) As Boolean
+
+        Dim authorized As Boolean,
+            auth As New authorization(context, authorized, userId)
+
+        Return authorized
+
+    End Function
+
 End Class
 
 

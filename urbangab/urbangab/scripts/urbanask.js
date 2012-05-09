@@ -156,6 +156,7 @@
                 "answers": 15
 
             },
+            RANDOM_DISTANCE = 600, //feet
             REFRESH_NEW_QUESTION_RATE = 500, // milliseconds
             REFRESH_QUESTION_RATE = 60000, // 60 seconds
             REFRESH_USER_QUESTION_RATE = 30000, //30 seconds
@@ -1131,7 +1132,7 @@
             //69.1 * ( lat2 - lat1 )
             //53.0 * ( lon2 - lon1 )
 
-            var distance = Math.floor( Math.random() * 200 ) + 1, //200 feet
+            var distance = Math.floor( Math.random() * RANDOM_DISTANCE ) + 1, 
                 negative = ( Math.floor( Math.random() * 2 ) ? 1 : -1 ),
                 latitudeModifier = .000002741;
 
@@ -1141,7 +1142,7 @@
 
         function getRandomLongitude() {
 
-            var distance = Math.floor( Math.random() * 200 ) + 1, //200 feet
+            var distance = Math.floor( Math.random() * RANDOM_DISTANCE ) + 1, 
                 negative = ( Math.floor( Math.random() * 2 ) ? 1 : -1 ),
                 longitudeModifier = .0000035736;
 
@@ -2216,7 +2217,6 @@
             $( '#answer-text' ).setAttribute( 'placeholder', STRINGS.answerLabel );
             $( '#ask-text' ).setAttribute( 'placeholder', STRINGS.questionLabel );
             $( '#cancel-answer-button' ).setAttribute( 'placeholder', STRINGS.addAnswer.cancel );
-            $( '#cancel-account' ).textContent = STRINGS.createAccount.cancelAccount;
             $( '#create-email' ).setAttribute( 'placeholder', STRINGS.emailLabel );
             $( '#create-username' ).setAttribute( 'placeholder', STRINGS.usernameLabel );
             $( '#create-password' ).setAttribute( 'placeholder', STRINGS.passwordLabel );
@@ -2305,7 +2305,7 @@
 
             var login = document.getElementById( 'fb-login' );
 
-            showLoading( 'center', 263, login );
+            showLoading( 'center', 243, login );
 
             login.innerHTML = STRINGS.facebook.authenticatingCaption;
             login.removeAttribute( 'data-facebook-id' );
@@ -5005,7 +5005,7 @@
 
             var createAccount = document.getElementById( 'create-account-page' ),
                 save = document.getElementById( 'save-account' ),
-                cancel = document.getElementById( 'cancel-account' );
+                cancel = document.getElementById( 'create-account-cancel' );
 
             createAccount.removeClass( 'hide' );
             addEventListeners();
@@ -5020,7 +5020,7 @@
 
                 if ( username && password && email ) {
 
-                    var resource = '/logins/login',
+                    var resource = '/logins/login/add',
                         data = 'email=' + email
                             + ( _currentLocation.latitude ? '&latitude=' + _currentLocation.latitude : '' )
                             + ( _currentLocation.longitude ? '&longitude=' + _currentLocation.longitude : '' ),
@@ -5037,15 +5037,25 @@
                             if ( status != "error" ) {
 
                                 var session = response.getResponseHeader( 'x-session' ).split( ':' ),
-                                    newAccount = window.JSON.parse( response.responseText ).newAccount;
+                                    username = window.JSON.parse( response.responseText ).username;
 
+                                _session.id = session[0];
+                                _session.key = session[1];
+                                window.setLocalStorage( 'sessionId', _session.id );
+                                window.setLocalStorage( 'sessionKey', _session.key );
+
+                                document.getElementById( 'login-username' ).value = username;
+                                document.getElementById( 'login-password' ).value = password;
+
+                                close();
+                                startApp();
 
                             };
 
                         },
                         "error": function ( response, status, error ) {
 
-                            document.getElementById( 'login-error' ).innerHTML = error;
+                            document.getElementById( 'create-error' ).innerHTML = error;
 
                         }
 
@@ -5058,6 +5068,7 @@
             function close() {
 
                 removeEventListeners();
+                createAccount.addClass( 'hide' );
 
             };
 

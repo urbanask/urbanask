@@ -24,14 +24,14 @@ Public Class authorization
 
 #Else
 
-    '    Private Const CONNECTION_STRING As String = "Server=SERVER2008;Database=session;uid=login;pwd=everythingcarpetandall;Connect Timeout=600;"
+    'Private Const CONNECTION_STRING As String = "Server=SERVER2008;Database=session;uid=login;pwd=everythingcarpetandall;Connect Timeout=600;"
     Private Const CONNECTION_STRING As String = "Server=69.65.42.214;Database=session;uid=login;pwd=everythingcarpetandall;Connect Timeout=600;"
 
 #End If
 
     Public Sub New(
         context As Web.HttpContext,
-        ByRef isAuthorized As Boolean,
+        ByRef authorized As Boolean,
         ByRef userId As Int32)
 
         Dim session() As String = Nothing
@@ -83,7 +83,7 @@ Public Class authorization
 
                     If digest = computedDigest Then
 
-                        isAuthorized = True
+                        authorized = True
 
                     End If
 

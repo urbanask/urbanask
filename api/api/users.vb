@@ -19,6 +19,8 @@ Public Class users : Inherits api.messageHandler
         LOAD_USER_PICTURE As String = "Gabs.api.loadUserPicture",
         LOAD_USER_ICON As String = "Gabs.api.loadUserIcon",
         LOAD_TOP_USERS As String = "Gabs.api.loadTopUsers",
+        VERIFY_USER_EMAIL As String = "Gabs.login.verifyUserEmail",
+        VERIFIED_URL As String = "http://urbanask.com",
         JSON_USER_COLUMNS As String =
               "[" _
             & """userId""," _
@@ -55,6 +57,10 @@ Public Class users : Inherits api.messageHandler
             Case "/columns" '/api/users/columns
 
                 loadColumns(context)
+
+            Case "/verifyemail" '/api/users/verifyemail
+
+                verifyEmail(context, connection, queries)
 
             Case Else
 
@@ -142,7 +148,26 @@ Public Class users : Inherits api.messageHandler
             command.Parameters.AddWithValue("@count", Me.userCount(queries))
             command.Parameters.AddWithValue("@expirationDays", Me.expirationDays(queries))
 
-            sendSuccessResponse(context, createJsonUser(command))
+            MyBase.sendSuccessResponse(context, createJsonUser(command))
+
+        End Using
+
+    End Sub
+
+    Private Sub verifyEmail(
+        context As Web.HttpContext,
+        connection As SqlClient.SqlConnection,
+        queries As Collections.Specialized.NameValueCollection)
+
+        Using command As New SqlClient.SqlCommand(VERIFY_USER_EMAIL, connection)
+
+            command.CommandType = CommandType.StoredProcedure
+            command.CommandTimeout = COMMAND_TIMEOUT
+
+            command.Parameters.AddWithValue("@guid", queries("guid"))
+            command.ExecuteNonQuery()
+
+            context.Response.Redirect(VERIFIED_URL, True)
 
         End Using
 
@@ -513,6 +538,28 @@ Public Class users : Inherits api.messageHandler
         End Get
 
     End Property
+
+    Protected Overrides Function isAuthorized(
+        context As System.Web.HttpContext,
+        ByRef userId As Int32) As Boolean
+
+        Dim authorized As Boolean,
+            resource As String = context.Request.PathInfo
+
+        Select resource
+            Case "/verifyemail" '/api/users/verifyemail
+
+                authorized = True
+
+            Case Else
+
+                Dim auth As New authorization(context, authorized, userId)
+
+        End Select
+
+        Return authorized
+
+    End Function
 
 End Class
 

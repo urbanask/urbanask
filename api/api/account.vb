@@ -62,7 +62,7 @@ Public Class account : Inherits api.messageHandler
 
             Case Else
 
-                sendErrorResponse(context, 404, "Not Found")
+                MyBase.sendErrorResponse(context, 404, "Not Found")
 
         End Select
 
@@ -227,6 +227,17 @@ Public Class account : Inherits api.messageHandler
         request As String) As Boolean
 
         Return True
+
+    End Function
+
+    Protected Overrides Function isAuthorized(
+        context As System.Web.HttpContext,
+        ByRef userId As Int32) As Boolean
+
+        Dim authorized As Boolean,
+            auth As New authorization(context, authorized, userId)
+
+        Return authorized
 
     End Function
 

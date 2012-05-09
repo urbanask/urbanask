@@ -13,6 +13,7 @@ Public Class login : Implements System.Web.IHttpHandler
     Private Const CREATE_SESSION_PROC As String = "session.login.createSession",
         CHECK_AUTHORIZATION_PROC As String = "Gabs.login.checkAuthorization",
         CREATE_USER_PROC As String = "Gabs.login.createUser",
+        UPDATE_HASH_PROC As String = "Gabs.login.updateHash",
         COMMAND_TIMEOUT As Int32 = 60,
         METRIC_DEFAULT As Int32 = 0,
         LANGUAGE_DEFAULT As Int32 = 1,
@@ -70,7 +71,8 @@ Public Class login : Implements System.Web.IHttpHandler
                     sessionConnection As New Data.SqlClient.SqlConnection(SESSION_CONNECTION_STRING),
                     checkAuthorization As New Data.SqlClient.SqlCommand(CHECK_AUTHORIZATION_PROC, gabsConnection),
                     createUser As New Data.SqlClient.SqlCommand(CREATE_USER_PROC, gabsConnection),
-                    createSession As New Data.SqlClient.SqlCommand(CREATE_SESSION_PROC, sessionConnection)
+                    createSession As New Data.SqlClient.SqlCommand(CREATE_SESSION_PROC, sessionConnection),
+                    updateHash As New Data.SqlClient.SqlCommand(UPDATE_HASH_PROC, gabsConnection)
 
                     gabsConnection.Open()
 
@@ -86,6 +88,7 @@ Public Class login : Implements System.Web.IHttpHandler
                             checkAuthorization.Parameters.Add("@hashType", Data.SqlDbType.VarChar, 10).Direction = Data.ParameterDirection.Output
                             checkAuthorization.Parameters.Add("@salt", Data.SqlDbType.Char, 8).Direction = Data.ParameterDirection.Output
                             checkAuthorization.Parameters.Add("@iterations", Data.SqlDbType.Int).Direction = Data.ParameterDirection.Output
+                            checkAuthorization.Parameters.Add("@enabled", Data.SqlDbType.Int).Direction = Data.ParameterDirection.Output
 
                             checkAuthorization.ExecuteNonQuery()
 
@@ -134,7 +137,7 @@ Public Class login : Implements System.Web.IHttpHandler
                             createUser.CommandType = Data.CommandType.StoredProcedure
                             createUser.CommandTimeout = COMMAND_TIMEOUT
 
-                            createUser.Parameters.AddWithValue("@username", username)
+                            createUser.Parameters.AddWithValue("@suggestedUsername", username)
                             createUser.Parameters.AddWithValue("@tagline", "")
                             createUser.Parameters.AddWithValue("@hash", hash.hash)
                             createUser.Parameters.AddWithValue("@salt", hash.salt)
@@ -146,6 +149,7 @@ Public Class login : Implements System.Web.IHttpHandler
                             createUser.Parameters.AddWithValue("@email", email)
                             createUser.Parameters.AddWithValue("@defaultRegionId", DEFAULT_REGION_ID)
                             createUser.Parameters.Add("@userId", Data.SqlDbType.Int).Direction = Data.ParameterDirection.Output
+                            createUser.Parameters.Add("@username", Data.SqlDbType.VarChar, 100).Direction = Data.ParameterDirection.Output
 
                             If latitude IsNot Nothing Then
 
@@ -155,9 +159,22 @@ Public Class login : Implements System.Web.IHttpHandler
                             End If
 
                             createUser.ExecuteNonQuery()
-
                             userId = CInt(createUser.Parameters("@userId").Value)
-                            loadSession(sessionConnection, createSession, context, userId)
+
+                            If username <> createUser.Parameters("@username").Value.ToString() Then
+
+                                username = createUser.Parameters("@username").Value.ToString()
+                                hash = New Hashing.hash(username, password)
+
+                                updateHash.CommandType = Data.CommandType.StoredProcedure
+                                updateHash.CommandTimeout = COMMAND_TIMEOUT
+                                updateHash.Parameters.AddWithValue("@userId", userId)
+                                updateHash.Parameters.AddWithValue("@hash", hash.hash)
+                                updateHash.ExecuteNonQuery()
+
+                            End If
+
+                            loadSession(sessionConnection, createSession, context, userId, username)
 
                     End Select
 
@@ -181,7 +198,8 @@ Public Class login : Implements System.Web.IHttpHandler
         sessionConnection As Data.SqlClient.SqlConnection, _
         createSession As Data.SqlClient.SqlCommand,
         context As Web.HttpContext,
-        userId As Int32)
+        userId As Int32,
+        Optional username As String = "")
 
         sessionConnection.Open()
 
@@ -197,7 +215,8 @@ Public Class login : Implements System.Web.IHttpHandler
         sendSuccessResponse(
             context,
             createSession.Parameters("@sessionId").Value.ToString(),
-            createSession.Parameters("@sessionKey").Value.ToString())
+            createSession.Parameters("@sessionKey").Value.ToString(),
+            username)
 
     End Sub
 
@@ -224,21 +243,22 @@ Public Class login : Implements System.Web.IHttpHandler
     Private Sub sendSuccessResponse(
         context As Web.HttpContext,
         session As String,
-        key As String)
+        key As String,
+        username As String)
 
         context.Response.Headers.Remove("Server")
         context.Response.Headers.Add("x-session", String.Concat(session, ":", key))
 
-        'Dim response As String = "{""newAccount"":" & newAccount.ToString().ToLower() & "}"
-        '        context.Response.Headers.Add("Content-Length", response.Length.ToString())
+        Dim response As String = "{""username"":""" & jsonEncode(username) & """}"
+        context.Response.Headers.Add("Content-Length", response.Length.ToString())
 
-        '#If CONFIG <> "Debug" Then
+#If CONFIG <> "Debug" Then
 
-        '            context.Response.ContentType = "application/json"
+        context.Response.ContentType = "application/json"
 
-        '#End If
+#End If
 
-        '        context.Response.Write(response)
+        context.Response.Write(response)
 
     End Sub
 
@@ -251,6 +271,18 @@ Public Class login : Implements System.Web.IHttpHandler
         'context.Response.Headers.Add("WWW-Authenticate", "Basic")
 
     End Sub
+
+    Protected Function jsonEncode(
+        json As String) As String
+
+        Return json _
+            .Replace("&", "&amp;") _
+            .Replace("\", "&#92;") _
+            .Replace("""", "\""") _
+            .Replace("<", "&lt;") _
+            .Replace(">", "&gt;")
+
+    End Function
 
 End Class
 

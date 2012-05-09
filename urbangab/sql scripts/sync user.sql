@@ -1,6 +1,7 @@
 
 SELECT * FROM [user] WHERE userId < 100000 ORDER BY userId DESC
 SELECT * FROM [userFacebook] WHERE userId < 100000 ORDER BY [userFacebook].userId
+SELECT * FROM [userEmail] WHERE userId < 100000 ORDER BY [userEmail].userId
 SELECT * FROM userRegion WHERE userId < 100000
 SELECT * FROM userPicture WHERE userId < 100
 SELECT * FROM question WHERE userId < 100000 ORDER BY timestamp DESC
