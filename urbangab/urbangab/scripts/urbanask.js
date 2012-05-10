@@ -18,7 +18,6 @@
 
                     showNotification( STRINGS.notification.newVersion, { footer: STRINGS.notification.downloading, size: 'tiny' } );
                     window.applicationCache.swapCache();
-
                     window.setTimeout( function () { window.location.reload(); }, 3000 );
 
                 }, 2000 );
@@ -101,6 +100,7 @@
                 "badges": 4
 
             },
+            EXPIRATION_DAYS = 14,
             FACEBOOK_APP_ID = '267603823260704',
             FACEBOOK_AUTH_URL = 'http://urbanask.com',
             FACEBOOK_LOGIN_URL = 'http://urbanask.com/fb-login.html',
@@ -224,6 +224,7 @@
                 "reputations": 12
 
             },
+            VERSION_CHECK_RATE = 4 * 60 * 60 * 1000, //4 hours
             _pages = {
 
                 data: [],
@@ -269,6 +270,7 @@
                     timestamp: new window.Date(),
                     data: [],
                     length: function () { return this.data.length },
+                    refreshed: false,
 
                     load: function () {
 
@@ -304,6 +306,7 @@
                         this.data = window.JSON.parse( data );
                         window.setLocalStorage( 'topUsers', data );
                         window.setLocalStorage( 'topUsersTimestamp', this.timestamp );
+                        this.refreshed = true;
 
                     },
 
@@ -403,7 +406,7 @@
                 case 'login-page':
 
                     var loginButton = document.getElementById( 'login-button' );
-                    document.getElementById( 'login-page' ).addEventListener( 'submit', login, false );
+                    loginButton.addEventListener( 'click', login, false );
 
                     var facebookButton = document.getElementById( 'fb-login' );
                     facebookButton.addEventListener( 'click', loginFacebook, false );
@@ -1132,7 +1135,7 @@
             //69.1 * ( lat2 - lat1 )
             //53.0 * ( lon2 - lon1 )
 
-            var distance = Math.floor( Math.random() * RANDOM_DISTANCE ) + 1, 
+            var distance = Math.floor( Math.random() * RANDOM_DISTANCE ) + 1,
                 negative = ( Math.floor( Math.random() * 2 ) ? 1 : -1 ),
                 latitudeModifier = .000002741;
 
@@ -1142,7 +1145,7 @@
 
         function getRandomLongitude() {
 
-            var distance = Math.floor( Math.random() * RANDOM_DISTANCE ) + 1, 
+            var distance = Math.floor( Math.random() * RANDOM_DISTANCE ) + 1,
                 negative = ( Math.floor( Math.random() * 2 ) ? 1 : -1 ),
                 longitudeModifier = .0000035736;
 
@@ -1630,6 +1633,7 @@
                     initializeTrackingCode();
                     addDefaultEventListeners();
                     initializeInterface();
+                    initializeVersionCheck();
                     loadCachedData();
                     hideSplashPage();
                     checkLogin()
@@ -1723,8 +1727,8 @@
             var locationsViewHeight = viewportHeight - 45;
             document.getElementById( 'locations-view' ).style.height = locationsViewHeight + 'px';
 
-            var loginPageLeft = ( view.clientWidth - 320 ) / 2;
-            document.getElementById( 'login-page' ).style.left = loginPageLeft + 'px';
+            //            var loginPageLeft = ( view.clientWidth - 320 ) / 2;
+            //            document.getElementById( 'login-page' ).style.left = loginPageLeft + 'px';
 
         };
 
@@ -1939,6 +1943,20 @@
 
         };
 
+        function initializeVersionCheck() {
+
+            if ( window.applicationCache ) {
+
+                window.setInterval( function () {
+
+                    window.applicationCache.update();
+
+                }, VERSION_CHECK_RATE );
+
+            };
+
+        };
+
         function isMe( user ) {
 
             return ( _account[ACCOUNT_COLUMNS.userId] == user[USER_COLUMNS.userId] );
@@ -2023,8 +2041,8 @@
 
             if ( latitude ) {
 
-                _currentLocation.latitude = latitude;
-                _currentLocation.longitude = longitude;
+                _currentLocation.latitude = window.parseFloat( latitude );
+                _currentLocation.longitude = window.parseFloat( longitude );
 
             };
 
@@ -2180,7 +2198,8 @@
 
         function loadUserQuestions() {
 
-            var data = 'userId=' + _account[ACCOUNT_COLUMNS.userId],
+            var data = 'userId=' + _account[ACCOUNT_COLUMNS.userId]
+                    + '&expirationDays=' + EXPIRATION_DAYS,
                 resource = '/api/questions',
                 session = getSession( resource );
 
@@ -2911,7 +2930,7 @@
                 case 'login-page':
 
                     var loginButton = document.getElementById( 'login-button' );
-                    document.getElementById( 'login-page' ).removeEventListener( 'submit', login, false );
+                    loginButton.removeEventListener( 'click', login, false );
 
                     var facebookButton = document.getElementById( 'fb-login' );
                     facebookButton.removeEventListener( 'click', loginFacebook, false );
@@ -3970,8 +3989,8 @@
 
                 var geo = window.navigator.geolocation.watchPosition( function ( position ) {
 
-                    _currentLocation.latitude = position.coords.latitude;
-                    _currentLocation.longitude = position.coords.longitude;
+                    _currentLocation.latitude = window.parseFloat( position.coords.latitude );
+                    _currentLocation.longitude = window.parseFloat( position.coords.longitude );
                     _currentLocation.accuracy = position.coords.accuracy;
 
                 },
@@ -4002,8 +4021,8 @@
 
                 var geo = window.navigator.geolocation.getCurrentPosition( function ( position ) {
 
-                    _currentLocation.latitude = position.coords.latitude;
-                    _currentLocation.longitude = position.coords.longitude;
+                    _currentLocation.latitude = window.parseFloat( position.coords.latitude );
+                    _currentLocation.longitude = window.parseFloat( position.coords.longitude );
                     _currentLocation.accuracy = position.coords.accuracy;
 
                     window.setLocalStorage( 'current-latitude', _currentLocation.latitude ),
@@ -5936,9 +5955,15 @@
 
             if ( !window.deviceInfo.mobile ) {
 
-                var html = '<div id="external-footer" class="fadeable fade">' + STRINGS.externalFooter + '</div>';
+                var html = '<div id="external-footer" class="fadeable fade">'
+                        + STRINGS.externalFooter
+                        + '<a class="external-footer-link" href="download.html">'
+                        + '<img class="external-footer-image" src="images/apple.png" alt="apple" />' + STRINGS.iphone + '</a>'
+                        + '<a class="external-footer-link" href="download.html">'
+                        + '<img class="external-footer-image" src="images/android.png" alt="android" />' + STRINGS.android + '</a>'
+                        + '</div>';
 
-                document.getElementById( 'viewport' ).insertAdjacentHTML( 'beforeEnd', html );
+                document.getElementById( 'viewport' ).insertAdjacentHTML( 'afterEnd', html );
 
                 window.setTimeout( function () {
 
@@ -6087,7 +6112,7 @@
             var noTopUsers = document.getElementById( 'no-top-users' ),
                 topUsers = document.getElementById( 'top-users' );
 
-            if ( _cache.topUsers.length() ) {
+            if ( _cache.topUsers.refreshed ) {
 
                 var topTypeId = window.parseInt( document.getElementById( 'top-type' ).getDataset( 'id' ) ),
                     intervalId = window.parseInt( document.getElementById( 'top-interval' ).getDataset( 'id' ) ),

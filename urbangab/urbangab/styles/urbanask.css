@@ -300,6 +300,12 @@
     vertical-align: top;
 }
 
+#auth-view {
+    margin: 0 auto;
+    padding: 10px 5px 0 5px;
+    text-align: center;
+}
+
 #back-button { 
     background-image: linear-gradient( 
             top, 
@@ -889,12 +895,20 @@ body {
 }
 
 #external-footer {
-    bottom: -40px;
     color: white;
     font-size: 12px;
-    position: absolute;
+    margin-top: 10px;
     text-align: center;
-    width: 100%;
+}
+
+.external-footer-link {
+    color: white;
+    text-decoration: none;
+}
+
+.external-footer-image {
+    margin: 0 4px 0 7px;
+    vertical-align: text-bottom;
 }
 
 #fb-login {
@@ -1223,14 +1237,15 @@ html {
 
 #login-page {
     height: 100%;
+    left: 0;
     position: absolute;
     top: 0;
     width: 100%;
 }
 
 #login-view {
-    margin: 0;
-    padding: 10px 5px 10px 5px;
+    margin: 0 auto;
+    padding: 0 5px 10px 5px;
     text-align: center;
 }
 
@@ -1924,16 +1939,6 @@ html {
     font-weight: bold;
     position: relative;
     top: -10px;
-}
-
-#section-header-or {
-    margin-left: 25px;
-    text-align: left;
-}
-
-#section-header-or::before {
-    content: "Or";
-    left: -25px;
 }
 
 .section-header-black {

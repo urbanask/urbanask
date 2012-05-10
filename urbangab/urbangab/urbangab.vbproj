@@ -82,11 +82,15 @@
     <Content Include="download.html" />
     <Content Include="fb-login.html" />
     <Content Include="frame.html" />
+    <Content Include="images\amazon.png" />
+    <Content Include="images\android.png" />
     <Content Include="images\android\icon-57.png" />
     <Content Include="images\android\splash-320x480.png" />
     <Content Include="images\app-store.png" />
+    <Content Include="images\apple.png" />
     <Content Include="images\blackberry\icon-57.png" />
     <Content Include="images\blackberry\splash-320x480.png" />
+    <Content Include="images\google-play.png" />
     <Content Include="images\icon-114.png" />
     <Content Include="images\icon-57.png" />
     <Content Include="images\icon-72.png" />
@@ -99,6 +103,11 @@
     <Content Include="images\ios\splash-640x960.png" />
     <Content Include="images\ios\splash-768x1024.png" />
     <Content Include="images\iphone.png" />
+    <Content Include="images\on-the-web.png" />
+    <Content Include="images\qr-amazon.png" />
+    <Content Include="images\qr-apple.png" />
+    <Content Include="images\qr-google.png" />
+    <Content Include="images\qr-web.png" />
     <Content Include="images\red_foil_sticker.png" />
     <Content Include="images\screen-shot.jpg" />
     <Content Include="images\share-logo.png" />

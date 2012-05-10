@@ -1,0 +1,10 @@
+0.1.30
+
+new - app download links on desktop version
+new - personal unanswered questions remain on main page longer
+new - auto version updating without restarting app
+
+bug - switching regions causes top users to hang
+bug - login screen layout issues on iPad
+bug - iPhone Done button selecting wrong button on login screen
+various bugs

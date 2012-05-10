@@ -1,5 +1,5 @@
 ﻿<!doctype html>
-<html lang="en" data-version="0.1.29" manifest="cache.manifest">
+<html lang="en" data-version="0.1.30" manifest="cache.manifest">
 <head>
     <title>urbanAsk</title>
     
@@ -19,7 +19,7 @@
 
     <header id="header">
         <div id="back-button" class="hide"><div id="back-button-arrow"></div><div id="back-button-gradient"></div><div id="back-button-text"></div></div>
-        <h1 id="title">0.1.29</h1>
+        <h1 id="title">0.1.30</h1>
         <div id="refresh-button"><div id="refresh-button-text"></div></div>
     </header>
     
@@ -136,10 +136,11 @@
         </section>
 
         <section id ="login-page" class="hide">
-            <form id="login-view">
+            <form id="auth-view">
                 <button id="fb-login">Login with Facebook</button>
                 <button id="create-email-account">Create Account with Email</button>
-                <div id="section-header-or" class="section-header"></div>
+            </form>
+            <form id="login-view">
                 <input autocorrect="off" autocapitalize="none" class="login-field" id="login-username" type="text" maxlength="100" /><!--
              --><input class="login-field" id="login-password" type="password" maxlength="100" /><!--
              --><button id="login-button" type="submit"></button>

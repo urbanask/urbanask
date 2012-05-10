@@ -12,6 +12,7 @@
         "ageMinute": "min",
         "ageMinutes": "mins",
         "ageNow": "now",
+        "android": "Android",
         "answer": 
         {
             "noAnswers": "No one has answered yet. <br /><br />Be the first!",
@@ -70,7 +71,7 @@
             "voteOnOwnAnswer": "You can't vote on your own answer."
         },
         "existingAnswer": "Existing Answer",
-        "externalFooter": "Try it on your iPhone: urbanAsk.com",
+        "externalFooter": "Available on: ",
         "facebook": {
             "authenticatingCaption": "Authenticating",
             "loginCaption": "Login with Facebook",
@@ -89,6 +90,7 @@
         "intervalMonthCaption": "month",
         "intervalYearCaption": "year",
         "intervalAllCaption": "all",
+        "iphone": "iPhone",
         "letters": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
         "local": "local",
         "months": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
