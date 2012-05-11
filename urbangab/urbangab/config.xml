@@ -4,7 +4,7 @@
     xmlns:gap   = "http://phonegap.com/ns/1.0"
     id          = "com.urbanask"
     versionCode = "10"
-    version     = "0.1.30">
+    version     = "0.1.31">
 
     <name>urbanAsk</name>
     <description>Find it. Share it.</description>

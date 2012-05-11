@@ -163,7 +163,9 @@
             REGION_COLUMNS = {
 
                 "id": 0,
-                "name": 1
+                "name": 1,
+                "centerLatitude": 2,
+                "centerLongitude": 3
 
             },
             REPUTATION_ACTION = {
@@ -2219,9 +2221,7 @@
                 },
                 "error": function ( response, status, error ) {
 
-                    error == 'Unauthorized'
-                            ? logoutApp()
-                            : showMessage( STRINGS.error.loadQuestions );
+                    if ( error == 'Unauthorized' ) { logoutApp() };
 
                 }
 
@@ -3571,11 +3571,14 @@
 
             if ( document.getElementById( 'ask-text' ).value.trim() ) {
 
-                if ( _currentLocation.latitude ) {
+                var centerLatitude = parseFloat( _account[ACCOUNT_COLUMNS.regions][0][REGION_COLUMNS.centerLatitude] ),
+                    centerLongitude = parseFloat( _account[ACCOUNT_COLUMNS.regions][0][REGION_COLUMNS.centerLongitude] );
+
+                if ( _currentLocation.latitude || centerLatitude ) {
 
                     var questionText = document.getElementById( 'ask-text' ).value.trim(),
-                        latitude = _currentLocation.latitude + getRandomLatitude(),
-                        longitude = _currentLocation.longitude + getRandomLongitude(),
+                        latitude = ( _currentLocation.latitude ? _currentLocation.latitude : centerLatitude ) + getRandomLatitude(),
+                        longitude = ( _currentLocation.longitude ? _currentLocation.longitude : centerLongitude ) + getRandomLongitude(),
                         message = latitude + "~" + longitude + "~" + questionText,
                         resource = '/messaging/questions',
                         session = getSession( resource );
@@ -4904,11 +4907,20 @@
             call.addEventListener( 'mousedown', selectButton, false );
             call.addEventListener( 'mouseup', unselectButton, false );
 
-            website.addEventListener( 'click', viewWebsite, false );
-            website.addEventListener( 'touchstart', selectButton, false );
-            website.addEventListener( 'touchend', unselectButton, false );
-            website.addEventListener( 'mousedown', selectButton, false );
-            website.addEventListener( 'mouseup', unselectButton, false );
+            if ( answer[ANSWER_COLUMNS.link] ) {
+
+                website.removeClass( 'hide' );
+                website.addEventListener( 'click', viewWebsite, false );
+                website.addEventListener( 'touchstart', selectButton, false );
+                website.addEventListener( 'touchend', unselectButton, false );
+                website.addEventListener( 'mousedown', selectButton, false );
+                website.addEventListener( 'mouseup', unselectButton, false );
+
+            } else {
+
+                website.addClass( 'hide' );
+
+            };
 
             map.addEventListener( 'click', showGoogleMaps, false );
             map.addEventListener( 'touchstart', selectButton, false );
