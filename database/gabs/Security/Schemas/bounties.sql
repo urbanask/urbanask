@@ -1,0 +1,3 @@
+CREATE SCHEMA [bounties]
+AUTHORIZATION [bounties]
+GO

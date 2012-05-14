@@ -1,0 +1,3 @@
+CREATE SCHEMA [badges]
+AUTHORIZATION [badges]
+GO
