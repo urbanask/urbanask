@@ -1625,7 +1625,7 @@
 
             initializePhoneGap( function () {
 
-                if ( window.location.queryString()['logout'] ) { //for debugging
+                if ( window.location.queryString()['logout'] ) { //for debugging - logout=true
 
                     hideSplashPage();
                     logoutApp();
@@ -1729,8 +1729,8 @@
             var locationsViewHeight = viewportHeight - 45;
             document.getElementById( 'locations-view' ).style.height = locationsViewHeight + 'px';
 
-            //            var loginPageLeft = ( view.clientWidth - 320 ) / 2;
-            //            document.getElementById( 'login-page' ).style.left = loginPageLeft + 'px';
+            var accountPageHeight = view.clientHeight - 54;
+            document.getElementById( 'account' ).style.height = accountPageHeight + 'px';
 
         };
 
@@ -4616,7 +4616,8 @@
 
             function showAnswerConfirm( locationItem ) {
 
-                var answerConfirm = document.getElementById( 'answer-confirm' ),
+                var answerConfirmPage = document.getElementById( 'answer-confirm-page' ),
+                    answerConfirm = document.getElementById( 'answer-confirm' ),
                     answerText = document.getElementById( 'answer-text' ),
                     location = document.getElementById( 'answer-confirm-location' ),
                     map = document.getElementById( 'answer-confirm-map' ),
@@ -4639,10 +4640,10 @@
                 note.value = '';
                 map.setAttribute( 'src', mapUrl );
 
-                answerConfirm.removeClass( 'hide' );
+                answerConfirmPage.removeClass( 'hide' );
                 answerConfirm.style.top = ( ( viewport.clientHeight - answerConfirm.clientHeight ) / 2 ) + 'px';
                 answerConfirm.style.left = ( ( viewport.clientWidth - answerConfirm.clientWidth ) / 2 ) + 'px';
-                window.setTimeout( function () { answerConfirm.removeClass( 'fade' ); }, 50 );
+                window.setTimeout( function () { answerConfirmPage.removeClass( 'fade' ); }, 50 );
 
                 addListeners();
 
@@ -4650,8 +4651,8 @@
 
                     removeListeners();
 
-                    answerConfirm.addClass( 'fade' );
-                    window.setTimeout( function () { answerConfirm.addClass( 'hide' ); }, 1000 );
+                    answerConfirmPage.addClass( 'fade' );
+                    window.setTimeout( function () { answerConfirmPage.addClass( 'hide' ); }, 1000 );
 
                 };
 

@@ -121,10 +121,6 @@
     <Content Include="images\winphone\splash-320x480.jpg" />
     <Content Include="index.aspx" />
     <Content Include="images\icon.png" />
-    <Content Include="images\install-add.png" />
-    <Content Include="images\install-homescreen.png" />
-    <Content Include="images\install-safari.png" />
-    <Content Include="images\install-share.png" />
     <Content Include="images\logo.png" />
     <Content Include="images\splash.png" />
     <Content Include="index.html" />
@@ -136,7 +132,6 @@
     <Content Include="styles\download.css" />
     <Content Include="support.html" />
     <Content Include="tos.html" />
-    <Content Include="twitter.html" />
     <Content Include="web.config" />
     <Content Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>

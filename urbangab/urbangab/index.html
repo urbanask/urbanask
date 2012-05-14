@@ -1,5 +1,5 @@
 ﻿<!doctype html>
-<html lang="en" data-version="0.1.31" manifest="cache.manifest">
+<html lang="en" data-version="0.1.32" manifest="cache.manifest">
 <head>
     <title>urbanAsk</title>
     
@@ -19,7 +19,7 @@
 
     <header id="header">
         <div id="back-button" class="hide"><div id="back-button-arrow"></div><div id="back-button-gradient"></div><div id="back-button-text"></div></div>
-        <h1 id="title">0.1.31</h1>
+        <h1 id="title">0.1.32</h1>
         <div id="refresh-button"><div id="refresh-button-text"></div></div>
     </header>
     
@@ -94,6 +94,7 @@
         </section>
 
         <section id="account-page" class="hide">
+            <div id="account-cancel"></div>
             <form id="account">
                 <input id="edit-username" class="edit-input" placeholder="username">
                 <input id="edit-tagline" class="edit-input" placeholder="tagline">
@@ -104,7 +105,6 @@
                 <button id="invite" class="button">invite friends</button>
                 <button id="post" class="button">post to wall</button>
                 <button id="logout" class="button">log out</button>
-                <div id="account-cancel"></div>
             </form>
         </section>
 
@@ -190,15 +190,17 @@
         <div id="locations-view">
             <ul id="locations" class="scroll"></ul>
         </div>
-        <form id="answer-confirm" class="fade fadeable-500 hide">
-            <div id="answer-confirm-body">
-                <ul id="answer-confirm-location"></ul>
-                <input id="location-note" type="text" maxlength="40" placeholder="optional note..." />
-                <img id="answer-confirm-map" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12P4DwQACfsD/WMmxY8AAAAASUVORK5CYII=" />
-            </div>
-            <button id="answer-confirm-ok" type="submit"></button><!--
-            --><button id="answer-confirm-cancel"></button>
-        </form>
+        <div id="answer-confirm-page" class="fade fadeable-500 hide">
+            <form id="answer-confirm">
+                <div id="answer-confirm-body">
+                    <ul id="answer-confirm-location"></ul>
+                    <input id="location-note" type="text" maxlength="40" placeholder="optional note..." />
+                    <img id="answer-confirm-map" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12P4DwQACfsD/WMmxY8AAAAASUVORK5CYII=" />
+                </div>
+                <button id="answer-confirm-ok" type="submit"></button><!--
+                --><button id="answer-confirm-cancel"></button>
+            </form>
+        </div>
     </section>
 
     <footer id="toolbar">

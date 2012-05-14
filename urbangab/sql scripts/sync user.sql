@@ -1,6 +1,6 @@
 
 SELECT * FROM [user] WHERE userId < 100000 ORDER BY userId DESC
-SELECT * FROM [userFacebook] WHERE userId < 100000 ORDER BY [userFacebook].userId
+SELECT * FROM [userFacebook] WHERE userId < 100000 ORDER BY [userFacebook].userId DESC
 SELECT * FROM [userEmail] WHERE userId < 100000 ORDER BY [userEmail].userId
 SELECT * FROM userRegion WHERE userId < 100000
 SELECT * FROM userPicture WHERE userId < 100
@@ -14,11 +14,11 @@ SELECT * FROM reputation WHERE userId < 100
 
 /*
 DBCC CHECKIDENT( 'Gabs.dbo.[user]', RESEED, 127 )
-DELETE FROM question WHERE questionId = 1105898
+DELETE FROM question WHERE questionId = 1105995
 DELETE FROM answer WHERE answerId = 4250081
 UPDATE question SET question = 'Used Marshall cab' WHERE questionId = 1105852
 SELECT username, authtypeId FROM [user] WHERE userId < 100
-SELECT * FROM question WHERE question = 'edible panties'
+SELECT * FROM question WHERE questionId = 1106045
 SELECT * FROM reputation WHERE itemId = 1105914
 DELETE FROM question WHERE question = 'edible panties'
 UPDATE [user] SET 
