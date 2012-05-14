@@ -1,0 +1,3 @@
+CREATE SCHEMA [answers]
+AUTHORIZATION [answers]
+GO
