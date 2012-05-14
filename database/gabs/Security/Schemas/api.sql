@@ -1,0 +1,3 @@
+CREATE SCHEMA [api]
+AUTHORIZATION [api]
+GO
