@@ -1,7 +1,9 @@
+
 SET QUOTED_IDENTIFIER OFF
 GO
 SET ANSI_NULLS OFF
 GO
+
 --CHECKPOINT; 
 --GO 
 --DBCC DROPCLEANBUFFERS; 
@@ -21,7 +23,7 @@ CREATE PROCEDURE [api].[loadUser]
 AS
 
 --###
---api.loadUser
+--api.[loadUser]
 --###p
  
 SET NOCOUNT ON;
