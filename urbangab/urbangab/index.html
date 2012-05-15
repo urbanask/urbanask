@@ -1,5 +1,5 @@
 ﻿<!doctype html>
-<html lang="en" data-version="0.1.32" manifest="cache.manifest">
+<html lang="en" data-version="1.0.0" manifest="cache.manifest">
 <head>
     <title>urbanAsk</title>
     
@@ -19,7 +19,7 @@
 
     <header id="header">
         <div id="back-button" class="hide"><div id="back-button-arrow"></div><div id="back-button-gradient"></div><div id="back-button-text"></div></div>
-        <h1 id="title">0.1.32</h1>
+        <h1 id="title"></h1>
         <div id="refresh-button"><div id="refresh-button-text"></div></div>
     </header>
     
@@ -94,18 +94,22 @@
         </section>
 
         <section id="account-page" class="hide">
-            <div id="account-cancel"></div>
-            <form id="account">
-                <input id="edit-username" class="edit-input" placeholder="username">
-                <input id="edit-tagline" class="edit-input" placeholder="tagline">
-                <select id="edit-region">
-                </select>
-                <button id="save-edit" class="button">save</button>
-                <div class="section-header-black"></div>
-                <button id="invite" class="button">invite friends</button>
-                <button id="post" class="button">post to wall</button>
-                <button id="logout" class="button">log out</button>
-            </form>
+            <div id="account-view">
+                <div id="account-cancel"></div>
+                <div id="account-scroll">
+                    <form id="account">
+                        <input id="edit-username" class="edit-input" placeholder="username">
+                        <input id="edit-tagline" class="edit-input" placeholder="tagline">
+                        <select id="edit-region">
+                        </select>
+                        <button id="save-edit" class="button">save</button>
+                        <div class="section-header-black"></div>
+                        <button id="invite" class="button">invite friends</button>
+                        <button id="post" class="button">post to wall</button>
+                        <button id="logout" class="button">log out</button>
+                    </form>
+                </div>
+            </div>
         </section>
 
         <section id="user-page" class="hide">
@@ -130,9 +134,10 @@
                     --><ul id="users-questions"></ul><!--
                     --><ul id="user-answers"></ul><!--
                     --><ul id="user-badges"></ul>
+                    <div id="app-version"></div>
                 </div>
             </div>
-
+            
         </section>
 
         <section id ="login-page" class="hide">

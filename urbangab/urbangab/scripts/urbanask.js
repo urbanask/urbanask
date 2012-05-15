@@ -1730,7 +1730,7 @@
             document.getElementById( 'locations-view' ).style.height = locationsViewHeight + 'px';
 
             var accountPageHeight = view.clientHeight - 54;
-            document.getElementById( 'account' ).style.height = accountPageHeight + 'px';
+            document.getElementById( 'account-view' ).style.height = accountPageHeight + 'px';
 
         };
 
@@ -1917,6 +1917,9 @@
             document.getElementById( 'top-interval' ).setDataset( 'id', INTERVALS.all );
             document.querySelectorAll( '#top-type .toggle-button[data-id="' + TOP_TYPES.reputation + '"]' )[0].addClass( 'toggle-button-selected' );
             document.querySelectorAll( '#top-interval .toggle-button[data-id="' + INTERVALS.all + '"]' )[0].addClass( 'toggle-button-selected' );
+
+            var version = document.getElementsByTagName( 'html' )[0].getAttribute( 'data-version' );
+            document.getElementById( 'app-version' ).textContent = STRINGS.versionCaption + ' ' + version;
 
             showSocialButtons();
             showExternalFooter();

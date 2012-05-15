@@ -154,6 +154,7 @@
             "notifications": "notifications"
         },
         "usernameLabel": "username",
+        "versionCaption": "version: ",
         "voteDownCaption": "-1",
         "voteUpCaption": "+1",
         "xmark": "&#10008;"
