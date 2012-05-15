@@ -82,6 +82,7 @@
     <Content Include="download.html" />
     <Content Include="fb-login.html" />
     <Content Include="frame.html" />
+    <Content Include="icon-72.png" />
     <Content Include="images\amazon.png" />
     <Content Include="images\android.png" />
     <Content Include="images\android\icon-57.png" />
@@ -128,6 +129,7 @@
     <Content Include="scripts\urbanask-compiled.js" />
     <Content Include="scripts\urbanask.js" />
     <Content Include="scripts\strings-en.js" />
+    <Content Include="splash-320x480.png" />
     <Content Include="styles\urbanask.css" />
     <Content Include="styles\download.css" />
     <Content Include="support.html" />
