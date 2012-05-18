@@ -104,11 +104,7 @@ Public Class loginFB : Implements System.Web.IHttpHandler
 
                     If System.Convert.ToInt32(checkAuthorization.Parameters("@userId").Value) > 0 Then
 
-                        If System.Convert.ToBoolean(checkAuthorization.Parameters("@enabled").Value) = False Then
-
-                            sendErrorResponse(context)
-
-                        Else
+                        If System.Convert.ToBoolean(checkAuthorization.Parameters("@enabled").Value) Then
 
                             userId = CInt(checkAuthorization.Parameters("@userId").Value)
 
@@ -133,6 +129,10 @@ Public Class loginFB : Implements System.Web.IHttpHandler
                             End If
 
                             loadSession(sessionConnection, createSession, context, userId, newAccount)
+
+                        Else
+
+                            sendErrorResponse(context)
 
                         End If
 

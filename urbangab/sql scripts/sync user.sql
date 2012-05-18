@@ -1,9 +1,10 @@
 
 SELECT * FROM [user] WHERE userId < 100000 ORDER BY userId DESC
-SELECT * FROM [userFacebook] WHERE userId < 100000 ORDER BY [userFacebook].userId DESC
-SELECT * FROM [userEmail] WHERE userId < 100000 ORDER BY [userEmail].userId
-SELECT * FROM userRegion WHERE userId < 100000
-SELECT * FROM userPicture WHERE userId < 100
+SELECT * FROM [userFacebook] WHERE userId < 100000 ORDER BY userId DESC
+SELECT * FROM [userTwitter] WHERE userId < 100000 ORDER BY userId DESC
+SELECT * FROM [userEmail] WHERE userId < 100000 ORDER BY userId DESC
+SELECT * FROM userRegion WHERE userId < 100000 ORDER BY userId DESC
+SELECT * FROM userPicture WHERE userId < 100000 ORDER BY userId DESC
 SELECT * FROM question WHERE userId < 100000 ORDER BY timestamp DESC
 SELECT * FROM answer WHERE userId < 100000 ORDER BY timestamp DESC
 SELECT * FROM answerVote WHERE userId < 100000

@@ -92,6 +92,11 @@
         "intervalAllCaption": "all",
         "iphone": "iPhone",
         "letters": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "login": 
+        {
+            "createEmailAccount": "Create Account with Email",
+            "twitter": "Login with Twitter"
+        },
         "local": "local",
         "months": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
         "multiplication": "&#215;",

@@ -58,6 +58,9 @@
     <Reference Include="Hashing">
       <HintPath>..\..\common\Hashing.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\Common\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="removeHttpHeaders">
       <HintPath>..\..\Common\removeHttpHeaders.dll</HintPath>
     </Reference>
@@ -68,6 +71,9 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
+    <Reference Include="Twitterizer2">
+      <HintPath>..\..\common\Twitterizer2.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Import Include="System" />
@@ -87,6 +93,7 @@
   <ItemGroup>
     <Compile Include="login.vb" />
     <Compile Include="loginFB.vb" />
+    <Compile Include="loginTwitter.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>

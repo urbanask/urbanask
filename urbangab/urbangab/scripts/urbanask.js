@@ -209,6 +209,7 @@
                 "topScore": 9
 
             },
+            TWITTER_RETURN_URL = ( _hostname == '75.144.228.69' ) ? 'http://75.144.228.69:55555/urbangab' : 'http://urbanask.com',
             USER_COLUMNS = {
 
                 "userId": 0,
@@ -413,6 +414,9 @@
                     var facebookButton = document.getElementById( 'fb-login' );
                     facebookButton.addEventListener( 'click', loginFacebook, false );
 
+                    var twitterLogin = document.getElementById( 'twitter-login' );
+                    twitterLogin.addEventListener( 'click', authorizeTwitter, false );
+
                     var emailButton = document.getElementById( 'create-email-account' );
                     emailButton.addEventListener( 'click', showCreateEmailAccount, false );
 
@@ -426,6 +430,9 @@
                         facebookButton.addEventListener( 'touchstart', selectButton, false );
                         facebookButton.addEventListener( 'touchend', unselectButton, false );
 
+                        twitterLogin.addEventListener( 'touchstart', selectButton, false );
+                        twitterLogin.addEventListener( 'touchend', unselectButton, false );
+
                         emailButton.addEventListener( 'touchstart', selectButton, false );
                         emailButton.addEventListener( 'touchend', unselectButton, false );
 
@@ -434,8 +441,11 @@
                         loginButton.addEventListener( 'mousedown', selectButton, false );
                         loginButton.addEventListener( 'mouseup', unselectButton, false );
 
-                        //                        facebookButton.addEventListener( 'mousedown', selectButton, false );
-                        //                        facebookButton.addEventListener( 'mouseup', unselectButton, false );
+                        facebookButton.addEventListener( 'mousedown', selectButton, false );
+                        facebookButton.addEventListener( 'mouseup', unselectButton, false );
+
+                        twitterLogin.addEventListener( 'mousedown', selectButton, false );
+                        twitterLogin.addEventListener( 'mouseup', unselectButton, false );
 
                         emailButton.addEventListener( 'mousedown', selectButton, false );
                         emailButton.addEventListener( 'mouseup', unselectButton, false );
@@ -735,7 +745,11 @@
 
         function checkLogin() {
 
-            if ( _session.id && _session.key ) {
+            if ( window.location.queryString()['oauth_token'] ) {
+
+                loginTwitter( window.location.queryString()['oauth_token'] );
+
+            } else if ( _session.id && _session.key ) {
 
                 startApp();
 
@@ -1625,7 +1639,7 @@
 
             initializePhoneGap( function () {
 
-                if ( window.location.queryString()['logout'] ) { //for debugging - logout=true
+                if ( window.location.queryString()['logout'] ) { //for debugging - ?logout=true
 
                     hideSplashPage();
                     logoutApp();
@@ -2240,6 +2254,7 @@
             $( '#ask-text' ).setAttribute( 'placeholder', STRINGS.questionLabel );
             $( '#cancel-answer-button' ).setAttribute( 'placeholder', STRINGS.addAnswer.cancel );
             $( '#create-email' ).setAttribute( 'placeholder', STRINGS.emailLabel );
+            $( '#create-email-account' ).innerHTML = STRINGS.login.createEmailAccount;
             $( '#create-username' ).setAttribute( 'placeholder', STRINGS.usernameLabel );
             $( '#create-password' ).setAttribute( 'placeholder', STRINGS.passwordLabel );
             $( '#edit-account-caption' ).innerHTML = STRINGS.editAccountCaption;
@@ -2271,6 +2286,7 @@
             $( '#total-answers-caption' ).textContent = STRINGS.totalAnswers;
             $( '#total-questions-caption' ).textContent = STRINGS.totalQuestions;
             $( '#total-badges-caption' ).textContent = STRINGS.totalBadges;
+            $( '#twitter-login' ).innerHTML = STRINGS.login.twitter;
             $( '#user-id-caption' ).textContent = STRINGS.userIdCaption;
 
         };
@@ -2387,6 +2403,72 @@
                 //                };
 
             };
+
+        };
+
+        function authorizeTwitter( event ) {
+
+            event.preventDefault();
+
+            var resource = '/logins/loginTwitter',
+                data = 'returnUrl=' + TWITTER_RETURN_URL + '/index.html'
+                    + ( _currentLocation.latitude ? '&latitude=' + _currentLocation.latitude : '' )
+                    + ( _currentLocation.longitude ? '&longitude=' + _currentLocation.longitude : '' );
+
+            ajax( API_URL + resource, {
+
+                "type": "GET",
+                "data": data,
+                "success": function ( data, status ) {
+
+                    window.location.href = window.JSON.parse( data ).url;
+
+                },
+                "error": function ( response, status, error ) {
+
+                    document.getElementById( 'login-error' ).innerHTML = error;
+
+                }
+
+            } );
+
+        };
+
+        function loginTwitter( token ) {
+
+            var resource = '/logins/loginTwitter',
+                data = 'oauth_token=' + token;
+
+            window.history.replaceState( '', '', window.location.pathname );
+
+            ajax( API_URL + resource, {
+
+                "type": "GET",
+                "data": data,
+                "complete": function ( response, status ) {
+
+                    if ( status != "error" ) {
+
+                        var session = response.getResponseHeader( 'x-session' ).split( ':' );
+
+                        _session.id = session[0];
+                        _session.key = session[1];
+                        window.setLocalStorage( 'sessionId', _session.id );
+                        window.setLocalStorage( 'sessionKey', _session.key );
+
+                        startApp();
+
+                    };
+
+                },
+                "error": function ( response, status, error ) {
+
+                    showPage( 'login-page', { logout: true } );
+                    document.getElementById( 'login-error' ).innerHTML = error;
+
+                }
+
+            } );
 
         };
 
@@ -2555,11 +2637,7 @@
                             window.setLocalStorage( 'sessionId', _session.id );
                             window.setLocalStorage( 'sessionKey', _session.key );
 
-                            startApp( function () {
-
-                                //                                if ( newAccount ) { showAccountPage(); };
-
-                            } );
+                            startApp();
 
                         };
 
@@ -2938,6 +3016,9 @@
                     var facebookButton = document.getElementById( 'fb-login' );
                     facebookButton.removeEventListener( 'click', loginFacebook, false );
 
+                    var twitterLogin = document.getElementById( 'twitter-login' );
+                    twitterLogin.removeEventListener( 'click', authorizeTwitter, false );
+
                     var emailButton = document.getElementById( 'create-email-account' );
                     emailButton.removeEventListener( 'click', showCreateEmailAccount, false );
 
@@ -2951,6 +3032,9 @@
                         facebookButton.removeEventListener( 'touchstart', selectButton, false );
                         facebookButton.removeEventListener( 'touchend', unselectButton, false );
 
+                        twitterLogin.removeEventListener( 'touchstart', selectButton, false );
+                        twitterLogin.removeEventListener( 'touchend', unselectButton, false );
+
                         emailButton.removeEventListener( 'touchstart', selectButton, false );
                         emailButton.removeEventListener( 'touchend', unselectButton, false );
 
@@ -2959,8 +3043,11 @@
                         loginButton.removeEventListener( 'mousedown', selectButton, false );
                         loginButton.removeEventListener( 'mouseup', unselectButton, false );
 
-                        //                        facebookButton.removeEventListener( 'mousedown', selectButton, false );
-                        //                        facebookButton.removeEventListener( 'mouseup', unselectButton, false );
+                        facebookButton.removeEventListener( 'mousedown', selectButton, false );
+                        facebookButton.removeEventListener( 'mouseup', unselectButton, false );
+
+                        twitterLogin.removeEventListener( 'mousedown', selectButton, false );
+                        twitterLogin.removeEventListener( 'mouseup', unselectButton, false );
 
                         emailButton.removeEventListener( 'mousedown', selectButton, false );
                         emailButton.removeEventListener( 'mouseup', unselectButton, false );

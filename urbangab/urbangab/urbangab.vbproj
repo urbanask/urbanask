@@ -180,6 +180,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="cache.manifest" />
+    <None Include="build-scripts\set-version-debug.ps1" />
+    <None Include="build-scripts\set-version-release.ps1" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
