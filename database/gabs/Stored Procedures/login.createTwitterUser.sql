@@ -1,26 +1,30 @@
-
 SET QUOTED_IDENTIFIER OFF
 GO
 SET ANSI_NULLS OFF
 GO
 
---DECLARE	@username			AS VARCHAR(100) = 'appstore'
+--DECLARE	@suggestedUsername	AS VARCHAR(100) = 'mattwalton'
 --DECLARE	@tagline			AS VARCHAR(256) = ''
 --DECLARE	@hash				AS CHAR(88) = '1'
 --DECLARE	@salt				AS CHAR(8) = '2'
 --DECLARE	@iterations			AS INT = 3
---DECLARE	@hashType			AS VARCHAR(10) = '4'
+--DECLARE	@hashType			AS VARCHAR(10) = 'SHA512'
 --DECLARE	@metricDistances	AS INT = 1
 --DECLARE	@languageId			AS ForeignKey  = 1
---DECLARE	@authTypeId			AS ForeignKey = 1
---DECLARE	@email				AS VARCHAR(256) = 'appemail'
+--DECLARE	@authTypeId			AS ForeignKey = 3
+--DECLARE	@twitterId			AS VARCHAR(20) = '509992905'
+--DECLARE	@screenName			AS VARCHAR(200) = 'mattwalton'
+--DECLARE	@token				AS VARCHAR(256) = '509992905-0lfNtgoF6ElDyBADP5bcNxeLSlSMzYyAIJH5MxAK'
+--DECLARE	@tokenSecret		AS VARCHAR(256) = 'VPtt67zvKpCIjkoTQO9WgruoPZQ1urPEBNsZXna28'
+--DECLARE	@location			AS VARCHAR(200) = 'Sacramento, CA'
 --DECLARE	@defaultRegionId	AS ForeignKey = 2
 --DECLARE	@latitude			AS DECIMAL(9,7)		= NULL
 --DECLARE	@longitude			AS DECIMAL(10,7)	= NULL
 --DECLARE	@userId				AS ForeignKey		
+--DECLARE	@username			AS VARCHAR(100)		
 
 
-CREATE PROCEDURE [login].[createUser]
+CREATE PROCEDURE [login].[createTwitterUser]
 	(
 	@suggestedUsername	AS VARCHAR(100),
 	@tagline			AS VARCHAR(256),
@@ -31,7 +35,11 @@ CREATE PROCEDURE [login].[createUser]
 	@metricDistances	AS INT,
 	@languageId			AS ForeignKey,
 	@authTypeId			AS ForeignKey,
-	@email				AS VARCHAR(256),
+	@twitterId			AS VARCHAR(20),
+	@screenName			AS VARCHAR(200),
+	@token				AS VARCHAR(256),
+	@tokenSecret		AS VARCHAR(256),
+	@location			AS VARCHAR(200),
 	@defaultRegionId	AS ForeignKey,
 	@latitude			AS DECIMAL(9,7)		= NULL,
 	@longitude			AS DECIMAL(10,7)	= NULL,
@@ -41,7 +49,7 @@ CREATE PROCEDURE [login].[createUser]
 AS
 
 --###
---[login].[createUser]
+--[login].[createTwitterUser]
 --###
  
 SET NOCOUNT ON;
@@ -134,35 +142,24 @@ SELECT @userId = SCOPE_IDENTITY()
 
 
 INSERT INTO
-	Gabs.dbo.[userEmail]
+	Gabs.dbo.[userTwitter]
 	(
 	userId,
-	email
+	twitterId,
+	screenName,
+	token,
+	tokenSecret,
+	location
 	)
 
 VALUES
 	(
 	@userId,
-	@email
-	)
-
-
-
-INSERT INTO
-	Gabs.login.verifyEmail
-	(
-	userId,
-	email,
-	guid,
-	timestamp
-	)
-	
-VALUES
-	(
-	@userId,
-	@email,
-	NEWID(),
-	GETDATE()
+	@twitterId,
+	@screenName,
+	@token,
+	@tokenSecret,
+	@location
 	)
 
 
@@ -237,4 +234,6 @@ VALUES
 
 
 --PRINT @userId
+--PRINT @username
+
 GO
