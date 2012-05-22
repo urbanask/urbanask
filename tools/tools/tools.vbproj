@@ -93,6 +93,7 @@
   <ItemGroup>
     <Content Include="styles\Site.css" />
     <Content Include="profile-picture.aspx" />
+    <Content Include="tools.js" />
     <Content Include="web.config" />
     <Content Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>

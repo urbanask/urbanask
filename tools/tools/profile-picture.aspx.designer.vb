@@ -11,7 +11,7 @@ Option Strict On
 Option Explicit On
 
 
-Partial Public Class _Default
+Partial Public Class profilePicture
 
     '''<summary>
     '''urlForm control.
@@ -21,15 +21,6 @@ Partial Public Class _Default
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents urlForm As Global.System.Web.UI.HtmlControls.HtmlForm
-
-    '''<summary>
-    '''userId control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents userId As Global.System.Web.UI.WebControls.TextBox
 
     '''<summary>
     '''url control.
@@ -48,4 +39,13 @@ Partial Public Class _Default
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents save As Global.System.Web.UI.WebControls.Button
+
+    '''<summary>
+    '''message control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents message As Global.System.Web.UI.HtmlControls.HtmlGenericControl
 End Class

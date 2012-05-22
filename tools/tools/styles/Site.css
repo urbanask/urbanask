@@ -1,19 +1,21 @@
 ﻿/* DEFAULTS
 ----------------------------------------------------------*/
 
-input {
+#url {
     width: 300px;
     margin-left: 10px;    
 }
 
+#message {
+    color: red;
+}
+
 body   
 {
-    background: #b6b7bc;
     font-size: .80em;
     font-family: "Helvetica Neue", "Lucida Grande", "Segoe UI", Arial, Helvetica, Verdana, sans-serif;
     margin: 0px;
     padding: 0px;
-    color: #696969;
 }
 
 a:link, a:visited

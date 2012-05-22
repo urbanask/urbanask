@@ -1,18 +1,29 @@
-﻿<%@ Page Title="Home Page" Language="vb" AutoEventWireup="false"
-    CodeBehind="profile-picture.aspx.vb" Inherits="tools._Default" %>
+﻿<%@ Page Language="vb" AutoEventWireup="false" CodeBehind="profile-picture.aspx.vb" Inherits="tools.profilePicture" %>
+
+<!doctype html>
 <html>
 <head>
 <title>update profile picture</title>
+<link rel="stylesheet" href="styles/Site.css" />
 </head>
 
 <body>
 <form id="urlForm" runat="server">
 
-<label for="userId">userId:</label><asp:TextBox id="userId" runat="server"></asp:TextBox>
 <label for="url">url:</label><asp:TextBox id="url" runat="server"></asp:TextBox>
 <asp:Button ID="save" runat="server" Text="save" />
-
+<br />
+<img id="picture" />
+<div id="message" runat="server"></div>
 </form>
+
+
+<script src="tools.js"></script>
 </body>
 
 </html>
+
+
+
+
+
