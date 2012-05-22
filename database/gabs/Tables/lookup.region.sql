@@ -8,9 +8,11 @@ CREATE TABLE [lookup].[region]
 [toLongitude] [decimal] (10, 7) NOT NULL
 ) ON [PRIMARY]
 GO
-ALTER TABLE [lookup].[region] ADD CONSTRAINT [pk_region] PRIMARY KEY CLUSTERED  ([regionId], [fromLatitude], [toLatitude], [fromLongitude], [toLongitude]) ON [PRIMARY]
-GO
 GRANT SELECT ON  [lookup].[region] TO [api]
+GRANT SELECT ON  [lookup].[region] TO [bot]
 GRANT SELECT ON  [lookup].[region] TO [login]
 GRANT SELECT ON  [lookup].[region] TO [processTopLists]
+GO
+
+ALTER TABLE [lookup].[region] ADD CONSTRAINT [pk_region] PRIMARY KEY CLUSTERED  ([regionId], [fromLatitude], [toLatitude], [fromLongitude], [toLongitude]) ON [PRIMARY]
 GO
