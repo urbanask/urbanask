@@ -2454,7 +2454,7 @@
 
                 var resource = '/logins/loginTwitter',
                     data = 'oauth_token=' + token
-                        +( _currentLocation.latitude ? '&latitude=' + _currentLocation.latitude : '' )
+                        + ( _currentLocation.latitude ? '&latitude=' + _currentLocation.latitude : '' )
                         + ( _currentLocation.longitude ? '&longitude=' + _currentLocation.longitude : '' );
 
                 ajax( API_URL + resource, {
@@ -6293,8 +6293,27 @@
             showLoading( 'center', 'center' );
 
             $( '#username' ).textContent = user[USER_COLUMNS.username];
-            $( '#member-since' ).textContent = getMemberSince( user );
-            $( '#user-id-value' ).textContent = user[USER_COLUMNS.userId];
+
+            var memberSince = document.getElementById( 'member-since' ),
+                userIdCaption = document.getElementById( 'user-id-caption' ),
+                userIdValue = document.getElementById( 'user-id-value' );
+
+            memberSince.textContent = getMemberSince( user );
+
+            if ( user[USER_COLUMNS.userId] > 143400 && user[USER_COLUMNS.userId] < 147494 ) {
+
+                userIdCaption.addClass( 'hide' );
+                userIdValue.addClass( 'hide' );
+
+            } else {
+
+                userId.textContent = user[USER_COLUMNS.userId];
+
+                userIdCaption.removeClass( 'hide' );
+                userIdValue.removeClass( 'hide' );
+
+            };
+
             $( '#tagline' ).textContent = user[USER_COLUMNS.tagline];
 
             var reputationValue = $( '#reputation-value' );
@@ -6358,7 +6377,6 @@
             };
 
             $( '#users-questions' ).innerHTML = html;
-
             html = getListItemHeader( STRINGS.answerHeader );
 
             if ( user[USER_COLUMNS.answers].length ) {
@@ -6378,7 +6396,6 @@
             };
 
             $( '#user-answers' ).innerHTML = html;
-
             html = getListItemHeader( STRINGS.headerBadges );
 
             if ( user[USER_COLUMNS.badges].length ) {
@@ -6399,7 +6416,7 @@
 
             $( '#user-badges' ).innerHTML = html;
 
-            $( '#signup-info' ).removeClass( 'hide' );
+            document.getElementById( 'signup-info' ).removeClass( 'hide' );
             $( '#user-reputations' ).removeClass( 'hide' );
             $( '#users-questions' ).removeClass( 'hide' );
             $( '#user-answers' ).removeClass( 'hide' );

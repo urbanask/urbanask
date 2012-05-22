@@ -57,6 +57,8 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <OutputPath>bin\Debug\</OutputPath>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugType>Full</DebugType>
+    <DefineDebug>true</DefineDebug>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>

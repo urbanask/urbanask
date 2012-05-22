@@ -52,7 +52,8 @@ Public Class authorization
 
         End If
 
-        If session IsNot Nothing AndAlso session.Length = 2 Then
+        If session IsNot Nothing _
+            AndAlso session.Length = 2 Then
 
             Using connection As New Data.SqlClient.SqlConnection(CONNECTION_STRING),
                 command As New SqlClient.SqlCommand(CHECK_SESSION_PROC, connection)
