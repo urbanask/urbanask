@@ -33,4 +33,7 @@ VALUES
 	@picture,
 	@icon
 	)
+
+GO
+GRANT EXECUTE ON  [login].[createUserPicture] TO [tools]
 GO

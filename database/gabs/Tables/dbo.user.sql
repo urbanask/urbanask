@@ -16,10 +16,6 @@ CREATE TABLE [dbo].[user]
 [authTypeId] [dbo].[foreignKey] NOT NULL
 ) ON [PRIMARY]
 GO
-ALTER TABLE [dbo].[user] ADD CONSTRAINT [pk_user] PRIMARY KEY NONCLUSTERED  ([userId]) ON [PRIMARY]
-GO
-CREATE CLUSTERED INDEX [ix_user_username] ON [dbo].[user] ([username], [authTypeId], [enabled], [userId]) ON [PRIMARY]
-GO
 GRANT SELECT ON  [dbo].[user] TO [api]
 GRANT UPDATE ON  [dbo].[user] TO [api]
 GRANT SELECT ON  [dbo].[user] TO [login]
@@ -32,4 +28,10 @@ GRANT SELECT ON  [dbo].[user] TO [processQuestions]
 GRANT SELECT ON  [dbo].[user] TO [processReputation]
 GRANT UPDATE ON  [dbo].[user] TO [processReputation]
 GRANT SELECT ON  [dbo].[user] TO [processTopLists]
+GRANT SELECT ON  [dbo].[user] TO [tools]
+GO
+
+ALTER TABLE [dbo].[user] ADD CONSTRAINT [pk_user] PRIMARY KEY NONCLUSTERED  ([userId]) ON [PRIMARY]
+GO
+CREATE CLUSTERED INDEX [ix_user_username] ON [dbo].[user] ([username], [authTypeId], [enabled], [userId]) ON [PRIMARY]
 GO
