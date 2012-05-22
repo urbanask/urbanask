@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -8,7 +9,6 @@ CREATE PROCEDURE [messaging].[insertQuestionMessage]
 	@processed	AS BIT			OUTPUT
 	)
 AS
-BEGIN
 
 --###
 --[messaging].[insertQuestionMessage]
@@ -19,34 +19,33 @@ SET XACT_ABORT ON;
 
 
 
-	--###
-	--default
-	--###
-	 
-	SELECT @processed = 0;
-
-
-
-	INSERT INTO
-		Messaging.questions.questionQueue	
-		(
-		[message]
-		)
-	    
-	VALUES
-		(
-		@message
-		)
-
-
-
-	--###
-	--success
-	--###
+--###
+--default
+--###
  
-	SELECT @processed = 1;
-	
+SELECT @processed = 0;
 
 
-END
+
+INSERT INTO
+	Messaging.questions.questionQueue	
+	(
+	[message]
+	)
+    
+VALUES
+	(
+	@message
+	)
+
+
+
+--###
+--success
+--###
+
+SELECT @processed = 1;
+
+
+
 GO

@@ -1,0 +1,3 @@
+CREATE SCHEMA [bot]
+AUTHORIZATION [bot]
+GO

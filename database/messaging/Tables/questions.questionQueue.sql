@@ -5,11 +5,13 @@ CREATE TABLE [questions].[questionQueue]
 [timestamp] [datetime2] NOT NULL CONSTRAINT [DF_Message_Timestamp] DEFAULT (getdate())
 ) ON [PRIMARY]
 GO
-ALTER TABLE [questions].[questionQueue] ADD CONSTRAINT [pk_questionQueue] PRIMARY KEY NONCLUSTERED  ([questionQueueId]) ON [PRIMARY]
-GO
-CREATE UNIQUE CLUSTERED INDEX [ix_questionQueue] ON [questions].[questionQueue] ([timestamp], [questionQueueId]) ON [PRIMARY]
-GO
+GRANT INSERT ON  [questions].[questionQueue] TO [bot]
 GRANT INSERT ON  [questions].[questionQueue] TO [messaging]
 GRANT SELECT ON  [questions].[questionQueue] TO [processQuestions]
 GRANT DELETE ON  [questions].[questionQueue] TO [processQuestions]
+GO
+
+ALTER TABLE [questions].[questionQueue] ADD CONSTRAINT [pk_questionQueue] PRIMARY KEY NONCLUSTERED  ([questionQueueId]) ON [PRIMARY]
+GO
+CREATE UNIQUE CLUSTERED INDEX [ix_questionQueue] ON [questions].[questionQueue] ([timestamp], [questionQueueId]) ON [PRIMARY]
 GO
