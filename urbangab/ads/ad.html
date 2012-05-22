@@ -1,0 +1,81 @@
+<style>
+#urbanask-view, 
+#urbanask-view:link, 
+#urbanask-view:visited  {
+    color: black;
+    font: normal 13px Monaco, 'Andale Mono', 'Courier New', monospace;
+    outline: 0;
+    position: absolute;  
+    right: -165px;
+    text-decoration: none;
+    top: 0;
+    transition:             opacity 1000ms ease;
+        -moz-transition:    opacity 1000ms ease;
+        -ms-transition:     opacity 1000ms ease;
+        -o-transition:      opacity 1000ms ease;
+        -webkit-transition: opacity 1000ms ease;
+}
+   
+#urbanask-view:hover,
+#urbanask-view:active
+{
+background-color: black;
+color: white;
+}
+
+#urbanask-logo {
+    width: 140px;
+}
+
+.urbanask-faded {
+    opacity: 0 !important;
+}
+</style>
+
+    <a id="urbanask-view" class="urbanask-faded" href="http://urbanask.com/download.html">
+        <div id="urbanask-header">check out:</div>
+        <img id="urbanask-logo"src="http://urbanask.com/images/share-logo.png" />
+        <div id="urbanask-body">find it. share it.</div>
+    </a>
+    
+    <script>
+    setTimeout( function() {
+        document.getElementById( 'urbanask-view' ).removeAttribute( 'class' );
+    }, 4000 );
+    </script>
+
+
+
+
+
+
+Stiff Theme
+
+<style>
+    
+#urbanask {
+    text-align: center;
+}
+   
+#urbanask-logo {
+    display: block;
+    margin: 0 auto;
+    width: 140px;
+}
+</style>
+
+        <section id="urbanask">
+            <h1>check out</h1>
+            <a id="urbanask-view" href="http://urbanask.com/download.html">
+                <img id="urbanask-logo"src="http://urbanask.com/images/share-logo.png" />
+            </a>            
+                <div id="urbanask-body">find it. share it.</div>
+        </section>
+
+<script>
+window.onload = function () {
+    $( "#urbanask h1" ).sectionHeaderLine( { "textAlign": "left" } );
+};
+</script>
+
+

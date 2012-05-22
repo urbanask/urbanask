@@ -4,7 +4,7 @@ $newContent = @()
 
 $content | ForEach-Object {
 
-	if ($_ -match '\#ver (\d)\.(\d).(\d)') {
+	if ($_ -match '\#ver (\d*)\.(\d*).(\d*)') {
 
 		$majorVersion = $matches[1]
 		$minorVersion = $matches[2]

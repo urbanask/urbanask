@@ -2411,9 +2411,7 @@
             event.preventDefault();
 
             var resource = '/logins/loginTwitter',
-                data = 'returnUrl=' + TWITTER_RETURN_URL + '/index.html'
-                    + ( _currentLocation.latitude ? '&latitude=' + _currentLocation.latitude : '' )
-                    + ( _currentLocation.longitude ? '&longitude=' + _currentLocation.longitude : '' );
+                data = 'returnUrl=' + TWITTER_RETURN_URL + '/index.html';
 
             ajax( API_URL + resource, {
 
@@ -2436,39 +2434,59 @@
 
         function loginTwitter( token ) {
 
-            var resource = '/logins/loginTwitter',
-                data = 'oauth_token=' + token;
-
             window.history.replaceState( '', '', window.location.pathname );
 
-            ajax( API_URL + resource, {
+            if ( _currentLocation.latitude ) {
 
-                "type": "GET",
-                "data": data,
-                "complete": function ( response, status ) {
+                login();
 
-                    if ( status != "error" ) {
+            } else {
 
-                        var session = response.getResponseHeader( 'x-session' ).split( ':' );
+                getGeolocation( function () {
 
-                        _session.id = session[0];
-                        _session.key = session[1];
-                        window.setLocalStorage( 'sessionId', _session.id );
-                        window.setLocalStorage( 'sessionKey', _session.key );
+                    login();
 
-                        startApp();
+                }, { quick: true } );
 
-                    };
+            };
 
-                },
-                "error": function ( response, status, error ) {
+            function login() {
 
-                    showPage( 'login-page', { logout: true } );
-                    document.getElementById( 'login-error' ).innerHTML = error;
+                var resource = '/logins/loginTwitter',
+                    data = 'oauth_token=' + token
+                        +( _currentLocation.latitude ? '&latitude=' + _currentLocation.latitude : '' )
+                        + ( _currentLocation.longitude ? '&longitude=' + _currentLocation.longitude : '' );
 
-                }
+                ajax( API_URL + resource, {
 
-            } );
+                    "type": "GET",
+                    "data": data,
+                    "complete": function ( response, status ) {
+
+                        if ( status != "error" ) {
+
+                            var session = response.getResponseHeader( 'x-session' ).split( ':' );
+
+                            _session.id = session[0];
+                            _session.key = session[1];
+                            window.setLocalStorage( 'sessionId', _session.id );
+                            window.setLocalStorage( 'sessionKey', _session.key );
+
+                            startApp();
+
+                        };
+
+                    },
+                    "error": function ( response, status, error ) {
+
+                        showPage( 'login-page', { logout: true } );
+                        document.getElementById( 'login-error' ).innerHTML = error;
+
+                    }
+
+                } );
+
+            };
 
         };
 

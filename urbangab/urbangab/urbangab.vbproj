@@ -215,8 +215,9 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
+    <PreBuildEvent>if $(ConfigurationName) == Debug powershell "&amp; '$(SolutionDir)urbangab\build-scripts\set-version-debug.ps1'"
+if $(ConfigurationName) == Release powershell "&amp; '$(SolutionDir)urbangab\build-scripts\set-version-release.ps1'"
+</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>cd $(ProjectDir)scripts\

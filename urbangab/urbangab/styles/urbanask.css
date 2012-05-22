@@ -2626,11 +2626,11 @@ html {
 }
 
 #view {
-    -webkit-overflow-scrolling: touch;
+    -webkit-overflow-scrolling: touch !important;
     -webkit-user-select: none;
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAGklEQVQI12Pw8fH5X19fD8YMMAZIkAHGANEAiZwUkmznO8QAAAAASUVORK5CYII=);
     bottom: 46px;
-    overflow-y: auto;
+    overflow-y: auto !important;
     overflow-x: hidden;
     position: absolute;
     top: 42px;
@@ -2649,7 +2649,7 @@ html {
 }
 
 #viewport {
-    -webkit-overflow-scrolling: touch;
+    -webkit-overflow-scrolling: touch !important;
     -webkit-user-select: none;
     margin: 0 auto;
     position: relative;
