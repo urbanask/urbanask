@@ -4,5 +4,8 @@ CREATE TABLE [bot].[question]
 [question] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
 ) ON [PRIMARY]
 GO
+GRANT INSERT ON  [bot].[question] TO [tools]
+GO
+
 ALTER TABLE [bot].[question] ADD CONSTRAINT [pk_botQuestion] PRIMARY KEY NONCLUSTERED  ([questionId]) ON [PRIMARY]
 GO
