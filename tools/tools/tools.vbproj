@@ -91,6 +91,9 @@
     <Import Include="System.Web.UI.HtmlControls" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="users.aspx" />
+    <Content Include="questions.aspx" />
+    <Content Include="scripts\questions.js" />
     <Content Include="styles\Site.css" />
     <Content Include="profile-picture.aspx" />
     <Content Include="tools.js" />
@@ -103,6 +106,13 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="users.aspx.designer.vb">
+      <DependentUpon>users.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="users.aspx.vb">
+      <DependentUpon>users.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
     <Compile Include="profile-picture.aspx.vb">
       <SubType>ASPXCodeBehind</SubType>
       <DependentUpon>profile-picture.aspx</DependentUpon>
@@ -128,6 +138,13 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="questions.aspx.designer.vb">
+      <DependentUpon>questions.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="questions.aspx.vb">
+      <DependentUpon>questions.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>

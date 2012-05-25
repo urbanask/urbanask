@@ -13,7 +13,7 @@
 <label for="url">url:</label><asp:TextBox id="url" runat="server"></asp:TextBox>
 <asp:Button ID="save" runat="server" Text="save" />
 <br />
-<img id="picture" />
+<div id="pictureFrame"><img id="picture" /></div>
 <div id="message" runat="server"></div>
 </form>
 

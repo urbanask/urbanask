@@ -6307,7 +6307,7 @@
 
             } else {
 
-                userId.textContent = user[USER_COLUMNS.userId];
+                userIdValue.textContent = user[USER_COLUMNS.userId];
 
                 userIdCaption.removeClass( 'hide' );
                 userIdValue.removeClass( 'hide' );

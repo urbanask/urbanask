@@ -1,9 +1,29 @@
 ﻿/* DEFAULTS
 ----------------------------------------------------------*/
 
-#url {
-    width: 300px;
+#users img {
+    vertical-align: middle;
+}
+
+#users li {
+    display: inline-block;
+    width: 250px;
+}
+
+#url, #question {
+    width: 1000px;
     margin-left: 10px;    
+}
+
+#picture {
+    position: relative;
+}
+
+#pictureFrame {
+    height: 50px;
+    overflow: hidden;
+    position: relative;
+    width: 50px;
 }
 
 #message {

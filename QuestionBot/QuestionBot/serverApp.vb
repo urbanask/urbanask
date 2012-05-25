@@ -20,6 +20,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         _loadQuestionQueue As String,
         _moveToWork As String,
         _insertQuestions As String,
+        _selectAnswers As String,
         _logProcedureStatitics As Boolean,
         _workCount As Int32
 
@@ -46,6 +47,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         _loadQuestionQueue = Parameters.Parameter.GetValue("loadQuestionQueue")
         _moveToWork = Parameters.Parameter.GetValue("moveToWork")
         _insertQuestions = Parameters.Parameter.GetValue("insertQuestions")
+        _selectAnswers = Parameters.Parameter.GetValue("selectAnswers")
 
     End Sub
 
@@ -79,6 +81,12 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
             If MyBase.IsAppActive() Then
 
                 Me.insertQuestions(connection)
+
+            End If
+
+            If MyBase.IsAppActive() Then
+
+                Me.selectAnswers(connection)
 
             End If
 
@@ -142,6 +150,25 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
 
         Me.logProcedureStatistics(_insertQuestions, startTime)
         Me.logStatistics("insertQuestions", startTime)
+
+    End Sub
+
+    Private Sub selectAnswers( _
+        ByVal connection As Data.SqlClient.SqlConnection)
+
+        Dim startTime As System.DateTime = System.DateTime.Now
+
+        Using command As New SqlClient.SqlCommand(_selectAnswers, connection)
+
+            command.CommandType = CommandType.StoredProcedure
+            command.CommandTimeout = _commandTimeout
+
+            command.ExecuteNonQuery()
+
+        End Using
+
+        Me.logProcedureStatistics(_selectAnswers, startTime)
+        Me.logStatistics("selectAnswers", startTime)
 
     End Sub
 
