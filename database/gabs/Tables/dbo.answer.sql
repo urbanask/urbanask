@@ -18,6 +18,18 @@ CREATE TABLE [dbo].[answer]
 [phone] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
 ) ON [PRIMARY]
 GO
+GRANT SELECT ON  [dbo].[answer] TO [api]
+GRANT UPDATE ON  [dbo].[answer] TO [api]
+GRANT SELECT ON  [dbo].[answer] TO [bot]
+GRANT UPDATE ON  [dbo].[answer] TO [bot]
+GRANT SELECT ON  [dbo].[answer] TO [processAnswers]
+GRANT INSERT ON  [dbo].[answer] TO [processAnswers]
+GRANT SELECT ON  [dbo].[answer] TO [ProcessBadges]
+GRANT SELECT ON  [dbo].[answer] TO [processBounties]
+GRANT SELECT ON  [dbo].[answer] TO [processReputation]
+GRANT SELECT ON  [dbo].[answer] TO [processTopLists]
+GO
+
 ALTER TABLE [dbo].[answer] ADD CONSTRAINT [pk_answer] PRIMARY KEY NONCLUSTERED  ([answerId]) ON [PRIMARY]
 GO
 CREATE CLUSTERED INDEX [ix_answer_questionId] ON [dbo].[answer] ([questionId], [timestamp], [answerId]) ON [PRIMARY]
@@ -25,13 +37,4 @@ GO
 CREATE NONCLUSTERED INDEX [ix_answer_timestamp] ON [dbo].[answer] ([timestamp]) INCLUDE ([answerId], [selected], [userId]) ON [PRIMARY]
 GO
 CREATE NONCLUSTERED INDEX [ix_answer_userId] ON [dbo].[answer] ([userId], [timestamp], [answerId]) ON [PRIMARY]
-GO
-GRANT SELECT ON  [dbo].[answer] TO [api]
-GRANT UPDATE ON  [dbo].[answer] TO [api]
-GRANT SELECT ON  [dbo].[answer] TO [processAnswers]
-GRANT INSERT ON  [dbo].[answer] TO [processAnswers]
-GRANT SELECT ON  [dbo].[answer] TO [ProcessBadges]
-GRANT SELECT ON  [dbo].[answer] TO [processBounties]
-GRANT SELECT ON  [dbo].[answer] TO [processReputation]
-GRANT SELECT ON  [dbo].[answer] TO [processTopLists]
 GO

@@ -12,14 +12,10 @@ CREATE TABLE [dbo].[question]
 [votes] [int] NOT NULL CONSTRAINT [DF_question_votes] DEFAULT ((0))
 ) ON [PRIMARY]
 GO
-ALTER TABLE [dbo].[question] ADD CONSTRAINT [pk_question] PRIMARY KEY NONCLUSTERED  ([questionId]) ON [PRIMARY]
-GO
-CREATE CLUSTERED INDEX [ix_question_longitude_latitude] ON [dbo].[question] ([timestamp] DESC, [longitude], [latitude], [resolved], [bounty], [questionId]) ON [PRIMARY]
-GO
-CREATE NONCLUSTERED INDEX [ix_question_userId] ON [dbo].[question] ([userId], [timestamp], [questionId]) ON [PRIMARY]
-GO
 GRANT SELECT ON  [dbo].[question] TO [api]
 GRANT UPDATE ON  [dbo].[question] TO [api]
+GRANT SELECT ON  [dbo].[question] TO [bot]
+GRANT UPDATE ON  [dbo].[question] TO [bot]
 GRANT SELECT ON  [dbo].[question] TO [processAnswers]
 GRANT SELECT ON  [dbo].[question] TO [ProcessBadges]
 GRANT SELECT ON  [dbo].[question] TO [processBounties]
@@ -28,4 +24,11 @@ GRANT SELECT ON  [dbo].[question] TO [processQuestions]
 GRANT INSERT ON  [dbo].[question] TO [processQuestions]
 GRANT SELECT ON  [dbo].[question] TO [processReputation]
 GRANT SELECT ON  [dbo].[question] TO [processTopLists]
+GO
+
+ALTER TABLE [dbo].[question] ADD CONSTRAINT [pk_question] PRIMARY KEY NONCLUSTERED  ([questionId]) ON [PRIMARY]
+GO
+CREATE CLUSTERED INDEX [ix_question_longitude_latitude] ON [dbo].[question] ([timestamp] DESC, [longitude], [latitude], [resolved], [bounty], [questionId]) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [ix_question_userId] ON [dbo].[question] ([userId], [timestamp], [questionId]) ON [PRIMARY]
 GO
