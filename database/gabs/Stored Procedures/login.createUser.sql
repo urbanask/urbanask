@@ -236,5 +236,18 @@ VALUES
 
 
 
+INSERT INTO
+	[Gabs].dbo.userInstructions
+	(
+	[userId]
+	)
+
+VALUES
+	(
+	@userId
+	)
+	
+	
+	
 --PRINT @userId
 GO

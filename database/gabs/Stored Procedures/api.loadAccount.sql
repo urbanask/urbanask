@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER OFF
 GO
 SET ANSI_NULLS OFF
@@ -142,6 +143,16 @@ OPTION
 	  (FORCE ORDER, LOOP JOIN, MAXDOP 1)
 
 
+
+SELECT
+	userInstructions.postQuestion	AS postQuestion
+
+FROM
+	Gabs.dbo.userInstructions		AS userInstructions
+	WITH							( NOLOCK, INDEX( ix_userInstructions_userId ) )
+	
+WHERE
+	userInstructions.userId			= @userId
 
 
 GO

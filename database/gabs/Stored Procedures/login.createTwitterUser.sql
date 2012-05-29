@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER OFF
 GO
 SET ANSI_NULLS OFF
@@ -233,6 +234,19 @@ VALUES
 
 
 
+INSERT INTO
+	[Gabs].dbo.userInstructions
+	(
+	[userId]
+	)
+
+VALUES
+	(
+	@userId
+	)
+	
+	
+	
 --PRINT @userId
 --PRINT @username
 

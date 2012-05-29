@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER OFF
 GO
 SET ANSI_NULLS OFF
@@ -92,7 +93,7 @@ FROM
 --lat: .000002741 = 1 ft
 --lon: .0000035736 = 1 ft
 
-DECLARE @randomRange		INT = 25000 -- ~5 miles
+DECLARE @randomRange		INT = 10000 -- ~2 miles
 DECLARE @latitudePerFoot	DECIMAL(10,10) = 0.000002741
 DECLARE @longitudePerFoot	DECIMAL(10,10) = 0.0000035736
 
