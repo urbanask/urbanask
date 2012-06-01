@@ -145,7 +145,11 @@ OPTION
 
 
 SELECT
-	userInstructions.postQuestion	AS postQuestion
+	userInstructions.postQuestion	AS postQuestion,
+	userInstructions.viewQuestions	AS viewQuestions,
+	userInstructions.viewQuestion	AS viewQuestion,
+	userInstructions.addAnswer		AS addAnswer,
+	userInstructions.toolbar		AS toolbar
 
 FROM
 	Gabs.dbo.userInstructions		AS userInstructions
