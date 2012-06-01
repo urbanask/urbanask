@@ -1,7 +1,6 @@
 a, a:active, a:hover, a:link, a:visited {text-decoration: none;}
 
-#amazon-store-link {
-    background-image: url("../images/amazon.png");
+.store-link {
     background-position: center center;
     background-repeat: no-repeat;
     background-size: 125px auto;
@@ -11,46 +10,29 @@ a, a:active, a:hover, a:link, a:visited {text-decoration: none;}
     margin: 0 auto;
 }
 
-#amazon-store-qr {
-    background-image: url("../images/qr-amazon.png");
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: 125px auto;
+#amazon-store-link {
+    background-image: url("../images/download/amazon.png");
+}
+
+.store-qr {
     height: 125px;
     margin: 0 auto;
-    width: 125px;
+    width: 125px; 
+    border: none;   
 }
 
 
 #app-links {
     display: inline-block;
-    padding-left: 20px;
-    padding-top: 135px;
+    margin-left: 20px;
+    margin-top: 135px;
     vertical-align: top;
     width: 300px;
 }
 
 #apple-store-link {
-    background-image: url("../images/app-store.png");
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: 125px auto;
-    display: block;
-    height: 50px;
-    margin: 0 auto;
-    padding-top: 8px;
+    background-image: url("../images/download/app-store.gif");
 }
-
-#apple-store-qr {
-    background-image: url("../images/qr-apple.png");
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: 125px auto;
-    height: 125px;
-    margin: 0 auto;
-    width: 125px;
-}
-
 
 body {
     color: white;
@@ -60,7 +42,7 @@ body {
 }
 
 #button-store-link {
-    bottom: 495px;
+    bottom: 465px;
     display: block;
     height: 88px;
     left: 215px;
@@ -74,7 +56,7 @@ body {
 }
 
 #free-button {
-    background-image: url("../images/red_foil_sticker.png");
+    background-image: url("../images/download/red_foil_sticker.png");
     background-repeat: no-repeat;
     color: white;
     height: 88px;
@@ -100,32 +82,13 @@ body {
 }
 
 #google-store-link {
-    background-image: url("../images/google-play.png");
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: 125px auto;
-    display: block;
-    height: 50px;
-    margin: 0 auto;
-    padding-top: 8px;
+    background-image: url("../images/download/google-play.png");
 }
-
-#google-store-qr {
-    background-image: url("../images/qr-google.png");
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: 125px auto;
-    height: 125px;
-    margin: 0 auto;
-    width: 125px;
-}
-
 
 #landing-logo {
     display: block;
     height: 125px;
-    margin: 0 auto;
-    padding-bottom: 10px;
+    margin: 0 auto 20px auto;
 }
 
 .links-text {
@@ -134,34 +97,150 @@ body {
 }
 
 #phone-preview {
-    background-image: url("../images/iphone.png");
     background-position: center bottom;
     background-repeat: no-repeat;
     display: inline-block;
     height: 622px;
-    padding-top: 50px;
     vertical-align: top;
-    width: 281px;
+    width: 293px;
+}
+
+#phone-preview.iphone {
+    background-image: url("../images/download/iphone.png");
+    height: 622px;
+    margin-top: 50px;
+}
+
+#phone-preview.android {
+    background-image: url("../images/download/android.png") !important;
+    height: 540px;
+    margin-top: 75px;
 }
 
 #phone-screen {
-    height: 358px;
-    margin: 0 auto;
-    padding-top: 99px;
     width: 239px;
-}
-
-#screen-shot {
-    display: block;
-    height: 100%;
-    margin: 0 auto;
+    height: 358px;
+    overflow: hidden;
     position: relative;
-    width: 100%;
+    
 }
 
-.store-group {
+#phone-preview.iphone #phone-screen {
+    margin: 99px auto 0 auto;
+}
+
+#phone-preview.android #phone-screen {
+    margin: 74px auto 0 auto;
+}
+
+#screen-shot-container {
+    width: 1195px;
+    height: 358px;
+    position: absolute;
+	transition: all 1.0s ease-in-out;
+		-webkit-transition: all 1.0s ease-in-out;
+		-moz-transition: all 1.0s ease-in-out;
+		-o-transition: all 1.0s ease-in-out;
+		-ms-transition: all 1.0s ease-in-out;	
+}
+
+#screen-shot-container div
+{	
+    background-repeat: no-repeat;
+    height: 358px;
+    width: 239px;
+    float: left;
+}
+
+#screen-shot-container.screen-shot-1
+{
+	left: 0;
+}
+
+#screen-shot-container.screen-shot-2
+{
+	left: -239px;
+}
+
+#screen-shot-container.screen-shot-3
+{
+	left: -478px;
+}
+
+#screen-shot-container.screen-shot-4
+{
+	left: -717px;
+}
+
+#screen-shot-container.screen-shot-5
+{
+	left: -956px;
+}
+
+#phone-preview.iphone #screen-shot-1
+{	
+    background-image: url("../images/download/iphone-screen-shot-1.png");
+}
+
+#phone-preview.iphone #screen-shot-2
+{	
+    background-image: url("../images/download/iphone-screen-shot-2.png");
+}
+
+#phone-preview.iphone #screen-shot-3
+{	
+    background-image: url("../images/download/iphone-screen-shot-3.png");
+}
+
+#phone-preview.iphone #screen-shot-4
+{	
+    background-image: url("../images/download/iphone-screen-shot-4.png");
+}
+
+#phone-preview.iphone #screen-shot-5
+{	
+    background-image: url("../images/download/iphone-screen-shot-5.png");
+}
+
+#phone-preview.android #screen-shot-1
+{	
+    background-image: url("../images/download/android-screen-shot-1.png");
+}
+
+#phone-preview.android #screen-shot-2
+{	
+    background-image: url("../images/download/android-screen-shot-2.png");
+}
+
+#phone-preview.android #screen-shot-3
+{	
+    background-image: url("../images/download/android-screen-shot-3.png");
+}
+
+#phone-preview.android #screen-shot-4
+{	
+    background-image: url("../images/download/android-screen-shot-4.png");
+}
+
+#phone-preview.android #screen-shot-5
+{	
+    background-image: url("../images/download/android-screen-shot-5.png");
+}
+
+.stores 
+{
+	list-style: none;
     display: inline-block;
-    padding: 10px;
+    vertical-align: top;
+    width: 300px;
+    margin: 0;
+    padding: 0;
+}
+
+.stores li
+{
+    padding: 5px 10px;
+    display: inline-block;
     vertical-align: top;
 }
 
@@ -169,7 +248,7 @@ body {
     display: inline-block;
     height: 600px;
     padding-right: 50px;
-    padding-top: 25px;
+    margin-top: 25px;
     vertical-align: top;
     width: 350px;
 }
@@ -180,22 +259,5 @@ body {
 }
 
 #web-store-link {
-    background-image: url("../images/on-the-web.png");
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: 125px auto;
-    display: block;
-    height: 50px;
-    margin: 0 auto;
-    padding-top: 8px;
-}
-
-#web-store-qr {
-    background-image: url("../images/qr-web.png");
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: 125px auto;
-    height: 125px;
-    margin: 0 auto;
-    width: 125px;
+    background-image: url("../images/download/on-the-web.png");
 }

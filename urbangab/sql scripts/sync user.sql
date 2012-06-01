@@ -5,7 +5,7 @@ SELECT * FROM [userTwitter] WHERE userId < 100000 ORDER BY userId DESC
 SELECT * FROM [userEmail] WHERE userId < 100000 ORDER BY userId DESC
 SELECT * FROM userRegion WHERE userId < 100000 ORDER BY userId DESC
 SELECT * FROM userPicture WHERE userId < 100000 ORDER BY userId DESC
-SELECT * FROM question WHERE userId < 100000 ORDER BY timestamp DESC
+SELECT * FROM question ORDER BY timestamp DESC
 SELECT * FROM answer WHERE userId < 100000 ORDER BY timestamp DESC
 SELECT * FROM answerVote WHERE userId < 100000
 SELECT * FROM answerVote WHERE vote< 0 AND userId < 100000

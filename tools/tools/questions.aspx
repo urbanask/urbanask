@@ -3,7 +3,7 @@
 <!doctype html>
 <html>
 <head>
-<title>add questionse</title>
+<title>add questions</title>
 <link rel="stylesheet" href="styles/Site.css" />
 </head>
 

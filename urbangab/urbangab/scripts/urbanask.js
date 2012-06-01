@@ -45,6 +45,7 @@
             _userQuestionTimer,
             _questionTimer,
             _geoTimer,
+            _instructionsTimer,
             ACCOUNT_COLUMNS = {
 
                 "userId": 0,
@@ -55,7 +56,8 @@
                 "languageId": 5,
                 "tagline": 6,
                 "regions": 7,
-                "notifications": 8
+                "notifications": 8,
+                "instructions": 9
 
             },
             ANSWER_COLUMNS = {
@@ -80,8 +82,6 @@
                 "votes": 17
 
             },
-        //API_URL = 'http://75.144.228.69:55555',
-        //API_URL = 'http://urbanask.com',
             API_URL = ( _hostname == '75.144.228.69' ? 'http://75.144.228.69:55555' : 'http://urbanask.com' ),
             BADGE_CLASSES = {
 
@@ -106,6 +106,16 @@
             FACEBOOK_LOGIN_URL = 'http://urbanask.com/fb-login.html',
             FACEBOOK_POST_URL = 'http://urbanask.com/fb-login.html',
             FACEBOOK_REDIRECT_URL = 'http://' + ( _hostname == '75.144.228.69' ? '75.144.228.69:55555/urbangab' : _hostname ) + '/index.html',
+            INSTRUCTION_RATE = 30000,
+            INSTRUCTION_TYPES = {
+
+                postQuestion: { id: 0, name: 'postQuestion' },
+                viewQuestions: { id: 1, name: 'viewQuestions' },
+                viewQuestion: { id: 2, name: 'viewQuestion' },
+                addAnswer: { id: 3, name: 'addAnswer' },
+                toolbar: { id: 4, name: 'toolbar' }
+
+            },
             INTERVALS = {
 
                 "all": 0,
@@ -1402,6 +1412,16 @@
 
         };
 
+        function hideInstructions() {
+
+            var instructions = document.getElementById( 'instructions' ),
+                event = document.createEvent( 'HTMLEvents' );
+
+            event.initEvent( 'close', false, false );
+            instructions.dispatchEvent( event );
+
+        };
+
         function hideQuestionShare() {
 
             var share = document.getElementById( 'question-share' ),
@@ -1865,8 +1885,12 @@
 
         function usePhoneGap( ready ) {
 
-            var html = '<iframe style="display:none;" height="0px" width="0px" frameborder="0" src="gap://ready"></iframe>';
-            document.body.insertAdjacentHTML( 'beforeEnd', html );
+            if ( window.deviceInfo.brand != 'android' ) {
+
+                var html = '<iframe style="display:none;" height="0px" width="0px" frameborder="0" src="gap://ready"></iframe>';
+                document.body.insertAdjacentHTML( 'beforeEnd', html );
+
+            };
 
             window.setTimeout( function () {
 
@@ -1913,11 +1937,15 @@
 
         function closePhoneGap() {
 
-            var frames = document.querySelectorAll( 'iframe' );
+            if ( window.deviceInfo.brand != 'android' ) {
 
-            for ( var index = 0; index < frames.length; index++ ) {
+                var frames = document.getElementsByTagName( 'iframe' );
 
-                frames[index].parentNode.removeChild( frames[index] );
+                for ( var index = 0; index < frames.length; index++ ) {
+
+                    frames[index].parentNode.removeChild( frames[index] );
+
+                };
 
             };
 
@@ -2029,8 +2057,21 @@
                         ? _account[ACCOUNT_COLUMNS.notifications].items( 0, NOTIFICATION_COLUMNS.viewed ).length
                         : 0;
                     _account = window.JSON.parse( data )[0];
-                    showNotifications( _account[ACCOUNT_COLUMNS.notifications].length > count );
+                    _account[ACCOUNT_COLUMNS.instructions].unviewed = function () {
 
+                        var instuctions = [];
+
+                        for ( var index = 0; index < _account[ACCOUNT_COLUMNS.instructions].length; index++ ) {
+
+                            if ( !_account[ACCOUNT_COLUMNS.instructions][index] ) { instuctions.push( index ); };
+
+                        };
+
+                        return instuctions;
+
+                    };
+
+                    showNotifications( _account[ACCOUNT_COLUMNS.notifications].length > count );
                     if ( complete ) { complete(); };
 
                 },
@@ -2151,7 +2192,7 @@
                     "success": function ( data, status ) {
 
                         _cache.topUsers.refresh( data );
-                        showTopUsers();
+                        showTopUsers( _account[ACCOUNT_COLUMNS.regions][0][REGION_COLUMNS.name] );
                         hideLoading();
 
                     },
@@ -3605,6 +3646,32 @@
                     error == 'Unauthorized'
                         ? logoutApp()
                         : showMessage( STRINGS.error.answerSelect );
+
+                }
+
+            } );
+
+        };
+
+        function saveInstructionViewed( type ) {
+
+            var data = 'type=' + type.name,
+                resource = '/api/account/instructions/save',
+                session = getSession( resource );
+
+            ajax( API_URL + resource, {
+
+                "type": "GET",
+                "data": data,
+                "headers": { "x-session": session },
+                "success": function ( data, status ) {
+
+                    _account[ACCOUNT_COLUMNS.instructions][type.id] = 1; //true 
+
+                },
+                "error": function ( response, status, error ) {
+
+                    if ( error == 'Unauthorized' ) { logoutApp(); };
 
                 }
 
@@ -5293,6 +5360,402 @@
 
         };
 
+        function showInstructions() {
+
+            if ( _account[ACCOUNT_COLUMNS.instructions].unviewed().length ) {
+
+                var type = _account[ACCOUNT_COLUMNS.instructions].unviewed()[0];
+
+                switch ( type ) {
+                    case INSTRUCTION_TYPES.postQuestion.id:
+
+                        if ( !document.getElementById( 'questions-page' ).hasClass( 'hide' ) ) {
+
+                            showInstruction( 
+                                STRINGS.instructions.postQuestion,
+                                { x: 20, y: 50, from: { x: "left", y: "top"} },
+                                { x: 20, from: { x: "left", y: "top"} },
+                                { timeout: 6 * SECOND }
+                            );
+
+                            window.setTimeout( function () {
+
+                                showAskButton();
+                                var text = STRINGS.instructions.postQuestionSend;
+
+                                if ( window.deviceInfo.mobile ) {
+
+                                    text = text.replace( '%1', STRINGS.instructions.tap );
+
+                                } else {
+
+                                    text = text.replace( '%1', STRINGS.instructions.click );
+
+                                };
+
+                                if ( !document.getElementById( 'questions-page' ).hasClass( 'hide' ) ) {
+
+                                    showInstruction( 
+                                        text,
+                                        { x: 20, y: 50, from: { x: "right", y: "top"} },
+                                        { x: 20, from: { x: "right", y: "top"} },
+                                        { timeout: 6 * SECOND }
+                                    );
+
+                                };
+
+                            }, 8 * SECOND );
+
+                            saveInstructionViewed( INSTRUCTION_TYPES.postQuestion );
+
+                        };
+
+                        break;
+
+                    case INSTRUCTION_TYPES.viewQuestions.id:
+
+                        if ( !document.getElementById( 'questions-page' ).hasClass( 'hide' ) ) {
+
+                            showInstruction( 
+                                STRINGS.instructions.viewQuestions,
+                                { x: 20, y: 10, from: { x: "left", y: "bottom"} },
+                                { x: 20, from: { x: "left", y: "top"} },
+                                { timeout: 6 * SECOND }
+                            );
+
+                            window.setTimeout( function () {
+
+                                if ( !document.getElementById( 'questions-page' ).hasClass( 'hide' ) ) {
+
+                                    showInstruction( 
+                                        STRINGS.instructions.viewMyQuestions,
+                                        { x: 20, y: 120, from: { x: "left", y: "top"} },
+                                        { x: 20, from: { x: "left", y: "top"} },
+                                        { timeout: 6 * SECOND }
+                                    );
+
+                                };
+
+                                window.setTimeout( function () {
+
+                                    if ( !document.getElementById( 'questions-page' ).hasClass( 'hide' ) ) {
+
+                                        var text = STRINGS.instructions.viewQuestion;
+
+                                        if ( window.deviceInfo.mobile ) {
+
+                                            text = text.replace( '%1', STRINGS.instructions.tap );
+
+                                        } else {
+
+                                            text = text.replace( '%1', STRINGS.instructions.click );
+
+                                        };
+
+                                        showInstruction( 
+                                            text,
+                                            { x: 20, y: 10, from: { x: "left", y: "bottom"} },
+                                            { x: 20, from: { x: "left", y: "top"} },
+                                            { timeout: 6 * SECOND }
+                                        );
+
+                                    };
+
+                                }, 8 * SECOND );
+
+                            }, 8 * SECOND );
+
+                            saveInstructionViewed( INSTRUCTION_TYPES.viewQuestions );
+
+                        };
+
+                        break;
+
+                    case INSTRUCTION_TYPES.viewQuestion.id:
+
+                        if ( !document.getElementById( 'question-page' ).hasClass( 'hide' ) ) {
+
+                            showInstruction( 
+                                STRINGS.instructions.viewQuestionWho,
+                                { x: 20, y: 80, from: { x: "right", y: "top"} },
+                                { x: 65, from: { x: "right", y: "top"} },
+                                { timeout: 6 * SECOND }
+                            );
+
+                            window.setTimeout( function () {
+
+                                showInstruction( 
+                                    STRINGS.instructions.viewQuestionWhat,
+                                    { x: 20, y: 80, from: { x: "left", y: "top"} },
+                                    { x: 125, from: { x: "left", y: "top"} },
+                                    { timeout: 6 * SECOND }
+                                );
+
+                                window.setTimeout( function () {
+
+                                    showInstruction( 
+                                        STRINGS.instructions.viewQuestionWhere,
+                                        { x: 20, y: 20, from: { x: "left", y: "top"} },
+                                        { x: 125, from: { x: "left", y: "bottom"} },
+                                        { timeout: 6 * SECOND }
+                                    );
+
+                                }, 8 * SECOND );
+
+                            }, 8 * SECOND );
+
+                            saveInstructionViewed( INSTRUCTION_TYPES.viewQuestion );
+
+                        };
+
+                        break;
+
+                    case INSTRUCTION_TYPES.addAnswer.id:
+
+                        if ( !document.getElementById( 'question-page' ).hasClass( 'hide' ) ) {
+
+                            showInstruction( 
+                                STRINGS.instructions.viewAnswer,
+                                { x: 20, y: 10, from: { x: "left", y: "bottom"} },
+                                { x: 20, from: { x: "left", y: "top"} },
+                                { timeout: 6 * SECOND }
+                            );
+
+                            window.setTimeout( function () {
+
+                                var text = STRINGS.instructions.addAnswer;
+
+                                if ( window.deviceInfo.mobile ) {
+
+                                    text = text.replace( '%1', STRINGS.instructions.tap );
+
+                                } else {
+
+                                    text = text.replace( '%1', STRINGS.instructions.click );
+
+                                };
+
+                                showInstruction( 
+                                    text,
+                                    { y: 30, from: { x: "center", y: "bottom"} },
+                                    { x: 5, from: { x: "left", y: "bottom"} },
+                                    { timeout: 6 * SECOND }
+                                );
+
+                            }, 8 * SECOND );
+
+                            saveInstructionViewed( INSTRUCTION_TYPES.addAnswer );
+
+                        };
+
+                        break;
+
+                    case INSTRUCTION_TYPES.toolbar.id:
+
+                        if ( !document.getElementById( 'questions-page' ).hasClass( 'hide' )
+                            || !document.getElementById( 'top-page' ).hasClass( 'hide' )
+                            || !document.getElementById( 'user-page' ).hasClass( 'hide' ) ) {
+
+                            var text = STRINGS.instructions.toolbarQuestions;
+
+                            if ( window.deviceInfo.mobile ) {
+
+                                text = text.replace( '%1', STRINGS.instructions.tap );
+
+                            } else {
+
+                                text = text.replace( '%1', STRINGS.instructions.click );
+
+                            };
+
+                            showInstruction( 
+                                text,
+                                { y: 30, from: { x: "center", y: "bottom"} },
+                                { x: 53, from: { x: "left", y: "bottom"} },
+                                { timeout: 6 * SECOND }
+                            );
+
+                            window.setTimeout( function () {
+
+                                var text = STRINGS.instructions.toolbarTop;
+
+                                if ( window.deviceInfo.mobile ) {
+
+                                    text = text.replace( '%1', STRINGS.instructions.tap );
+
+                                } else {
+
+                                    text = text.replace( '%1', STRINGS.instructions.click );
+
+                                };
+
+                                showInstruction( 
+                                    text,
+                                    { y: 30, from: { x: "center", y: "bottom"} },
+                                    { x: 130, from: { x: "left", y: "bottom"} },
+                                    { timeout: 6 * SECOND }
+                                );
+
+                                window.setTimeout( function () {
+
+                                    var text = STRINGS.instructions.toolbarUser;
+
+                                    if ( window.deviceInfo.mobile ) {
+
+                                        text = text.replace( '%1', STRINGS.instructions.tap );
+
+                                    } else {
+
+                                        text = text.replace( '%1', STRINGS.instructions.click );
+
+                                    };
+
+                                    showInstruction( 
+                                        text,
+                                        { y: 30, from: { x: "center", y: "bottom"} },
+                                        { x: 205, from: { x: "left", y: "bottom"} },
+                                        { timeout: 6 * SECOND }
+                                    );
+
+                                }, 8 * SECOND );
+
+                            }, 8 * SECOND );
+
+                            saveInstructionViewed( INSTRUCTION_TYPES.toolbar );
+
+                        };
+
+                        break;
+
+                };
+
+            };
+
+            if ( _account[ACCOUNT_COLUMNS.instructions].unviewed().length ) {
+
+                window.setTimeout( function () {
+
+                    showInstructions();
+
+                }, INSTRUCTION_RATE );
+
+            };
+
+        };
+
+        function showInstruction( text, position, bubble, options ) {
+
+            var instructions = document.getElementById( 'instructions' );
+            options = options || {};
+
+            switch ( position.from.y ) {
+                case 'top':
+
+                    instructions.style.top = position.y + 'px';
+                    instructions.style.bottom = '';
+
+                    break;
+
+                case 'bottom':
+
+                    instructions.style.top = '';
+                    instructions.style.bottom = position.y + 'px';
+
+                    break;
+
+            };
+
+            switch ( position.from.x ) {
+                case 'left':
+
+                    instructions.style.left = position.x + 'px';
+                    instructions.style.right = '';
+
+                    break;
+
+                case 'right':
+
+                    instructions.style.left = '';
+                    instructions.style.right = position.x + 'px';
+
+                    break;
+
+                case 'center':
+
+                    var view = document.getElementById( 'view' );
+
+                    instructions.style.left = ( ( view.clientWidth - 280 ) / 2 ) + 'px';
+                    instructions.style.right = '';
+
+                    break;
+
+            };
+
+            switch ( bubble.from.y ) {
+                case 'top':
+
+                    instructions.addClass( 'instructions-top' );
+                    instructions.removeClass( 'instructions-bottom' );
+
+                    break;
+
+                case 'bottom':
+
+                    instructions.addClass( 'instructions-bottom' );
+                    instructions.removeClass( 'instructions-top' );
+
+                    break;
+
+            };
+
+            var style = '<style id="instruction-styles">'
+                + '#instructions::before {'
+                + bubble.from.x + ':' + bubble.x + 'px;'
+                + '}'
+                + '</style>';
+            instructions.insertAdjacentHTML( 'afterEnd', style );
+
+            instructions.innerHTML = text;
+            instructions.removeClass( 'hide' );
+            window.setTimeout( function () { instructions.removeClass( 'fade' ); }, 10 );
+            if ( options.timeout ) { window.setTimeout( function () { close(); }, options.timeout ); };
+            addEventListeners();
+
+            function close() {
+
+                removeEventListeners();
+
+                if ( !instructions.hasClass( 'fade' ) ) {
+
+                    instructions.addClass( 'fade' );
+                    window.setTimeout( function () {
+
+                        instructions.addClass( 'hide' );
+                        var styles = document.getElementById( 'instruction-styles' );
+                        styles.parentNode.removeChild( styles );
+
+                    }, 1000 );
+
+                };
+
+            };
+
+            function addEventListeners() {
+
+                instructions.addEventListener( 'close', close, false );
+                instructions.addEventListener( 'click', close, false );
+
+            };
+
+            function removeEventListeners() {
+
+                instructions.removeEventListener( 'close', close, false );
+                instructions.removeEventListener( 'click', close, false );
+
+            };
+
+        };
+
         function showLoading( top, left, element ) {
 
             var loading = document.getElementById( 'loading' );
@@ -5348,17 +5811,7 @@
             };
 
             window.setTimeout( function () { message.removeClass( 'fade' ); }, 50 );
-
-            okButton.addEventListener( 'click', ok, false );
-            okButton.addEventListener( 'touchstart', selectButton, false );
-            okButton.addEventListener( 'touchend', unselectButton, false );
-            okButton.addEventListener( 'mousedown', selectButton, false );
-            okButton.addEventListener( 'mouseup', unselectButton, false );
-            cancelButton.addEventListener( 'click', cancel, false );
-            cancelButton.addEventListener( 'touchstart', selectButton, false );
-            cancelButton.addEventListener( 'touchend', unselectButton, false );
-            cancelButton.addEventListener( 'mousedown', selectButton, false );
-            cancelButton.addEventListener( 'mouseup', unselectButton, false );
+            addEventListeners();
 
             function ok() {
 
@@ -5392,6 +5845,21 @@
                 cancelButton.removeEventListener( 'touchend', unselectButton, false );
                 cancelButton.removeEventListener( 'mousedown', selectButton, false );
                 cancelButton.removeEventListener( 'mouseup', unselectButton, false );
+
+            };
+
+            function addEventListeners() {
+
+                okButton.addEventListener( 'click', ok, false );
+                okButton.addEventListener( 'touchstart', selectButton, false );
+                okButton.addEventListener( 'touchend', unselectButton, false );
+                okButton.addEventListener( 'mousedown', selectButton, false );
+                okButton.addEventListener( 'mouseup', unselectButton, false );
+                cancelButton.addEventListener( 'click', cancel, false );
+                cancelButton.addEventListener( 'touchstart', selectButton, false );
+                cancelButton.addEventListener( 'touchend', unselectButton, false );
+                cancelButton.addEventListener( 'mousedown', selectButton, false );
+                cancelButton.addEventListener( 'mouseup', unselectButton, false );
 
             };
 
@@ -5530,6 +5998,7 @@
             viewport.setDataset( 'page', page );
             addEventListeners( page, previousPage );
             hideLoading();
+            hideInstructions();
 
             switch ( page ) {
 
@@ -5621,7 +6090,7 @@
 
                 case 'top-page':
 
-                    showTopUsers();
+                    showTopUsers( _account[ACCOUNT_COLUMNS.regions][0][REGION_COLUMNS.name] );
 
                     _pages.replace( page, { caption: STRINGS.backButtonTopUsers } );
 
@@ -6228,7 +6697,7 @@
 
         };
 
-        function showTopUsers() {
+        function showTopUsers( header ) {
 
             var noTopUsers = document.getElementById( 'no-top-users' ),
                 topUsers = document.getElementById( 'top-users' );
@@ -6253,14 +6722,16 @@
 
                 };
 
-                topUsers.innerHTML = html;
-
                 if ( html.length ) {
+
+                    topUsers.innerHTML = getListItemHeader( header ) + html;
 
                     noTopUsers.addClass( 'hide' );
                     topUsers.removeClass( 'hide' );
 
                 } else {
+
+                    topUsers.innerHTML = '';
 
                     noTopUsers.innerHTML = STRINGS.topUsers.noTopUsers
                         .replace( "%1", STRINGS.topUsers.noTopUsersType[topTypeId - 1] )
@@ -6548,7 +7019,6 @@
                 setupGeolocation();
                 refreshQuestions();
                 refreshUserQuestions();
-
                 showRefreshButton();
 
                 if ( window.location.queryString()['question-id'] ) {
@@ -6561,6 +7031,8 @@
                     showPage( 'questions-page' );
 
                 };
+
+                window.setTimeout( showInstructions, 10 * SECOND );
 
                 if ( complete ) { complete() };
 
@@ -6807,7 +7279,7 @@
 
                 toggleButton.addClass( 'toggle-button-selected' );
                 toggleButton.parentNode.setDataset( 'id', toggleButton.getDataset( 'id' ) );
-                showTopUsers();
+                showTopUsers( _account[ACCOUNT_COLUMNS.regions][0][REGION_COLUMNS.name] );
 
             };
 
@@ -6831,7 +7303,7 @@
 
                 toggleButton.addClass( 'toggle-button-selected' );
                 toggleButton.parentNode.setDataset( 'id', toggleButton.getDataset( 'id' ) );
-                showTopUsers();
+                showTopUsers( _account[ACCOUNT_COLUMNS.regions][0][REGION_COLUMNS.name] );
 
             };
 

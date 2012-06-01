@@ -18,6 +18,7 @@ Public Class account : Inherits api.messageHandler
     Private Const LOAD_ACCOUNT As String = "Gabs.api.loadAccount",
         SAVE_ACCOUNT As String = "Gabs.api.saveAccount",
         SAVE_NOTIFICATION_VIEWED As String = "Gabs.api.saveNotificationViewed",
+        SAVE_INSTRUCTION_VIEWED As String = "Gabs.api.saveInstructionViewed",
         JSON_ACCOUNT_COLUMNS As String =
               "[" _
             & """userId""," _
@@ -55,6 +56,10 @@ Public Class account : Inherits api.messageHandler
                     saveAccount(context, connection, queries, userId)
 
                 End If
+
+            Case "/instructions/save" '/api/account/instructions/save
+
+                saveInstructionViewed(context, connection, queries, userId)
 
             Case "/columns" '/api/account/columns
 
@@ -135,6 +140,28 @@ Public Class account : Inherits api.messageHandler
 
     End Sub
 
+    Private Sub saveInstructionViewed(
+        context As Web.HttpContext,
+        connection As SqlClient.SqlConnection,
+        queries As Collections.Specialized.NameValueCollection,
+        userId As Int32)
+
+        Dim type As String = queries("type")
+
+        Using command As New SqlClient.SqlCommand(SAVE_INSTRUCTION_VIEWED, connection)
+
+            command.CommandType = CommandType.StoredProcedure
+            command.CommandTimeout = COMMAND_TIMEOUT
+
+            command.Parameters.AddWithValue("@userId", userId)
+            command.Parameters.AddWithValue("@type", type)
+
+            command.ExecuteNonQuery()
+
+        End Using
+
+    End Sub
+
     Private Sub loadColumns(
         context As Web.HttpContext)
 
@@ -162,6 +189,7 @@ Public Class account : Inherits api.messageHandler
                     user("languageId"), ",""",
                     user("tagline"), """,[")
 
+                'regions
                 If user.NextResult() Then
 
                     If user.HasRows() Then
@@ -207,6 +235,27 @@ Public Class account : Inherits api.messageHandler
                         End While
 
                         response = response.Substring(0, response.Length - 1) 'remove last comma
+
+                    End If
+
+                End If
+
+                response &= "],["
+
+                'instructions
+                If user.NextResult() Then
+
+                    If user.HasRows() Then
+
+                        user.Read()
+
+                        response &= String.Concat(
+                            user("postQuestion"), ",",
+                            user("viewQuestions"), ",",
+                            user("viewQuestion"), ",",
+                            user("addAnswer"), ",",
+                            user("toolbar")
+                            )
 
                     End If
 

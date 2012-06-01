@@ -83,15 +83,26 @@
     <Content Include="fb-login.html" />
     <Content Include="frame.html" />
     <Content Include="icon-72.png" />
-    <Content Include="images\amazon.png" />
+    <Content Include="images\download\amazon.png" />
     <Content Include="images\android.png" />
     <Content Include="images\android\icon-57.png" />
     <Content Include="images\android\splash-320x480.png" />
-    <Content Include="images\app-store.png" />
     <Content Include="images\apple.png" />
     <Content Include="images\blackberry\icon-57.png" />
     <Content Include="images\blackberry\splash-320x480.png" />
-    <Content Include="images\google-play.png" />
+    <Content Include="images\download\android-screen-shot-1.PNG" />
+    <Content Include="images\download\android-screen-shot-2.PNG" />
+    <Content Include="images\download\android-screen-shot-3.PNG" />
+    <Content Include="images\download\android-screen-shot-4.PNG" />
+    <Content Include="images\download\android-screen-shot-5.PNG" />
+    <Content Include="images\download\android.png" />
+    <Content Include="images\download\app-store.gif" />
+    <Content Include="images\download\google-play.png" />
+    <Content Include="images\download\iphone-screen-shot-1.PNG" />
+    <Content Include="images\download\iphone-screen-shot-2.PNG" />
+    <Content Include="images\download\iphone-screen-shot-3.PNG" />
+    <Content Include="images\download\iphone-screen-shot-4.PNG" />
+    <Content Include="images\download\iphone-screen-shot-5.PNG" />
     <Content Include="images\icon-114.png" />
     <Content Include="images\icon-57.png" />
     <Content Include="images\icon-72.png" />
@@ -103,14 +114,13 @@
     <Content Include="images\ios\splash-320x480.png" />
     <Content Include="images\ios\splash-640x960.png" />
     <Content Include="images\ios\splash-768x1024.png" />
-    <Content Include="images\iphone.png" />
-    <Content Include="images\on-the-web.png" />
-    <Content Include="images\qr-amazon.png" />
-    <Content Include="images\qr-apple.png" />
-    <Content Include="images\qr-google.png" />
-    <Content Include="images\qr-web.png" />
-    <Content Include="images\red_foil_sticker.png" />
-    <Content Include="images\screen-shot.jpg" />
+    <Content Include="images\download\iphone.png" />
+    <Content Include="images\download\on-the-web.png" />
+    <Content Include="images\download\qr-amazon.png" />
+    <Content Include="images\download\qr-apple.png" />
+    <Content Include="images\download\qr-google.png" />
+    <Content Include="images\download\qr-web.png" />
+    <Content Include="images\download\red_foil_sticker.png" />
     <Content Include="images\share-logo.png" />
     <Content Include="images\splash-320x480.png" />
     <Content Include="images\splash-fullscreen.png" />
@@ -126,6 +136,7 @@
     <Content Include="images\splash.png" />
     <Content Include="index.html" />
     <Content Include="questions.aspx" />
+    <Content Include="scripts\download.js" />
     <Content Include="scripts\urbanask-compiled.js" />
     <Content Include="scripts\urbanask.js" />
     <Content Include="scripts\strings-en.js" />
@@ -192,7 +203,9 @@
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
   <ProjectExtensions>
