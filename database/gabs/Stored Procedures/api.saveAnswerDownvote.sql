@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER OFF
 GO
 SET ANSI_NULLS ON
@@ -19,11 +20,10 @@ AS
 --###
 
 --###
---1. can't vote on own question
---2. can't vote on own answer
---3. if already voted on another answer, delete other answer.vote and answerVote, update answer.vote, insert new answerVote
---4. else if already voted on this answer, delete answer.vote and answerVote
---5. else update answer.vote, insert answerVote
+--1. can't vote on own answer
+--2. if already voted on another answer, delete other answer.vote and answerVote, update answer.vote, insert new answerVote
+--3. else if already voted on this answer, delete answer.vote and answerVote
+--4. else update answer.vote, insert answerVote
 --###
 
 SET NOCOUNT ON;
@@ -52,187 +52,165 @@ OPTION
 
 
 
---#1 
+--#1 can't vote on own answer
 
 IF NOT EXISTS
 (
 	SELECT
-		question.questionId				AS questionId
+		answer.answerId				AS answerId
 
 	FROM
-		Gabs.dbo.question				AS question
-		WITH							(NOLOCK, INDEX(pk_question))
-		
+		Gabs.dbo.answer				AS answer
+		WITH						( NOLOCK, INDEX( pk_answer ) )
+
 	WHERE
-			question.questionId			= @questionId
-		AND	question.userId				= @userId
+			answer.answerId			= @answerId
+		AND answer.userId			= @userId 
 )
 BEGIN
 	
 
 
-	--#2 
+	-- #3 else if already voted on this answer, delete answer.vote and answerVote
 	
-	IF NOT EXISTS
+	IF EXISTS
 	(
 		SELECT
-			answer.answerId				AS answerId
+			answer.answerId					AS answerId
+		
+		FROM
+			Gabs.dbo.answer					AS answer
+			WITH							( NOLOCK, INDEX( pk_answer ) )
+
+			INNER JOIN
+			Gabs.dbo.answerVote				AS answerVote
+			WITH							( NOLOCK, INDEX( ix_answerVote_answerId ) )
+			ON	answer.answerId				= answerVote.answerId
+
+		WHERE
+				answer.answerId				= @answerId
+			AND	answerVote.userId			= @userId
+			AND answerVote.vote				= -1 --downvote
+	)
+	BEGIN
+
+		SET @alreadyAnswered = 1 --true
+		SET @success = 1 --true
+
+	END
+	
+	
+	
+	-- #2 if already voted on another answer, delete other answer.vote and answerVote, update answer.vote, insert new answerVote
+	-- #3 else if already voted on this answer, delete answer.vote and answerVote
+	
+	IF EXISTS
+	(
+		SELECT
+			answer.answerId					AS answerId
+			
+		FROM
+			Gabs.dbo.answer					AS answer
+			WITH							( NOLOCK, INDEX( ix_answer_questionId ) )
+
+			INNER JOIN
+			Gabs.dbo.answerVote				AS answerVote
+			WITH							( NOLOCK, INDEX( ix_answerVote_answerId ) )
+			ON	answer.answerId				= answerVote.answerId
+
+		WHERE
+				answer.questionId			= @questionId
+			AND	answerVote.userId			= @userId
+	)
+	BEGIN
+	
+
+	
+		UPDATE
+			Gabs.dbo.answer
+			
+		SET
+			votes						= votes - answerVote.vote
 
 		FROM
 			Gabs.dbo.answer				AS answer
-			WITH						( NOLOCK, INDEX( pk_answer ) )
+			WITH						( NOLOCK, INDEX( ix_answer_questionId ) )
+
+			INNER JOIN
+			Gabs.dbo.answerVote			AS answerVote
+			WITH						( NOLOCK, INDEX( ix_answerVote_answerId ) )
+			ON	answer.answerId			= answerVote.answerId
 
 		WHERE
-				answer.answerId			= @answerId
-			AND answer.userId			= @userId 
-	)
-	BEGIN
-		
+				answer.questionId		= @questionId
+			AND	answerVote.userId		= @userId
 
 
-		-- #4
-		
-		IF EXISTS
-		(
-			SELECT
-				answer.answerId					AS answerId
+
+		DELETE
+			Gabs.dbo.answerVote
 			
-			FROM
-				Gabs.dbo.answer					AS answer
-				WITH							( NOLOCK, INDEX( pk_answer ) )
+		FROM
+			Gabs.dbo.answer					AS answer
+			WITH							( NOLOCK, INDEX( ix_answer_questionId ) )
 
-				INNER JOIN
-				Gabs.dbo.answerVote				AS answerVote
-				WITH							( NOLOCK, INDEX( ix_answerVote_answerId ) )
-				ON	answer.answerId				= answerVote.answerId
+			INNER JOIN
+			Gabs.dbo.answerVote				AS answerVote
+			WITH							( NOLOCK, INDEX( ix_answerVote_answerId ) )
+			ON	answer.answerId				= answerVote.answerId
 
-			WHERE
-					answer.answerId				= @answerId
-				AND	answerVote.userId			= @userId
-				AND answerVote.vote				= -1 --downvote
-		)
-		BEGIN
-
-			SET @alreadyAnswered = 1 --true
-			SET @success = 1 --true
-
-		END
-		
-		
-		
-		-- #3, #4
-		
-		IF EXISTS
-		(
-			SELECT
-				answer.answerId					AS answerId
-				
-			FROM
-				Gabs.dbo.answer					AS answer
-				WITH							( NOLOCK, INDEX( ix_answer_questionId ) )
-
-				INNER JOIN
-				Gabs.dbo.answerVote				AS answerVote
-				WITH							( NOLOCK, INDEX( ix_answerVote_answerId ) )
-				ON	answer.answerId				= answerVote.answerId
-
-			WHERE
-					answer.questionId			= @questionId
-				AND	answerVote.userId			= @userId
-		)
-		BEGIN
-		
-
-		
-			UPDATE
-				Gabs.dbo.answer
-				
-			SET
-				votes						= votes - answerVote.vote
-
-			FROM
-				Gabs.dbo.answer				AS answer
-				WITH						( NOLOCK, INDEX( ix_answer_questionId ) )
-
-				INNER JOIN
-				Gabs.dbo.answerVote			AS answerVote
-				WITH						( NOLOCK, INDEX( ix_answerVote_answerId ) )
-				ON	answer.answerId			= answerVote.answerId
-
-			WHERE
-					answer.questionId		= @questionId
-				AND	answerVote.userId		= @userId
-
-
-
-			DELETE
-				Gabs.dbo.answerVote
-				
-			FROM
-				Gabs.dbo.answer					AS answer
-				WITH							( NOLOCK, INDEX( ix_answer_questionId ) )
-
-				INNER JOIN
-				Gabs.dbo.answerVote				AS answerVote
-				WITH							( NOLOCK, INDEX( ix_answerVote_answerId ) )
-				ON	answer.answerId				= answerVote.answerId
-
-			WHERE
-					answer.questionId			= @questionId
-				AND	answerVote.userId			= @userId
-
-
-
-		END
-		
-		
-		
-		-- #5
-		
-		IF @alreadyAnswered = 0 --false
-		BEGIN
-		
-
-		
-			UPDATE
-				Gabs.dbo.answer
-				
-			SET
-				votes				= votes - 1 --downvote
-
-			WHERE
-					answerId		= @answerId
-
-
-
-			INSERT INTO
-				Gabs.dbo.answerVote
-				(
-				answerId,
-				userId,
-				vote
-				)
-			VALUES
-				(
-				@answerId,
-				@userId,
-				-1 --downvote
-				)
-			
-
-			
-			SET @success = 1; --true
-
-
-
-		END
+		WHERE
+				answer.questionId			= @questionId
+			AND	answerVote.userId			= @userId
 
 
 
 	END
+	
+	
+	
+	-- #4 else update answer.vote, insert answerVote
+	
+	IF @alreadyAnswered = 0 --false
+	BEGIN
+	
+
+	
+		UPDATE
+			Gabs.dbo.answer
 			
-			
-			
+		SET
+			votes				= votes - 1 --downvote
+
+		WHERE
+				answerId		= @answerId
+
+
+
+		INSERT INTO
+			Gabs.dbo.answerVote
+			(
+			answerId,
+			userId,
+			vote
+			)
+		VALUES
+			(
+			@answerId,
+			@userId,
+			-1 --downvote
+			)
+		
+
+		
+		SET @success = 1; --true
+
+
+
+	END
+
+
+
 END
 
 

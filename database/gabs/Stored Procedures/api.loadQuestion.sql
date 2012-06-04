@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER OFF
 GO
 SET ANSI_NULLS OFF
@@ -93,11 +94,7 @@ SELECT
 	ELSE 0 --false
 	END										AS expired,
 	questions.bounty						AS bounty,
-	CASE 
-	WHEN COUNT(questionVote.questionVoteId) > 0
-	THEN 1
-	ELSE 0
-	END										AS voted,
+	ISNULL( questionVote.vote, 0 )			AS voted,
 	questions.votes							AS votes,
 	COUNT( answer.answerId )				AS answers
 	
@@ -127,6 +124,7 @@ GROUP BY
 	questions.timestamp,
 	questions.resolved,
 	questions.bounty,
+	ISNULL( questionVote.vote, 0 ),
 	questions.votes
 
 OPTION
@@ -153,7 +151,7 @@ SELECT
 	answer.selected							AS selected,
 	ISNULL( answerVote.vote, 0 )			AS voted,
 	answer.votes							AS votes
-	
+
 FROM
 	Gabs.dbo.answer							AS answer
 	WITH									( NOLOCK, INDEX( ix_answer_questionId ) )

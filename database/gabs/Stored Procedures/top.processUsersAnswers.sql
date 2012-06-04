@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER OFF
 GO
 SET ANSI_NULLS OFF
@@ -96,19 +97,23 @@ OPTION
 
 
 
-DELETE FROM
-	Gabs.[top].topUser
-
-WHERE
-		topUser.regionId		= @regionId
-	AND topUser.topTypeId		= 3 --answers
-	AND topUser.intervalId		= @intervalId
-
-
+DECLARE @topUsers		TABLE
+	(
+	regionId			INT,
+	topTypeId			INT,
+	intervalId			INT,
+	userId				INT,
+	username			VARCHAR(100),
+	reputation			INT,
+	totalQuestions		INT,
+	totalAnswers		INT,
+	totalBadges			INT,
+	topScore			INT
+	)
 
 INSERT INTO
-	Gabs.[top].topUser
-
+	@topUsers
+	
 SELECT	
 	@regionId									AS regionId,
     3											AS topTypeId, --answers
@@ -153,7 +158,38 @@ OPTION
 
 
 
+DELETE FROM
+	Gabs.[top].topUser
+
+WHERE
+		topUser.regionId		= @regionId
+	AND topUser.topTypeId		= 3 --answers
+	AND topUser.intervalId		= @intervalId
+
+
+
+INSERT INTO
+	Gabs.[top].topUser
+
+SELECT
+	regionId,
+	topTypeId,
+	intervalId,
+	userId,
+	username,
+	reputation,
+	totalQuestions,
+	totalAnswers,
+	totalBadges,
+	topScore
+
+FROM
+	@topUsers
+
+
+
 COMMIT TRAN
 GO
+
 GRANT EXECUTE ON  [top].[processUsersAnswers] TO [processTopLists]
 GO

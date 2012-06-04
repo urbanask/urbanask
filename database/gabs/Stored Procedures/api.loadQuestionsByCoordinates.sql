@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS OFF
@@ -6,12 +7,12 @@ GO
 --GO 
 --DBCC DROPCLEANBUFFERS; 
 --GO
---DECLARE	@currentUserId		AS PrimaryKey = 1  
+--DECLARE	@currentUserId		AS PrimaryKey = 1
 --DECLARE	@fromLatitude		AS DECIMAL(9,7)=37.0000000
 --DECLARE	@fromLongitude		AS DECIMAL(10,7)=-122.0000000
 --DECLARE	@toLatitude			AS DECIMAL(9,7)=39.0000000
 --DECLARE	@toLongitude		AS DECIMAL(10,7)=-120.0000000
---DECLARE	@age				AS DATETIME2='11/27/2011'
+--DECLARE	@age				AS DATETIME2 = '5/15/2012'
 --DECLARE	@count				AS INT = 30
 --DECLARE	@expirationDays		AS INT = 2
 
@@ -38,28 +39,29 @@ SET ROWCOUNT @count;
 
 
 
-DECLARE @questions	TABLE
+DECLARE @rowcount		AS INT
+DECLARE @questions		TABLE
 	(
-	questionId		ForeignKey PRIMARY KEY,
-	userId			ForeignKey,
-	username		VARCHAR(100),
-	reputation		INT,
-	question		VARCHAR(50),
-	link			VARCHAR(256),
-	latitude		DECIMAL(9,7),
-	longitude		DECIMAL(10,7),
-	timestamp		DATETIME2,
-	resolved		INT,
-	bounty			INT,
-	votes			INT
+	[order]				INT,
+	questionId			ForeignKey PRIMARY KEY,
+	userId				ForeignKey,
+	username			VARCHAR(100),
+	reputation			INT,
+	question			VARCHAR(50),
+	link				VARCHAR(256),
+	latitude			DECIMAL(9,7),
+	longitude			DECIMAL(10,7),
+	timestamp			DATETIME2,
+	resolved			INT,
+	bounty				INT,
+	votes				INT
 	)
-
-
 
 INSERT INTO	
 	@questions
 	
 SELECT
+	1													AS [order],
 	question.questionId									AS questionId,
 	question.userId										AS userId,
 	[user].username										AS username,
@@ -75,11 +77,11 @@ SELECT
 	
 FROM
 	Gabs.dbo.question									AS question
-	WITH												(NOLOCK, INDEX(ix_question_longitude_latitude))
+	WITH												( NOLOCK, INDEX( ix_question_longitude_latitude ) )
 
 	INNER JOIN
 	Gabs.dbo.[user]										AS [user]
-	WITH												(NOLOCK, INDEX(pk_user))
+	WITH												( NOLOCK, INDEX( pk_user ) )
 	ON	question.userId									= [user].userId
 	
 WHERE
@@ -96,20 +98,17 @@ ORDER BY
 	question.timestamp									DESC
 
 OPTION
-	  (FORCE ORDER, LOOP JOIN, MAXDOP 1)	
+	  ( FORCE ORDER, LOOP JOIN, MAXDOP 1 )	
 
 
 
---no unresolved, try resolved
+SET @rowcount = @@ROWCOUNT
 
-IF NOT EXISTS
-	(
-	SELECT
-		questions.questionId	AS questionId
-		
-	FROM
-		@questions				AS questions
-	)
+
+
+--if questions < @count, try expired
+
+IF @rowcount < @count
 BEGIN
 
 
@@ -118,43 +117,112 @@ BEGIN
 		@questions
 		
 	SELECT
-		question.questionId									AS questionId,
-		question.userId										AS userId,
-		[user].username										AS username,
-		[user].reputation									AS reputation,
-		question.question									AS question,
-		question.link										AS link,
-		question.latitude									AS latitude,
-		question.longitude									AS longitude,
-		question.timestamp									AS timestamp,
-		1													AS resolved,
-		question.bounty										AS bounty,
-		question.votes										AS votes
+		1										AS [order],
+		question.questionId						AS questionId,
+		question.userId							AS userId,
+		[user].username							AS username,
+		[user].reputation						AS reputation,
+		question.question						AS question,
+		question.link							AS link,
+		question.latitude						AS latitude,
+		question.longitude						AS longitude,
+		question.timestamp						AS timestamp,
+		0										AS resolved,
+		question.bounty							AS bounty,
+		question.votes							AS votes
 		
 	FROM
-		Gabs.dbo.question									AS question
-		WITH												(NOLOCK, INDEX(ix_question_longitude_latitude))
+		Gabs.dbo.question						AS question
+		WITH									( NOLOCK, INDEX( ix_question_longitude_latitude ) )
 
 		INNER JOIN
-		Gabs.dbo.[user]										AS [user]
-		WITH												(NOLOCK, INDEX(pk_user))
-		ON	question.userId									= [user].userId
+		Gabs.dbo.[user]							AS [user]
+		WITH									( NOLOCK, INDEX( pk_user ) )
+		ON	question.userId						= [user].userId
 		
+		LEFT JOIN
+		@questions								AS questions
+		ON question.questionId					= questions.questionId
+
 	WHERE
-			question.latitude								BETWEEN @fromLatitude 
-															AND		@toLatitude 
-		AND	question.longitude								BETWEEN @fromLongitude
-															AND		@toLongitude
-		AND question.userId									<> @currentUserId
-		AND	question.timestamp								> @age
-		AND	question.resolved								= 1 --true
-		AND DATEDIFF( D, question.timestamp, GETDATE() )	< @expirationDays 
-		
+			question.latitude					BETWEEN @fromLatitude 
+												AND		@toLatitude 
+		AND	question.longitude					BETWEEN @fromLongitude
+												AND		@toLongitude
+		AND	question.userId						<> @currentUserId
+		AND	question.timestamp					> @age
+		AND	question.resolved					= 0 --false
+		AND questions.questionId				IS NULL --not already there
+
 	ORDER BY
-		question.timestamp									DESC
+		question.timestamp						DESC
 
 	OPTION
-		  (FORCE ORDER, LOOP JOIN, MAXDOP 1)	
+		  ( FORCE ORDER, LOOP JOIN, MAXDOP 1 )
+
+
+
+END
+
+
+
+SET @rowcount = @@ROWCOUNT + @rowcount
+
+
+
+--if questions < @count, try resolved
+PRINT @rowcount
+
+IF @rowcount < @count
+BEGIN
+
+
+
+	INSERT INTO	
+		@questions
+		
+	SELECT
+		2											AS [order],
+		question.questionId							AS questionId,
+		question.userId								AS userId,
+		[user].username								AS username,
+		[user].reputation							AS reputation,
+		question.question							AS question,
+		question.link								AS link,
+		question.latitude							AS latitude,
+		question.longitude							AS longitude,
+		question.timestamp							AS timestamp,
+		1											AS resolved,
+		question.bounty								AS bounty,
+		question.votes								AS votes
+		
+	FROM
+		Gabs.dbo.question							AS question
+		WITH										( NOLOCK, INDEX( ix_question_longitude_latitude ) )
+
+		INNER JOIN
+		Gabs.dbo.[user]								AS [user]
+		WITH										( NOLOCK, INDEX( pk_user ) )
+		ON	question.userId							= [user].userId
+		
+		LEFT JOIN
+		@questions									AS questions
+		ON question.questionId						= questions.questionId
+
+	WHERE
+			question.latitude						BETWEEN @fromLatitude 
+													AND		@toLatitude 
+		AND	question.longitude						BETWEEN @fromLongitude
+													AND		@toLongitude
+		AND question.userId							<> @currentUserId
+		AND	question.timestamp						> @age
+		AND questions.questionId					IS NULL --not already there
+		
+	ORDER BY
+		question.timestamp							DESC
+
+	OPTION
+		  ( FORCE ORDER, LOOP JOIN, MAXDOP 1 )	
 
 
 
@@ -198,6 +266,7 @@ FROM
 	AND	questionVote.userId					= @currentUserId
 
 GROUP BY
+	questions.[order],
 	questions.questionId,
 	questions.userId,
 	questions.username,
@@ -212,13 +281,14 @@ GROUP BY
 	questions.votes
 
 ORDER BY
+	questions.[order]						ASC,
 	COUNT( answer.answerId )				ASC,
 	questions.votes							DESC,
 	questions.bounty						DESC,
 	questions.timestamp						DESC
 
 OPTION
-	  (FORCE ORDER, LOOP JOIN, MAXDOP 1)	
+	  ( FORCE ORDER, LOOP JOIN, MAXDOP 1 )	
 
 
 GO

@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER OFF
 GO
 SET ANSI_NULLS OFF
@@ -54,13 +55,8 @@ SELECT
 	COUNT( DISTINCT userBadge.userBadgeId )		AS topScore
 	
 FROM
-	Gabs.lookup.region							AS region
-	WITH										(NOLOCK, INDEX(pk_region))
-
-	INNER JOIN
 	Gabs.dbo.userRegion							AS userRegion
 	WITH										( NOLOCK, INDEX( pk_userRegion ) )
-	ON	region.regionId							= userRegion.regionId
 
 	INNER JOIN
 	Gabs.dbo.[user]								AS [user]
@@ -73,7 +69,7 @@ FROM
 	ON	[user].userId							= userBadge.userId
 
 WHERE
-		region.regionId							= @regionId
+		userRegion.regionId						= @regionId
 	AND	userBadge.timestamp						BETWEEN @beginDate
 												AND		@endDate
 	 
@@ -90,19 +86,23 @@ OPTION
 
 
 
-DELETE FROM
-	Gabs.[top].topUser
-
-WHERE
-		topUser.regionId		= @regionId
-	AND topUser.topTypeId		= 4 --badges
-	AND topUser.intervalId		= @intervalId
-
-
+DECLARE @topUsers		TABLE
+	(
+	regionId			INT,
+	topTypeId			INT,
+	intervalId			INT,
+	userId				INT,
+	username			VARCHAR(100),
+	reputation			INT,
+	totalQuestions		INT,
+	totalAnswers		INT,
+	totalBadges			INT,
+	topScore			INT
+	)
 
 INSERT INTO
-	Gabs.[top].topUser
-
+	@topUsers
+	
 SELECT	
 	@regionId									AS regionId,
     4											AS topTypeId, --badges
@@ -147,7 +147,38 @@ OPTION
 
 
 
+DELETE FROM
+	Gabs.[top].topUser
+
+WHERE
+		topUser.regionId		= @regionId
+	AND topUser.topTypeId		= 4 --badges
+	AND topUser.intervalId		= @intervalId
+
+
+
+INSERT INTO
+	Gabs.[top].topUser
+
+SELECT
+	regionId,
+	topTypeId,
+	intervalId,
+	userId,
+	username,
+	reputation,
+	totalQuestions,
+	totalAnswers,
+	totalBadges,
+	topScore
+
+FROM
+	@topUsers
+
+
+
 COMMIT TRAN
 GO
+
 GRANT EXECUTE ON  [top].[processUsersBadges] TO [processTopLists]
 GO

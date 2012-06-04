@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS OFF
@@ -6,10 +7,10 @@ GO
 --GO 
 --DBCC DROPCLEANBUFFERS; 
 --GO
---DECLARE	@currentUserId		AS ForeignKey=46
---DECLARE	@regionId			AS ForeignKey=2
---DECLARE	@count				AS INT=50
---DECLARE	@age				AS DATETIME2 = '2/25/2012'
+--DECLARE	@currentUserId		AS ForeignKey=1
+--DECLARE	@regionId			AS ForeignKey=1
+--DECLARE	@count				AS INT=30
+--DECLARE	@age				AS DATETIME2 = '5/15/2012'
 --DECLARE	@expirationDays		AS INT = 2
 
 CREATE PROCEDURE [api].[loadQuestionsByRegion]
@@ -189,7 +190,7 @@ SET @rowcount = @@ROWCOUNT + @rowcount
 
 --if questions < @count, try resolved
 
-IF @@ROWCOUNT < @count
+IF @rowcount < @count
 BEGIN
 
 
