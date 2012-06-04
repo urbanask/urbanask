@@ -19,7 +19,8 @@ Public Class questions : Inherits api.messageHandler
         LOAD_QUESTIONS_BY_USER As String = "Gabs.api.loadQuestionsByUser",
         LOAD_QUESTIONS_BY_REGION As String = "Gabs.api.loadQuestionsByRegion",
         LOAD_QUESTION As String = "Gabs.api.loadQuestion",
-        SAVE_QUESTION_VOTE As String = "Gabs.api.saveQuestionUpvote",
+        SAVE_QUESTION_UPVOTE As String = "Gabs.api.saveQuestionUpvote",
+        SAVE_QUESTION_DOWNVOTE As String = "Gabs.api.saveQuestionDownvote",
         SAVE_QUESTION_FLAG As String = "Gabs.api.saveQuestionFlag",
         JSON_QUESTION_COLUMNS As String =
               "[" _
@@ -40,11 +41,16 @@ Public Class questions : Inherits api.messageHandler
             & """answers""," _
             & "]",
         MESSAGE_LENGTH_MAX As Int32 = 600,
+        RANGE_MAX As Int32 = 50,
+        RANGE_DEFAULT As Int32 = 10,
         ROW_COUNT_MAX As Int32 = 400,
         ROW_COUNT_DEFAULT As Int32 = 50,
         AGE_DAYS_MAX As Int32 = 30,
         AGE_DAYS_DEFAULT As Int32 = 14,
-        EXPIRATION_DAYS_DEFAULT As Int32 = 2
+        EXPIRATION_DAYS_DEFAULT As Int32 = 2,
+        FEET_PER_MILE As Int32 = 5280,
+        LATITUDE_PER_FOOT As Double = 0.000002741,
+        LONGITUDE_PER_FOOT As Double = 0.0000035736
 
     Protected Overrides Sub process(
          connection As SqlClient.SqlConnection,
@@ -78,11 +84,15 @@ Public Class questions : Inherits api.messageHandler
 
                             loadQuestion(context, connection, queries, userId)
 
-                        Case "upvote"
+                        Case "upvote" '/api/questions/{id}/upvote
 
                             saveUpvote(context, connection, userId, id)
 
-                        Case "flag"
+                        Case "downvote" '/api/questions/{id}/downvote
+
+                            saveDownvote(context, connection, userId, id)
+
+                        Case "flag" '/api/questions/{id}/flag
 
                             saveFlag(context, connection, userId, id)
 
@@ -104,7 +114,7 @@ Public Class questions : Inherits api.messageHandler
         queries As Collections.Specialized.NameValueCollection,
         userId As Int32)
 
-        If queries("fromLatitude") <> "" Then
+        If queries("latitude") <> "" Then
 
             loadQuestionsByCoordinates(context, connection, queries, userId)
 
@@ -131,11 +141,18 @@ Public Class questions : Inherits api.messageHandler
             command.CommandType = CommandType.StoredProcedure
             command.CommandTimeout = COMMAND_TIMEOUT
 
+            Dim latitude As Double = CDec(queries("latitude")),
+                longitude As Double = CDec(queries("longitude")),
+                fromLatitude As Double = latitude - (Me.range(queries) * FEET_PER_MILE * LATITUDE_PER_FOOT),
+                toLatitude As Double = latitude + (Me.range(queries) * FEET_PER_MILE * LATITUDE_PER_FOOT),
+                fromLongitude As Double = longitude - (Me.range(queries) * FEET_PER_MILE * LONGITUDE_PER_FOOT),
+                toLongitude As Double = longitude + (Me.range(queries) * FEET_PER_MILE * LONGITUDE_PER_FOOT)
+
             command.Parameters.AddWithValue("@currentUserId", currentUserId)
-            command.Parameters.AddWithValue("@fromLatitude", queries("fromLatitude"))
-            command.Parameters.AddWithValue("@fromLongitude", queries("fromLongitude"))
-            command.Parameters.AddWithValue("@toLatitude", queries("toLatitude"))
-            command.Parameters.AddWithValue("@toLongitude", queries("toLongitude"))
+            command.Parameters.AddWithValue("@fromLatitude", fromLatitude)
+            command.Parameters.AddWithValue("@fromLongitude", fromLongitude)
+            command.Parameters.AddWithValue("@toLatitude", toLatitude)
+            command.Parameters.AddWithValue("@toLongitude", toLongitude)
             command.Parameters.AddWithValue("@age", DateTime.Now().AddDays(-Me.age(queries)))
             command.Parameters.AddWithValue("@count", Me.count(queries))
             command.Parameters.AddWithValue("@expirationDays", Me.expirationDays(queries))
@@ -225,7 +242,34 @@ Public Class questions : Inherits api.messageHandler
         userId As Int32,
         questionId As String)
 
-        Using command As New SqlClient.SqlCommand(SAVE_QUESTION_VOTE, connection)
+        Using command As New SqlClient.SqlCommand(SAVE_QUESTION_UPVOTE, connection)
+
+            command.CommandType = CommandType.StoredProcedure
+            command.CommandTimeout = COMMAND_TIMEOUT
+
+            command.Parameters.AddWithValue("@userId", userId)
+            command.Parameters.AddWithValue("@questionId", questionId)
+            command.Parameters.Add("@success", SqlDbType.Bit).Direction = ParameterDirection.Output
+
+            command.ExecuteNonQuery()
+
+            If System.Convert.ToInt32(command.Parameters("@success").Value) = 0 Then 'error
+
+                MyBase.sendErrorResponse(context, 412, "Forbidden")
+
+            End If
+
+        End Using
+
+    End Sub
+
+    Private Sub saveDownvote(
+        context As Web.HttpContext,
+        connection As SqlClient.SqlConnection,
+        userId As Int32,
+        questionId As String)
+
+        Using command As New SqlClient.SqlCommand(SAVE_QUESTION_DOWNVOTE, connection)
 
             command.CommandType = CommandType.StoredProcedure
             command.CommandTimeout = COMMAND_TIMEOUT
@@ -459,6 +503,42 @@ Public Class questions : Inherits api.messageHandler
             Else
 
                 Return ROW_COUNT_DEFAULT
+
+            End If
+
+        End Get
+
+    End Property
+
+    Private ReadOnly Property range(queries As Collections.Specialized.NameValueCollection) As Integer
+
+        Get
+
+            Dim rangeString As String = queries("range"),
+                rangeValue As Integer = 0
+
+            If Microsoft.VisualBasic.IsNumeric(rangeString) Then
+
+                rangeValue = Convert.ToInt32(rangeString)
+
+                Select Case rangeValue
+                    Case 0
+
+                        Return RANGE_DEFAULT
+
+                    Case Is > RANGE_MAX
+
+                        Return RANGE_MAX
+
+                    Case Else
+
+                        Return rangeValue
+
+                End Select
+
+            Else
+
+                Return RANGE_DEFAULT
 
             End If
 

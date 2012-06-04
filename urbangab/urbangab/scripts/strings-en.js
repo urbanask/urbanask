@@ -52,8 +52,6 @@
             "answerSelect": "There was an error saving your selection.",
             "answerVote": "There was an error saving your vote.",
             "deleteAnswer": "There was an error deleting your question.",
-            "flagOwnAnswer": "You can't flag your own answer.",
-            "flagOwnQuestion": "You can't flag your own question.",
             "geoLocation": "Could not determine your GPS location. Check to see if location services are locked or disabled.",
             "geoNotFound": "Could not determine your current location. Please try again in a few moments.",
             "loadAccount": "There was an error loading your account information.",
@@ -64,7 +62,6 @@
             "loadUser": "There was an error loading this user.",
             "noAnswersToSelect": "There are no answers to select.",
             "saveAnswer": "There was an error saving this answer.",
-            "saveFlag": "There was an error saving your flag.",
             "saveQuestion": "There was an error saving this question.",
             "saveQuestionUpvote": "There was an error saving your vote.",
             "voteOnOwnQuestion": "You can't vote on your own question.",
@@ -81,9 +78,6 @@
             "postFacebookMessageCaption": "optional message",
             "postCaption": "post"
         },
-        "flagCaption": "&#9873;",
-        "flagAnswerConfirmation": "The note on this answer is inappropriate.",
-        "flagQuestionConfirmation": "This question is spam or is inappropriate.",
         "headerBadges": "badges",
         "instructions": {
             "tap": "tap",
@@ -116,7 +110,7 @@
             "twitter": "Login with Twitter"
         },
         "local": "local",
-        "months": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+        "months": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         "multiplication": "&#215;",
         "notificationAskQuestion": "?",
         "notificationAnswerQuestion": "@",
@@ -125,20 +119,19 @@
         "notificationUpvote": "+1",
         "notification":
         {
-            "flag": "&#9873;",
-            "minusReputation": "%1 reputation",
             "questionSaved": "question posted",
             "answerSaved": "answer posted",
             "newVersion": "There is a new version of urbanAsk.",
             "downloading": "downloading..."
         },
-        "noQuestions": "There are no active questions. <br /><br />Why not ask one?",
         "okButtonCaption": "ok",
         "optionalNote": "optional note...",
         "passwordLabel": "password",
         "questionHeader": "questions",
         "questionLabel":"I want...",
         "questionPosted": "Posted",
+        "questionsNearby": "nearby",
+        "questionsEverywhere": "everywhere",
         "toolbar": 
         {
             "questions": "questions",
@@ -166,6 +159,7 @@
         "userIdCaption": "id",
         "user":
         {
+            "memberSince":"signup",
             "noAnswersMe": "You have not answered any questions yet. <br /><br />Go help someone find something.",
             "noAnswersUser": "%1 has not answered any questions yet.",
             "noBadgesMe": "You have not earned any badges yet. <br /><br />You're missing out!",
