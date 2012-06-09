@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS OFF
@@ -8,6 +9,7 @@ CREATE PROCEDURE [processQuestions].[insertQuestion]
 	@userId			AS ForeignKey,
 	@latitude		AS DECIMAL(9,7),
 	@longitude		AS DECIMAL(10,7),
+	@region			AS VARCHAR(100),
 	@question		AS VARCHAR(50),
 	@timestamp		AS DATETIME2
 	)
@@ -29,6 +31,7 @@ INSERT INTO
 	userId,
 	latitude,
 	longitude,
+	region,
 	question,
 	timestamp,
 	resolved,
@@ -41,6 +44,7 @@ VALUES
 	@userId,
 	@latitude,
 	@longitude,
+	@region,
 	@question,
 	@timestamp,
 	0,
