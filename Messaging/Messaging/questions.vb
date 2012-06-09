@@ -15,7 +15,7 @@ Imports System.Data
 Public Class questions : Inherits messaging.messageHandler
 
     Private Const INSERT_MESSAGE_PROC As String = "Messaging.messaging.insertQuestionMessage",
-        MAX_MESSAGE_LENGTH As Int32 = 200
+        MAX_MESSAGE_LENGTH As Int32 = 300
 
     Protected Overrides Sub processMessage(
         connection As SqlClient.SqlConnection,

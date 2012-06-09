@@ -15,7 +15,7 @@ Imports Utility
 
 Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
 
-    Private Const MESSAGE_LENGTH As Int32 = 4
+    Private Const MESSAGE_LENGTH As Int32 = 5 'userId,lat,lon,region,question
     Private _batchSize As Int32
     Private _commandTimeout As Int32
     Private _deleteErrorsFromWork As String
@@ -34,6 +34,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         userId
         latitude
         longitude
+        region
         question
 
     End Enum
@@ -136,6 +137,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
             questions.Columns.Add("userId")
             questions.Columns.Add("latitude")
             questions.Columns.Add("longitude")
+            questions.Columns.Add("region")
             questions.Columns.Add("question")
             questions.Columns.Add("timestamp")
 
@@ -159,6 +161,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
                         row("userId") = message(messageColumns.userId)
                         row("latitude") = message(messageColumns.latitude)
                         row("longitude") = message(messageColumns.longitude)
+                        row("region") = message(messageColumns.region)
                         row("question") = message(messageColumns.question)
                         row("timestamp") = messages("timestamp")
                         questions.Rows.Add(row)
@@ -191,6 +194,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
                     insertQuestions.Parameters.Add(New SqlClient.SqlParameter("@userId", Data.SqlDbType.Int, 0, "userId"))
                     insertQuestions.Parameters.Add(New SqlClient.SqlParameter("@latitude", Data.SqlDbType.Decimal, 9, "latitude"))
                     insertQuestions.Parameters.Add(New SqlClient.SqlParameter("@longitude", Data.SqlDbType.Decimal, 10, "longitude"))
+                    insertQuestions.Parameters.Add(New SqlClient.SqlParameter("@region", Data.SqlDbType.VarChar, 100, "region"))
                     insertQuestions.Parameters.Add(New SqlClient.SqlParameter("@question", Data.SqlDbType.VarChar, 50, "question"))
                     insertQuestions.Parameters.Add(New SqlClient.SqlParameter("@timestamp", Data.SqlDbType.DateTime2, 7, "timestamp"))
 

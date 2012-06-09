@@ -3511,7 +3511,7 @@
                         voted = answer[ANSWER_COLUMNS.voted],
                         vote = ( voted == 1 ? 0 : 1 ),
                         currentVotes = answer[ANSWER_COLUMNS.votes],
-                        newVotes = currentVotes - voted + vote; 
+                        newVotes = currentVotes - voted + vote;
 
                     answer[ANSWER_COLUMNS.votes] = newVotes;
                     answer[ANSWER_COLUMNS.voted] = vote;
@@ -3756,80 +3756,85 @@
 
                     var questionText = document.getElementById( 'ask-text' ).value.trim(),
                         latitude = ( _currentLocation.latitude ? _currentLocation.latitude : centerLatitude ) + getRandomLatitude(),
-                        longitude = ( _currentLocation.longitude ? _currentLocation.longitude : centerLongitude ) + getRandomLongitude(),
-                        message = latitude + "~" + longitude + "~" + questionText,
-                        resource = '/messaging/questions',
-                        session = getSession( resource );
+                        longitude = ( _currentLocation.longitude ? _currentLocation.longitude : centerLongitude ) + getRandomLongitude();
 
-                    document.getElementById( 'ask-button' ).focus();
-                    scrollUp();
+                    getRegion( { latitude: latitude, longitude: longitude }, function ( region ) {
 
-                    ajax( API_URL + resource, {
+                        var message = latitude + '~' + longitude + '~' + region + '~' + questionText,
+                            resource = '/messaging/questions',
+                            session = getSession( resource );
 
-                        "type": "POST",
-                        "data": message,
-                        "headers": { "x-session": session },
-                        "cache": false,
-                        "success": function ( data, status ) {
+                        document.getElementById( 'ask-button' ).focus();
+                        scrollUp();
 
-                            var html = '',
-                                questions = document.getElementById( 'user-questions' ),
-                                question = [];
+                        ajax( API_URL + resource, {
 
-                            question[QUESTION_COLUMNS.questionId] = 0;
-                            question[QUESTION_COLUMNS.userId] = _account[ACCOUNT_COLUMNS.userId];
-                            question[QUESTION_COLUMNS.username] = _account[ACCOUNT_COLUMNS.username];
-                            question[QUESTION_COLUMNS.reputation] = formatNumber( getReputation() );
-                            question[QUESTION_COLUMNS.question] = questionText;
-                            question[QUESTION_COLUMNS.link] = '';
-                            question[QUESTION_COLUMNS.latitude] = latitude;
-                            question[QUESTION_COLUMNS.longitude] = longitude;
-                            question[QUESTION_COLUMNS.timestamp] = new window.Date();
-                            question[QUESTION_COLUMNS.resolved] = 0;
-                            question[QUESTION_COLUMNS.expired] = 0;
-                            question[QUESTION_COLUMNS.bounty] = 0;
-                            question[QUESTION_COLUMNS.answerCount] = 0;
-                            question[QUESTION_COLUMNS.answers] = [];
+                            "type": "POST",
+                            "data": message,
+                            "headers": { "x-session": session },
+                            "cache": false,
+                            "success": function ( data, status ) {
 
-                            if ( _userQuestions.length == 0 ) {
+                                var html = '',
+                                    questions = document.getElementById( 'user-questions' ),
+                                    question = [];
 
-                                html += getListItemHeader( _account[ACCOUNT_COLUMNS.username] );
+                                question[QUESTION_COLUMNS.questionId] = 0;
+                                question[QUESTION_COLUMNS.userId] = _account[ACCOUNT_COLUMNS.userId];
+                                question[QUESTION_COLUMNS.username] = _account[ACCOUNT_COLUMNS.username];
+                                question[QUESTION_COLUMNS.reputation] = formatNumber( getReputation() );
+                                question[QUESTION_COLUMNS.question] = questionText;
+                                question[QUESTION_COLUMNS.link] = '';
+                                question[QUESTION_COLUMNS.latitude] = latitude;
+                                question[QUESTION_COLUMNS.longitude] = longitude;
+                                question[QUESTION_COLUMNS.timestamp] = new window.Date();
+                                question[QUESTION_COLUMNS.resolved] = 0;
+                                question[QUESTION_COLUMNS.expired] = 0;
+                                question[QUESTION_COLUMNS.bounty] = 0;
+                                question[QUESTION_COLUMNS.answerCount] = 0;
+                                question[QUESTION_COLUMNS.answers] = [];
 
-                            };
+                                if ( _userQuestions.length == 0 ) {
 
-                            html += getQuestionItem( question, { newItem: true } );
-                            document.getElementById( 'ask-text' ).value = '';
-                            hideAskButton();
+                                    html += getListItemHeader( _account[ACCOUNT_COLUMNS.username] );
 
-                            if ( _userQuestions.length == 0 ) {
+                                };
 
-                                questions.insertAdjacentHTML( 'afterBegin', html );
+                                html += getQuestionItem( question, { newItem: true } );
+                                document.getElementById( 'ask-text' ).value = '';
+                                hideAskButton();
 
-                            } else {
+                                if ( _userQuestions.length == 0 ) {
 
-                                questions.firstChild.insertAdjacentHTML( 'afterEnd', html );
+                                    questions.insertAdjacentHTML( 'afterBegin', html );
 
-                            };
+                                } else {
 
-                            _userQuestions.unshift( question );
-                            window.setTimeout( function () { questions.childNodes[1].removeClass( 'height-zero' ) }, 50 );
+                                    questions.firstChild.insertAdjacentHTML( 'afterEnd', html );
 
-                            showNotification( STRINGS.notificationAskQuestion, { footer: STRINGS.notification.questionSaved } );
+                                };
 
-                            getNewQuestionId( questionText, function ( questionId ) {
+                                _userQuestions.unshift( question );
+                                window.setTimeout( function () { questions.childNodes[1].removeClass( 'height-zero' ) }, 50 );
 
-                                postToFacebook( 'post-open-graph', 'question', { value: questionText, id: questionId } );
+                                showNotification( STRINGS.notificationAskQuestion, { footer: STRINGS.notification.questionSaved } );
 
-                            } );
+                                getNewQuestionId( questionText, function ( questionId ) {
 
-                        },
-                        "error": function ( response, status, error ) {
+                                    postToFacebook( 'post-open-graph', 'question', { value: questionText, id: questionId } );
 
-                            error == 'Unauthorized'
-                                ? logoutApp()
-                                : showMessage( STRINGS.error.saveQuestion + ' ( error: ' + status + ', ' + error + ')' );
+                                } );
 
-                        }
+                            },
+                            "error": function ( response, status, error ) {
+
+                                error == 'Unauthorized'
+                                    ? logoutApp()
+                                    : showMessage( STRINGS.error.saveQuestion + ' ( error: ' + status + ', ' + error + ')' );
+
+                            }
+
+                        } );
 
                     } );
 
@@ -4132,6 +4137,78 @@
         function resetQuestionsTop() {
 
             document.getElementById( 'questions-view' ).setDataset( 'scroll-top', 0 );
+
+        };
+
+        function getRegion( options, complete ) {
+
+            var geocoder = new google.maps.Geocoder(),
+                request;
+
+            if ( options.latitude ) {
+
+                request = { 'latLng': new google.maps.LatLng( options.latitude, options.longitude ) };
+
+            } else {
+
+                request = { 'address': options.address };
+
+            };
+
+            geocoder.geocode( request, function ( results, status ) {
+
+                if ( status == google.maps.GeocoderStatus.OK ) {
+
+                    //check top-level results
+                    for ( var resultIndex = 0; resultIndex < results.length; resultIndex++ ) {
+
+                        var types = results[resultIndex].types;
+
+                        for ( var typeIndex = 0; typeIndex < types.length; typeIndex++ ) {
+
+                            if ( types[typeIndex] == 'locality' ) {
+
+                                complete( results[resultIndex].formatted_address );
+                                return;
+
+                            };
+
+                        };
+
+                    };
+
+                    //no result, check addresses
+                    for ( var resultIndex = 0; resultIndex < results.length; resultIndex++ ) {
+
+                        var addresses = results[resultIndex].address_components;
+
+                        for ( var addressIndex = 0; addressIndex < addresses.length; addressIndex++ ) {
+
+                            var types = addresses[addressIndex].types;
+
+                            for ( var typeIndex = 0; typeIndex < types.length; typeIndex++ ) {
+
+                                if ( types[typeIndex] == 'locality' ) {
+
+                                    complete( addresses[addressIndex].long_name );
+                                    return;
+
+                                };
+
+                            };
+
+                        };
+
+                    };
+
+                } else {
+
+                    complete();
+                    return;
+
+                };
+
+            } );
 
         };
 
@@ -5054,10 +5131,10 @@
 
         function showAnswersSelect( question ) {
 
-            var answers = document.getElementById( 'answers' ).getElementsByClassName( 'select-answer' );
-
             hideVoteDown();
             hideVoteUp();
+
+            var answers = document.getElementById( 'answers' ).getElementsByClassName( 'select-answer' );
 
             for ( var index = 0; index < answers.length; index++ ) {
 
@@ -6414,8 +6491,6 @@
             share.removeClass( 'hide' );
             window.setTimeout( function () { share.addClass( 'question-share-slide' ); }, 20 );
 
-            //            share.style.bottom = '100px';
-
             addListeners();
 
             function postToFacebook() {
@@ -7230,7 +7305,7 @@
 
                         question = _pages.last().options.object;
                         var voteUpQuestion = document.getElementById( 'question-view' ).getElementsByClassName( 'vote-up-question' )[0];
-                            voteUpAnswer = document.getElementById( 'answers' ).getElementsByClassName( 'vote-up-answer' )[0];
+                        voteUpAnswer = document.getElementById( 'answers' ).getElementsByClassName( 'vote-up-answer' )[0];
 
                         if ( ( voteUpQuestion && voteUpQuestion.hasClass( 'hide' ) )
                             || ( voteUpAnswer && voteUpAnswer.hasClass( 'hide' ) ) ) {

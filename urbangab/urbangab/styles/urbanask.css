@@ -1613,7 +1613,6 @@ html {
 #question-page {
     height: 100%;
     left: 0;
-    overflow: hidden;
     position: absolute;
     top: 0;
     width: 100%;
@@ -2596,6 +2595,7 @@ html {
 #user-info-view {
     overflow-x: hidden;
     overflow-y: auto;
+    z-index: 0;
 }
 
 #username  {
@@ -2620,6 +2620,7 @@ html {
     position: absolute;
     top: 0;
     width: 100%;
+    z-index: 0;
 }
 
 #user-picture  {

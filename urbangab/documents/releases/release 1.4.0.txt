@@ -1,2 +1,6 @@
 1.4.0
 
+bug - share buttons not showing on question
+bug - android account edit not visible
+various bug fixes
+
