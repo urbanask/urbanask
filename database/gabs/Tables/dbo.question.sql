@@ -6,6 +6,8 @@ CREATE TABLE [dbo].[question]
 [link] [varchar] (256) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [latitude] [decimal] (9, 7) NOT NULL,
 [longitude] [decimal] (10, 7) NOT NULL,
+[region] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[regionId] [dbo].[foreignKey] NULL,
 [timestamp] [datetime2] NOT NULL,
 [resolved] [int] NOT NULL CONSTRAINT [DF_question_resolved] DEFAULT ((0)),
 [bounty] [int] NOT NULL,
