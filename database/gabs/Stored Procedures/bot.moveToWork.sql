@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -5,7 +6,7 @@ GO
 
 --DECLARE @workCount INT = 10
 
-CREATE PROCEDURE bot.[moveToWork]
+CREATE PROCEDURE [bot].[moveToWork]
 	(
 	@workCount		INT
 	)
@@ -42,14 +43,16 @@ BEGIN
 		questionWork.userId,
 		questionWork.question,
 		questionWork.latitude,
-		questionWork.longitude
+		questionWork.longitude,
+		questionWork.region
 		)
 	    
 	SELECT
 		questionQueue.userId			AS userId,
 		questionQueue.question			AS question,
 		questionQueue.latitude			AS latitude,
-		questionQueue.longitude			AS longitude
+		questionQueue.longitude			AS longitude,
+		questionQueue.region			AS region
 		
 	FROM
 		Gabs.bot.questionQueue			AS questionQueue

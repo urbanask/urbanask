@@ -36,7 +36,8 @@ DECLARE @users		TABLE
 	number			INT,
 	userId			INT,
 	latitude		DECIMAL( 9, 7 ),
-	longitude		DECIMAL( 10, 7 )
+	longitude		DECIMAL( 10, 7 ),
+	region			VARCHAR( 100 )
 	)
 	
 INSERT INTO 
@@ -46,7 +47,8 @@ SELECT
 	ROW_NUMBER() OVER ( ORDER BY RAND( CAST( NEWID() AS VARBINARY ) ) )				AS number, 
 	[user].userId																	AS userId,
 	region.fromLatitude + ( ( region.toLatitude - region.fromLatitude ) / 2 )		AS latitude,
-	region.fromLongitude + ( ( region.toLongitude - region.fromLongitude ) / 2 )	AS longitude
+	region.fromLongitude + ( ( region.toLongitude - region.fromLongitude ) / 2 )	AS longitude,
+	region.name																		AS region
 
 FROM
 	Gabs.bot.[user]			AS [user]
@@ -113,7 +115,8 @@ SELECT
 	+	(	ROUND( ( RAND( CAST( NEWID() AS VARBINARY ) ) * ( @randomRange - 1 ) ) + 1, 0 )	-- distance
 		*	CASE ROUND( ( RAND( CAST( NEWID() AS VARBINARY ) ) * ( 2 - 1 ) ) + 1, 0 ) WHEN 1 THEN 1 ELSE -1 END	-- negative
 		*	@longitudePerFoot )
-											AS randomLongitude
+											AS randomLongitude,
+	users.region							AS region
 	
 FROM
 	@questions								AS questions

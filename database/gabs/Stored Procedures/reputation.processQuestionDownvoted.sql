@@ -131,4 +131,7 @@ FROM
 	ON	users.userId			= [user].userId
 
 
+
+GO
+GRANT EXECUTE ON  [reputation].[processQuestionDownvoted] TO [processReputation]
 GO

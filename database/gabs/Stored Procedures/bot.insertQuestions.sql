@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS OFF
@@ -26,6 +27,7 @@ SELECT
 	CAST( questionWork.userId AS VARCHAR )
 	+ '~' + CAST( questionWork.latitude AS VARCHAR )
 	+ '~' + CAST( questionWork.longitude AS VARCHAR )
+	+ '~' + questionWork.region							
 	+ '~' + questionWork.question						AS message
 	
 FROM

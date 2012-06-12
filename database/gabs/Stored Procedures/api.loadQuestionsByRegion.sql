@@ -8,9 +8,9 @@ GO
 --DBCC DROPCLEANBUFFERS; 
 --GO
 --DECLARE	@currentUserId		AS ForeignKey=1
---DECLARE	@regionId			AS ForeignKey=1
---DECLARE	@count				AS INT=30
---DECLARE	@age				AS DATETIME2 = '5/15/2012'
+--DECLARE	@regionId			AS ForeignKey=0
+--DECLARE	@count				AS INT=50
+--DECLARE	@age				AS DATETIME2 = '5/25/2012'
 --DECLARE	@expirationDays		AS INT = 2
 
 CREATE PROCEDURE [api].[loadQuestionsByRegion]
@@ -113,7 +113,7 @@ WHERE
 	AND DATEDIFF( D, question.timestamp, GETDATE() )	< @expirationDays 
 
 ORDER BY
-	question.timestamp						DESC
+	question.timestamp									DESC
 
 OPTION
 	  ( FORCE ORDER, LOOP JOIN, MAXDOP 1 )
@@ -247,12 +247,74 @@ END
 
 
 
+SET @rowcount = @@ROWCOUNT + @rowcount
+
+
+
+--if questions < @count, try older than age
+
+IF @rowcount < @count
+BEGIN
+
+
+
+	INSERT INTO	
+		@questions
+		
+	SELECT
+		2										AS [order],
+		question.questionId						AS questionId,
+		question.userId							AS userId,
+		[user].username							AS username,
+		[user].reputation						AS reputation,
+		question.question						AS question,
+		question.link							AS link,
+		question.latitude						AS latitude,
+		question.longitude						AS longitude,
+		question.timestamp						AS timestamp,
+		question.resolved						AS resolved,
+		question.bounty							AS bounty,
+		question.votes							AS votes
+		
+	FROM
+		Gabs.dbo.question						AS question
+		WITH									( NOLOCK, INDEX( ix_question_longitude_latitude ) )
+
+		INNER JOIN
+		Gabs.dbo.[user]							AS [user]
+		WITH									( NOLOCK, INDEX( pk_user ) )
+		ON	question.userId						= [user].userId
+		
+		LEFT JOIN
+		@questions								AS questions
+		ON question.questionId					= questions.questionId
+
+	WHERE
+			question.latitude					BETWEEN @fromLatitude 
+												AND		@toLatitude 
+		AND	question.longitude					BETWEEN @fromLongitude
+												AND		@toLongitude
+		AND	question.userId						<> @currentUserId
+		AND questions.questionId				IS NULL --not already there
+
+	ORDER BY
+		question.timestamp						DESC
+
+	OPTION
+		  ( FORCE ORDER, LOOP JOIN, MAXDOP 1 )
+
+
+
+END
+
+
+
 SELECT
 	questions.questionId					AS questionId,
 	questions.userId						AS userId,
 	questions.username						AS username,
-	questions.question						AS question,
 	questions.reputation					AS reputation,
+	questions.question						AS question,
 	questions.link							AS link,
 	questions.latitude						AS latitude,
 	questions.longitude						AS longitude,

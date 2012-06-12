@@ -33,18 +33,21 @@ SET ROWCOUNT @count;
 
 
 
-BEGIN TRAN
-
-
-
+DECLARE @topTypeId  INT = 4 --badges
 DECLARE @users		TABLE
 	(
-	userId			INT PRIMARY KEY,
+	userId			INT NOT NULL PRIMARY KEY,
 	username		VARCHAR(100),
 	reputation		INT,
 	topScore		INT
 	)
 
+
+
+--###
+--load question users
+--###
+ 
 INSERT INTO
 	@users
 
@@ -55,24 +58,23 @@ SELECT
 	COUNT( DISTINCT userBadge.userBadgeId )		AS topScore
 	
 FROM
-	Gabs.dbo.userRegion							AS userRegion
-	WITH										( NOLOCK, INDEX( pk_userRegion ) )
+	Gabs.dbo.question							AS question
+	WITH										( NOLOCK, INDEX( ix_question_longitude_latitude ) )
 
 	INNER JOIN
 	Gabs.dbo.[user]								AS [user]
-	WITH										(NOLOCK, INDEX(pk_user))
-	ON	userRegion.userId						= [user].userId
+	WITH										( NOLOCK, INDEX( pk_user ) )
+	ON	question.userId						    = [user].userId
 
 	INNER JOIN
 	Gabs.dbo.userBadge							AS userBadge
-	WITH										(NOLOCK, INDEX(ix_userBadge_userId))
+	WITH										( NOLOCK, INDEX( ix_userBadge_userId ) )
 	ON	[user].userId							= userBadge.userId
 
 WHERE
-		userRegion.regionId						= @regionId
-	AND	userBadge.timestamp						BETWEEN @beginDate
-												AND		@endDate
-	 
+		question.regionId						= @regionId
+	AND	userBadge.[timestamp]					BETWEEN @beginDate
+												AND		@endDate	 
 GROUP BY
 	[user].userId,
 	[user].username,
@@ -86,6 +88,61 @@ OPTION
 
 
 
+--###
+--load answer users
+--###
+ 
+INSERT INTO
+	@users
+
+SELECT	
+	[user].userId								AS userId,
+	[user].username								AS username,
+	[user].reputation							AS reputation,
+	COUNT( DISTINCT userBadge.userBadgeId )		AS topScore
+	
+FROM
+	Gabs.dbo.question							AS question
+	WITH										( NOLOCK, INDEX( ix_question_longitude_latitude ) )
+
+	INNER JOIN
+	Gabs.dbo.answer								AS answer
+	WITH										( NOLOCK, INDEX( ix_answer_questionId ) )
+	ON	question.questionId						= answer.questionId
+
+    LEFT JOIN
+    @users                                      AS users
+    ON  answer.userId                           = users.userId
+    
+	INNER JOIN
+	Gabs.dbo.[user]								AS [user]
+	WITH										( NOLOCK, INDEX( pk_user ) )
+	ON	answer.userId						    = [user].userId
+
+	INNER JOIN
+	Gabs.dbo.userBadge							AS userBadge
+	WITH										( NOLOCK, INDEX( ix_userBadge_userId ) )
+	ON	[user].userId							= userBadge.userId
+    
+WHERE
+		question.regionId						= @regionId
+	AND userBadge.[timestamp]					BETWEEN @beginDate
+	                                            AND     @endDate
+	AND users.userId					        IS NULL
+	
+GROUP BY
+	[user].userId,
+	[user].username,
+	[user].reputation
+	
+ORDER BY
+	topScore									DESC
+
+OPTION
+	  (FORCE ORDER, LOOP JOIN, MAXDOP 1)	
+	  
+
+	  
 DECLARE @topUsers		TABLE
 	(
 	regionId			INT,
@@ -105,42 +162,71 @@ INSERT INTO
 	
 SELECT	
 	@regionId									AS regionId,
-    4											AS topTypeId, --badges
+    @topTypeId									AS topTypeId, 
 	@intervalId									AS intervalId,
 	users.userId								AS userId,
 	users.username								AS username,
 	users.reputation							AS reputation,
-	COUNT( DISTINCT question.questionId )		AS totalQuestions,
-	COUNT( DISTINCT answer.answerId )			AS totalAnswers,
-	COUNT( DISTINCT userBadge.userBadgeId )		AS totalBadges,
+	NULL                                		AS totalQuestions,
+	NULL                            			AS totalAnswers,
+	users.topScore              		        AS totalBadges,
 	users.topScore								AS topScore
 	
 FROM
 	@users										AS users
 
-	LEFT JOIN
-	Gabs.dbo.userBadge							AS userBadge
-	WITH										(NOLOCK, INDEX(ix_userBadge_userId))
-	ON	users.userId							= userBadge.userId
-
-	LEFT JOIN
-	Gabs.dbo.question							AS question
-	WITH										(NOLOCK, INDEX(ix_question_userId))
-	ON	users.userId							= question.userId
-
-	LEFT JOIN
-	Gabs.dbo.answer								AS answer
-	WITH										(NOLOCK, INDEX(ix_answer_userId))
-	ON	users.userId							= answer.userId
-
-GROUP BY
-	users.userId,
-	users.username,
-	users.reputation,
-	users.topScore
-	
 ORDER BY
 	users.topScore								DESC
+
+OPTION
+	  (FORCE ORDER, LOOP JOIN, MAXDOP 1)	
+
+
+
+UPDATE
+	@topUsers
+	
+SET	
+	totalQuestions                              = 
+	(
+	    SELECT
+	        COUNT( question.userId )            AS totalQuestions
+
+        FROM
+	        Gabs.dbo.question					AS question
+	        WITH								( NOLOCK, INDEX( ix_question_userId ) )
+	    
+	    WHERE
+	        topUsers.userId						= question.userId
+	)
+	
+FROM
+	@topUsers									AS topUsers
+
+OPTION
+	  (FORCE ORDER, LOOP JOIN, MAXDOP 1)	
+
+
+
+UPDATE
+	@topUsers
+	
+SET	
+	totalAnswers                                = 
+	(
+	    SELECT
+	        COUNT( answer.userId )              AS totalAnswers
+
+        FROM
+	        Gabs.dbo.answer					    AS answer
+	        WITH								( NOLOCK, INDEX( ix_answer_userId ) )
+	    
+	    WHERE
+	        topUsers.userId						= answer.userId
+	)
+	
+FROM
+	@topUsers									AS topUsers
 
 OPTION
 	  (FORCE ORDER, LOOP JOIN, MAXDOP 1)	
@@ -152,7 +238,7 @@ DELETE FROM
 
 WHERE
 		topUser.regionId		= @regionId
-	AND topUser.topTypeId		= 4 --badges
+	AND topUser.topTypeId		= @topTypeId
 	AND topUser.intervalId		= @intervalId
 
 
@@ -174,11 +260,8 @@ SELECT
 
 FROM
 	@topUsers
-
-
-
-COMMIT TRAN
 GO
+
 
 GRANT EXECUTE ON  [top].[processUsersBadges] TO [processTopLists]
 GO

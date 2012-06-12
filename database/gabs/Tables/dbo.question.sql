@@ -24,9 +24,12 @@ GRANT SELECT ON  [dbo].[question] TO [processBounties]
 GRANT UPDATE ON  [dbo].[question] TO [processBounties]
 GRANT SELECT ON  [dbo].[question] TO [processQuestions]
 GRANT INSERT ON  [dbo].[question] TO [processQuestions]
+GRANT SELECT ON  [dbo].[question] TO [processRegions]
+GRANT UPDATE ON  [dbo].[question] TO [processRegions]
 GRANT SELECT ON  [dbo].[question] TO [processReputation]
 GRANT SELECT ON  [dbo].[question] TO [processTopLists]
 GO
+
 
 ALTER TABLE [dbo].[question] ADD CONSTRAINT [pk_question] PRIMARY KEY NONCLUSTERED  ([questionId]) ON [PRIMARY]
 GO

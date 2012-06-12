@@ -5,6 +5,9 @@ CREATE TABLE [lookup].[regionName]
 [name] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
 ) ON [PRIMARY]
 GO
+GRANT SELECT ON  [lookup].[regionName] TO [processRegions]
+GO
+
 ALTER TABLE [lookup].[regionName] ADD CONSTRAINT [pk_regionName] PRIMARY KEY NONCLUSTERED  ([regionNameId]) ON [PRIMARY]
 GO
 CREATE CLUSTERED INDEX [ix_regionName] ON [lookup].[regionName] ([name], [regionId]) ON [PRIMARY]

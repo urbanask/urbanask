@@ -9,8 +9,10 @@ CREATE TABLE [lookup].[reputationAction]
 [enabled] [int] NOT NULL CONSTRAINT [DF_reputationAction_enabled] DEFAULT ((1))
 ) ON [PRIMARY]
 GO
-ALTER TABLE [lookup].[reputationAction] ADD CONSTRAINT [pk_reputationAction] PRIMARY KEY CLUSTERED  ([reputationActionId]) ON [PRIMARY]
-GO
 GRANT SELECT ON  [lookup].[reputationAction] TO [api]
 GRANT SELECT ON  [lookup].[reputationAction] TO [processReputation]
+GRANT SELECT ON  [lookup].[reputationAction] TO [processTopLists]
+GO
+
+ALTER TABLE [lookup].[reputationAction] ADD CONSTRAINT [pk_reputationAction] PRIMARY KEY CLUSTERED  ([reputationActionId]) ON [PRIMARY]
 GO
