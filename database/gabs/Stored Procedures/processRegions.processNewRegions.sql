@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -13,6 +14,23 @@ AS
  
 SET NOCOUNT ON;
 SET XACT_ABORT ON;
+
+
+
+DELETE
+    Gabs.processRegions.regionNew
+    
+FROM
+	Gabs.processRegions.regionNew       AS regionNew
+	WITH                                ( NOLOCK, INDEX( ix_regionNew ) )
+
+    INNER JOIN
+	Gabs.[lookup].regionName            AS regionName
+	WITH                                ( NOLOCK, INDEX( ix_regionName ) )
+	ON  regionNew.region                = regionName.name
+        
+OPTION
+      ( FORCE ORDER, LOOP JOIN, MAXDOP 1 )
 
 
 
@@ -49,12 +67,18 @@ BEGIN
     	ON  regionWork.questionId           = question.questionId
     	
     	LEFT JOIN
-    	Gabs.lookup.regionName              AS regionName
+    	Gabs.[lookup].regionName            AS regionName
     	WITH                                ( NOLOCK, INDEX( ix_regionName ) )
     	ON  regionWork.region               = regionName.name
     	
+    	LEFT JOIN
+    	Gabs.processRegions.regionNew       AS regionNew
+    	WITH                                ( NOLOCK, INDEX( ix_regionNew ) )
+    	ON  regionWork.region               = regionNew.region
+    	
     WHERE
-        regionName.regionId                 IS NULL
+            regionName.regionId             IS NULL
+        AND regionNew.region                IS NULL
         
     OPTION
 	      ( FORCE ORDER, LOOP JOIN, MAXDOP 1 )

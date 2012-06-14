@@ -13,6 +13,8 @@ CREATE TABLE [dbo].[question]
 [bounty] [int] NOT NULL,
 [votes] [int] NOT NULL CONSTRAINT [DF_question_votes] DEFAULT ((0))
 ) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [ix_question_regionId] ON [dbo].[question] ([timestamp] DESC, [regionId]) INCLUDE ([questionId], [resolved]) ON [PRIMARY]
+
 GO
 GRANT SELECT ON  [dbo].[question] TO [api]
 GRANT UPDATE ON  [dbo].[question] TO [api]

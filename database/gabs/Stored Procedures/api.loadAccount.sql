@@ -44,9 +44,7 @@ OPTION
 
 SELECT
 	region.regionId							AS regionId,
-	region.name								AS name,
-	region.fromLatitude + ( ( region.toLatitude - region.fromLatitude ) / 2 )		AS centerLatitude,
-	region.fromLongitude + ( ( region.toLongitude - region.fromLongitude ) / 2 )	AS centerLongitude
+	region.name								AS name
 
 FROM
 	Gabs.dbo.userRegion						AS userRegion

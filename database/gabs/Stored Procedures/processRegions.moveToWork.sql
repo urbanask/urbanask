@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -51,7 +52,7 @@ BEGIN
         WITH                        ( NOLOCK, INDEX( ix_question_longitude_latitude ) )
         
     WHERE
-		    question.timestamp		> DATEADD( YEAR, -2, GETDATE() ) -- last two years (change to WEEK)
+		    question.timestamp		> DATEADD( WEEK, -2, GETDATE() ) -- last two weeks
         AND question.regionId       IS NULL
         AND question.region         <> ''
         

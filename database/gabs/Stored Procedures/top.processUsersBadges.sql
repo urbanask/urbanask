@@ -7,7 +7,7 @@ GO
 --GO 
 --DBCC DROPCLEANBUFFERS; 
 --GO
---DECLARE @regionId		AS INT = 1 --sacramento
+--DECLARE @regionId		AS INT = 2 --sacramento
 --DECLARE	@intervalId		AS INT = 2 --week
 --DECLARE	@beginDate		AS DATETIME2 = '1/16/2011 00:00:00'
 --DECLARE	@endDate		AS DATETIME2 = GETDATE()
@@ -59,7 +59,7 @@ SELECT
 	
 FROM
 	Gabs.dbo.question							AS question
-	WITH										( NOLOCK, INDEX( ix_question_longitude_latitude ) )
+	WITH										( NOLOCK, INDEX( ix_question_regionId ) )
 
 	INNER JOIN
 	Gabs.dbo.[user]								AS [user]
@@ -103,7 +103,7 @@ SELECT
 	
 FROM
 	Gabs.dbo.question							AS question
-	WITH										( NOLOCK, INDEX( ix_question_longitude_latitude ) )
+	WITH										( NOLOCK, INDEX( ix_question_regionId ) )
 
 	INNER JOIN
 	Gabs.dbo.answer								AS answer
@@ -261,6 +261,7 @@ SELECT
 FROM
 	@topUsers
 GO
+
 
 
 GRANT EXECUTE ON  [top].[processUsersBadges] TO [processTopLists]

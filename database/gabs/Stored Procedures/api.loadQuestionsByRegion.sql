@@ -8,7 +8,7 @@ GO
 --DBCC DROPCLEANBUFFERS; 
 --GO
 --DECLARE	@currentUserId		AS ForeignKey=1
---DECLARE	@regionId			AS ForeignKey=0
+--DECLARE	@regionId			AS ForeignKey=1
 --DECLARE	@count				AS INT=50
 --DECLARE	@age				AS DATETIME2 = '5/25/2012'
 --DECLARE	@expirationDays		AS INT = 2
@@ -34,13 +34,8 @@ SET ROWCOUNT @count;
 
 
 DECLARE @rowcount			AS INT
-DECLARE	@fromLatitude		AS DECIMAL(9,7) 
-DECLARE	@fromLongitude		AS DECIMAL(10,7) 
-DECLARE	@toLatitude			AS DECIMAL(9,7) 
-DECLARE	@toLongitude		AS DECIMAL(10,7) 
 DECLARE @questions			TABLE
 	(
-	[order]					INT,
 	questionId				ForeignKey PRIMARY KEY,
 	userId					ForeignKey,
 	username				VARCHAR(100),
@@ -57,29 +52,10 @@ DECLARE @questions			TABLE
 
 
 
-SELECT
-	@fromLatitude						= region.fromLatitude,
-	@fromLongitude						= region.fromLongitude,
-	@toLatitude							= region.toLatitude,
-	@toLongitude						= region.toLongitude
-	
-FROM
-	Gabs.lookup.region					region
-	WITH								( NOLOCK, INDEX( pk_region ) )
-
-WHERE
-		region.regionId					= @regionId
-		 
-OPTION
-	( FORCE ORDER, LOOP JOIN, MAXDOP 1 )
-
-
-
 INSERT INTO	
 	@questions
 	
 SELECT
-	1													AS [order],
 	question.questionId									AS questionId,
 	question.userId										AS userId,
 	[user].username										AS username,
@@ -95,7 +71,7 @@ SELECT
 	
 FROM
 	Gabs.dbo.question									AS question
-	WITH												( NOLOCK, INDEX( ix_question_longitude_latitude ) )
+	WITH												( NOLOCK, INDEX( ix_question_regionId ) )
 
 	INNER JOIN
 	Gabs.dbo.[user]										AS [user]
@@ -103,10 +79,7 @@ FROM
 	ON	question.userId									= [user].userId
 	
 WHERE
-		question.latitude								BETWEEN @fromLatitude 
-														AND		@toLatitude 
-	AND	question.longitude								BETWEEN @fromLongitude
-														AND		@toLongitude
+		question.regionId								= @regionId
 	AND	question.userId									<> @currentUserId
 	AND	question.timestamp								> @age
 	AND	question.resolved								= 0 --false
@@ -135,7 +108,6 @@ BEGIN
 		@questions
 		
 	SELECT
-		1										AS [order],
 		question.questionId						AS questionId,
 		question.userId							AS userId,
 		[user].username							AS username,
@@ -151,7 +123,7 @@ BEGIN
 		
 	FROM
 		Gabs.dbo.question						AS question
-		WITH									( NOLOCK, INDEX( ix_question_longitude_latitude ) )
+		WITH									( NOLOCK, INDEX( ix_question_regionId ) )
 
 		INNER JOIN
 		Gabs.dbo.[user]							AS [user]
@@ -163,10 +135,7 @@ BEGIN
 		ON question.questionId					= questions.questionId
 
 	WHERE
-			question.latitude					BETWEEN @fromLatitude 
-												AND		@toLatitude 
-		AND	question.longitude					BETWEEN @fromLongitude
-												AND		@toLongitude
+		    question.regionId				    = @regionId
 		AND	question.userId						<> @currentUserId
 		AND	question.timestamp					> @age
 		AND	question.resolved					= 0 --false
@@ -199,7 +168,6 @@ BEGIN
 		@questions
 		
 	SELECT
-		2										AS [order],
 		question.questionId						AS questionId,
 		question.userId							AS userId,
 		[user].username							AS username,
@@ -215,7 +183,7 @@ BEGIN
 		
 	FROM
 		Gabs.dbo.question						AS question
-		WITH									( NOLOCK, INDEX( ix_question_longitude_latitude ) )
+		WITH									( NOLOCK, INDEX( ix_question_regionId ) )
 
 		INNER JOIN
 		Gabs.dbo.[user]							AS [user]
@@ -227,10 +195,7 @@ BEGIN
 		ON question.questionId					= questions.questionId
 
 	WHERE
-			question.latitude					BETWEEN @fromLatitude 
-												AND		@toLatitude 
-		AND	question.longitude					BETWEEN @fromLongitude
-												AND		@toLongitude
+		    question.regionId					= @regionId
 		AND	question.userId						<> @currentUserId
 		AND	question.timestamp					> @age
 		AND questions.questionId				IS NULL --not already there
@@ -251,7 +216,7 @@ SET @rowcount = @@ROWCOUNT + @rowcount
 
 
 
---if questions < @count, try older than age
+--if questions < @count, try older than @age
 
 IF @rowcount < @count
 BEGIN
@@ -262,7 +227,6 @@ BEGIN
 		@questions
 		
 	SELECT
-		2										AS [order],
 		question.questionId						AS questionId,
 		question.userId							AS userId,
 		[user].username							AS username,
@@ -278,7 +242,7 @@ BEGIN
 		
 	FROM
 		Gabs.dbo.question						AS question
-		WITH									( NOLOCK, INDEX( ix_question_longitude_latitude ) )
+		WITH									( NOLOCK, INDEX( ix_question_regionId ) )
 
 		INNER JOIN
 		Gabs.dbo.[user]							AS [user]
@@ -290,10 +254,7 @@ BEGIN
 		ON question.questionId					= questions.questionId
 
 	WHERE
-			question.latitude					BETWEEN @fromLatitude 
-												AND		@toLatitude 
-		AND	question.longitude					BETWEEN @fromLongitude
-												AND		@toLongitude
+		    question.regionId					= @regionId
 		AND	question.userId						<> @currentUserId
 		AND questions.questionId				IS NULL --not already there
 
@@ -350,7 +311,6 @@ FROM
 	AND	questionVote.userId					= @currentUserId
 
 GROUP BY
-	questions.[order],
 	questions.questionId,
 	questions.userId,
 	questions.username,
@@ -365,7 +325,7 @@ GROUP BY
 	questions.votes
 
 ORDER BY
-	questions.[order]						ASC,
+	questions.resolved						ASC,
 	COUNT( answer.answerId )				ASC,
 	questions.votes							DESC,
 	questions.bounty						DESC,

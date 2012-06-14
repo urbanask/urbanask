@@ -53,7 +53,7 @@ SELECT
 	
 FROM
 	Gabs.dbo.question							AS question
-	WITH										( NOLOCK, INDEX( ix_question_longitude_latitude ) )
+	WITH										( NOLOCK, INDEX( ix_question_regionId ) )
 
 	INNER JOIN
 	Gabs.dbo.[user]								AS [user]
@@ -206,6 +206,7 @@ SELECT
 FROM
 	@topUsers
 GO
+
 
 
 GRANT EXECUTE ON  [top].[processUsersQuestions] TO [processTopLists]

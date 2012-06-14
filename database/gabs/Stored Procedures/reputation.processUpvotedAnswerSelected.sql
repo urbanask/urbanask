@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER OFF
 GO
 SET ANSI_NULLS OFF
@@ -61,6 +62,11 @@ FROM
 	WITH								( NOLOCK, INDEX( pk_answer ) )
 	ON answerVote.answerId				= answer.answerId
 
+	INNER JOIN
+	Gabs.dbo.question					AS question
+	WITH								( NOLOCK, INDEX( pk_question ) )
+	ON answer.questionId				= question.questionId
+
 	LEFT JOIN
 	Gabs.dbo.reputation					AS reputation
 	WITH								( NOLOCK, INDEX( ix_reputation_itemId ) )
@@ -71,6 +77,7 @@ FROM
 
 WHERE
 		answer.selected					= 1 -- true
+	AND question.userId                 <> answerVote.userId -- not my question
 	AND	reputation.reputationId			IS NULL	
 
 OPTION
@@ -130,5 +137,6 @@ FROM
 
 
 GO
+
 GRANT EXECUTE ON  [reputation].[processUpvotedAnswerSelected] TO [processReputation]
 GO

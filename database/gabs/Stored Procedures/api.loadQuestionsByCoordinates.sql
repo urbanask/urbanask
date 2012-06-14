@@ -42,7 +42,6 @@ SET ROWCOUNT @count;
 DECLARE @rowcount		AS INT
 DECLARE @questions		TABLE
 	(
-	[order]				INT,
 	questionId			ForeignKey PRIMARY KEY,
 	userId				ForeignKey,
 	username			VARCHAR(100),
@@ -61,7 +60,6 @@ INSERT INTO
 	@questions
 	
 SELECT
-	1													AS [order],
 	question.questionId									AS questionId,
 	question.userId										AS userId,
 	[user].username										AS username,
@@ -117,7 +115,6 @@ BEGIN
 		@questions
 		
 	SELECT
-		1										AS [order],
 		question.questionId						AS questionId,
 		question.userId							AS userId,
 		[user].username							AS username,
@@ -181,7 +178,6 @@ BEGIN
 		@questions
 		
 	SELECT
-		2										AS [order],
 		question.questionId						AS questionId,
 		question.userId							AS userId,
 		[user].username							AS username,
@@ -244,7 +240,6 @@ BEGIN
 		@questions
 		
 	SELECT
-		2										AS [order],
 		question.questionId						AS questionId,
 		question.userId							AS userId,
 		[user].username							AS username,
@@ -332,7 +327,6 @@ FROM
 	AND	questionVote.userId					= @currentUserId
 
 GROUP BY
-	questions.[order],
 	questions.questionId,
 	questions.userId,
 	questions.username,
@@ -347,7 +341,7 @@ GROUP BY
 	questions.votes
 
 ORDER BY
-	questions.[order]						ASC,
+	questions.resolved						ASC,
 	COUNT( answer.answerId )				ASC,
 	questions.votes							DESC,
 	questions.bounty						DESC,

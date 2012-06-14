@@ -5,6 +5,8 @@ CREATE TABLE [processRegions].[regionNew]
 [latitude] [decimal] (9, 7) NOT NULL,
 [longitude] [decimal] (10, 7) NOT NULL
 ) ON [PRIMARY]
+CREATE CLUSTERED INDEX [ix_regionNew] ON [processRegions].[regionNew] ([region], [latitude], [longitude]) ON [PRIMARY]
+
 GO
 ALTER TABLE [processRegions].[regionNew] ADD CONSTRAINT [pk_regionNew] PRIMARY KEY NONCLUSTERED  ([regionNewId]) ON [PRIMARY]
 GO

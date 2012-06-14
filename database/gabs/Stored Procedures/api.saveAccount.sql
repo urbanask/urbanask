@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER OFF
 GO
 SET ANSI_NULLS OFF
@@ -36,15 +37,33 @@ WHERE
 
 
 
-UPDATE
-	Gabs.dbo.userRegion
-
-SET 
-	userRegion.regionId		= @regionId
+DELETE FROM
+    Gabs.dbo.userRegion
 
 WHERE
-	userRegion.userId		= @userId
+        userRegion.userId		= @userId
 
 
 
+IF @regionId > -1
+BEGIN
+
+
+
+    INSERT INTO
+        Gabs.dbo.userRegion
+        (
+        userId,
+        regionId
+        )
+       
+    VALUES
+        (
+        @userId,
+        @regionId
+        )
+    
+
+
+END
 GO

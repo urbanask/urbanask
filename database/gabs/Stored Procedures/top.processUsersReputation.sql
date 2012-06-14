@@ -65,7 +65,7 @@ FROM
 
     FROM
 	    Gabs.dbo.question							AS question
-	    WITH										( NOLOCK, INDEX( ix_question_longitude_latitude ) )
+	    WITH										( NOLOCK, INDEX( ix_question_regionId ) )
 
 	    INNER JOIN
 	    Gabs.dbo.reputation							AS reputation
@@ -98,7 +98,7 @@ FROM
 
     FROM
         Gabs.dbo.question							AS question
-        WITH										( NOLOCK, INDEX( ix_question_longitude_latitude ) )
+        WITH										( NOLOCK, INDEX( ix_question_regionId ) )
 
         INNER JOIN
         Gabs.dbo.answer								AS answer
@@ -298,6 +298,7 @@ SELECT
 FROM
 	@topUsers
 GO
+
 
 
 GRANT EXECUTE ON  [top].[processUsersReputation] TO [processTopLists]
