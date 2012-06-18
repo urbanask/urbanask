@@ -19,8 +19,7 @@ Public Class loginTwitter : Implements System.Web.IHttpHandler
         COMMAND_TIMEOUT As Int32 = 60,
         METRIC_DEFAULT As Int32 = 0,
         LANGUAGE_DEFAULT As Int32 = 1,
-        TWITTER_AUTH_TYPE As Int32 = 3,
-        DEFAULT_REGION_ID As Int32 = 2
+        TWITTER_AUTH_TYPE As Int32 = 3
 
 #If CONFIG = "Release" Then
 
@@ -113,8 +112,6 @@ Public Class loginTwitter : Implements System.Web.IHttpHandler
                 Else
 
                     Dim hash As New Hashing.hash(twitterId, tokenSecret),
-                        latitude As String = context.Request.QueryString("latitude"),
-                        longitude As String = context.Request.QueryString("longitude"),
                         tokens As New Twitterizer.OAuthTokens(),
                         user As Twitterizer.TwitterResponse(Of Twitterizer.TwitterUser),
                         location As String = ""
@@ -148,16 +145,8 @@ Public Class loginTwitter : Implements System.Web.IHttpHandler
                     createUser.Parameters.AddWithValue("@token", token)
                     createUser.Parameters.AddWithValue("@tokenSecret", tokenSecret)
                     createUser.Parameters.AddWithValue("@location", location)
-                    createUser.Parameters.AddWithValue("@defaultRegionId", DEFAULT_REGION_ID)
                     createUser.Parameters.Add("@userId", Data.SqlDbType.Int).Direction = Data.ParameterDirection.Output
                     createUser.Parameters.Add("@username", Data.SqlDbType.VarChar, 100).Direction = Data.ParameterDirection.Output
-
-                    If latitude IsNot Nothing Then
-
-                        createUser.Parameters.AddWithValue("@latitude", latitude)
-                        createUser.Parameters.AddWithValue("@longitude", longitude)
-
-                    End If
 
                     createUser.ExecuteNonQuery()
 

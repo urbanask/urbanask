@@ -199,9 +199,7 @@ Public Class account : Inherits api.messageHandler
                             response &= String.Concat(
                                  "[",
                                  user("regionId"), ",""",
-                                 user("name"), """,",
-                                 user("centerLatitude"), ",",
-                                 user("centerLongitude"),
+                                 user("name"), """",
                                  "],")
 
                         End While

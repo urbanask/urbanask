@@ -1,0 +1,11 @@
+1.5.0
+
+new - region is optional. create an account anywhere in the world.
+new - leaderboard tied to questions. you can be on leaderboards for multiple regions
+new - question list based on current location
+new - leaderboard based on current location
+new - regions are created dynamically as needed when questions are asked
+
+bug - "upvoted answer, answer selected" giving rep on voter's questions
+
+

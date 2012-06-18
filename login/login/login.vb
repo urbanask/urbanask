@@ -17,8 +17,7 @@ Public Class login : Implements System.Web.IHttpHandler
         COMMAND_TIMEOUT As Int32 = 60,
         METRIC_DEFAULT As Int32 = 0,
         LANGUAGE_DEFAULT As Int32 = 1,
-        EMAIL_AUTH_TYPE As Int32 = 1,
-        DEFAULT_REGION_ID As Int32 = 2
+        EMAIL_AUTH_TYPE As Int32 = 1
 
 #If CONFIG = "Release" Then
 
@@ -128,9 +127,7 @@ Public Class login : Implements System.Web.IHttpHandler
                         Case "/add" '/logins/login/add
 
                             Dim hash As New Hashing.hash(username, password),
-                                email As String = context.Request.QueryString("email"),
-                                latitude As String = context.Request.QueryString("latitude"),
-                                longitude As String = context.Request.QueryString("longitude")
+                                email As String = context.Request.QueryString("email")
 
                             createUser.CommandType = Data.CommandType.StoredProcedure
                             createUser.CommandTimeout = COMMAND_TIMEOUT
@@ -145,16 +142,8 @@ Public Class login : Implements System.Web.IHttpHandler
                             createUser.Parameters.AddWithValue("@languageId", LANGUAGE_DEFAULT)
                             createUser.Parameters.AddWithValue("@authTypeId", EMAIL_AUTH_TYPE)
                             createUser.Parameters.AddWithValue("@email", email)
-                            createUser.Parameters.AddWithValue("@defaultRegionId", DEFAULT_REGION_ID)
                             createUser.Parameters.Add("@userId", Data.SqlDbType.Int).Direction = Data.ParameterDirection.Output
                             createUser.Parameters.Add("@username", Data.SqlDbType.VarChar, 100).Direction = Data.ParameterDirection.Output
-
-                            If latitude IsNot Nothing Then
-
-                                createUser.Parameters.AddWithValue("@latitude", latitude)
-                                createUser.Parameters.AddWithValue("@longitude", longitude)
-
-                            End If
 
                             createUser.ExecuteNonQuery()
                             userId = CInt(createUser.Parameters("@userId").Value)

@@ -16,13 +16,16 @@ Imports System.Data
 Public Class lookups : Inherits api.messageHandler
 
     Public Const LOAD_REPUTATION_ACTIONS As String = "Gabs.api.loadReputationActions",
-        LOAD_REGIONS As String = "Gabs.api.loadRegions"
+        LOAD_REGIONS As String = "Gabs.api.loadRegions",
+        LOAD_REGION_BY_NAME As String = "Gabs.api.loadRegionByName"
 
     Protected Overrides Sub process(
         connection As SqlClient.SqlConnection,
         context As Web.HttpContext,
         request As String,
         userId As Int32)
+
+        Dim queries As Collections.Specialized.NameValueCollection = context.Request.QueryString
 
         Select Case context.Request.PathInfo
 
@@ -32,7 +35,15 @@ Public Class lookups : Inherits api.messageHandler
 
             Case "/regions"
 
-                loadRegions(connection, context)
+                If queries("region") = "" Then
+
+                    loadRegions(connection, context)
+
+                Else
+
+                    loadRegionByName(connection, context, queries("region"))
+
+                End If
 
             Case Else
 
@@ -72,6 +83,27 @@ Public Class lookups : Inherits api.messageHandler
 
     End Sub
 
+    Private Sub loadRegionByName(
+        connection As SqlClient.SqlConnection,
+        context As Web.HttpContext,
+        region As String)
+
+        Using command As New SqlClient.SqlCommand(LOAD_REGION_BY_NAME, connection)
+
+            command.CommandType = CommandType.StoredProcedure
+            command.CommandTimeout = COMMAND_TIMEOUT
+
+            command.Parameters.AddWithValue("@region", region)
+            command.Parameters.Add("@regionId", SqlDbType.Int).Direction = ParameterDirection.Output
+
+            command.ExecuteNonQuery()
+
+            MyBase.sendSuccessResponse(context, createRegion(command.Parameters("@regionId").Value.ToString()))
+
+        End Using
+
+    End Sub
+
     Private Function createReputationActions(command As Data.SqlClient.SqlCommand) As String
 
         Using rows As Data.SqlClient.SqlDataReader = command.ExecuteReader()
@@ -103,6 +135,12 @@ Public Class lookups : Inherits api.messageHandler
 
     End Function
 
+    Private Function createRegion(regionId As String) As String
+
+        Return "{""regionId"":" + MyBase.jsonEncode(regionId) + "}"
+
+    End Function
+
     Private Function createRegions(command As Data.SqlClient.SqlCommand) As String
 
         Using rows As Data.SqlClient.SqlDataReader = command.ExecuteReader()
@@ -116,7 +154,8 @@ Public Class lookups : Inherits api.messageHandler
                     response &= String.Concat(
                         "[",
                         rows("id"), ",""",
-                        rows("name"), """",
+                        rows("name"), """,",
+                        rows("level"),
                         "],")
 
                 End While

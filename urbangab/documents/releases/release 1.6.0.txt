@@ -1,0 +1,7 @@
+1.6.0
+
+new - leaderboards for rollup regions (California, USA, World, etc)
+
+bug - email account creation not working
+
+

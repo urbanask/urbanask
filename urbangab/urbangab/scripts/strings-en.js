@@ -42,7 +42,9 @@
         "edit": 
         {
             "usernameCaption": "username",
-            "taglineCaption": "say something about yourself"
+            "taglineCaption": "say something about yourself",
+            "regionCaption": "In addition to questions near me, show me the following region",
+            "regionNone": "&lt;none&gt;"
         },
         "editAccountCaption": "edit",
         "emailLabel": "email",
@@ -144,8 +146,9 @@
         "topTypeBadgesCaption": "badges",
         "topUsers":
         {
+            "everywhere": "everywhere",
             "loading": "Loading...",
-            "noTopUsers": "No one has %1 %2 <br /><br />Why not be the first?",
+            "noTopUsers": "No one in your area has %1 %2 <br /><br />Why not be the first?",
             "noTopUsersType": ["earned any reputation", "asked any questions", "answered any questions", "earned any badges"],
             "noTopUsersInterval": ["yet.", "today.", "this week.", "this month.", "this year."]
         },

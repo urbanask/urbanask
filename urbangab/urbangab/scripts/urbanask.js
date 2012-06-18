@@ -177,8 +177,7 @@
 
                 "id": 0,
                 "name": 1,
-                "centerLatitude": 2,
-                "centerLongitude": 3
+                "level": 2
 
             },
             REPUTATION_ACTION = {
@@ -240,7 +239,7 @@
 
             },
             VERSION_CHECK_RATE = 4 * 60 * 60 * 1000, //4 hours
-            WORLD_REGION = 0,
+            WORLD_REGION_ID = 0,
             _pages = {
 
                 data: [],
@@ -2069,6 +2068,21 @@
             if ( nearbyQuestions ) _nearbyQuestions = window.JSON.parse( nearbyQuestions );
             if ( everywhereQuestions ) _everywhereQuestions = window.JSON.parse( everywhereQuestions );
 
+            var regionId = window.getLocalStorage( 'current-region-id' ),
+                regionName = window.getLocalStorage( 'current-region-name' );
+
+            if ( regionId ) {
+
+                _currentLocation.regionId = regionId;
+                _currentLocation.regionName = regionName;
+
+            } else {
+
+                _currentLocation.regionId = WORLD_REGION_ID;
+                _currentLocation.regionName = STRINGS.topUsers.everywhere;
+
+            };
+
             var latitude = window.getLocalStorage( 'current-latitude' ),
                 longitude = window.getLocalStorage( 'current-longitude' );
 
@@ -2117,32 +2131,40 @@
 
         function loadQuestions() {
 
-            var region = _account[ACCOUNT_COLUMNS.regions][0],
-                data = 'regionId=' + region[REGION_COLUMNS.id],
-                resource = '/api/questions',
-                session = getSession( resource );
+            if ( _account[ACCOUNT_COLUMNS.regions].length ) {
 
-            ajax( API_URL + resource, {
+                var region = _account[ACCOUNT_COLUMNS.regions][0],
+                    data = 'regionId=' + region[REGION_COLUMNS.id],
+                    resource = '/api/questions',
+                    session = getSession( resource );
 
-                "type": "GET",
-                "data": data,
-                "headers": { "x-session": session },
-                "cache": false,
-                "async": false,
-                "success": function ( data, status ) {
+                ajax( API_URL + resource, {
 
-                    _questions = window.JSON.parse( data );
-                    window.setLocalStorage( 'questions', data );
-                    showQuestions( region[REGION_COLUMNS.name], _questions, document.getElementById( 'questions' ) );
+                    "type": "GET",
+                    "data": data,
+                    "headers": { "x-session": session },
+                    "cache": false,
+                    "async": false,
+                    "success": function ( data, status ) {
 
-                },
-                "error": function ( response, status, error ) {
+                        _questions = window.JSON.parse( data );
+                        window.setLocalStorage( 'questions', data );
+                        showQuestions( region[REGION_COLUMNS.name], _questions, document.getElementById( 'questions' ) );
 
-                    if ( error == 'Unauthorized' ) { logoutApp() };
+                    },
+                    "error": function ( response, status, error ) {
 
-                }
+                        if ( error == 'Unauthorized' ) { logoutApp() };
 
-            } );
+                    }
+
+                } );
+
+            } else {
+
+                document.getElementById( 'questions' ).addClass( 'hide' );
+
+            };
 
         };
 
@@ -2179,7 +2201,7 @@
 
             if ( _nearbyQuestions.length < QUESTION_ROW_COUNT ) {
 
-                var data = 'regionId=' + WORLD_REGION
+                var data = 'regionId=' + WORLD_REGION_ID
                         + '&count=' + ( QUESTION_ROW_COUNT - _nearbyQuestions.length ),
                     resource = '/api/questions',
                     session = getSession( resource );
@@ -2205,6 +2227,10 @@
 
                 } );
 
+            } else {
+
+                document.getElementById( 'everywhere-questions' ).addClass( 'hide' );
+
             };
 
         };
@@ -2215,7 +2241,7 @@
 
             window.setTimeout( function () {
 
-                var data = 'regionId=' + _account[ACCOUNT_COLUMNS.regions][0][REGION_COLUMNS.id],
+                var data = 'regionId=' + _currentLocation.regionId,
                     resource = '/api/top/topUsers',
                     session = getSession( resource );
 
@@ -2227,7 +2253,7 @@
                     "success": function ( data, status ) {
 
                         _cache.topUsers.refresh( data );
-                        showTopUsers( _account[ACCOUNT_COLUMNS.regions][0][REGION_COLUMNS.name] );
+                        showTopUsers( _currentLocation.regionName );
                         hideLoading();
 
                     },
@@ -2336,6 +2362,7 @@
             $( '#edit-account-caption' ).innerHTML = STRINGS.editAccountCaption;
             $( '#edit-username' ).setAttribute( 'placeholder', STRINGS.edit.usernameCaption );
             $( '#edit-tagline' ).setAttribute( 'placeholder', STRINGS.edit.taglineCaption );
+            $( '#edit-region-caption' ).innerHTML = STRINGS.edit.regionCaption;
             $( '#fb-login' ).innerHTML = STRINGS.facebook.authenticatingCaption;
             $( '#location-note' ).setAttribute( 'placeholder', STRINGS.optionalNote );
             $( '#login-username' ).setAttribute( 'placeholder', STRINGS.usernameLabel );
@@ -2529,9 +2556,7 @@
             function login() {
 
                 var resource = '/logins/loginTwitter',
-                    data = 'oauth_token=' + token
-                        + ( _currentLocation.latitude ? '&latitude=' + _currentLocation.latitude : '' )
-                        + ( _currentLocation.longitude ? '&longitude=' + _currentLocation.longitude : '' );
+                    data = 'oauth_token=' + token;
 
                 ajax( API_URL + resource, {
 
@@ -2712,9 +2737,7 @@
                 var resource = '/logins/loginFB',
                     data = 'location=' + location
                         + '&email=' + email
-                        + '&accessToken=' + password
-                        + ( _currentLocation.latitude ? '&latitude=' + _currentLocation.latitude : '' )
-                        + ( _currentLocation.longitude ? '&longitude=' + _currentLocation.longitude : '' ),
+                        + '&accessToken=' + password,
                     authorization = window.Crypto.util.bytesToBase64( 
                         window.Crypto.charenc.UTF8.stringToBytes( facebookId + ':' + username + ':' + password ) );
 
@@ -3749,14 +3772,11 @@
 
             if ( document.getElementById( 'ask-text' ).value.trim() ) {
 
-                var centerLatitude = parseFloat( _account[ACCOUNT_COLUMNS.regions][0][REGION_COLUMNS.centerLatitude] ),
-                    centerLongitude = parseFloat( _account[ACCOUNT_COLUMNS.regions][0][REGION_COLUMNS.centerLongitude] );
-
-                if ( _currentLocation.latitude || centerLatitude ) {
+                if ( _currentLocation.latitude ) {
 
                     var questionText = document.getElementById( 'ask-text' ).value.trim(),
-                        latitude = ( _currentLocation.latitude ? _currentLocation.latitude : centerLatitude ) + getRandomLatitude(),
-                        longitude = ( _currentLocation.longitude ? _currentLocation.longitude : centerLongitude ) + getRandomLongitude();
+                        latitude = _currentLocation.latitude + getRandomLatitude(),
+                        longitude = _currentLocation.longitude + getRandomLongitude();
 
                     getRegion( { latitude: latitude, longitude: longitude }, function ( region ) {
 
@@ -3816,7 +3836,6 @@
 
                                 _userQuestions.unshift( question );
                                 window.setTimeout( function () { questions.childNodes[1].removeClass( 'height-zero' ) }, 50 );
-
                                 showNotification( STRINGS.notificationAskQuestion, { footer: STRINGS.notification.questionSaved } );
 
                                 getNewQuestionId( questionText, function ( questionId ) {
@@ -4159,12 +4178,16 @@
 
                 if ( status == google.maps.GeocoderStatus.OK ) {
 
+                    var resultIndex,
+                        types,
+                        typeIndex;
+
                     //check top-level results
-                    for ( var resultIndex = 0; resultIndex < results.length; resultIndex++ ) {
+                    for ( resultIndex = 0; resultIndex < results.length; resultIndex++ ) {
 
-                        var types = results[resultIndex].types;
+                        types = results[resultIndex].types;
 
-                        for ( var typeIndex = 0; typeIndex < types.length; typeIndex++ ) {
+                        for ( typeIndex = 0; typeIndex < types.length; typeIndex++ ) {
 
                             if ( types[typeIndex] == 'locality' ) {
 
@@ -4178,15 +4201,15 @@
                     };
 
                     //no result, check addresses
-                    for ( var resultIndex = 0; resultIndex < results.length; resultIndex++ ) {
+                    for ( resultIndex = 0; resultIndex < results.length; resultIndex++ ) {
 
                         var addresses = results[resultIndex].address_components;
 
                         for ( var addressIndex = 0; addressIndex < addresses.length; addressIndex++ ) {
 
-                            var types = addresses[addressIndex].types;
+                            types = addresses[addressIndex].types;
 
-                            for ( var typeIndex = 0; typeIndex < types.length; typeIndex++ ) {
+                            for ( typeIndex = 0; typeIndex < types.length; typeIndex++ ) {
 
                                 if ( types[typeIndex] == 'locality' ) {
 
@@ -4239,7 +4262,7 @@
         function setupGeolocation() {
 
             window.setTimeout( getGeolocation, 4 * SECOND );
-            _geoTimer = window.setInterval( getGeolocation, 4 * 60 * SECOND ); //every 4 minutes
+            _geoTimer = window.setInterval( getGeolocation, 5 * 60 * SECOND ); //every 5 minutes
 
         };
 
@@ -4253,6 +4276,12 @@
 
                     geoFunction( function () {
 
+                        getRegion( { latitude: _currentLocation.latitude, longitude: _currentLocation.longitude }, function ( region ) {
+
+                            loadCurrentRegion( region );
+
+                        } );
+
                         phonegapComplete();
                         if ( geoComplete ) { geoComplete() };
 
@@ -4263,6 +4292,12 @@
             } else {
 
                 geoFunction( function () {
+
+                    getRegion( { latitude: _currentLocation.latitude, longitude: _currentLocation.longitude }, function ( region ) {
+
+                        loadCurrentRegion( region );
+
+                    } );
 
                     if ( geoComplete ) { geoComplete() };
 
@@ -4281,7 +4316,7 @@
                 },
                 function ( error ) {
 
-                    if ( window.deviceInfo.mode != 'webview' ) {
+                    if ( window.deviceInfo.mode != 'webview' && !_currentLocation.latitude ) {
 
                         showMessage( STRINGS.error.geoLocation );
 
@@ -4318,7 +4353,7 @@
                 },
                 function ( error ) {
 
-                    if ( window.deviceInfo.mode != 'webview' ) {
+                    if ( window.deviceInfo.mode != 'webview' && !_currentLocation.latitude ) {
 
                         showMessage( STRINGS.error.geoLocation );
 
@@ -4328,6 +4363,42 @@
 
                 },
                 { maximumAge: 60000, enableHighAccuracy: true } ); //must be valid within a minute
+
+            };
+
+            function loadCurrentRegion( region ) {
+
+                var resource = '/api/lookups/regions',
+                    data = 'region=' + region,
+                    session = getSession( resource );
+
+                ajax( API_URL + resource, {
+
+                    "type": "GET",
+                    "headers": { "x-session": session },
+                    "data": data,
+                    "success": function ( data, status ) {
+
+                        var regionId = window.JSON.parse( data ).regionId;
+
+                        if ( regionId ) {
+
+                            _currentLocation.regionId = regionId;
+                            _currentLocation.regionName = region;
+
+                            window.setLocalStorage( 'current-region-id', regionId );
+                            window.setLocalStorage( 'current-region-name', region );
+
+                        };
+
+                    },
+                    "error": function ( response, status, error ) {
+
+                        if ( error == 'Unauthorized' ) { logoutApp(); };
+
+                    }
+
+                } );
 
             };
 
@@ -4440,12 +4511,13 @@
                     "success": function ( data, status ) {
 
                         var regions = window.JSON.parse( data ),
-                            options = '';
+                            options = '<option value="-1">' + STRINGS.edit.regionNone + '</option>';
 
                         for ( var index = 0; index < regions.length; index++ ) {
 
                             options +=
                                   '<option value="' + regions[index][REGION_COLUMNS.id] + '">'
+                                + '&nbsp;&nbsp;'.repeat( regions[index][REGION_COLUMNS.level] - 1 )
                                 + regions[index][REGION_COLUMNS.name]
                                 + '</option>';
 
@@ -4471,13 +4543,21 @@
 
         function setRegion( region ) {
 
-            for ( var index = 0; index < region.options.length; index++ ) {
+            if ( _account[ACCOUNT_COLUMNS.regions].length ) {
 
-                if ( region.options[index].value == _account[ACCOUNT_COLUMNS.regions][0][REGION_COLUMNS.id] ) {
+                for ( var index = 0; index < region.options.length; index++ ) {
 
-                    region.selectedIndex = index;
+                    if ( region.options[index].value == _account[ACCOUNT_COLUMNS.regions][0][REGION_COLUMNS.id] ) {
+
+                        region.selectedIndex = index;
+
+                    };
 
                 };
+
+            } else {
+
+                region.selectedIndex = 0;
 
             };
 
@@ -4515,7 +4595,7 @@
 
                 var resource = '/api/account/save',
                     regionId = region.options[region.selectedIndex].value,
-                    regionName = region.options[region.selectedIndex].text,
+                    regionName = region.options[region.selectedIndex].text.trim(),
                     data = 'username=' + username.value + '&tagline=' + tagline.value + '&regionId=' + regionId,
                     session = getSession( resource );
 
@@ -4526,18 +4606,37 @@
                     "headers": { "x-session": session },
                     "success": function ( data, status ) {
 
-                        var newRegion = ( _account[ACCOUNT_COLUMNS.regions][0][REGION_COLUMNS.id] != regionId );
+                        var newRegion = false;
 
                         _account[ACCOUNT_COLUMNS.username] = username.value;
                         _account[ACCOUNT_COLUMNS.tagline] = tagline.value;
-                        _account[ACCOUNT_COLUMNS.regions][0][REGION_COLUMNS.id] = regionId;
-                        _account[ACCOUNT_COLUMNS.regions][0][REGION_COLUMNS.name] = regionName;
+
+                        if ( regionId == -1 ) {
+
+                            if ( _account[ACCOUNT_COLUMNS.regions].length ) { newRegion = true; };
+                            _account[ACCOUNT_COLUMNS.regions] = [];
+
+                        } else {
+
+                            if ( !_account[ACCOUNT_COLUMNS.regions].length
+                                || ( _account[ACCOUNT_COLUMNS.regions].length
+                                && _account[ACCOUNT_COLUMNS.regions][0][REGION_COLUMNS.id] != regionId ) ) {
+
+                                newRegion = true;
+
+                            };
+
+                            _account[ACCOUNT_COLUMNS.regions] = [[regionId, regionName]];
+
+                        };
 
                         close();
 
                         if ( newRegion ) {
 
                             loadQuestions();
+                            loadNearbyQuestions();
+                            loadEverywhereQuestions();
                             loadTopUsers();
 
                         };
@@ -5324,7 +5423,9 @@
 
         };
 
-        function showCreateEmailAccount() {
+        function showCreateEmailAccount( event ) {
+
+            event.preventDefault();
 
             var createAccount = document.getElementById( 'create-account-page' ),
                 save = document.getElementById( 'save-account' ),
@@ -5344,9 +5445,7 @@
                 if ( username && password && email ) {
 
                     var resource = '/logins/login/add',
-                        data = 'email=' + email
-                            + ( _currentLocation.latitude ? '&latitude=' + _currentLocation.latitude : '' )
-                            + ( _currentLocation.longitude ? '&longitude=' + _currentLocation.longitude : '' ),
+                        data = 'email=' + email,
                         authorization = window.Crypto.util.bytesToBase64( 
                             window.Crypto.charenc.UTF8.stringToBytes( username + ':' + password ) );
 
@@ -6177,7 +6276,7 @@
 
                 case 'top-page':
 
-                    showTopUsers( _account[ACCOUNT_COLUMNS.regions][0][REGION_COLUMNS.name] );
+                    showTopUsers( _currentLocation.regionName );
 
                     _pages.replace( page, { caption: STRINGS.backButtonTopUsers } );
 
@@ -7344,7 +7443,7 @@
 
                 toggleButton.addClass( 'toggle-button-selected' );
                 toggleButton.parentNode.setDataset( 'id', toggleButton.getDataset( 'id' ) );
-                showTopUsers( _account[ACCOUNT_COLUMNS.regions][0][REGION_COLUMNS.name] );
+                showTopUsers( _currentLocation.regionName );
 
             };
 
@@ -7368,7 +7467,7 @@
 
                 toggleButton.addClass( 'toggle-button-selected' );
                 toggleButton.parentNode.setDataset( 'id', toggleButton.getDataset( 'id' ) );
-                showTopUsers( _account[ACCOUNT_COLUMNS.regions][0][REGION_COLUMNS.name] );
+                showTopUsers( _currentLocation.regionName );
 
             };
 
@@ -7703,6 +7802,12 @@
             while ( ws.test( str.charAt( --i ) ) );
 
             return str.slice( 0, i + 1 );
+
+        };
+
+        String.prototype.repeat = function ( n ) {
+
+            return Array( n + 1 ).join( this );
 
         };
 

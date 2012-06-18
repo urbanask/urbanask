@@ -13,7 +13,10 @@ SELECT * FROM questionVote WHERE userId < 100
 SELECT * FROM userBadge WHERE userId < 100
 SELECT * FROM reputation WHERE userId < 100
 
+SELECT * FROM Gabs.processRegions.regionNew
+
 /*
+INSERT INTO region 
 DBCC CHECKIDENT( 'Gabs.dbo.[user]', RESEED, 127 )
 DELETE FROM question WHERE questionId = 1105995
 DELETE FROM answer WHERE answerId = 4250081
