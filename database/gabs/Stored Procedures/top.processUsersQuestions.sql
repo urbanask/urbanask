@@ -101,8 +101,8 @@ SELECT
 	users.userId								AS userId,
 	users.username								AS username,
 	users.reputation							AS reputation,
-	NULL                                		AS totalQuestions,
-	COUNT( answer.userId )		                AS totalAnswers,
+	COUNT( question.questionId )                AS totalQuestions,
+	NULL   		                                AS totalAnswers,
 	NULL                            			AS totalBadges,
 	users.topScore								AS topScore
 	
@@ -110,9 +110,9 @@ FROM
 	@users										AS users
 
 	INNER JOIN
-	Gabs.dbo.answer							    AS answer
-	WITH										( NOLOCK, INDEX( ix_answer_userId ) )
-	ON	users.userId							= answer.userId
+	Gabs.dbo.question							AS question
+	WITH										( NOLOCK, INDEX( ix_question_userId ) )
+	ON	users.userId							= question.userId
 
 GROUP BY
 	users.userId,
@@ -132,17 +132,17 @@ UPDATE
 	@topUsers
 	
 SET	
-	totalQuestions                              = 
+	totalAnswers                                = 
 	(
 	    SELECT
-	        COUNT( question.userId )            AS totalQuestions
+	        COUNT( answer.userId )              AS totalAnswers
 
         FROM
-	        Gabs.dbo.question					AS question
-	        WITH								( NOLOCK, INDEX( ix_question_userId ) )
+	        Gabs.dbo.answer					    AS answer
+	        WITH								( NOLOCK, INDEX( ix_answer_userId ) )
 	    
 	    WHERE
-	        topUsers.userId						= question.userId
+	        topUsers.userId						= answer.userId
 	)
 	
 FROM
@@ -206,6 +206,7 @@ SELECT
 FROM
 	@topUsers
 GO
+
 
 
 

@@ -14,9 +14,6 @@ GO
 --DECLARE	@languageId			AS ForeignKey  = 1
 --DECLARE	@authTypeId			AS ForeignKey = 1
 --DECLARE	@email				AS VARCHAR(256) = 'appemail'
---DECLARE	@defaultRegionId	AS ForeignKey = 2
---DECLARE	@latitude			AS DECIMAL(9,7)		= NULL
---DECLARE	@longitude			AS DECIMAL(10,7)	= NULL
 --DECLARE	@userId				AS ForeignKey		
 
 
@@ -32,9 +29,6 @@ CREATE PROCEDURE [login].[createUser]
 	@languageId			AS ForeignKey,
 	@authTypeId			AS ForeignKey,
 	@email				AS VARCHAR(256),
-	@defaultRegionId	AS ForeignKey,
-	@latitude			AS DECIMAL(9,7)		= NULL,
-	@longitude			AS DECIMAL(10,7)	= NULL,
 	@userId				AS ForeignKey		OUTPUT,
 	@username			AS VARCHAR(100)		OUTPUT
 	)
@@ -163,75 +157,6 @@ VALUES
 	@email,
 	NEWID(),
 	GETDATE()
-	)
-
-
-
-DECLARE @regionId	INT
-SET @regionId = @defaultRegionId
-
-
-
-IF @latitude IS NOT NULL
-BEGIN
-
-
-	IF EXISTS(
-		SELECT
-			region.regionId			AS regionId
-			
-		FROM
-			Gabs.lookup.region		AS region
-			WITH					( INDEX( pk_region ), NOLOCK )
-			
-		WHERE
-				@latitude			BETWEEN region.fromLatitude
-									AND		region.toLatitude
-			AND	@longitude			BETWEEN region.fromLongitude
-									AND		region.toLongitude
-	)
-	BEGIN
-
-
-
-		SELECT
-			@regionId				= region.regionId
-			
-		FROM
-			Gabs.lookup.region		AS region
-			WITH					( INDEX( pk_region ), NOLOCK )
-			
-		WHERE
-				@latitude			BETWEEN region.fromLatitude
-									AND		region.toLatitude
-			AND	@longitude			BETWEEN region.fromLongitude
-									AND		region.toLongitude
-			AND	region.regionId		> 0 -- all
-			
-		OPTION
-			( FORCE ORDER, LOOP JOIN, MAXDOP 1 )
-			
-			
-
-	END
-
-
-
-END
-
-
-
-INSERT INTO
-	[Gabs].[dbo].[userRegion]
-    (
-	[userId],
-    [regionId]
-	)
-
-VALUES
-    (
-	@userId,
-    @regionId
 	)
 
 

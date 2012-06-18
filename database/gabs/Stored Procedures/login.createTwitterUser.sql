@@ -18,9 +18,6 @@ GO
 --DECLARE	@token				AS VARCHAR(256) = '509992905-0lfNtgoF6ElDyBADP5bcNxeLSlSMzYyAIJH5MxAK'
 --DECLARE	@tokenSecret		AS VARCHAR(256) = 'VPtt67zvKpCIjkoTQO9WgruoPZQ1urPEBNsZXna28'
 --DECLARE	@location			AS VARCHAR(200) = 'Sacramento, CA'
---DECLARE	@defaultRegionId	AS ForeignKey = 2
---DECLARE	@latitude			AS DECIMAL(9,7)		= NULL
---DECLARE	@longitude			AS DECIMAL(10,7)	= NULL
 --DECLARE	@userId				AS ForeignKey		
 --DECLARE	@username			AS VARCHAR(100)		
 
@@ -41,9 +38,6 @@ CREATE PROCEDURE [login].[createTwitterUser]
 	@token				AS VARCHAR(256),
 	@tokenSecret		AS VARCHAR(256),
 	@location			AS VARCHAR(200),
-	@defaultRegionId	AS ForeignKey,
-	@latitude			AS DECIMAL(9,7)		= NULL,
-	@longitude			AS DECIMAL(10,7)	= NULL,
 	@userId				AS ForeignKey		OUTPUT,
 	@username			AS VARCHAR(100)		OUTPUT
 	)
@@ -161,75 +155,6 @@ VALUES
 	@token,
 	@tokenSecret,
 	@location
-	)
-
-
-
-DECLARE @regionId	INT
-SET @regionId = @defaultRegionId
-
-
-
-IF @latitude IS NOT NULL
-BEGIN
-
-
-	IF EXISTS(
-		SELECT
-			region.regionId			AS regionId
-			
-		FROM
-			Gabs.lookup.region		AS region
-			WITH					( INDEX( pk_region ), NOLOCK )
-			
-		WHERE
-				@latitude			BETWEEN region.fromLatitude
-									AND		region.toLatitude
-			AND	@longitude			BETWEEN region.fromLongitude
-									AND		region.toLongitude
-	)
-	BEGIN
-
-
-
-		SELECT
-			@regionId				= region.regionId
-			
-		FROM
-			Gabs.lookup.region		AS region
-			WITH					( INDEX( pk_region ), NOLOCK )
-			
-		WHERE
-				@latitude			BETWEEN region.fromLatitude
-									AND		region.toLatitude
-			AND	@longitude			BETWEEN region.fromLongitude
-									AND		region.toLongitude
-			AND	region.regionId		> 0 -- all
-			
-		OPTION
-			( FORCE ORDER, LOOP JOIN, MAXDOP 1 )
-			
-			
-
-	END
-
-
-
-END
-
-
-
-INSERT INTO
-	[Gabs].[dbo].[userRegion]
-    (
-	[userId],
-    [regionId]
-	)
-
-VALUES
-    (
-	@userId,
-    @regionId
 	)
 
 
