@@ -2674,7 +2674,7 @@ html {
 }
 
 #view {
-    -webkit-overflow-scrolling: touch !important;
+    /*-webkit-overflow-scrolling: touch !important;*/
     -webkit-user-select: none;
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAGklEQVQI12Pw8fH5X19fD8YMMAZIkAHGANEAiZwUkmznO8QAAAAASUVORK5CYII=);
     bottom: 46px;
@@ -2697,7 +2697,7 @@ html {
 }
 
 #viewport {
-    -webkit-overflow-scrolling: touch !important;
+    /*-webkit-overflow-scrolling: touch !important;*/
     -webkit-user-select: none;
     margin: 0 auto;
     position: relative;

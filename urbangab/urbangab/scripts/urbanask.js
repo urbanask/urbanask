@@ -43,6 +43,8 @@
             _questions = [],
             _nearbyQuestions = [],
             _everywhereQuestions = [],
+            _scrollQuestions,
+            _scrollTopUsers,
             _swipeY = 0,
             _userQuestionTimer,
             _questionTimer,
@@ -1922,6 +1924,7 @@
 
         function initializeInterface() {
 
+            initializeScrolling();
             localizeStrings();
 
             document.getElementById( 'top-type' ).setDataset( 'id', TOP_TYPES.reputation );
@@ -1934,6 +1937,26 @@
 
             showSocialButtons();
             showExternalFooter();
+
+        };
+
+        function initializeScrolling() {
+
+            if ( window.deviceInfo.mobile ) {
+
+                var script = document.createElement( 'script' );
+                script.id = 'scrolling';
+                script.src = 'scripts/iscroll-lite.min.js';
+                document.body.appendChild( script );
+
+                window.setTimeout( function () {
+
+                    _scrollQuestions = new iScroll( 'questions-view' );
+                    _scrollTopUsers = new iScroll( 'top-users-view' );
+
+                }, 200 );
+
+            };
 
         };
 
@@ -6578,6 +6601,7 @@
             };
 
             element.innerHTML = html;
+            updateScrollQuestions();
 
         };
 
@@ -6890,6 +6914,8 @@
                     topUsers.addClass( 'hide' );
 
                 };
+
+                updateScrollTopUsers();
 
                 window.setTimeout( function () {
 
@@ -7568,6 +7594,34 @@
 
             var item = event.target.closestByClassName( 'selectable' );
             if ( item ) item.removeClass( 'select' );
+
+        };
+
+        function updateScrollQuestions() {
+
+            if ( window.deviceInfo.mobile ) {
+
+                setTimeout( function () {
+
+                    _scrollQuestions.refresh();
+
+                }, 0 );
+
+            };
+
+        };
+
+        function updateScrollTopUsers() {
+
+            if ( window.deviceInfo.mobile ) {
+
+                setTimeout( function () {
+
+                    _scrollTopUsers.refresh();
+
+                }, 0 );
+
+            };
 
         };
 

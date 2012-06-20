@@ -137,6 +137,7 @@
     <Content Include="index.html" />
     <Content Include="questions.aspx" />
     <Content Include="scripts\download.js" />
+    <Content Include="scripts\iscroll-lite.min.js" />
     <Content Include="scripts\urbanask-compiled.js" />
     <Content Include="scripts\urbanask.js" />
     <Content Include="scripts\strings-en.js" />

@@ -1,5 +1,5 @@
 CACHE MANIFEST
-#ver 1.5.4
+#ver 1.5.13
 
 CACHE:
 index.html
@@ -9,6 +9,7 @@ images/splash.png
 
 styles/urbanask.css
 
+scripts/iscroll-lite.min.js
 scripts/strings-en.js
 scripts/urbanask.js
 scripts/urbanask-compiled.js
