@@ -18,7 +18,7 @@ SELECT * FROM Gabs.processRegions.regionNew
 /*
 INSERT INTO region 
 DBCC CHECKIDENT( 'Gabs.dbo.[user]', RESEED, 127 )
-DELETE FROM question WHERE questionId = 1105995
+DELETE FROM question WHERE questionId = 1107802
 DELETE FROM answer WHERE answerId = 4250081
 UPDATE question SET question = 'Used Marshall cab' WHERE questionId = 1105852
 SELECT username, authtypeId FROM [user] WHERE userId < 100

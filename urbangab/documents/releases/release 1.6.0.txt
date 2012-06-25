@@ -1,7 +1,10 @@
 1.6.0
 
+new - full scroll support on iPhone 3 and old Android phones
 new - leaderboards for rollup regions (California, USA, World, etc)
+new - smoother "scroll to top"
 
 bug - email account creation not working
+bug - account edit not scrolling in landscape mode
 
 

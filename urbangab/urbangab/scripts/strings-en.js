@@ -72,7 +72,7 @@
         "existingAnswer": "Existing Answer",
         "externalFooter": "Available on: ",
         "facebook": {
-            "authenticatingCaption": "Authenticating",
+            "authenticatingCaption": "Authenticating...",
             "loginCaption": "Login with Facebook",
             "linkCaption": "Login with Facebook",
             "postQuestionToFacebook": "Post Question",
