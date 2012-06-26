@@ -1,10 +1,11 @@
+
 SET QUOTED_IDENTIFIER OFF
 GO
 SET ANSI_NULLS OFF
 GO
 
 
-CREATE PROCEDURE bot.selectAnswer
+CREATE PROCEDURE [bot].[selectAnswer]
 
 AS
 
@@ -17,8 +18,8 @@ SET XACT_ABORT ON;
 
 
 
-DECLARE @chance		INT = 3 -- 3%
-DECLARE @daysOld	INT = 3 -- 3 days
+DECLARE @chance		INT = 2 -- 2%
+DECLARE @daysOld	INT = 4 -- 4 days
 
 
 DECLARE @questions	TABLE
