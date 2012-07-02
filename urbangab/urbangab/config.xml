@@ -4,13 +4,13 @@
     xmlns:gap   = "http://phonegap.com/ns/1.0"
     id          = "com.urbanask"
     versionCode = "11"
-    version     = "1.6.5">
+    version     = "1.7.3">
 
     <name>urbanAsk</name>
     <description>Find it. Share it.</description>
     <author href="https://urbanask.com" email="support@urbanask.com">urbanAsk Inc.</author>
     
-    <preference name="phonegap-version"     value="1.6.1" />
+    <preference name="phonegap-version"     value="1.7.0" />
     <preference name="fullscreen"           value="false" />
     <preference name="stay-in-webview"      value="true" />
     <preference name="orientation"          value="default" />
@@ -44,7 +44,8 @@
     <feature name="http://api.phonegap.com/1.0/geolocation" />
     <feature name="http://api.phonegap.com/1.0/network" />
     <feature name="http://api.phonegap.com/1.0/notification" />
-    <feature name="http://plugins.phonegap.com/ChildBrowser/2.0.1" />
+    
+    <gap:plugin name="ChildBrowser" />
     
     <access origin="*" />
     

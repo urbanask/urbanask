@@ -5,7 +5,7 @@ SELECT * FROM [userTwitter] WHERE userId < 100000 ORDER BY userId DESC
 SELECT * FROM [userEmail] WHERE userId < 100000 ORDER BY userId DESC
 SELECT * FROM userRegion WHERE userId < 100000 ORDER BY userId DESC
 SELECT * FROM userPicture WHERE userId < 100000 ORDER BY userId DESC
-SELECT * FROM question ORDER BY timestamp DESC
+SELECT * FROM question WHERE userId < 100000 ORDER BY timestamp DESC
 SELECT * FROM answer WHERE userId < 100000 ORDER BY timestamp DESC
 SELECT * FROM answerVote WHERE userId < 100000
 SELECT * FROM answerVote WHERE vote< 0 AND userId < 100000
@@ -16,13 +16,13 @@ SELECT * FROM reputation WHERE userId < 100
 SELECT * FROM Gabs.processRegions.regionNew
 
 /*
-INSERT INTO region 
+INSERT INTO Gabs.lookup.regionName VALUES ( xx, 'name' );
 DBCC CHECKIDENT( 'Gabs.dbo.[user]', RESEED, 127 )
 DELETE FROM question WHERE questionId = 1107802
 DELETE FROM answer WHERE answerId = 4250081
-UPDATE question SET question = 'Used Marshall cab' WHERE questionId = 1105852
+UPDATE question SET bounty = 0 WHERE regionId = 14 AND bounty = 100
 SELECT username, authtypeId FROM [user] WHERE userId < 100
-SELECT * FROM question WHERE questionId = 1106045
+SELECT * FROM question WHERE regionId = 14 AND bounty = 100
 SELECT * FROM reputation WHERE itemId = 1105914
 DELETE FROM question WHERE question = 'edible panties'
 UPDATE [user] SET 

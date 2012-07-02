@@ -76,6 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ads.html" />
+    <Content Include="build-scripts\zip-files.txt" />
     <Content Include="config.xml">
       <SubType>Designer</SubType>
     </Content>
@@ -136,6 +137,9 @@
     <Content Include="images\splash.png" />
     <Content Include="index.html" />
     <Content Include="questions.aspx" />
+    <Content Include="scripts\add-answer.js" />
+    <Content Include="scripts\block-start.js" />
+    <Content Include="scripts\block-end.js" />
     <Content Include="scripts\download.js" />
     <Content Include="scripts\iscroll-lite.min.js" />
     <Content Include="scripts\urbanask-compiled.js" />
@@ -192,6 +196,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="cache.manifest" />
+    <None Include="build-scripts\post-build-debug.bat" />
+    <None Include="build-scripts\post-build-release.bat" />
     <None Include="build-scripts\set-version-debug.ps1" />
     <None Include="build-scripts\set-version-release.ps1" />
     <None Include="My Project\Application.myapp">
@@ -234,10 +240,9 @@ if $(ConfigurationName) == Release powershell "&amp; '$(SolutionDir)urbangab\bui
 </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>cd $(ProjectDir)scripts\
-attrib -r urbanask-compiled.js
-copy /b strings-en.js + urbanask.js urbanask-compiled.js
-if $(ConfigurationName) == Release java -jar $(SolutionDir)..\Common\yuicompressor-2.4.7.jar urbanask-compiled.js -o urbanask-compiled.js --line-break 300</PostBuildEvent>
+    <PostBuildEvent>if $(ConfigurationName) == Debug $(ProjectDir)build-scripts\post-build-debug.bat
+if $(ConfigurationName) == Release $(ProjectDir)build-scripts\post-build-release.bat
+</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
