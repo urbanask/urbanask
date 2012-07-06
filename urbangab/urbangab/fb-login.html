@@ -69,16 +69,14 @@
 
         window.onload = function () {
 
-            var _hostname = window.location.hostname, 
+            var _hostname = window.location.hostname,
                 ROOT_URL = 'http://urbanask.com',
                 ROOT_HTTPS_URL = 'https://urbanask.com',
                 QUESTION_URL = 'https://urbanask.com/questions.aspx',
                 SOURCE_URL = 'http://75.144.228.69:55555',
                 FILE_URL = 'file://',
                 LOCALHOST_URL = 'http://localhost',
-                //REDIRECT_URL = 'http://75.144.228.69:55555/urbanask-alpha/index.html',
                 REDIRECT_URL = 'http://urbanask.com/index.html',
-                APP_PAGE = 'index.html',
                 APP_ID = '267603823260704',
                 _initialized = false;
 
@@ -106,10 +104,9 @@
 
                     window.localStorage.removeItem( 'facebook-login' );
 
-                    if ( window.deviceInfo.mode == 'webview' ) {
+                    if ( window.deviceInfo.mobile ) {
 
-                        //window.location.href = APP_PAGE;
-                        window.location.href = REDIRECT_URL;
+                        window.history.go( -( history.length - 1 ) );
 
                     } else {
 

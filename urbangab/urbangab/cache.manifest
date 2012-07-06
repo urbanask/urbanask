@@ -1,5 +1,5 @@
 CACHE MANIFEST
-#ver 1.7.3
+#ver 1.7.59
 
 CACHE:
 index.html
@@ -7,11 +7,9 @@ index.html
 images/icon.png
 images/splash.png
 
-styles/urbanask.css
+styles/urbanask-compiled.css
 
 scripts/iscroll-lite.min.js
-scripts/strings-en.js
-scripts/urbanask.js
 scripts/urbanask-compiled.js
 
 NETWORK:

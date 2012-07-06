@@ -2,4 +2,4 @@
 
     };
 
-} )( window );
+} )( window, window.document );

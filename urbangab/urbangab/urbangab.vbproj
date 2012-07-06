@@ -146,6 +146,7 @@
     <Content Include="scripts\urbanask.js" />
     <Content Include="scripts\strings-en.js" />
     <Content Include="splash-320x480.png" />
+    <Content Include="styles\urbanask-compiled.css" />
     <Content Include="styles\urbanask.css" />
     <Content Include="styles\download.css" />
     <Content Include="support.html" />

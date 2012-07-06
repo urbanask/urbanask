@@ -1640,8 +1640,6 @@ function hoverItem( event ) {
 
 function initialize() {
 
-    var redirectUrl = window.localStorage.getItem( 'redirect-url' );
-
     initializeEnvironment();
     initializeDimensions();
 
@@ -1649,11 +1647,6 @@ function initialize() {
 
         hideSplashPage();
         logoutApp();
-
-    } else if ( redirectUrl && !window.location.queryString()['oauth_token'] ) { //not twitter
-
-        window.localStorage.removeItem( 'redirect-url' );
-        window.location.href = redirectUrl;
 
     } else {
 
@@ -1845,20 +1838,20 @@ function initializePhoneGap( complete ) {
 
     } else if ( window.deviceInfo.mobile ) {
 
-    var timer = window.setInterval( function () {
+        var timer = window.setInterval( function () {
 
-        if ( window.device ) {
+            if ( window.device ) {
 
-            window.clearInterval( timer );
-            window.deviceInfo.phonegap = true;
-            initializeChildBrowser();
-            addEventListeners();
+                window.clearInterval( timer );
+                window.deviceInfo.phonegap = true;
+                initializeChildBrowser();
+                addEventListeners();
 
-            complete();
+                complete();
 
-        };
+            };
 
-    }, 100 );
+        }, 100 );
 
         window.setTimeout( function () { //failsafe
 
@@ -2559,7 +2552,6 @@ function loginFacebook( event ) {
 
 //        } else {
 
-        window.localStorage.setItem( 'redirect-url', window.location.href );
         window.location.href = FACEBOOK_LOGIN_URL + '?button=login';
 
 //        };
@@ -2581,7 +2573,6 @@ function authorizeTwitter( event ) {
         "data": data,
         "success": function ( data, status ) {
 
-            window.localStorage.setItem( 'redirect-url', window.location.href );
             window.location.href = window.JSON.parse( data ).url;
 
         },
@@ -2633,12 +2624,9 @@ function loginTwitter( token ) {
                     window.setLocalStorage( 'sessionId', _session.id );
                     window.setLocalStorage( 'sessionKey', _session.key );
 
-                    var redirectUrl = window.localStorage.getItem( 'redirect-url' );
+                    if ( window.deviceInfo.phonegap ) {
 
-                    if ( redirectUrl ) {
-
-                        window.localStorage.removeItem( 'redirect-url' );
-                        window.location.href = redirectUrl;
+                        window.history.go( -( history.length - 1 ) );
 
                     } else {
 

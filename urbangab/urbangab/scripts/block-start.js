@@ -1,8 +1,6 @@
 ﻿'use strict';
 
-(function ( window ) {
-
-    var document = window.document;
+(function ( window, document, undefined ) {
 
     window.onload = function () {
 
