@@ -16,20 +16,23 @@ SELECT * FROM reputation WHERE userId < 100
 SELECT * FROM Gabs.processRegions.regionNew
 
 /*
-INSERT INTO Gabs.lookup.regionName VALUES ( xx, 'name' );
+INSERT INTO Gabs.lookup.regionName VALUES ( 44, 'Santa Clara, CA, USA' );
 DBCC CHECKIDENT( 'Gabs.dbo.[user]', RESEED, 127 )
-DELETE FROM question WHERE questionId = 1107802
+DELETE FROM question WHERE questionId = 1109137
 DELETE FROM answer WHERE answerId = 4250081
 UPDATE question SET bounty = 0 WHERE regionId = 14 AND bounty = 100
 SELECT username, authtypeId FROM [user] WHERE userId < 100
 SELECT * FROM question WHERE regionId = 14 AND bounty = 100
 SELECT * FROM reputation WHERE itemId = 1105914
+SELECT * FROM [user] WHERE username LIKE '%matt%'
+SELECT * FROM userFacebook WHERE userId IN (166)
 DELETE FROM question WHERE question = 'edible panties'
 UPDATE [user] SET 
 hash='bFxydZg4GPGQqojigQxzbIcQw62jD3C4WeyXvB0fpB+1YHMSgAh1PIPHvpOsqqpT+gxTKG2hRl30kVhumuRuQg==',
 salt='7iJyqg==',
 authTypeId = 2 WHERE userId = 7
-UPDATE [userFacebook] SET facebookId='_100003577822117' WHERE userId = 59
+UPDATE [userFacebook] SET facebookId='_100003577822117' WHERE facebookId='100003577822117'
+UPDATE [userTwitter] SET twitterId='_509992905' WHERE twitterId = '509992905'
 DELETE FROM [user] WHERE userId IN (49, 50)
 */
 

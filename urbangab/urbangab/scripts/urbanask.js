@@ -218,6 +218,7 @@ var _hostname = window.location.hostname,
 
     },
     TWITTER_RETURN_URL = ( _hostname == '75.144.228.69' ) ? 'http://75.144.228.69:55555/urbangab' : 'http://urbanask.com',
+    URL_NOTHING = 'http://urbanask.com/nothing.html',
     USER_COLUMNS = {
 
         "userId": 0,
@@ -1881,16 +1882,16 @@ function initializePhoneGap( complete ) {
 
                 window.clearInterval( timer );
 
-                //            window.plugins.childBrowser.onClose = function () {
-                //            };
+                window.plugins.childBrowser.onClose = function () {
+
+                };
 
                 window.plugins.childBrowser.onLocationChange = function ( url ) {
 
-                    if ( url == FACEBOOK_REDIRECT_URL ) {
+                    if ( url.indexOf( URL_NOTHING ) > -1 ) {
 
                         window.plugins.childBrowser.close();
-                        //showPage( 'login-page' );
-                        initialize();
+                        window.location.reload();
 
                     };
 
@@ -1931,7 +1932,8 @@ function initializeInterface() {
     document.querySelectorAll( '#top-interval .toggle-button[data-id="' + INTERVALS.all + '"]' )[0].addClass( 'toggle-button-selected' );
 
     var version = document.getElementsByTagName( 'html' )[0].getAttribute( 'data-version' );
-    document.getElementById( 'app-version' ).textContent = STRINGS.versionCaption + ' ' + version;
+    document.getElementById( 'app-version-user' ).textContent = STRINGS.versionCaption + ' ' + version;
+    document.getElementById( 'app-version-login' ).textContent = STRINGS.versionCaption + ' ' + version;
 
     showSocialButtons();
     showExternalFooter();
@@ -2546,15 +2548,27 @@ function loginFacebook( event ) {
 
     } else {
 
-//        if ( window.deviceInfo.phonegap ) {
+        if ( window.deviceInfo.phonegap ) {
 
-//            window.plugins.childBrowser.showWebPage( FACEBOOK_LOGIN_URL + '?button=login' );
+            var url = 'https://www.facebook.com/dialog/oauth?'
+                    + 'client_id=' + FACEBOOK_APP_ID
+                    + '&redirect_uri=' + 'http://urbanask.com/nothing.html'
+                    + '&scope=' + 'email,publish_actions'
+                    + '&response_type=token'
+                    + '&display=touch';
 
-//        } else {
+            //window.plugins.childBrowser.showWebPage( FACEBOOK_LOGIN_URL + '?button=login' );
+            window.plugins.childBrowser.showWebPage( FACEBOOK_LOGIN_URL + '?button=login' );
 
-        window.location.href = FACEBOOK_LOGIN_URL + '?button=login';
+//            var html = '<iframe id="fb-frame" class="hide" src="' + FACEBOOK_LOGIN_URL + '"></iframe>';
+//            document.getElementById( 'login-page' ).insertAdjacentHTML( 'beforeEnd', html );
 
-//        };
+
+        } else {
+
+            window.location.href = FACEBOOK_LOGIN_URL + '?button=login';
+
+        };
 
     };
 
@@ -2587,8 +2601,6 @@ function authorizeTwitter( event ) {
 };
 
 function loginTwitter( token ) {
-
-    window.history.replaceState( '', '', window.location.pathname );
 
     if ( _currentLocation.latitude ) {
 
@@ -2624,15 +2636,16 @@ function loginTwitter( token ) {
                     window.setLocalStorage( 'sessionId', _session.id );
                     window.setLocalStorage( 'sessionKey', _session.key );
 
-                    if ( window.deviceInfo.phonegap ) {
+//                    if ( window.deviceInfo.mobile ) {
 
-                        window.history.go( -( history.length - 1 ) );
+//                        window.history.go( -( history.length - 1 ) );
 
-                    } else {
+//                    } else {
 
                         startApp();
+                        window.history.replaceState( '', '', window.location.pathname );
 
-                    };
+//                    };
 
                 };
 
@@ -5158,6 +5171,10 @@ function showContact() {
 
             event.preventDefault();
             window.open( 'http://' + url );
+
+            //} else {
+
+            //let click happen
 
         };
 

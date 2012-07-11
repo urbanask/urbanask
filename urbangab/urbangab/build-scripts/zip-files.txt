@@ -19,6 +19,7 @@ images\splash-fullscreen.png
 images\splash-phonegap.png
 images\splash.png
 index.html
+nothing.html
 scripts\iscroll-lite.min.js
 scripts\urbanask-compiled.js
 splash-320x480.png

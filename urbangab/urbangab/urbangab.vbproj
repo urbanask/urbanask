@@ -136,6 +136,7 @@
     <Content Include="images\logo.png" />
     <Content Include="images\splash.png" />
     <Content Include="index.html" />
+    <Content Include="nothing.html" />
     <Content Include="questions.aspx" />
     <Content Include="scripts\add-answer.js" />
     <Content Include="scripts\block-start.js" />

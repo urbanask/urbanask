@@ -231,7 +231,7 @@
     border: 0;
 }
 
-#app-version {
+.app-version {
     color: white;
     font-size: 13px;
     line-height: 18px;
@@ -241,6 +241,12 @@
     text-overflow: ellipsis;
     text-shadow: 2px 2px 3px rgba( 0, 0, 0, .7 );
     white-space: nowrap;
+}
+
+#app-version-login {
+    bottom: 5px;
+    position: absolute;
+    right: 5px;
 }
 
 #ask {

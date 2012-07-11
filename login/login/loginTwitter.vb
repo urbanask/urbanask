@@ -182,11 +182,11 @@ Public Class loginTwitter : Implements System.Web.IHttpHandler
 
             End Using
 
-            Else
+        Else
 
-                sendErrorResponse(context)
+            sendErrorResponse(context)
 
-            End If
+        End If
 
     End Sub
 
