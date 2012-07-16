@@ -1591,16 +1591,14 @@ html {
     -webkit-appearance: none;
     background-color: rgba( 0, 0, 0, .8 );
     box-shadow: 7px 7px 7px rgba( 0, 0, 0, .7 );
-    left: 20px;
-    margin: 0;
-    position: absolute;
-    top: 15px;
+    margin: 15px auto 0 auto;
+    padding-top: 10px;
+    position: relative;
     width: 280px;
-    z-index: 100;
 }
 
 #post-facebook-body {
-    margin: 10px;
+    margin: 0 10px 8px 10px;
 }
 
 #post-facebook-message {
@@ -1619,6 +1617,7 @@ html {
 }
 
 #post-facebook-page {
+    background-color: rgba( 0, 0, 0, .4);
     height: 100%;
     left: 0;
     overflow: hidden;

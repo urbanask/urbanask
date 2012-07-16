@@ -59,7 +59,6 @@
         <img id="logo" alt="" src="images/logo.png" />
         <button id="fb-login" class="fb-button hide">Login</button>
         <button id="fb-invite" class="fb-button hide">Invite Friends</button>
-        <button id="fb-post" class="fb-button hide">Post</button>
         <button id="fb-post-question" class="fb-button hide">Post Question</button>
     </div>
 
@@ -70,6 +69,10 @@
         window.onload = function () {
 
             var _hostname = window.location.hostname,
+                DESCRIPTION = 'The exciting new way to find things locally and help others do the same.',
+                TAGLINE = 'Find it. Share it.',
+                ICON = 'http://urbanask.com/images/icon.png',
+                NAME = 'urbanAsk',
                 ROOT_URL = 'http://urbanask.com',
                 ROOT_HTTPS_URL = 'https://urbanask.com',
                 QUESTION_URL = 'https://urbanask.com/questions.aspx',
@@ -107,7 +110,15 @@
 
                     if ( window.deviceInfo.mobile ) {
 
-                        window.location.href = URL_NOTHING;
+                        if ( window.location.queryString()['version'] ) {
+
+                            window.location.href = URL_NOTHING;
+
+                        } else {
+
+                            window.location.href = REDIRECT_URL;
+
+                        };
 
                     } else {
 
@@ -164,9 +175,9 @@
                         {
 
                             method: 'apprequests',
-                            message: 'The exciting new way to find things locally and help others do the same.',
+                            message: DESCRIPTION,
                             data: '',
-                            title: 'urbanAsk',
+                            title: NAME,
                             redirect_uri: window.location.href
 
                         },
@@ -180,50 +191,9 @@
                         {
 
                             method: 'apprequests',
-                            message: 'The exciting new way to find things locally and help others do the same.',
+                            message: DESCRIPTION,
                             data: '',
-                            title: 'urbanAsk'
-
-                        },
-                        complete
-                    );
-
-                };
-
-            };
-
-            function post() {
-
-                window.localStorage.setItem( 'facebook-login', true );
-
-                if ( window.deviceInfo.mobile ) {
-
-                    FB.ui( 
-                        {
-
-                            method: 'feed',
-                            name: 'urbanAsk',
-                            caption: 'The exciting new way to find things locally and help others do the same.',
-                            description: '',
-                            link: 'https://apps.facebook.com/urbanask/',
-                            picture: 'http://urbanask.com/images/icon.png',
-                            redirect_uri: window.location.href
-
-                        },
-                        complete
-                    );
-
-                } else {
-
-                    FB.ui( 
-                        {
-
-                            method: 'feed',
-                            name: 'urbanAsk',
-                            caption: 'The exciting new way to find things locally and help others do the same.',
-                            description: '',
-                            link: 'https://apps.facebook.com/urbanask/',
-                            picture: 'http://urbanask.com/images/icon.png'
+                            title: NAME
 
                         },
                         complete
@@ -243,11 +213,11 @@
                         {
 
                             method: 'feed',
-                            name: 'urbanAsk',
-                            description: 'The exciting new way to find things locally and help others do the same.',
+                            name: NAME,
+                            description: DESCRIPTION,
                             caption: 'Help me find: ' + window.location.queryString()['question'],
                             link: 'https://apps.facebook.com/urbanask/',
-                            picture: 'http://urbanask.com/images/icon.png',
+                            picture: ICON,
                             redirect_uri: window.location.href
 
                         },
@@ -260,11 +230,11 @@
                         {
 
                             method: 'feed',
-                            name: 'urbanAsk',
-                            description: 'The exciting new way to find things locally and help others do the same.',
+                            name: NAME,
+                            description: DESCRIPTION,
                             caption: 'Help me find: ' + window.location.queryString()['question'],
                             link: 'https://apps.facebook.com/urbanask/',
-                            picture: 'http://urbanask.com/images/icon.png'
+                            picture: ICON
 
                         },
                         complete
@@ -321,11 +291,49 @@
                             'post',
                             {
                                 message: message,
-                                name: 'urbanAsk.com',
-                                caption: 'The exciting new way to find things locally and help others do the same.',
-                                description: 'Find it. Share it.',
-                                link: 'http://urbanask.com',
-                                picture: 'http://urbanask.com/images/icon.png'
+                                name: NAME,
+                                caption: TAGLINE,
+                                description: DESCRIPTION,
+                                link: ROOT_HTTPS_URL,
+                                picture: ICON
+                            },
+                            function ( response ) {
+
+                                if ( response.id ) {
+
+                                    event.source.postMessage( '{"type":"success", "id":"' + response.id + '"}', event.origin );
+
+                                } else {
+
+                                    event.source.postMessage( '{"type":"error", "error":' + window.JSON.stringify( response.error ) + '}', event.origin );
+
+                                };
+
+                            }
+                        );
+
+                    };
+
+                } );
+
+            };
+
+            function postFeedQuestion( message, event ) {
+
+                FB.getLoginStatus( function ( response ) {
+
+                    if ( response.authResponse ) {
+
+                        FB.api( 
+                            '/me/feed',
+                            'post',
+                            {
+                                message: 'Help me find: ' + window.decodeURIComponent( message ),
+                                name: NAME,
+                                caption: TAGLINE,
+                                description: DESCRIPTION,
+                                link: ROOT_HTTPS_URL,
+                                picture: ICON
                             },
                             function ( response ) {
 
@@ -404,6 +412,7 @@
                                     case 'question':
 
                                         postOpenGraphQuestion( message.value, message.id, event );
+                                        break;
 
                                 };
 
@@ -415,6 +424,12 @@
                                     case 'app':
 
                                         postFeedApp( message.message, event );
+                                        break;
+
+                                    case 'question':
+
+                                        postFeedQuestion( message.message, event );
+                                        break;
 
                                 };
 
@@ -437,12 +452,10 @@
 
                 var loginButton = document.getElementById( 'fb-login' ),
                     inviteButton = document.getElementById( 'fb-invite' ),
-                    postButton = document.getElementById( 'fb-post' ),
                     postQuestionButton = document.getElementById( 'fb-post-question' );
 
                 loginButton.addEventListener( 'click', login, false );
                 inviteButton.addEventListener( 'click', invite, false );
-                postButton.addEventListener( 'click', post, false );
                 postQuestionButton.addEventListener( 'click', postQuestion, false );
 
                 switch ( window.location.queryString()['button'] ) {
@@ -456,11 +469,6 @@
                         inviteButton.className = 'fb-button';
                         break;
 
-                    case 'post':
-
-                        postButton.className = 'fb-button';
-                        break;
-
                     case 'post-question':
 
                         postQuestionButton.className = 'fb-button';
@@ -470,7 +478,6 @@
 
                         loginButton.className = 'fb-button';
                         inviteButton.className = 'fb-button';
-                        postButton.className = 'fb-button';
                         postQuestionButton.className = 'fb-button';
 
                 };

@@ -130,7 +130,8 @@
             "questionSaved": "question posted",
             "answerSaved": "answer posted",
             "newVersion": "There is a new version of urbanAsk.",
-            "downloading": "downloading..."
+            "downloading": "downloading...",
+            "postedToFacebook": "Successfully posted to your wall."
         },
         "okButtonCaption": "ok",
         "optionalNote": "optional note...",

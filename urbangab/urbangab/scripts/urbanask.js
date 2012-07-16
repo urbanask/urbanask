@@ -45,6 +45,7 @@ var _hostname = window.location.hostname,
     _questionTimer,
     _geoTimer,
     _instructionsTimer,
+    _version = document.getElementsByTagName( 'html' )[0].getAttribute( 'data-version' ),
     ACCOUNT_COLUMNS = {
 
         "userId": 0,
@@ -1882,16 +1883,25 @@ function initializePhoneGap( complete ) {
 
                 window.clearInterval( timer );
 
-                window.plugins.childBrowser.onClose = function () {
-
-                };
-
                 window.plugins.childBrowser.onLocationChange = function ( url ) {
 
                     if ( url.indexOf( URL_NOTHING ) > -1 ) {
 
+                        if ( url.indexOf( 'oauth_token' ) > -1 ) { //twitter
+
+                            window.plugins.childBrowser.close();
+                            loginTwitter( url.substr( url.indexOf( 'oauth_token' ) + 12 ) );
+
+                        } else { //facebook
+
+                            window.plugins.childBrowser.close();
+                            window.location.reload();
+
+                        };
+
+                    } else if ( url.indexOf( 'intent/tweet/complete' ) > -1 ) { //twitter - after question post
+
                         window.plugins.childBrowser.close();
-                        window.location.reload();
 
                     };
 
@@ -1931,9 +1941,8 @@ function initializeInterface() {
     document.querySelectorAll( '#top-type .toggle-button[data-id="' + TOP_TYPES.reputation + '"]' )[0].addClass( 'toggle-button-selected' );
     document.querySelectorAll( '#top-interval .toggle-button[data-id="' + INTERVALS.all + '"]' )[0].addClass( 'toggle-button-selected' );
 
-    var version = document.getElementsByTagName( 'html' )[0].getAttribute( 'data-version' );
-    document.getElementById( 'app-version-user' ).textContent = STRINGS.versionCaption + ' ' + version;
-    document.getElementById( 'app-version-login' ).textContent = STRINGS.versionCaption + ' ' + version;
+    document.getElementById( 'app-version-user' ).textContent = STRINGS.versionCaption + ' ' + _version;
+    document.getElementById( 'app-version-login' ).textContent = STRINGS.versionCaption + ' ' + _version;
 
     showSocialButtons();
     showExternalFooter();
@@ -2103,9 +2112,7 @@ function loadAccount( complete ) {
         },
         "error": function ( response, status, error ) {
 
-            error == 'Unauthorized'
-                ? logoutApp()
-                : showMessage( STRINGS.error.loadAccount );
+            if ( error == 'Unauthorized' ) { logoutApp() };
 
         }
 
@@ -2456,7 +2463,7 @@ function localizeStrings() {
 
 function login( event ) {
 
-    event.preventDefault();
+    if ( event ) { event.preventDefault(); };
 
     var resource = '/logins/login',
         username = document.getElementById( 'login-username' ).value,
@@ -2485,7 +2492,11 @@ function login( event ) {
                     window.setLocalStorage( 'sessionId', _session.id );
                     window.setLocalStorage( 'sessionKey', _session.key );
 
-                    startApp();
+                    getGeolocation( function () {
+
+                        startApp();
+
+                    }, { quick: true } );
 
                 };
 
@@ -2550,19 +2561,7 @@ function loginFacebook( event ) {
 
         if ( window.deviceInfo.phonegap ) {
 
-            var url = 'https://www.facebook.com/dialog/oauth?'
-                    + 'client_id=' + FACEBOOK_APP_ID
-                    + '&redirect_uri=' + 'http://urbanask.com/nothing.html'
-                    + '&scope=' + 'email,publish_actions'
-                    + '&response_type=token'
-                    + '&display=touch';
-
-            //window.plugins.childBrowser.showWebPage( FACEBOOK_LOGIN_URL + '?button=login' );
-            window.plugins.childBrowser.showWebPage( FACEBOOK_LOGIN_URL + '?button=login' );
-
-//            var html = '<iframe id="fb-frame" class="hide" src="' + FACEBOOK_LOGIN_URL + '"></iframe>';
-//            document.getElementById( 'login-page' ).insertAdjacentHTML( 'beforeEnd', html );
-
+            window.plugins.childBrowser.showWebPage( FACEBOOK_LOGIN_URL + '?button=login&version=' + _version );
 
         } else {
 
@@ -2579,7 +2578,8 @@ function authorizeTwitter( event ) {
     event.preventDefault();
 
     var resource = '/logins/loginTwitter',
-        data = 'returnUrl=' + TWITTER_RETURN_URL + '/index.html';
+        //data = 'returnUrl=' + TWITTER_RETURN_URL + '/index.html';
+        data = 'returnUrl=' + URL_NOTHING;
 
     ajax( API_URL + resource, {
 
@@ -2587,7 +2587,15 @@ function authorizeTwitter( event ) {
         "data": data,
         "success": function ( data, status ) {
 
-            window.location.href = window.JSON.parse( data ).url;
+            if ( window.deviceInfo.phonegap ) {
+
+                window.plugins.childBrowser.showWebPage( window.JSON.parse( data ).url );
+
+            } else {
+
+                window.location.href = window.JSON.parse( data ).url;
+
+            };
 
         },
         "error": function ( response, status, error ) {
@@ -2636,16 +2644,8 @@ function loginTwitter( token ) {
                     window.setLocalStorage( 'sessionId', _session.id );
                     window.setLocalStorage( 'sessionKey', _session.key );
 
-//                    if ( window.deviceInfo.mobile ) {
-
-//                        window.history.go( -( history.length - 1 ) );
-
-//                    } else {
-
-                        startApp();
-                        window.history.replaceState( '', '', window.location.pathname );
-
-//                    };
+                    startApp();
+                    window.history.replaceState( '', '', window.location.pathname );
 
                 };
 
@@ -2967,8 +2967,7 @@ function orientationChange() {
 
 function postToFacebook( type, object, options ) {
 
-    createFrame();
-    var facebookFrame = document.getElementById( 'facebook-frame' );
+    var facebookFrame = createFrame();
     addListeners();
     failSafe();
 
@@ -2982,24 +2981,27 @@ function postToFacebook( type, object, options ) {
 
         var message = '';
 
-        if ( object == 'app' ) {
+        switch( object ) {
+            case 'app':
+            case 'question':
 
-            message =
-                    '{'
-                + '"type":"' + type + '",'
-                + '"object":"' + object + '",'
-                + '"message":"' + options.message + '"'
-                + '}';
+                message =
+                      '{'
+                    + '"type":"' + type + '",'
+                    + '"object":"' + object + '",'
+                    + '"message":"' + options.message + '"'
+                    + '}';
+                break;
 
-        } else {
+            default:
 
-            message =
-                    '{'
-                + '"type":"' + type + '",'
-                + '"object":"' + object + '",'
-                + '"value":"' + options.value + '",'
-                + '"id":"' + options.id + '"'
-                + '}';
+                message =
+                      '{'
+                    + '"type":"' + type + '",'
+                    + '"object":"' + object + '",'
+                    + '"value":"' + options.value + '",'
+                    + '"id":"' + options.id + '"'
+                    + '}';
 
         };
 
@@ -3056,6 +3058,7 @@ function postToFacebook( type, object, options ) {
 
         var html = '<iframe id="facebook-frame" class="hide" src="' + FACEBOOK_POST_URL + '"></iframe>';
         document.body.insertAdjacentHTML( 'beforeEnd', html );
+        return document.getElementById( 'facebook-frame' );
 
     };
 
@@ -4479,7 +4482,7 @@ function getGeolocation( geoComplete, options ) {
             window.navigator.geolocation.clearWatch( geo )
             watchComplete();
 
-        }, 5000 );
+        }, 5 * SECOND );
 
     };
 
@@ -4824,7 +4827,16 @@ function showAccountPage() {
     function inviteFriends( event ) {
 
         event.preventDefault();
-        window.location.href = FACEBOOK_LOGIN_URL + '?button=invite';
+
+        if( window.deviceInfo.phonegap ) {
+
+            window.plugins.childBrowser.showWebPage( FACEBOOK_LOGIN_URL + '?button=invite&version=' + _version );
+
+        } else {
+
+            window.location.href = FACEBOOK_LOGIN_URL + '?button=invite';
+
+        };
 
     };
 
@@ -4834,9 +4846,6 @@ function showAccountPage() {
 
         close();
         showPostFacebook();
-
-        //window.location.href = FACEBOOK_LOGIN_URL + '?button=post';
-
 
     };
 
@@ -5290,7 +5299,16 @@ function showCreateEmailAccount( event ) {
                         document.getElementById( 'login-password' ).value = password;
 
                         close();
-                        startApp();
+
+                        getGeolocation( function () {
+
+                            startApp();
+
+                        }, { quick: true } );
+
+                    } else {
+
+                        document.getElementById( 'create-error' ).innerHTML = status;
 
                     };
 
@@ -6233,15 +6251,13 @@ function showPostFacebook() {
 
         event.preventDefault();
         ok.focus();
-
         removeListeners();
 
         postFacebookPage.addClass( 'fade' );
         window.setTimeout( function () { postFacebookPage.addClass( 'hide' ); }, 1000 );
 
         postToFacebook( 'post-feed', 'app', { message: message.value } );
-
-        //notification
+        showNotification( STRINGS.notification.postedToFacebook, { size: 'tiny' } );
 
     };
 
@@ -6424,12 +6440,12 @@ function showQuestionShare( question ) {
 
     addListeners();
 
-    function postToFacebook() {
+    function postFacebook() {
 
         close();
 
-        var query = '?button=post-question&question=' + window.encodeURIComponent( question );
-        window.location.href = FACEBOOK_LOGIN_URL + query;
+        postToFacebook( 'post-feed', 'question', { message: window.encodeURIComponent( question ) } );
+        showNotification( STRINGS.notification.postedToFacebook, { size: 'tiny' } );
 
     };
 
@@ -6472,7 +6488,7 @@ function showQuestionShare( question ) {
 
         share.removeEventListener( 'close', close, false );
 
-        facebook.removeEventListener( 'click', postToFacebook, false );
+        facebook.removeEventListener( 'click', postFacebook, false );
         facebook.removeEventListener( 'touchstart', selectButton, false );
         facebook.removeEventListener( 'touchend', unselectButton, false );
         facebook.removeEventListener( 'mousedown', selectButton, false );
@@ -6490,7 +6506,7 @@ function showQuestionShare( question ) {
 
         share.addEventListener( 'close', close, false );
 
-        facebook.addEventListener( 'click', postToFacebook, false );
+        facebook.addEventListener( 'click', postFacebook, false );
         facebook.addEventListener( 'touchstart', selectButton, false );
         facebook.addEventListener( 'touchend', unselectButton, false );
         facebook.addEventListener( 'mousedown', selectButton, false );
@@ -7030,7 +7046,7 @@ function showVoteUp( question ) {
 
 };
 
-function startApp( complete ) {
+function startApp() {
 
     loadAccount( function () {
 
@@ -7051,8 +7067,6 @@ function startApp( complete ) {
         };
 
         window.setTimeout( showInstructions, 10 * SECOND );
-
-        if ( complete ) { complete() };
 
     } );
 
