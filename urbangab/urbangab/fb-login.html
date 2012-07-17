@@ -112,7 +112,8 @@
 
                         if ( window.location.queryString()['version'] ) {
 
-                            window.location.href = URL_NOTHING;
+                            var button = window.location.queryString()['button'];
+                            window.location.href = URL_NOTHING + '?button=' + button;
 
                         } else {
 
@@ -178,7 +179,8 @@
                             message: DESCRIPTION,
                             data: '',
                             title: NAME,
-                            redirect_uri: window.location.href
+                            redirect_uri: URL_NOTHING,
+                            cancel_url: URL_NOTHING
 
                         },
                         complete

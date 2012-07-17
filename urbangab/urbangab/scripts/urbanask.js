@@ -1892,10 +1892,18 @@ function initializePhoneGap( complete ) {
                             window.plugins.childBrowser.close();
                             loginTwitter( url.substr( url.indexOf( 'oauth_token' ) + 12 ) );
 
-                        } else { //facebook
+                        } else if ( url.indexOf( 'invite' ) > 1 ) { //fb invite
+
+                            window.plugins.childBrowser.close();
+
+                        } else if ( url.indexOf( 'login' ) > 1 ) {
 
                             window.plugins.childBrowser.close();
                             window.location.reload();
+
+                        } else {
+
+                            window.plugins.childBrowser.close();
 
                         };
 
@@ -2578,8 +2586,17 @@ function authorizeTwitter( event ) {
     event.preventDefault();
 
     var resource = '/logins/loginTwitter',
-        //data = 'returnUrl=' + TWITTER_RETURN_URL + '/index.html';
+        data = '';
+
+    if ( window.deviceInfo.phonegap ) {
+
         data = 'returnUrl=' + URL_NOTHING;
+
+    } else {
+
+        data = 'returnUrl=' + TWITTER_RETURN_URL + '/index.html';
+
+    };
 
     ajax( API_URL + resource, {
 
