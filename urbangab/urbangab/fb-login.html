@@ -104,9 +104,9 @@
 
                 _initialized = true;
 
-                if ( window.localStorage.getItem( 'facebook-login' ) ) {
+                if ( window.getLocalStorage( 'facebook-login' ) ) {
 
-                    window.localStorage.removeItem( 'facebook-login' );
+                    window.removeLocalStorage( 'facebook-login' );
 
                     if ( window.deviceInfo.mobile ) {
 
@@ -133,7 +133,7 @@
 
             function login() {
 
-                window.localStorage.setItem( 'facebook-login', true );
+                window.setLocalStorage( 'facebook-login', true );
 
                 if ( window.deviceInfo.mobile ) {
 
@@ -161,14 +161,14 @@
 
             function complete( response ) {
 
-                window.localStorage.removeItem( 'facebook-login' );
+                window.removeLocalStorage( 'facebook-login' );
                 window.location.href = REDIRECT_URL;
 
             };
 
             function invite() {
 
-                window.localStorage.setItem( 'facebook-login', true );
+                window.setLocalStorage( 'facebook-login', true );
 
                 if ( window.deviceInfo.mobile ) {
 
@@ -207,7 +207,7 @@
 
             function postQuestion() {
 
-                window.localStorage.setItem( 'facebook-login', true );
+                window.setLocalStorage( 'facebook-login', true );
 
                 if ( window.deviceInfo.mobile ) {
 
@@ -452,6 +452,8 @@
 
             function initialize() {
 
+                window.checkLocalStorage();
+
                 var loginButton = document.getElementById( 'fb-login' ),
                     inviteButton = document.getElementById( 'fb-invite' ),
                     postQuestionButton = document.getElementById( 'fb-post-question' );
@@ -587,6 +589,59 @@
 
                 window.deviceInfo.mobile = ( window.deviceInfo.type == 'handheld' || window.deviceInfo.type == 'tablet' );
                 window.deviceInfo.phonegap = ( window.deviceInfo.brand == 'ios' && window.deviceInfo.mode == 'webview' );
+
+            };
+
+            window.checkLocalStorage = function () {
+
+                try {
+
+                    window.localStorage.setItem( 'checkLocalStorage', true );
+                    window.hasLocalStorage = true;
+
+                } catch ( error ) {
+
+                    window.hasLocalStorage = false;
+
+                };
+
+            };
+
+            window.removeLocalStorage = function ( name ) {
+
+                if ( window.hasLocalStorage ) {
+
+                    return window.localStorage.removeItem( name );
+
+                };
+
+                return this;
+
+            };
+
+            window.getLocalStorage = function ( name ) {
+
+                if ( window.hasLocalStorage ) {
+
+                    return window.localStorage.getItem( name );
+
+                } else {
+
+                    return '';
+
+                };
+
+            };
+
+            window.setLocalStorage = function ( name, value ) {
+
+                if ( window.hasLocalStorage ) {
+
+                    window.localStorage.setItem( name, value );
+
+                };
+
+                return this;
 
             };
 

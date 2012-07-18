@@ -1911,6 +1911,11 @@ function initializePhoneGap( complete ) {
 
                         window.plugins.childBrowser.close();
 
+                    } else if ( url.indexOf( 'access_token' ) > -1 ) { //android - fb login
+
+                        window.plugins.childBrowser.close();
+                        window.location.reload();
+
                     };
 
                 };
