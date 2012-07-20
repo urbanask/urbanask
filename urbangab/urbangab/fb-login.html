@@ -246,7 +246,57 @@
 
             };
 
-            function postOpenGraphQuestion( question, id, event ) {
+            function postOpenGraphQuestion( message, event ) {
+
+                FB.getLoginStatus( function ( response ) {
+
+                    if ( response.authResponse ) {
+
+                        var questionUrl = QUESTION_URL
+                                + '?title=' + window.encodeURIComponent( message.value )
+                                + '&question-id=' + message.id;
+
+                        FB.api( 
+                            '/me/urbanask:search',
+                            'post',
+                            {
+                                question: questionUrl,
+                                expires_in: 48 * 60 * 60
+                            },
+                            function ( response ) {
+
+                                if ( response.id ) {
+
+                                    debugger;
+
+                                    event.source.postMessage( 
+                                          '{'
+                                        + '"type":"success",'
+                                        + '"id":"' + response.id + '",'
+                                        + '"requestMessage":' + window.JSON.stringify( message )
+                                        + '}', 
+                                        event.origin
+                                    );
+
+                                } else {
+
+                                    event.source.postMessage(
+                                        '{"type":"error","error":"' + response.error.message + '"}', 
+                                        event.origin 
+                                    );
+
+                                };
+
+                            }
+                        );
+
+                    };
+
+                } );
+
+            };
+
+            function postOpenGraphAnswer( question, id, event ) {
 
                 FB.getLoginStatus( function ( response ) {
 
@@ -255,11 +305,10 @@
                         var questionUrl = QUESTION_URL + '?title=' + window.encodeURIComponent( question ) + '&question-id=' + id;
 
                         FB.api( 
-                            '/me/urbanask:search',
+                            '/me/urbanask:find',
                             'post',
                             {
-                                question: questionUrl,
-                                expires_in: 48 * 60 * 60
+                                question: questionUrl
                             },
                             function ( response ) {
 
@@ -413,7 +462,12 @@
                                 switch ( message.object ) {
                                     case 'question':
 
-                                        postOpenGraphQuestion( message.value, message.id, event );
+                                        postOpenGraphQuestion( message, event );
+                                        break;
+
+                                    case 'answer':
+
+                                        postOpenGraphAnswer( message.value, message.id, event );
                                         break;
 
                                 };

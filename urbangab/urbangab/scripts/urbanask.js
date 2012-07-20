@@ -3003,9 +3003,8 @@ function postToFacebook( type, object, options ) {
 
         var message = '';
 
-        switch( object ) {
-            case 'app':
-            case 'question':
+        switch( type ) {
+            case 'post-feed':
 
                 message =
                       '{'
@@ -3015,7 +3014,7 @@ function postToFacebook( type, object, options ) {
                     + '}';
                 break;
 
-            default:
+            case 'post-open-graph':
 
                 message =
                       '{'
@@ -3042,6 +3041,32 @@ function postToFacebook( type, object, options ) {
 
                     removeListeners();
                     deleteFrame();
+
+                    debugger;
+
+                    switch ( message.requestMessage.type ) {
+                        case 'post-feed':
+
+                            break;
+
+                        case 'post-open-graph':
+
+                            switch ( message.requestMessage.object ) {
+                                case 'question':
+
+                                    var openGraphId = message.id,
+                                        questionId = message.requestMessage.id;
+
+                                    break;
+
+                                case 'answer':
+                                    break;
+
+                            };
+
+                            break;
+
+                    };
 
                     break;
 
@@ -3410,7 +3435,6 @@ function removeEventListeners( page ) {
 
             var ask = document.getElementById( 'ask' );
             ask.removeEventListener( 'submit', saveQuestion, false );
-
 
             if ( window.deviceInfo.mobile ) {
 
@@ -3793,6 +3817,8 @@ function saveAnswerSelect( question, answer, answerItem ) {
                     }, 50 );
 
                 };
+
+                postToFacebook( 'post-open-graph', 'answer', { value: question[QUESTION_COLUMNS.question], id: question.questionId } );
 
             } else {
 
@@ -4501,7 +4527,7 @@ function getGeolocation( geoComplete, options ) {
             window.setLocalStorage( 'current-latitude', _currentLocation.latitude ),
             window.setLocalStorage( 'current-longitude', _currentLocation.longitude );
 
-            window.navigator.geolocation.clearWatch( geo )
+            window.navigator.geolocation.clearWatch( geo );
             watchComplete();
 
         }, 5 * SECOND );

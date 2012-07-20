@@ -1,8 +1,9 @@
 CACHE MANIFEST
-#ver 1.9.0
+#ver 1.8.51
 
 CACHE:
 index.html
+fb-login.html
 
 images/icon.png
 images/splash.png
@@ -15,7 +16,6 @@ scripts/urbanask-compiled.js
 NETWORK:
 api/
 
-fb-login.html
 index.aspx
 
 *

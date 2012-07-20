@@ -1,4 +1,7 @@
-﻿function showAddAnswer( question ) {
+﻿/// <reference path="/scripts/urbanask.js" />
+/// <reference path="/scripts/strings-en.js" />
+
+function showAddAnswer( question ) {
 
     var addAnswer = document.getElementById( 'add-answer-page' ),
         cancelButton = document.getElementById( 'cancel-answer-button' ),

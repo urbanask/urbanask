@@ -3,8 +3,8 @@
     xmlns       = "http://www.w3.org/ns/widgets"
     xmlns:gap   = "http://phonegap.com/ns/1.0"
     id          = "com.urbanask"
-    versionCode = "17"
-    version     = "1.7.0">
+    versionCode = "18"
+    version     = "1.8.51">
 
     <name>urbanAsk</name>
     <description>Find it. Share it.</description>
@@ -25,7 +25,7 @@
     <icon gap:platform="blackberry" src="images/blackberry/icon-57.png"     width="57"  height="57"     />
     <icon gap:platform="winphone"   src="images/winphone/icon-114.png.png"                              />
     <icon gap:platform="winphone"   src="images/winphone/icon-114.png.png"  gap:role="background"       />
-    <icon gap:platform="webos"      src="images/webos/icon-114.png" />
+    <icon gap:platform="webos"      src="images/webos/icon-114.png"                                     />
     <icon gap:platform="webos"      src="images/webos/icon-57.png"          gap:role="mini"             />
 
     <gap:splash src="splash-320x480.png" />
@@ -34,16 +34,16 @@
     <gap:splash src="images/ios/splash-640x960.png" width="640" height="960" />
     <gap:splash src="images/ios/splash-1024x768.png" width="1024" height="768" />
     <gap:splash src="images/ios/splash-768x1024.png" width="768" height="1024" />
-    <gap:splash gap:platform="android" src="images/ios/splash-320x480.png" width="320" height="480" />
+    <gap:splash gap:platform="android"    src="images/ios/splash-320x480.png"        width="320" height="480" />
     <gap:splash gap:platform="blackberry" src="images/blackberry/splash-320x480.png" width="320" height="480" />
-    <gap:splash gap:platform="winphone" src="images/winphone/splash-320x480.jpg" width="320" height="480" />
-    <gap:splash gap:platform="webos" src="images/webos/splash-320x480.jpg" width="320" height="480" />
+    <gap:splash gap:platform="winphone"   src="images/winphone/splash-320x480.jpg"   width="320" height="480" />
+    <gap:splash gap:platform="webos"      src="images/webos/splash-320x480.jpg"      width="320" height="480" />
 
-    <feature name="http://api.phonegap.com/1.0/geolocation" />
-    <feature name="http://api.phonegap.com/1.0/network" />
+    <feature name="http://api.phonegap.com/1.0/geolocation"  />
+    <feature name="http://api.phonegap.com/1.0/network"      />
     <feature name="http://api.phonegap.com/1.0/notification" />
     
-    <gap:plugin name="ChildBrowser" />
+    <gap:plugin name="ChildBrowser" version="~2" />
     
     <access origin="*" />
     
