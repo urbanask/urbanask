@@ -164,7 +164,8 @@ var _hostname = window.location.hostname,
         "voted": 12,
         "votes": 13,
         "answerCount": 14,
-        "answers": 15
+        "answers": 15,
+        "facebook": 16
 
     },
     RANDOM_DISTANCE = 600, //feet

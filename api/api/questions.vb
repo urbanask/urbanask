@@ -422,6 +422,7 @@ Public Class questions : Inherits api.messageHandler
                     question("votes"), ",",
                     question("answers"), ",[")
 
+                'answers
                 If question.NextResult() Then
 
                     If question.HasRows() Then
@@ -453,6 +454,22 @@ Public Class questions : Inherits api.messageHandler
                         End While
 
                         response = response.Substring(0, response.Length - 1) 'remove last comma
+
+                    End If
+
+                End If
+
+                response &= "],["
+
+                'facebook
+                If question.NextResult() Then
+
+                    If question.HasRows() Then
+
+                        response &= String.Concat(
+                            "[""",
+                            question("openGraphId"),
+                            """]")
 
                     End If
 
