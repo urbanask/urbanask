@@ -22,6 +22,7 @@ Public Class questions : Inherits api.messageHandler
         SAVE_QUESTION_UPVOTE As String = "Gabs.api.saveQuestionUpvote",
         SAVE_QUESTION_DOWNVOTE As String = "Gabs.api.saveQuestionDownvote",
         SAVE_QUESTION_FLAG As String = "Gabs.api.saveQuestionFlag",
+        SAVE_QUESTION_OPENGRAPH_POST As String = "Gabs.api.saveQuestionOpenGraphPost",
         JSON_QUESTION_COLUMNS As String =
               "[" _
             & """questionId""," _
@@ -95,6 +96,10 @@ Public Class questions : Inherits api.messageHandler
                         Case "flag" '/api/questions/{id}/flag
 
                             saveFlag(context, connection, userId, id)
+
+                        Case "opengraph/post" '/api/questions/{id}/opengraph/post
+
+                            saveOpenGraphPost(context, connection, queries, userId, id)
 
                     End Select
 
@@ -303,6 +308,35 @@ Public Class questions : Inherits api.messageHandler
 
             command.Parameters.AddWithValue("@userId", userId)
             command.Parameters.AddWithValue("@questionId", questionId)
+            command.Parameters.Add("@success", SqlDbType.Bit).Direction = ParameterDirection.Output
+
+            command.ExecuteNonQuery()
+
+            If System.Convert.ToInt32(command.Parameters("@success").Value) = 0 Then 'error
+
+                MyBase.sendErrorResponse(context, 412, "Forbidden")
+
+            End If
+
+        End Using
+
+    End Sub
+
+    Private Sub saveOpenGraphPost(
+        context As Web.HttpContext,
+        connection As SqlClient.SqlConnection,
+        queries As Collections.Specialized.NameValueCollection,
+        userId As Int32,
+        questionId As String)
+
+        Using command As New SqlClient.SqlCommand(SAVE_QUESTION_OPENGRAPH_POST, connection)
+
+            command.CommandType = CommandType.StoredProcedure
+            command.CommandTimeout = COMMAND_TIMEOUT
+
+            command.Parameters.AddWithValue("@userId", userId)
+            command.Parameters.AddWithValue("@questionId", questionId)
+            command.Parameters.AddWithValue("@openGraphId", queries("openGraphId"))
             command.Parameters.Add("@success", SqlDbType.Bit).Direction = ParameterDirection.Output
 
             command.ExecuteNonQuery()

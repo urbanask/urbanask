@@ -3042,8 +3042,6 @@ function postToFacebook( type, object, options ) {
                     removeListeners();
                     deleteFrame();
 
-                    debugger;
-
                     switch ( message.requestMessage.type ) {
                         case 'post-feed':
 
@@ -3054,9 +3052,7 @@ function postToFacebook( type, object, options ) {
                             switch ( message.requestMessage.object ) {
                                 case 'question':
 
-                                    var openGraphId = message.id,
-                                        questionId = message.requestMessage.id;
-
+                                    saveQuestionPostOpenGraph( message.requestMessage.id, message.id );
                                     break;
 
                                 case 'answer':
@@ -3131,6 +3127,30 @@ function postToFacebook( type, object, options ) {
         }, 10 * 1000 );
 
     };
+
+};
+
+function saveQuestionPostOpenGraph( questionId, openGraphId ) {
+
+    var resource = '/api/questions/' + questionId + '/opengraph/post',
+        data = 'openGraphId=' + openGraphId,
+        session = getSession( resource );
+
+    ajax( API_URL + resource, {
+
+        "type": "GET",
+        "data": data,
+        "headers": { "x-session": session },
+        "success": function ( data, status ) {
+
+
+        },
+        "error": function ( response, status, error ) {
+
+
+        }
+
+    } );
 
 };
 
