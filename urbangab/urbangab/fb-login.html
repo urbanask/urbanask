@@ -267,8 +267,6 @@
 
                                 if ( response.id ) {
 
-                                    debugger;
-
                                     event.source.postMessage( 
                                           '{'
                                         + '"type":"success",'
@@ -296,13 +294,15 @@
 
             };
 
-            function postOpenGraphAnswer( question, id, event ) {
+            function postOpenGraphAnswer( message, event ) {
 
                 FB.getLoginStatus( function ( response ) {
 
                     if ( response.authResponse ) {
 
-                        var questionUrl = QUESTION_URL + '?title=' + window.encodeURIComponent( question ) + '&question-id=' + id;
+                        var questionUrl = QUESTION_URL
+                                + '?title=' + window.encodeURIComponent( message.value )
+                                + '&question-id=' + message.id;
 
                         FB.api( 
                             '/me/urbanask:find',
@@ -314,11 +314,64 @@
 
                                 if ( response.id ) {
 
-                                    event.source.postMessage( '{"type":"success", "id":"' + response.id + '"}', event.origin );
+                                    event.source.postMessage( 
+                                          '{'
+                                        + '"type":"success",'
+                                        + '"id":"' + response.id + '",'
+                                        + '"requestMessage":' + window.JSON.stringify( message )
+                                        + '}',
+                                        event.origin
+                                    );
 
                                 } else {
 
-                                    event.source.postMessage( '{"type":"error","error":"' + response.error.message + '"}', event.origin );
+                                    event.source.postMessage( 
+                                        '{"type":"error","error":"' + response.error.message + '"}',
+                                        event.origin
+                                    );
+
+                                };
+
+                            }
+                        );
+
+                    };
+
+                } );
+
+            };
+
+            function postOpenGraphComment( message, event ) {
+
+                FB.getLoginStatus( function ( response ) {
+
+                    if ( response.authResponse ) {
+
+                        FB.api(
+                            '/' + message.openGraphId + '/comments',
+                            'post',
+                            {
+                                message: message.comment
+                            },
+                            function ( response ) {
+
+                                if ( response.id ) {
+
+                                    event.source.postMessage( 
+                                          '{'
+                                        + '"type":"success",'
+                                        + '"id":"' + response.id + '",'
+                                        + '"requestMessage":' + window.JSON.stringify( message )
+                                        + '}',
+                                        event.origin
+                                    );
+
+                                } else {
+
+                                    event.source.postMessage( 
+                                        '{"type":"error","error":"' + response.error.message + '"}',
+                                        event.origin
+                                    );
 
                                 };
 
@@ -467,7 +520,12 @@
 
                                     case 'answer':
 
-                                        postOpenGraphAnswer( message.value, message.id, event );
+                                        postOpenGraphAnswer( message, event );
+                                        break;
+
+                                    case 'comment':
+
+                                        postOpenGraphComment( message, event );
                                         break;
 
                                 };

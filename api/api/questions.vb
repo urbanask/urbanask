@@ -23,6 +23,7 @@ Public Class questions : Inherits api.messageHandler
         SAVE_QUESTION_DOWNVOTE As String = "Gabs.api.saveQuestionDownvote",
         SAVE_QUESTION_FLAG As String = "Gabs.api.saveQuestionFlag",
         SAVE_QUESTION_OPENGRAPH_POST As String = "Gabs.api.saveQuestionOpenGraphPost",
+        SAVE_QUESTION_OPENGRAPH_RESOLVE As String = "Gabs.api.saveQuestionOpenGraphResolved",
         JSON_QUESTION_COLUMNS As String =
               "[" _
             & """questionId""," _
@@ -100,6 +101,10 @@ Public Class questions : Inherits api.messageHandler
                         Case "opengraph/post" '/api/questions/{id}/opengraph/post
 
                             saveOpenGraphPost(context, connection, queries, userId, id)
+
+                        Case "opengraph/resolve" '/api/questions/{id}/opengraph/resolve
+
+                            saveOpenGraphResolve(context, connection, queries, userId, id)
 
                     End Select
 
@@ -351,6 +356,35 @@ Public Class questions : Inherits api.messageHandler
 
     End Sub
 
+    Private Sub saveOpenGraphResolve(
+        context As Web.HttpContext,
+        connection As SqlClient.SqlConnection,
+        queries As Collections.Specialized.NameValueCollection,
+        userId As Int32,
+        questionId As String)
+
+        Using command As New SqlClient.SqlCommand(SAVE_QUESTION_OPENGRAPH_RESOLVE, connection)
+
+            command.CommandType = CommandType.StoredProcedure
+            command.CommandTimeout = COMMAND_TIMEOUT
+
+            command.Parameters.AddWithValue("@userId", userId)
+            command.Parameters.AddWithValue("@questionId", questionId)
+            command.Parameters.AddWithValue("@openGraphId", queries("openGraphId"))
+            command.Parameters.Add("@success", SqlDbType.Bit).Direction = ParameterDirection.Output
+
+            command.ExecuteNonQuery()
+
+            If System.Convert.ToInt32(command.Parameters("@success").Value) = 0 Then 'error
+
+                MyBase.sendErrorResponse(context, 412, "Forbidden")
+
+            End If
+
+        End Using
+
+    End Sub
+
     Private Function createJsonQuestions(command As Data.SqlClient.SqlCommand) As String
 
         Using questions As Data.SqlClient.SqlDataReader = command.ExecuteReader()
@@ -466,10 +500,13 @@ Public Class questions : Inherits api.messageHandler
 
                     If question.HasRows() Then
 
+                        question.Read()
+
                         response &= String.Concat(
-                            "[""",
-                            question("openGraphId"),
-                            """]")
+                            """",
+                            question("openGraphId"), """,""",
+                            question("resolvedOpenGraphId"),
+                            """")
 
                     End If
 

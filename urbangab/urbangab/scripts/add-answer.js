@@ -262,7 +262,7 @@ function showAddAnswer( question ) {
                 var questionItem = _nearbyQuestions.item( question.questionId )
                     || _questions.item( question.questionId )
                     || _everywhereQuestions.item( question.questionId );
-                if ( questionItem ) { updateAnswerCount( question.questionId  ); };
+                if ( questionItem ) { updateAnswerCount( question.questionId ); };
                 question[QUESTION_COLUMNS.answers].push( answer );
                 question[QUESTION_COLUMNS.answerCount] += 1;
 
@@ -295,7 +295,15 @@ function showAddAnswer( question ) {
 
                 if ( questionItem ) {
 
-                    showQuestions( _account[ACCOUNT_COLUMNS.regions][0][REGION_COLUMNS.name], _questions, document.getElementById( 'questions' ) );
+                    if ( _account[ACCOUNT_COLUMNS.regions].length ) {
+
+                        showQuestions(  
+                            _account[ACCOUNT_COLUMNS.regions][0][REGION_COLUMNS.name],
+                            _questions, document.getElementById( 'questions' ) 
+                        );
+
+                    };
+
                     showQuestions( STRINGS.questionsNearby, _nearbyQuestions, document.getElementById( 'nearby-questions' ) );
                     showQuestions( STRINGS.questionsEverywhere, _everywhereQuestions, document.getElementById( 'everywhere-questions' ) );
 

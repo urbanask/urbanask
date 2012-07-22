@@ -81,6 +81,7 @@
             "authenticatingCaption": "Authenticating...",
             "loginCaption": "Login with Facebook",
             "linkCaption": "Login with Facebook",
+            "openGraphComment": "found this at %1 (%2).",
             "postQuestionToFacebook": "Post Question",
             "postQuestionToTwitter": "Tweet Question",
             "postFacebookMessageCaption": "optional message",

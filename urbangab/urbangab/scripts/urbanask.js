@@ -101,6 +101,12 @@ var _hostname = window.location.hostname,
 
     },
     EXPIRATION_DAYS = 14,
+    FACEBOOK_COLUMNS = {
+
+        "openGraphId": 0,
+        "resolvedOpenGraphId": 0
+
+    },
     FACEBOOK_APP_ID = '267603823260704',
     FACEBOOK_AUTH_URL = 'http://urbanask.com',
     FACEBOOK_LOGIN_URL = 'http://urbanask.com/fb-login.html',
@@ -3017,13 +3023,33 @@ function postToFacebook( type, object, options ) {
 
             case 'post-open-graph':
 
-                message =
-                      '{'
-                    + '"type":"' + type + '",'
-                    + '"object":"' + object + '",'
-                    + '"value":"' + options.value + '",'
-                    + '"id":"' + options.id + '"'
-                    + '}';
+                switch ( object ) {
+                    case 'comment':
+
+                        message =
+                              '{'
+                            + '"type":"' + type + '",'
+                            + '"object":"' + object + '",'
+                            + '"questionId":"' + options.questionId + '",'
+                            + '"openGraphId":"' + options.openGraphId + '",'
+                            + '"comment":"' + options.comment + '"'
+                            + '}';
+                        break;
+
+                    case 'question':
+                    case 'answer':
+
+                        message =
+                              '{'
+                            + '"type":"' + type + '",'
+                            + '"object":"' + object + '",'
+                            + '"value":"' + options.value + '",'
+                            + '"id":"' + options.id + '"'
+                            + '}';
+                        break;
+
+                };
+                break;
 
         };
 
@@ -3043,7 +3069,7 @@ function postToFacebook( type, object, options ) {
                     removeListeners();
                     deleteFrame();
 
-                    switch ( message.requestMessage.type ) {
+                    switch ( message.requestMessage && message.requestMessage.type ) {
                         case 'post-feed':
 
                             break;
@@ -3052,11 +3078,14 @@ function postToFacebook( type, object, options ) {
 
                             switch ( message.requestMessage.object ) {
                                 case 'question':
+                                case 'answer':
 
-                                    saveQuestionPostOpenGraph( message.requestMessage.id, message.id );
+                                    saveOpenGraphQuestionId( message.requestMessage.id, message.id );
                                     break;
 
-                                case 'answer':
+                                case 'comment':
+
+                                    saveOpenGraphResolvedId( message.requestMessage.questionId, message.id );
                                     break;
 
                             };
@@ -3129,29 +3158,53 @@ function postToFacebook( type, object, options ) {
 
     };
 
-};
+    function saveOpenGraphQuestionId( questionId, openGraphId ) {
 
-function saveQuestionPostOpenGraph( questionId, openGraphId ) {
+        var resource = '/api/questions/' + questionId + '/opengraph/post',
+            data = 'openGraphId=' + openGraphId,
+            session = getSession( resource );
 
-    var resource = '/api/questions/' + questionId + '/opengraph/post',
-        data = 'openGraphId=' + openGraphId,
-        session = getSession( resource );
+        ajax( API_URL + resource, {
 
-    ajax( API_URL + resource, {
-
-        "type": "GET",
-        "data": data,
-        "headers": { "x-session": session },
-        "success": function ( data, status ) {
+            "type": "GET",
+            "data": data,
+            "headers": { "x-session": session },
+            "success": function ( data, status ) {
 
 
-        },
-        "error": function ( response, status, error ) {
+            },
+            "error": function ( response, status, error ) {
 
 
-        }
+            }
 
-    } );
+        } );
+
+    };
+
+    function saveOpenGraphResolvedId( questionId, openGraphId ) {
+
+        var resource = '/api/questions/' + questionId + '/opengraph/resolve',
+            data = 'openGraphId=' + openGraphId,
+            session = getSession( resource );
+
+        ajax( API_URL + resource, {
+
+            "type": "GET",
+            "data": data,
+            "headers": { "x-session": session },
+            "success": function ( data, status ) {
+
+
+            },
+            "error": function ( response, status, error ) {
+
+
+            }
+
+        } );
+
+    };
 
 };
 
@@ -3839,7 +3892,26 @@ function saveAnswerSelect( question, answer, answerItem ) {
 
                 };
 
-                postToFacebook( 'post-open-graph', 'answer', { value: question[QUESTION_COLUMNS.question], id: question.questionId } );
+                if( question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.openGraphId] ) {
+
+                    postToFacebook(
+                        'post-open-graph',
+                        'comment',
+                        {
+                            questionId: question.questionId,
+                            openGraphId: question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.openGraphId],
+                            comment: STRINGS.facebook.openGraphComment
+                                .replace( '%1', answer[ANSWER_COLUMNS.location] )
+                                .replace( '%2', answer[ANSWER_COLUMNS.locationAddress] )
+
+                        } 
+                    );
+
+                } else {
+
+                    postToFacebook( 'post-open-graph', 'answer', { value: question[QUESTION_COLUMNS.question], id: question.questionId } );
+
+                };
 
             } else {
 
@@ -3870,9 +3942,7 @@ function saveAnswerSelect( question, answer, answerItem ) {
         },
         "error": function ( response, status, error ) {
 
-            error == 'Unauthorized'
-                ? logoutApp()
-                : showMessage( STRINGS.error.answerSelect );
+            if( error == 'Unauthorized' ) { logoutApp(); };
 
         }
 
