@@ -4611,7 +4611,7 @@ function getGeolocation( geoComplete, options ) {
             };
 
         },
-        { maximumAge: 60000, enableHighAccuracy: true } ); //must be valid within a minute
+        { maximumAge: 60000, enableHighAccuracy: true } );  //must be valid within a minute
 
         window.setTimeout( function () {
 

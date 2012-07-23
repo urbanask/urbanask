@@ -272,15 +272,15 @@
                                         + '"type":"success",'
                                         + '"id":"' + response.id + '",'
                                         + '"requestMessage":' + window.JSON.stringify( message )
-                                        + '}', 
+                                        + '}',
                                         event.origin
                                     );
 
                                 } else {
 
-                                    event.source.postMessage(
-                                        '{"type":"error","error":"' + response.error.message + '"}', 
-                                        event.origin 
+                                    event.source.postMessage( 
+                                        '{"type":"error","error":"' + response.error.message + '"}',
+                                        event.origin
                                     );
 
                                 };
@@ -347,7 +347,7 @@
 
                     if ( response.authResponse ) {
 
-                        FB.api(
+                        FB.api( 
                             '/' + message.openGraphId + '/comments',
                             'post',
                             {

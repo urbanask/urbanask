@@ -1,16 +1,10 @@
 1.10
 
 new - FB Open Graph integration for selecting answers
-
-bug - having no region causes a few issues
-
+bug - being in a region with no questions shows no results
 
 
 
-Uncaught TypeError: Cannot call method 'unviewed' of undefined". It went back to. Login screen
 
-35.2222 -110
-
-Android - auth bug, never leaves childBrowser
 
 	
