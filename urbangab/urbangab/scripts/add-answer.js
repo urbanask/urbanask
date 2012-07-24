@@ -267,11 +267,11 @@ function showAddAnswer( question ) {
                 question[QUESTION_COLUMNS.answerCount] += 1;
 
                 var html = getAnswerItem( answer, question, { letter: '&#x2022;', newItem: true } ),
-                        markers = '&markers=color:gray|size:mid|' + location.latitude + "," + location.longitude,
-                        questionMap = document.getElementById( 'question-map' ),
-                        mapUrl = questionMap.getAttribute( 'src' ).replace( '&zoom=12', '' ),
-                        answers = document.getElementById( 'answers' ),
-                        answerCount = document.getElementById( 'question-view' ).childByClassName( 'answer-count' );
+                    markers = '&markers=color:gray|size:mid|' + location.latitude + "," + location.longitude,
+                    questionMap = document.getElementById( 'question-map' ),
+                    mapUrl = questionMap.getAttribute( 'src' ).replace( '&zoom=12', '' ),
+                    answers = document.getElementById( 'answers' ),
+                    answerCount = document.getElementById( 'question-view' ).childByClassName( 'answer-count' );
 
                 //show answer
                 document.getElementById( 'answers' ).removeClass( 'hide' );
@@ -297,9 +297,9 @@ function showAddAnswer( question ) {
 
                     if ( _account[ACCOUNT_COLUMNS.regions].length ) {
 
-                        showQuestions(  
+                        showQuestions( 
                             _account[ACCOUNT_COLUMNS.regions][0][REGION_COLUMNS.name],
-                            _questions, document.getElementById( 'questions' ) 
+                            _questions, document.getElementById( 'questions' )
                         );
 
                     };
@@ -309,12 +309,86 @@ function showAddAnswer( question ) {
 
                 };
 
+                if ( _account[ACCOUNT_COLUMNS.facebook][FACEBOOK_COLUMNS.facebookId]
+                    && question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.facebookId]
+                    && question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.openGraphId] ) {
+
+                    getNewAnswerId( question.questionId, answer[ANSWER_COLUMNS.locationAddress], function ( answerId ) {
+
+                        postToFacebook( 
+                            'post-open-graph',
+                            'answer-as-comment',
+                            {
+                                answerId: answerId,
+                                openGraphId: question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.openGraphId],
+                                questionFacebookId: question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.facebookId],
+                                comment: STRINGS.facebook.openGraphAnswerAsComment
+                                    .replace( '%1', answer[ANSWER_COLUMNS.location] )
+                                    .replace( '%2', answer[ANSWER_COLUMNS.locationAddress] )
+
+                            }
+                        );
+
+                    } );
+
+                };
+
             },
             "error": function ( response, status, error ) {
 
                 error == 'Unauthorized'
                     ? logoutApp()
                     : showMessage( STRINGS.error.saveAnswer );
+
+            }
+
+        } );
+
+    };
+
+    function getNewAnswerId( questionId, locationAddress, complete ) {
+
+        window.setTimeout( function () {
+
+            var interval = window.setInterval( function () {
+
+                loadAnswers( questionId, locationAddress, function ( answerId ) {
+
+                    if ( answerId ) {
+
+                        window.clearInterval( interval );
+                        complete( answerId );
+
+                    };
+
+                } );
+
+            }, REFRESH_NEW_ANSWER_RATE );
+
+        }, 5000 );
+
+    };
+
+    function loadAnswers( questionId, locationAddress, complete ) {
+
+        var resource = '/api/answers',
+            data = 'questionId=' + questionId + '&locationAddress=' + locationAddress,
+            session = getSession( resource );
+
+        ajax( API_URL + resource, {
+
+            "type": "GET",
+            "data": data,
+            "headers": { "x-session": session },
+            "cache": false,
+            "success": function ( data, status ) {
+
+                complete( window.JSON.parse( data ) );
+
+            },
+            "error": function ( response, status, error ) {
+
+                if( error == 'Unauthorized' ) { logoutApp() };
 
             }
 

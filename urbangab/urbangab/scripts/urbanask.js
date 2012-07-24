@@ -57,7 +57,8 @@ var _hostname = window.location.hostname,
         "tagline": 6,
         "regions": 7,
         "notifications": 8,
-        "instructions": 9
+        "instructions": 9,
+        "facebook": 10
 
     },
     ANSWER_COLUMNS = {
@@ -79,7 +80,8 @@ var _hostname = window.location.hostname,
         "timestamp": 14,
         "selected": 15,
         "voted": 16,
-        "votes": 17
+        "votes": 17,
+        "openGraphId": 18
 
     },
     API_URL = ( _hostname == '75.144.228.69' ? 'http://75.144.228.69:55555' : 'http://urbanask.com' ),
@@ -103,8 +105,9 @@ var _hostname = window.location.hostname,
     EXPIRATION_DAYS = 14,
     FACEBOOK_COLUMNS = {
 
-        "openGraphId": 0,
-        "resolvedOpenGraphId": 0
+        "facebookId": 0,
+        "openGraphId": 1,
+        "resolvedOpenGraphId": 2
 
     },
     FACEBOOK_APP_ID = '267603823260704',
@@ -176,6 +179,7 @@ var _hostname = window.location.hostname,
     },
     RANDOM_DISTANCE = 600, //feet
     REFRESH_NEW_QUESTION_RATE = 500, // milliseconds
+    REFRESH_NEW_ANSWER_RATE = 500, // milliseconds
     REFRESH_QUESTION_RATE = 60000, // 60 seconds
     REFRESH_USER_QUESTION_RATE = 30000, //30 seconds
     REGION_COLUMNS = {
@@ -3017,7 +3021,7 @@ function postToFacebook( type, object, options ) {
                       '{'
                     + '"type":"' + type + '",'
                     + '"object":"' + object + '",'
-                    + '"message":"' + options.message + '"'
+                    + '"message":"' + window.encodeURIComponent( options.message ) + '"'
                     + '}';
                 break;
 
@@ -3032,7 +3036,31 @@ function postToFacebook( type, object, options ) {
                             + '"object":"' + object + '",'
                             + '"questionId":"' + options.questionId + '",'
                             + '"openGraphId":"' + options.openGraphId + '",'
-                            + '"comment":"' + options.comment + '"'
+                            + '"comment":"' + window.encodeURIComponent( options.comment ) + '"'
+                            + '}';
+                        break;
+
+                    case 'answer-as-comment':
+
+                        message =
+                              '{'
+                            + '"type":"' + type + '",'
+                            + '"object":"' + object + '",'
+                            + '"answerId":"' + options.answerId + '",'
+                            + '"openGraphId":"' + options.openGraphId + '",'
+                            + '"questionFacebookId":"' + options.questionFacebookId + '",'
+                            + '"comment":"' + window.encodeURIComponent( options.comment ) + '"'
+                            + '}';
+                        break;
+
+                    case 'like':
+
+                        message =
+                              '{'
+                            + '"type":"' + type + '",'
+                            + '"object":"' + object + '",'
+                            + '"openGraphId":"' + options.openGraphId + '",'
+                            + '"questionFacebookId":"' + options.questionFacebookId + '"'
                             + '}';
                         break;
 
@@ -3043,7 +3071,7 @@ function postToFacebook( type, object, options ) {
                               '{'
                             + '"type":"' + type + '",'
                             + '"object":"' + object + '",'
-                            + '"value":"' + options.value + '",'
+                            + '"value":"' + window.encodeURIComponent( options.value ) + '",'
                             + '"id":"' + options.id + '"'
                             + '}';
                         break;
@@ -3086,6 +3114,11 @@ function postToFacebook( type, object, options ) {
                                 case 'comment':
 
                                     saveOpenGraphResolvedId( message.requestMessage.questionId, message.id );
+                                    break;
+
+                                case 'answer-as-comment':
+
+                                    saveOpenGraphAnswerId( message.requestMessage.answerId, message.id );
                                     break;
 
                             };
@@ -3155,6 +3188,30 @@ function postToFacebook( type, object, options ) {
             };
 
         }, 10 * 1000 );
+
+    };
+
+    function saveOpenGraphAnswerId( answerId, openGraphId ) {
+
+        var resource = '/api/answers/' + answerId + '/opengraph/post',
+            data = 'openGraphId=' + openGraphId,
+            session = getSession( resource );
+
+        ajax( API_URL + resource, {
+
+            "type": "GET",
+            "data": data,
+            "headers": { "x-session": session },
+            "success": function ( data, status ) {
+
+
+            },
+            "error": function ( response, status, error ) {
+
+
+            }
+
+        } );
 
     };
 
@@ -3809,6 +3866,22 @@ function saveAnswerUpvote( question, answer, answerItem ) {
 
                 showNotification( STRINGS.notificationUpvote, { tight: true } );
 
+                if ( _account[ACCOUNT_COLUMNS.facebook][FACEBOOK_COLUMNS.facebookId]
+                    && question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.facebookId]
+                    && question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.openGraphId]
+                    && answer[ANSWER_COLUMNS.openGraphId] ) {
+
+                    postToFacebook( 
+                        'post-open-graph',
+                        'like',
+                        {
+                            openGraphId: answer[ANSWER_COLUMNS.openGraphId],
+                            questionFacebookId: question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.facebookId]
+                        }
+                    );
+
+                };
+
             };
 
             window.setTimeout( function () {
@@ -4265,6 +4338,21 @@ function saveQuestionUpvote( question ) {
             if ( voted != 1 ) { //upvote
 
                 showNotification( STRINGS.notificationUpvote, { tight: true } );
+
+                if ( _account[ACCOUNT_COLUMNS.facebook][FACEBOOK_COLUMNS.facebookId]
+                    && question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.facebookId]
+                    && question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.openGraphId] ) {
+
+                    postToFacebook( 
+                        'post-open-graph',
+                        'like',
+                        {
+                            openGraphId: question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.openGraphId],
+                            questionFacebookId: question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.facebookId]
+                        }
+                    );
+
+                };
 
             };
 
@@ -6583,7 +6671,7 @@ function showQuestionShare( question ) {
 
         close();
 
-        postToFacebook( 'post-feed', 'question', { message: window.encodeURIComponent( question ) } );
+        postToFacebook( 'post-feed', 'question', { message: question } );
         showNotification( STRINGS.notification.postedToFacebook, { size: 'tiny' } );
 
     };
@@ -7196,6 +7284,7 @@ function startApp() {
 
         if ( window.location.queryString()['question-id'] ) {
 
+            _pages.replace( 'questions-page', { caption: STRINGS.backButtonQuestions } )
             showPage( 'question-page', { id: window.location.queryString()['question-id'] } );
             window.history.replaceState( '', '', window.location.pathname );
 

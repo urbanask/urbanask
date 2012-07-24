@@ -259,6 +259,23 @@ Public Class account : Inherits api.messageHandler
 
                 End If
 
+                response &= "],["
+
+                'facebook
+                If user.NextResult() Then
+
+                    If user.HasRows() Then
+
+                        user.Read()
+
+                        response &= String.Concat(
+                            """", user("facebookId"), """"
+                            )
+
+                    End If
+
+                End If
+
                 response &= "]]"
 
             End If

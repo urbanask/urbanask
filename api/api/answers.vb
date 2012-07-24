@@ -37,10 +37,12 @@ Public Class answers : Inherits api.messageHandler
             & """votes""" _
             & "]",
         MESSAGE_LENGTH_MAX As Int32 = 200,
+        LOAD_ANSWERS As String = "Gabs.api.loadAnswers",
         SAVE_ANSWER_UPVOTE As String = "Gabs.api.saveAnswerUpvote",
         SAVE_ANSWER_DOWNVOTE As String = "Gabs.api.saveAnswerDownvote",
         SAVE_ANSWER_SELECT As String = "Gabs.api.saveAnswerSelect",
-        SAVE_ANSWER_FLAG As String = "Gabs.api.saveAnswerFlag"
+        SAVE_ANSWER_FLAG As String = "Gabs.api.saveAnswerFlag",
+        SAVE_ANSWER_OPENGRAPH_POST As String = "Gabs.api.saveAnswerOpenGraphPost"
 
     Protected Overrides Sub process(
         connection As SqlClient.SqlConnection,
@@ -48,9 +50,14 @@ Public Class answers : Inherits api.messageHandler
         request As String,
         userId As Int32)
 
-        Dim resource As String = context.Request.PathInfo
+        Dim resource As String = context.Request.PathInfo,
+            queries As Collections.Specialized.NameValueCollection = context.Request.QueryString
 
         Select Case resource
+
+            Case "" '/api/answers
+
+                loadAnswers(context, connection, queries, userId)
 
             Case "/columns"
 
@@ -80,6 +87,10 @@ Public Class answers : Inherits api.messageHandler
 
                             saveSelect(context, connection, userId, id)
 
+                        Case "opengraph/post" '/api/answers/{id}/opengraph/post
+
+                            saveOpenGraphPost(context, connection, queries, userId, id)
+
                     End Select
 
                 Else
@@ -89,6 +100,30 @@ Public Class answers : Inherits api.messageHandler
                 End If
 
         End Select
+
+    End Sub
+
+    Private Sub loadAnswers(
+        context As Web.HttpContext,
+        connection As SqlClient.SqlConnection,
+        queries As Collections.Specialized.NameValueCollection,
+        userId As Int32)
+
+        Using command As New SqlClient.SqlCommand(LOAD_ANSWERS, connection)
+
+            command.CommandType = CommandType.StoredProcedure
+            command.CommandTimeout = COMMAND_TIMEOUT
+
+            command.Parameters.AddWithValue("@questionId", queries("questionId"))
+            command.Parameters.AddWithValue("@locationAddress", queries("locationAddress"))
+            command.Parameters.Add("@answerId", SqlDbType.Int).Direction = ParameterDirection.Output
+
+            command.ExecuteNonQuery()
+
+            Dim response As String = String.Concat("[", command.Parameters("@answerId").Value, "]")
+            sendSuccessResponse(context, response)
+
+        End Using
 
     End Sub
 
@@ -196,6 +231,35 @@ Public Class answers : Inherits api.messageHandler
             command.Parameters.AddWithValue("@userId", userId)
             command.Parameters.AddWithValue("@questionId", queries("questionId"))
             command.Parameters.AddWithValue("@answerId", answerId)
+            command.Parameters.Add("@success", SqlDbType.Bit).Direction = ParameterDirection.Output
+
+            command.ExecuteNonQuery()
+
+            If System.Convert.ToInt32(command.Parameters("@success").Value) = 0 Then 'error
+
+                MyBase.sendErrorResponse(context, 412, "Forbidden")
+
+            End If
+
+        End Using
+
+    End Sub
+
+    Private Sub saveOpenGraphPost(
+        context As Web.HttpContext,
+        connection As SqlClient.SqlConnection,
+        queries As Collections.Specialized.NameValueCollection,
+        userId As Int32,
+        answerId As String)
+
+        Using command As New SqlClient.SqlCommand(SAVE_ANSWER_OPENGRAPH_POST, connection)
+
+            command.CommandType = CommandType.StoredProcedure
+            command.CommandTimeout = COMMAND_TIMEOUT
+
+            command.Parameters.AddWithValue("@userId", userId)
+            command.Parameters.AddWithValue("@answerId", answerId)
+            command.Parameters.AddWithValue("@openGraphId", queries("openGraphId"))
             command.Parameters.Add("@success", SqlDbType.Bit).Direction = ParameterDirection.Output
 
             command.ExecuteNonQuery()

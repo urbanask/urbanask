@@ -482,7 +482,8 @@ Public Class questions : Inherits api.messageHandler
                                 question("timestamp"), """,",
                                 question("selected"), ",",
                                 question("voted"), ",",
-                                question("votes"),
+                                question("votes"), ",""",
+                                question("openGraphId"), """",
                                 "],")
 
                         End While
@@ -504,6 +505,7 @@ Public Class questions : Inherits api.messageHandler
 
                         response &= String.Concat(
                             """",
+                            question("facebookId"), """,""",
                             question("openGraphId"), """,""",
                             question("resolvedOpenGraphId"),
                             """")

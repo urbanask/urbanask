@@ -82,6 +82,7 @@
             "loginCaption": "Login with Facebook",
             "linkCaption": "Login with Facebook",
             "openGraphComment": "found this at %1 (%2).",
+            "openGraphAnswerAsComment": "suggested %1 (%2).",
             "postQuestionToFacebook": "Post Question",
             "postQuestionToTwitter": "Tweet Question",
             "postFacebookMessageCaption": "optional message",
@@ -101,7 +102,7 @@
             "viewQuestionWhat": "This is what they want.",
             "viewQuestionWhere": "This is where they want it.",
             "viewAnswer": "Answers to this question are here.",
-            "addAnswer": "To add an asnwer, %1 here.",
+            "addAnswer": "To add an answer, %1 here.",
             "toolbarQuestions": "To view questions, %1 here.",
             "toolbarTop": "To view the leaderboard, %1 here.",
             "toolbarUser": "To view your profile, %1 here."

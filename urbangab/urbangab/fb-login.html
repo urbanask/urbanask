@@ -253,7 +253,7 @@
                     if ( response.authResponse ) {
 
                         var questionUrl = QUESTION_URL
-                                + '?title=' + window.encodeURIComponent( message.value )
+                                + '?title=' + window.decodeURIComponent( message.value )
                                 + '&question-id=' + message.id;
 
                         FB.api( 
@@ -301,7 +301,7 @@
                     if ( response.authResponse ) {
 
                         var questionUrl = QUESTION_URL
-                                + '?title=' + window.encodeURIComponent( message.value )
+                                + '?title=' + window.decodeURIComponent( message.value )
                                 + '&question-id=' + message.id;
 
                         FB.api( 
@@ -351,7 +351,7 @@
                             '/' + message.openGraphId + '/comments',
                             'post',
                             {
-                                message: message.comment
+                                message: window.decodeURIComponent( message.comment )
                             },
                             function ( response ) {
 
@@ -384,6 +384,117 @@
 
             };
 
+            function postOpenGraphLike( message, event ) {
+
+                FB.getLoginStatus( function ( response ) {
+
+                    if ( response.authResponse ) {
+
+                        isMyFriend( message, function () {
+
+                            FB.api( 
+                                '/' + message.openGraphId + '/likes',
+                                'post',
+                                function ( response ) {
+
+                                    event.source.postMessage( 
+                                            '{'
+                                        + '"type":"success",'
+                                        + '"requestMessage":' + window.JSON.stringify( message )
+                                        + '}',
+                                        event.origin
+                                    );
+
+                                }
+                            );
+
+                        } );
+
+                    };
+
+                } );
+
+            };
+
+            function postOpenGraphAnswerAsComment( message, event ) {
+
+                FB.getLoginStatus( function ( response ) {
+
+                    if ( response.authResponse ) {
+
+                        isMyFriend( message, function () {
+
+                            FB.api( 
+                                '/' + message.openGraphId + '/comments',
+                                'post',
+                                {
+                                    message: window.decodeURIComponent( message.comment )
+                                },
+                                function ( response ) {
+
+                                    if ( response.id ) {
+
+                                        event.source.postMessage( 
+                                              '{'
+                                            + '"type":"success",'
+                                            + '"id":"' + response.id + '",'
+                                            + '"requestMessage":' + window.JSON.stringify( message )
+                                            + '}',
+                                            event.origin
+                                        );
+
+                                    } else {
+
+                                        event.source.postMessage( 
+                                            '{"type":"error","error":"' + response.error.message + '"}',
+                                            event.origin
+                                        );
+
+                                    };
+
+                                }
+                            );
+
+                        } );
+
+                    };
+
+                } );
+
+            };
+
+            function isMyFriend( message, complete ) {
+
+                FB.api( 
+                    '/me/friends/' + message.questionFacebookId + '',
+                    function ( response ) {
+
+                        if ( response.data && response.data.length ) {
+
+                            complete();
+
+                        } else {
+
+                            FB.api( 
+                                '/me',
+                                function ( response ) {
+
+                                    if ( response && response.id == message.questionFacebookId ) {
+
+                                        complete();
+
+                                    };
+
+                                }
+                            );
+
+                        };
+
+                    }
+                );
+
+            };
+
             function postFeedApp( message, event ) {
 
                 FB.getLoginStatus( function ( response ) {
@@ -394,7 +505,7 @@
                             '/me/feed',
                             'post',
                             {
-                                message: message,
+                                message: window.decodeURIComponent( message ),
                                 name: NAME,
                                 caption: TAGLINE,
                                 description: DESCRIPTION,
@@ -447,7 +558,10 @@
 
                                 } else {
 
-                                    event.source.postMessage( '{"type":"error", "error":' + window.JSON.stringify( response.error ) + '}', event.origin );
+                                    event.source.postMessage( 
+                                        '{"type":"error", "error":' + window.JSON.stringify( response.error ) + '}',
+                                        event.origin
+                                    );
 
                                 };
 
@@ -526,6 +640,16 @@
                                     case 'comment':
 
                                         postOpenGraphComment( message, event );
+                                        break;
+
+                                    case 'answer-as-comment':
+
+                                        postOpenGraphAnswerAsComment( message, event );
+                                        break;
+
+                                    case 'like':
+
+                                        postOpenGraphLike( message, event );
                                         break;
 
                                 };
