@@ -22,11 +22,11 @@ DELETE FROM question WHERE questionId = 1109137
 DELETE FROM answer WHERE answerId = 4250081
 UPDATE question SET bounty = 0 WHERE regionId = 14 AND bounty = 100
 SELECT username, authtypeId FROM [user] WHERE userId < 100
-SELECT * FROM question WHERE regionId = 14 AND bounty = 100
+SELECT * FROM question WHERE question LIKE '%chalk%'
 SELECT * FROM reputation WHERE itemId = 1105914
-SELECT * FROM [user] WHERE username LIKE '%matt%'
-SELECT * FROM userFacebook WHERE userId IN (166)
-DELETE FROM question WHERE question = 'edible panties'
+SELECT * FROM [user] WHERE email LIKE '%thinkingstiff%'
+SELECT * FROM userFacebook WHERE email LIKE '%thinkingstiff%'
+DELETE FROM question WHERE questionId = 1110251
 UPDATE [user] SET 
 hash='bFxydZg4GPGQqojigQxzbIcQw62jD3C4WeyXvB0fpB+1YHMSgAh1PIPHvpOsqqpT+gxTKG2hRl30kVhumuRuQg==',
 salt='7iJyqg==',
