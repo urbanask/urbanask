@@ -157,4 +157,21 @@ WHERE
 	userInstructions.userId			= @userId
 
 
+
+--facebook
+
+SELECT
+	userFacebook.facebookId			    AS facebookId
+
+FROM
+	Gabs.dbo.userFacebook				AS userFacebook
+	WITH								( NOLOCK, INDEX( ix_userFacebook_userId ) )
+    
+WHERE
+		userFacebook.userId			    = @userId 
+	  
+OPTION
+	  ( FORCE ORDER, LOOP JOIN, MAXDOP 1 )
+
+
 GO

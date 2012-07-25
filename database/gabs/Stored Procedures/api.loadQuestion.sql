@@ -3,9 +3,9 @@ SET QUOTED_IDENTIFIER OFF
 GO
 SET ANSI_NULLS OFF
 GO
---DECLARE @questionId			AS PrimaryKey = 1105045
---DECLARE @userId				AS ForeignKey = 1
---DECLARE	@expirationDays		AS INT = 2
+--DECLARE @questionId			AS PrimaryKey = 1106064
+--DECLARE @userId				AS ForeignKey = 128
+--DECLARE @expirationDays		AS INT = 2
 
 CREATE PROCEDURE [api].[loadQuestion]
 	(
@@ -150,7 +150,8 @@ SELECT
 	answer.timestamp						AS timestamp,
 	answer.selected							AS selected,
 	ISNULL( answerVote.vote, 0 )			AS voted,
-	answer.votes							AS votes
+	answer.votes							AS votes,
+	answerFacebook.openGraphId              AS openGraphId
 
 FROM
 	Gabs.dbo.answer							AS answer
@@ -167,6 +168,11 @@ FROM
 	ON	answer.answerId						= answerVote.answerId
 	AND answerVote.userId					= @userId
 
+    LEFT JOIN
+	Gabs.dbo.answerFacebook				    AS answerFacebook
+	WITH									( NOLOCK, INDEX( ix_answerFacebook_answerId ) )
+    ON  answer.answerId                     = answerFacebook.answerId
+
 WHERE
 		answer.questionId					= @questionId 
 	
@@ -178,6 +184,34 @@ ORDER BY
 
 OPTION
 	  ( FORCE ORDER, LOOP JOIN, MAXDOP 1 )
+
+
+
+SELECT
+    userFacebook.facebookId                 AS facebookId,
+	questionFacebook.openGraphId			AS openGraphId,
+	questionFacebook.resolvedOpenGraphId	AS resolvedOpenGraphId
+
+FROM
+    Gabs.dbo.question                       AS question
+    WITH                                    ( NOLOCK, INDEX( pk_question ) )
+    
+    LEFT JOIN
+	Gabs.dbo.questionFacebook				AS questionFacebook
+	WITH									( NOLOCK, INDEX( ix_questionFacebook_questionId ) )
+    ON  question.questionId                 = questionFacebook.questionId
+    
+    LEFT JOIN
+    Gabs.dbo.userFacebook                   AS userFacebook
+    WITH                                    ( NOLOCK, INDEX( ix_userFacebook_userId ) )
+    ON  question.userId                     = userFacebook.userId
+    
+WHERE
+		question.questionId			        = @questionId 
+	  
+OPTION
+	  ( FORCE ORDER, LOOP JOIN, MAXDOP 1 )
+
 
 
 

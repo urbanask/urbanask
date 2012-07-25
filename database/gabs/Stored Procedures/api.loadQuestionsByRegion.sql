@@ -8,7 +8,7 @@ GO
 --DBCC DROPCLEANBUFFERS; 
 --GO
 --DECLARE	@currentUserId		AS ForeignKey=1
---DECLARE	@regionId			AS ForeignKey=1
+--DECLARE	@regionId			AS ForeignKey=0
 --DECLARE	@count				AS INT=50
 --DECLARE	@age				AS DATETIME2 = '5/25/2012'
 --DECLARE	@expirationDays		AS INT = 2
@@ -79,7 +79,8 @@ FROM
 	ON	question.userId									= [user].userId
 	
 WHERE
-		question.regionId								= @regionId
+		(   question.regionId							= @regionId
+		OR  @regionId                                   = 0)
 	AND	question.userId									<> @currentUserId
 	AND	question.timestamp								> @age
 	AND	question.resolved								= 0 --false
@@ -135,7 +136,8 @@ BEGIN
 		ON question.questionId					= questions.questionId
 
 	WHERE
-		    question.regionId				    = @regionId
+		    (   question.regionId			    = @regionId
+		    OR  @regionId                       = 0)
 		AND	question.userId						<> @currentUserId
 		AND	question.timestamp					> @age
 		AND	question.resolved					= 0 --false
@@ -195,7 +197,8 @@ BEGIN
 		ON question.questionId					= questions.questionId
 
 	WHERE
-		    question.regionId					= @regionId
+		    (   question.regionId				= @regionId
+		    OR  @regionId                       = 0)
 		AND	question.userId						<> @currentUserId
 		AND	question.timestamp					> @age
 		AND questions.questionId				IS NULL --not already there
@@ -254,7 +257,8 @@ BEGIN
 		ON question.questionId					= questions.questionId
 
 	WHERE
-		    question.regionId					= @regionId
+		    (   question.regionId				= @regionId
+		    OR  @regionId                       = 0)
 		AND	question.userId						<> @currentUserId
 		AND questions.questionId				IS NULL --not already there
 
