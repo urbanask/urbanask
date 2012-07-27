@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-version="1.12.1" manifest="cache.manifest">
+<html lang="en" data-version="1.12.21" manifest="cache.manifest">
 <head>
     <title>urbanAsk</title>
     
@@ -210,6 +210,18 @@
                 </div>
                 <button id="answer-confirm-ok" type="submit"></button><!--
                 --><button id="answer-confirm-cancel"></button>
+            </form>
+        </div>
+        <div id="add-location-page" class="fade fadeable-500 hide">
+            <form id="add-location">
+                <div id="add-location-body">
+                    <input id="location-name" class="location-field" type="text" maxlength="80" required="required" placeholder="name" />
+                    <input id="location-address" class="location-field" type="text" maxlength="100" required="required" placeholder="address" />
+                    <input id="location-link" class="location-field" type="text" maxlength="256" placeholder="link" />
+                    <input id="location-phone" class="location-field" type="text" maxlength="50" placeholder="phone" />
+                </div>
+                <button id="add-location-ok" type="submit"></button><!--
+             --><button id="add-location-cancel"></button>
             </form>
         </div>
     </section>

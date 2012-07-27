@@ -1332,6 +1332,22 @@ function goBack( event ) {
 
 };
 
+function guid() {
+
+    function fourDigits() {
+
+        return ( ( ( 1 + Math.random() ) * 0x10000 ) | 0 ).toString( 16 ).substring( 1 ).toUpperCase();
+
+    };
+
+    return fourDigits() + fourDigits()
+       + "-" + fourDigits()
+       + "-" + fourDigits()
+       + "-" + fourDigits()
+       + "-" + fourDigits() + fourDigits() + fourDigits();
+
+};
+
 function hideAccountPage() {
 
     var account = document.getElementById( 'account-page' ),
@@ -2455,6 +2471,10 @@ function localizeStrings() {
     $( '#edit-tagline' ).setAttribute( 'placeholder', STRINGS.edit.taglineCaption );
     $( '#edit-region-caption' ).innerHTML = STRINGS.edit.regionCaption;
     $( '#fb-login' ).innerHTML = STRINGS.facebook.authenticatingCaption;
+    $( '#location-name' ).setAttribute( 'placeholder', STRINGS.addAnswer.locationNameCaption );
+    $( '#location-address' ).setAttribute( 'placeholder', STRINGS.addAnswer.locationAddressCaption );
+    $( '#location-link' ).setAttribute( 'placeholder', STRINGS.addAnswer.locationLinkCaption );
+    $( '#location-phone' ).setAttribute( 'placeholder', STRINGS.addAnswer.locationPhoneCaption );
     $( '#location-note' ).setAttribute( 'placeholder', STRINGS.optionalNote );
     $( '#login-username' ).setAttribute( 'placeholder', STRINGS.usernameLabel );
     $( '#login-password' ).setAttribute( 'placeholder', STRINGS.passwordLabel );

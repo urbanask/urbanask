@@ -3,7 +3,12 @@
         "addAnswer": 
         {
             "noLocations": "Enter a location.",
-            "cancel": "Cancel"
+            "cancel": "Cancel",
+            "addLocation": "Add a new location",
+            "locationNameCaption": "name",
+            "locationAddressCaption": "address (be specific)",
+            "locationLinkCaption": "link (optional)",
+            "locationPhoneCaption": "phone (optional)"
         },
         "ageDay": "day",
         "ageDays": "days",

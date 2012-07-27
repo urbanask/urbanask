@@ -69,35 +69,49 @@ function showAddAnswer( question ) {
 
             for ( var index = 0; index < results.length; index++ ) {
 
-                var existingAnswerClass = '',
-                    existingAnswer = '';
+                var options;
 
                 if ( question[QUESTION_COLUMNS.answers].item( results[index].id, ANSWER_COLUMNS.locationId ) ) {
 
-                    existingAnswerClass = ' existing-answer';
-                    existingAnswer = '<div class="existing-answer-caption">' + STRINGS.existingAnswer + '</div>';
+                    options = {
+                        existingClass: 'existing-answer',
+                        existingAnswer: '<div class="existing-answer-caption">' + STRINGS.existingAnswer + '</div>'
+                    };
 
                 };
 
-                html +=
-                        '<li class="location-item list-item' + existingAnswerClass + '" '
-                    + 'data-location-id="' + results[index].id + '" '
-                    + 'data-reference="' + results[index].reference + '" '
-                    + 'data-address="' + results[index].vicinity + '" '
-                    + 'data-latitude="' + results[index].geometry.location.lat() + '" '
-                    + 'data-longitude="' + results[index].geometry.location.lng() + '" '
-                    + 'data-name="' + results[index].name.htmlEncode() + '">'
-                    + '<div class="location-body">' + results[index].name + '</div>'
-                    + '<div class="location-info">' + results[index].vicinity + '</div>'
-                    + existingAnswer
-                    + '</li>';
+                html += getLocationItem( results[index], options );
 
             };
+
+            html += '<li class="location-add list-item">'
+                + '<div class="location-add-button button-3d">+</div>'
+                + '<div class="location-add-body">' + STRINGS.addAnswer.addLocation + '</div>'
+                + '</li>';
 
             locations.innerHTML = html;
             updateScrollLocations();
 
         } );
+
+    };
+
+    function getLocationItem( location, options ) {
+
+        return '<li class="location-item list-item' + ( options.existingClass ? ' ' + options.existingClass : '' ) + '" '
+            + 'data-location-id="' + location.id + '" '
+            + 'data-reference="' + location.reference + '" '
+            + 'data-address="' + location.vicinity + '" '
+            + 'data-latitude="' + location.geometry.location.lat() + '" '
+            + 'data-longitude="' + location.geometry.location.lng() + '" '
+            + ( options.link ? 'data-link="' + options.link.htmlEncode() + '" ' : '' )
+            + ( options.phone ? 'data-phone="' + options.phone.htmlEncode() + '" ' : '' )
+            + ( options.newLocation ? 'data-new="true" ' : '' )
+            + 'data-name="' + location.name.htmlEncode() + '">'
+            + '<div class="location-body">' + location.name + '</div>'
+            + '<div class="location-info">' + location.vicinity + '</div>'
+            + ( options.existingAnswer ? options.existingAnswer : '' )
+            + '</li>';
 
     };
 
@@ -123,9 +137,23 @@ function showAddAnswer( question ) {
 
             var locationItem = event.target.closestByClassName( 'location-item' );
 
-            if ( locationItem && !locationItem.hasClass( 'existing-answer' ) ) {
+            if ( locationItem ) {
 
-                showAnswerConfirm( locationItem )
+                if ( !locationItem.hasClass( 'existing-answer' ) ) {
+
+                    showAnswerConfirm( locationItem );
+
+                };
+
+            } else {
+
+                var locationAdd = event.target.closestByClassName( 'location-add' );
+
+                if ( locationAdd ) {
+
+                    showAddLocation();
+
+                };
 
             };
 
@@ -459,32 +487,53 @@ function showAddAnswer( question ) {
 
             close();
 
-            places.getDetails( { reference: locationItem.getDataset( 'reference' ) }, function ( place, status ) {
+            if ( locationItem.getDataset( 'new' ) ) {
 
-                if ( status == google.maps.places.PlacesServiceStatus.OK ) {
+                saveAnswer( 
+                    question,
+                    {
+                        "name": locationItem.getDataset( 'name' ),
+                        "address": locationItem.getDataset( 'address' ),
+                        "locationId": locationItem.getDataset( 'location-id' ),
+                        "reference": locationItem.getDataset( 'reference' ),
+                        "latitude": locationItem.getDataset( 'latitude' ),
+                        "longitude": locationItem.getDataset( 'longitude' ),
+                        "note": note.value.trim(),
+                        "link": locationItem.getDataset( 'link' ),
+                        "phone": locationItem.getDataset( 'phone' )
+                    }
+                );
 
-                    saveAnswer( 
-                        question,
-                        {
-                            "name": locationItem.getDataset( 'name' ),
-                            "address": locationItem.getDataset( 'address' ),
-                            "locationId": locationItem.getDataset( 'location-id' ),
-                            "reference": locationItem.getDataset( 'reference' ),
-                            "latitude": locationItem.getDataset( 'latitude' ),
-                            "longitude": locationItem.getDataset( 'longitude' ),
-                            "note": note.value.trim(),
-                            "link": place.website ? place.website : '',
-                            "phone": place.formatted_phone_number ? place.formatted_phone_number : ''
-                        }
-                    );
+            } else {
 
-                } else {
+                places.getDetails( { reference: locationItem.getDataset( 'reference' ) }, function ( place, status ) {
 
-                    showMessage( status );
+                    if ( status == google.maps.places.PlacesServiceStatus.OK ) {
 
-                };
+                        saveAnswer( 
+                            question,
+                            {
+                                "name": locationItem.getDataset( 'name' ),
+                                "address": locationItem.getDataset( 'address' ),
+                                "locationId": locationItem.getDataset( 'location-id' ),
+                                "reference": locationItem.getDataset( 'reference' ),
+                                "latitude": locationItem.getDataset( 'latitude' ),
+                                "longitude": locationItem.getDataset( 'longitude' ),
+                                "note": note.value.trim(),
+                                "link": place.website ? place.website : '',
+                                "phone": place.formatted_phone_number ? place.formatted_phone_number : ''
+                            }
+                        );
 
-            } );
+                    } else {
+
+                        showMessage( status );
+
+                    };
+
+                } );
+
+            };
 
         };
 
@@ -519,6 +568,131 @@ function showAddAnswer( question ) {
         function addListeners() {
 
             answerConfirm.addEventListener( 'submit', okClick, false );
+            ok.addEventListener( 'click', okClick, false );
+            ok.addEventListener( 'touchstart', selectButton, false );
+            ok.addEventListener( 'touchend', unselectButton, false );
+            ok.addEventListener( 'mousedown', selectButton, false );
+            ok.addEventListener( 'mouseup', unselectButton, false );
+            cancel.addEventListener( 'click', cancelClick, false );
+            cancel.addEventListener( 'touchstart', selectButton, false );
+            cancel.addEventListener( 'touchend', unselectButton, false );
+            cancel.addEventListener( 'mousedown', selectButton, false );
+            cancel.addEventListener( 'mouseup', unselectButton, false );
+
+        };
+
+    };
+
+    function showAddLocation() {
+
+        var addLocationPage = document.getElementById( 'add-location-page' ),
+            addLocation = document.getElementById( 'add-location' ),
+            ok = document.getElementById( 'add-location-ok' ),
+            cancel = document.getElementById( 'add-location-cancel' ),
+            answerText = document.getElementById( 'answer-text' ),
+            viewport = document.getElementById( 'viewport' );
+
+        answerText.blur();
+        answerText.disabled = true;
+
+        addLocationPage.removeClass( 'hide' );
+        addLocation.style.top = ( ( viewport.clientHeight - addLocation.clientHeight ) / 2 ) + 'px';
+        addLocation.style.left = ( ( viewport.clientWidth - addLocation.clientWidth ) / 2 ) + 'px';
+        window.setTimeout( function () { addLocationPage.removeClass( 'fade' ); }, 50 );
+
+        addListeners();
+
+        function close() {
+
+            removeListeners();
+            addLocationPage.addClass( 'fade' );
+            window.setTimeout( function () { addLocationPage.addClass( 'hide' ); }, 1000 );
+
+        };
+
+        function okClick( event ) {
+
+            event.preventDefault();
+
+            var name = document.getElementById( 'location-name' ).value.trim(),
+                address = document.getElementById( 'location-address' ).value.trim();
+
+            if ( name && address ) {
+
+                ok.focus();
+                close();
+
+                var link = document.getElementById( 'location-link' ).value.trim(),
+                    phone = document.getElementById( 'location-phone' ).value.trim(),
+                    options = { link: link, phone: phone, newLocation: true },
+                    location = {
+                        id: guid(),
+                        reference: '',
+                        vicinity: address,
+                        name: name,
+                        geometry: {
+                            location: {
+                                lat: function () { return latitude },
+                                lon: function () { return latitude }
+                            }
+                        }
+
+                    },
+                    locationHtml = getLocationItem( location, options ),
+                    div = document.createElement( 'div' );
+
+                div.innerHTML = locationHtml;
+                showAnswerConfirm( div.firstChild );
+
+                //submit to google?
+
+            };
+
+        };
+
+            return '<li class="location-item list-item' + ( options ? ' ' + options.existingClass : '' ) + '" '
+            + 'data-location-id="' + location.id + '" '
+            + 'data-reference="' + location.reference + '" '
+            + 'data-address="' + location.vicinity + '" '
+            + 'data-latitude="' + location.geometry.location.lat() + '" '
+            + 'data-longitude="' + location.geometry.location.lng() + '" '
+            + 'data-name="' + location.name.htmlEncode() + '">'
+            + '<div class="location-body">' + location.name + '</div>'
+            + '<div class="location-info">' + location.vicinity + '</div>'
+            + ( options ? options.existingAnswer : '' )
+            + '</li>';
+
+        function cancelClick( event ) {
+
+            event.preventDefault();
+            cancel.focus();
+
+            answerText.disabled = false;
+            answerText.focus();
+
+            close();
+
+        };
+
+        function removeListeners() {
+
+            addLocation.removeEventListener( 'submit', okClick, false );
+            ok.removeEventListener( 'click', okClick, false );
+            ok.removeEventListener( 'touchstart', selectButton, false );
+            ok.removeEventListener( 'touchend', unselectButton, false );
+            ok.removeEventListener( 'mousedown', selectButton, false );
+            ok.removeEventListener( 'mouseup', unselectButton, false );
+            cancel.removeEventListener( 'click', cancelClick, false );
+            cancel.removeEventListener( 'touchstart', selectButton, false );
+            cancel.removeEventListener( 'touchend', unselectButton, false );
+            cancel.removeEventListener( 'mousedown', selectButton, false );
+            cancel.removeEventListener( 'mouseup', unselectButton, false );
+
+        };
+
+        function addListeners() {
+
+            addLocation.addEventListener( 'submit', okClick, false );
             ok.addEventListener( 'click', okClick, false );
             ok.addEventListener( 'touchstart', selectButton, false );
             ok.addEventListener( 'touchend', unselectButton, false );
