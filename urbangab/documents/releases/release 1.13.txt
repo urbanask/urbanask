@@ -1,6 +1,6 @@
 1.13
 
-
+new - Add locations if they don't exist or if outside your region.
 
 various bug fixes
 

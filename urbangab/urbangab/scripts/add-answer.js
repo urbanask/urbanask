@@ -21,7 +21,7 @@ function showAddAnswer( question ) {
 
     addListeners();
     answerText.value = '';
-    autocompleteLocations();
+    locations.innerHTML = '';
     addAnswer.removeClass( 'hide' );
     window.setTimeout( function () { addAnswer.removeClass( 'top-slide' ); }, 50 );
 
@@ -42,8 +42,11 @@ function showAddAnswer( question ) {
     if ( window.deviceInfo.iscroll ) {
 
         scrollLocations = new iScroll( 'locations-view' );
+        scrollLocations.scrollTo( 0, 0 );
 
     };
+
+    autocompleteLocations();
 
     function close() {
 
@@ -588,7 +591,9 @@ function showAddAnswer( question ) {
         var addLocationPage = document.getElementById( 'add-location-page' ),
             addLocation = document.getElementById( 'add-location' ),
             address = document.getElementById( 'location-address' ),
-            error = document.getElementById( 'location-not-found' ),
+            statusFrame = document.getElementById( 'location-status-frame' ),
+            status = document.getElementById( 'location-status' ),
+            statusMessage = document.getElementById( 'location-status-message' ),
             ok = document.getElementById( 'add-location-ok' ),
             cancel = document.getElementById( 'add-location-cancel' ),
             answerText = document.getElementById( 'answer-text' ),
@@ -596,10 +601,11 @@ function showAddAnswer( question ) {
 
         answerText.blur();
         answerText.disabled = true;
-        document.getElementById( 'location-name' ).value = '';
+        document.getElementById( 'location-name' ).value = answerText.value;
         address.value = '';
         document.getElementById( 'location-link' ).value = '';
         document.getElementById( 'location-phone' ).value = '';
+        resetStatus();
 
         addLocationPage.removeClass( 'hide' );
         addLocation.style.top = ( ( viewport.clientHeight - addLocation.clientHeight ) / 2 ) + 'px';
@@ -632,37 +638,58 @@ function showAddAnswer( question ) {
 
                     if ( geometry ) {
 
-                        close();
+                        if ( status.hasClass( 'location-status-found' ) ) {
 
-                        var link = document.getElementById( 'location-link' ).value.trim(),
-                            phone = document.getElementById( 'location-phone' ).value.trim(),
-                            location = {
-                                id: guid(),
-                                reference: '',
-                                vicinity: ( formattedAddress ? formattedAddress : addressText ),
-                                name: name,
-                                link: link,
-                                phone: phone,
-                                geometry: {
-                                    location: {
-                                        lat: function () { return geometry.location.lat() },
-                                        lng: function () { return geometry.location.lng() }
+                            close();
+
+                            var link = document.getElementById( 'location-link' ).value.trim(),
+                                phone = document.getElementById( 'location-phone' ).value.trim(),
+                                location = {
+                                    id: guid(),
+                                    reference: '',
+                                    vicinity: ( formattedAddress ? formattedAddress : addressText ),
+                                    name: name,
+                                    link: link,
+                                    phone: phone,
+                                    geometry: {
+                                        location: {
+                                            lat: function () { return geometry.location.lat() },
+                                            lng: function () { return geometry.location.lng() }
+                                        }
                                     }
-                                }
-                            },
-                            locationHtml = getLocationItem( location, { newLocation: true } ),
-                            div = document.createElement( 'div' );
+                                },
+                                locationHtml = getLocationItem( location, { newLocation: true } ),
+                                div = document.createElement( 'div' );
 
-                        div.innerHTML = locationHtml;
-                        showAnswerConfirm( div.firstChild );
+                            div.innerHTML = locationHtml;
+                            showAnswerConfirm( div.firstChild );
 
-                        //submit to google?
+                            //submit to google?
+
+                        } else {
+
+                            ok.innerHTML = STRINGS.addAnswer.addCaption;
+
+                            statusMessage.innerHTML = ( formattedAddress ? formattedAddress : addressText );
+                            statusMessage.removeClass( 'location-status-message-not-found' );
+                            status.innerHTML = STRINGS.checkmark;
+                            status.removeClass( 'location-status-not-found' ).addClass( 'location-status-found' );
+                            statusFrame.removeClass( 'hide' );
+                            window.setTimeout( function () { statusFrame.removeClass( 'height-zero' ); }, 10 );
+
+                        };
 
                     } else {
 
                         address.focus();
-                        error.removeClass( 'hide' );
-                        window.setTimeout( function () { error.removeClass( 'height-zero' ); }, 10 );
+                        ok.innerHTML = STRINGS.addAnswer.checkCaption;
+
+                        statusMessage.innerHTML = STRINGS.addAnswer.locationNotFound;
+                        statusMessage.addClass( 'location-status-message-not-found' );
+                        status.innerHTML = STRINGS.xmark;
+                        status.removeClass( 'location-status-found' ).addClass( 'location-status-not-found' );
+                        statusFrame.removeClass( 'hide' );
+                        window.setTimeout( function () { statusFrame.removeClass( 'height-zero' ); }, 10 );
 
                     };
 
@@ -686,12 +713,24 @@ function showAddAnswer( question ) {
 
         function addressKeyDown() {
 
-            if ( !error.hasClass( 'hide' ) ) {
+            if ( !statusFrame.hasClass( 'hide' ) ) {
 
-                error.addClass( 'height-zero' );
-                window.setTimeout( function () { error.addClass( 'hide' ); }, 600 );
+                resetStatus();
 
             };
+
+        };
+
+        function resetStatus() {
+
+            ok.innerHTML = STRINGS.addAnswer.checkCaption;
+            statusFrame.addClass( 'height-zero' );
+            window.setTimeout( function () {
+
+                statusFrame.addClass( 'hide' );
+                status.removeClass( 'location-status-found' ).addClass( 'location-status-not-found' );
+
+            }, 600 );
 
         };
 

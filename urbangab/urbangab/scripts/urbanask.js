@@ -2478,7 +2478,6 @@ function localizeStrings() {
     $( '#location-example-2' ).innerHTML = STRINGS.addAnswer.locationExamples.example2;
     $( '#location-example-3' ).innerHTML = STRINGS.addAnswer.locationExamples.example3;
     $( '#location-name' ).setAttribute( 'placeholder', STRINGS.addAnswer.locationNameCaption );
-    $( '#location-not-found' ).innerHTML = STRINGS.addAnswer.locationNotFound;
     $( '#location-address' ).setAttribute( 'placeholder', STRINGS.addAnswer.locationAddressCaption );
     $( '#location-link' ).setAttribute( 'placeholder', STRINGS.addAnswer.locationLinkCaption );
     $( '#location-phone' ).setAttribute( 'placeholder', STRINGS.addAnswer.locationPhoneCaption );

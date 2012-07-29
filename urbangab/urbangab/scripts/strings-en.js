@@ -2,8 +2,10 @@
     {
         "addAnswer":
         {
+            "addCaption": "add",
             "noLocations": "Enter a location.",
             "cancel": "Cancel",
+            "checkCaption": "check",
             "addLocation": "Add a new location",
             "locationNameCaption": "name",
             "locationAddressCaption": "address (be specific)",

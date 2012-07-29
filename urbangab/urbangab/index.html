@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-version="1.12.46" manifest="cache.manifest">
+<html lang="en" data-version="1.13.2" manifest="cache.manifest">
 <head>
     <title>urbanAsk</title>
     
@@ -217,7 +217,9 @@
                 <div id="add-location-body">
                     <input id="location-name" class="location-field" type="text" maxlength="80" required="required" placeholder="name" />
                     <input id="location-address" class="location-field" type="text" maxlength="100" required="required" placeholder="address" />
-                    <div id="location-not-found" class="height-slide height-zero hide"></div>
+                    <div id="location-status-frame" class="height-slide height-zero hide">
+                        <div id="location-status"></div><div id="location-status-message"></div>
+                    </div>
                     <div id="location-example-caption" class="location-example">Examples:</div>
                     <div id="location-example-1" class="location-example">example 1</div>
                     <div id="location-example-2" class="location-example">example 2</div>

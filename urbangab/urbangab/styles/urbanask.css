@@ -1406,12 +1406,6 @@ html {
     width: 254px;
 }
 
-#location-not-found {
-    color: red;
-    height: 20px;
-    overflow: hidden;
-}
-
 .location-example {
     color: white;
     font-size: 12px;
@@ -1424,6 +1418,46 @@ html {
 #locations {
     margin: 0;
     padding: 0;
+}
+
+#location-status {
+    border-radius: 50%;
+    display: inline-block;
+    height: 18px;
+    line-height: 18px;
+    text-align: center;
+    vertical-align: top;
+    width: 18px;
+}
+
+.location-status-not-found {
+    background-color: red;
+}
+
+.location-status-found {
+    background-color: green;
+}
+
+#location-status-frame {
+    color: white;
+    font-size: 12px;
+    height: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#location-status-message {
+    display: inline-block;
+    height: 18px;
+    line-height: 19px;
+    margin-left: 5px;
+    vertical-align: top;
+}
+
+.location-status-message-not-found {
+    color: red;
+    font-weight: bold;
 }
 
 .add-answer-keyboard-up {
