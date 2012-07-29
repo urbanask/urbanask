@@ -1,6 +1,6 @@
 ﻿var STRINGS =
     {
-        "addAnswer": 
+        "addAnswer":
         {
             "noLocations": "Enter a location.",
             "cancel": "Cancel",
@@ -8,7 +8,14 @@
             "locationNameCaption": "name",
             "locationAddressCaption": "address (be specific)",
             "locationLinkCaption": "link (optional)",
-            "locationPhoneCaption": "phone (optional)"
+            "locationNotFound": "Address not found",
+            "locationPhoneCaption": "phone (optional)",
+            "locationExamples": {
+                "caption": "Examples:",
+                "example1": "524 12th St, 95814",
+                "example2": "Corner of 7th & J Street, Sacramento CA",
+                "example3": "Winn Park, Sacramento CA 95816"
+            }
         },
         "ageDay": "day",
         "ageDays": "days",
@@ -18,7 +25,7 @@
         "ageMinutes": "mins",
         "ageNow": "now",
         "android": "Android",
-        "answer": 
+        "answer":
         {
             "noAnswers": "No one has answered yet. <br /><br />Be the first!",
             "noAnswersMyQuestion": "No one has answered yet. <br /><br />Check back soon."
@@ -33,7 +40,7 @@
         "backButtonUser": "User",
         "cancelButtonCaption": "cancel",
         "checkmark": "&#10004;",
-        "contact": 
+        "contact":
         {
             "call": "call",
             "website": "website",
@@ -50,7 +57,7 @@
         "distanceMeters": "m",
         "distanceMiles": "mi",
         "distanceFeet": "ft",
-        "edit": 
+        "edit":
         {
             "usernameCaption": "username",
             "taglineCaption": "say something about yourself",
@@ -59,7 +66,7 @@
         },
         "editAccountCaption": "edit",
         "emailLabel": "email",
-        "error": 
+        "error":
         {
             "alreadyAnswered": "You already answered this question.",
             "answerSelect": "There was an error saving your selection.",
@@ -119,7 +126,7 @@
         "intervalAllCaption": "all",
         "iphone": "iPhone",
         "letters": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-        "login": 
+        "login":
         {
             "createEmailAccount": "Create Account with Email",
             "twitter": "Login with Twitter"
@@ -144,11 +151,11 @@
         "optionalNote": "optional note...",
         "passwordLabel": "password",
         "questionHeader": "questions",
-        "questionLabel":"I want...",
+        "questionLabel": "I want...",
         "questionPosted": "Posted",
         "questionsNearby": "nearby",
         "questionsEverywhere": "everywhere",
-        "toolbar": 
+        "toolbar":
         {
             "questions": "questions",
             "top": "top",
@@ -176,7 +183,7 @@
         "userIdCaption": "id",
         "user":
         {
-            "memberSince":"signup",
+            "memberSince": "signup",
             "noAnswersMe": "You have not answered any questions yet. <br /><br />Go help someone find something.",
             "noAnswersUser": "%1 has not answered any questions yet.",
             "noBadgesMe": "You have not earned any badges yet. <br /><br />You're missing out!",

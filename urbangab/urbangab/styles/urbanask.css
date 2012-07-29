@@ -840,6 +840,21 @@ body {
     background-position: 10px center;
 }
 
+.dialog-button {
+    background-color: transparent;
+    border: 1px solid white;
+    color: white;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 17px;
+    height: 42px;
+    line-height: 40px;
+    margin: 0 0 10px 10px;
+    padding: 0;
+    text-align: center;
+    width: 125px;
+}
+
 .direction-item {
     border-bottom: 1px solid lightgray;
     display: block;
@@ -1124,6 +1139,14 @@ body {
     display: none !important;
 }
 
+.height-slide {
+    transition:             height 500ms ease;
+        -moz-transition:    height 500ms ease;
+        -ms-transition:     height 500ms ease;
+        -o-transition:      height 500ms ease;
+        -webkit-transition: height 500ms ease;
+}
+
 .height-zero {
     height: 0 !important;
 }
@@ -1344,7 +1367,7 @@ html {
     font-size: 16px;
     height: 35px;
     line-height: 20px;
-    margin: 8px 0;
+    margin: 4px 0;
     outline: none;
     padding: 0 3px 0 3px;
     width: 254px;
@@ -1381,6 +1404,21 @@ html {
     outline: none;
     padding: 0 3px 0 3px;
     width: 254px;
+}
+
+#location-not-found {
+    color: red;
+    height: 20px;
+    overflow: hidden;
+}
+
+.location-example {
+    color: white;
+    font-size: 12px;
+}
+
+#location-example-caption {
+    font-weight: bold;
 }
 
 #locations {

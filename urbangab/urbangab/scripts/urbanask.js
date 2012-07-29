@@ -2454,6 +2454,8 @@ function loadUserQuestions() {
 
 function localizeStrings() {
 
+    $( '#add-location-cancel' ).textContent = STRINGS.cancelButtonCaption;
+    $( '#add-location-ok' ).textContent = STRINGS.okButtonCaption;
     $( '#answer-confirm-cancel' ).textContent = STRINGS.cancelButtonCaption;
     $( '#answer-confirm-ok' ).textContent = STRINGS.okButtonCaption;
     $( '#answer-text' ).setAttribute( 'placeholder', STRINGS.answerLabel );
@@ -2471,7 +2473,12 @@ function localizeStrings() {
     $( '#edit-tagline' ).setAttribute( 'placeholder', STRINGS.edit.taglineCaption );
     $( '#edit-region-caption' ).innerHTML = STRINGS.edit.regionCaption;
     $( '#fb-login' ).innerHTML = STRINGS.facebook.authenticatingCaption;
+    $( '#location-example-caption' ).innerHTML = STRINGS.addAnswer.locationExamples.caption;
+    $( '#location-example-1' ).innerHTML = STRINGS.addAnswer.locationExamples.example1;
+    $( '#location-example-2' ).innerHTML = STRINGS.addAnswer.locationExamples.example2;
+    $( '#location-example-3' ).innerHTML = STRINGS.addAnswer.locationExamples.example3;
     $( '#location-name' ).setAttribute( 'placeholder', STRINGS.addAnswer.locationNameCaption );
+    $( '#location-not-found' ).innerHTML = STRINGS.addAnswer.locationNotFound;
     $( '#location-address' ).setAttribute( 'placeholder', STRINGS.addAnswer.locationAddressCaption );
     $( '#location-link' ).setAttribute( 'placeholder', STRINGS.addAnswer.locationLinkCaption );
     $( '#location-phone' ).setAttribute( 'placeholder', STRINGS.addAnswer.locationPhoneCaption );

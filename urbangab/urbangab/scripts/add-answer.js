@@ -98,19 +98,19 @@ function showAddAnswer( question ) {
 
     function getLocationItem( location, options ) {
 
-        return '<li class="location-item list-item' + ( options.existingClass ? ' ' + options.existingClass : '' ) + '" '
+        return '<li class="location-item list-item' + ( options && options.existingClass ? ' ' + options.existingClass : '' ) + '" '
             + 'data-location-id="' + location.id + '" '
             + 'data-reference="' + location.reference + '" '
             + 'data-address="' + location.vicinity + '" '
             + 'data-latitude="' + location.geometry.location.lat() + '" '
             + 'data-longitude="' + location.geometry.location.lng() + '" '
-            + ( options.link ? 'data-link="' + options.link.htmlEncode() + '" ' : '' )
-            + ( options.phone ? 'data-phone="' + options.phone.htmlEncode() + '" ' : '' )
-            + ( options.newLocation ? 'data-new="true" ' : '' )
+            + ( options && options.newLocation ? 'data-link="' + location.link.htmlEncode() + '" ' : '' )
+            + ( options && options.newLocation ? 'data-phone="' + location.phone.htmlEncode() + '" ' : '' )
+            + ( options && options.newLocation ? 'data-new="true" ' : '' )
             + 'data-name="' + location.name.htmlEncode() + '">'
             + '<div class="location-body">' + location.name + '</div>'
             + '<div class="location-info">' + location.vicinity + '</div>'
-            + ( options.existingAnswer ? options.existingAnswer : '' )
+            + ( options && options.existingAnswer ? options.existingAnswer : '' )
             + '</li>';
 
     };
@@ -587,6 +587,8 @@ function showAddAnswer( question ) {
 
         var addLocationPage = document.getElementById( 'add-location-page' ),
             addLocation = document.getElementById( 'add-location' ),
+            address = document.getElementById( 'location-address' ),
+            error = document.getElementById( 'location-not-found' ),
             ok = document.getElementById( 'add-location-ok' ),
             cancel = document.getElementById( 'add-location-cancel' ),
             answerText = document.getElementById( 'answer-text' ),
@@ -594,11 +596,16 @@ function showAddAnswer( question ) {
 
         answerText.blur();
         answerText.disabled = true;
+        document.getElementById( 'location-name' ).value = '';
+        address.value = '';
+        document.getElementById( 'location-link' ).value = '';
+        document.getElementById( 'location-phone' ).value = '';
 
         addLocationPage.removeClass( 'hide' );
         addLocation.style.top = ( ( viewport.clientHeight - addLocation.clientHeight ) / 2 ) + 'px';
         addLocation.style.left = ( ( viewport.clientWidth - addLocation.clientWidth ) / 2 ) + 'px';
         window.setTimeout( function () { addLocationPage.removeClass( 'fade' ); }, 50 );
+        document.getElementById( 'location-name' ).focus();
 
         addListeners();
 
@@ -615,52 +622,55 @@ function showAddAnswer( question ) {
             event.preventDefault();
 
             var name = document.getElementById( 'location-name' ).value.trim(),
-                address = document.getElementById( 'location-address' ).value.trim();
+                addressText = address.value.trim();
 
-            if ( name && address ) {
+            if ( name && addressText ) {
 
                 ok.focus();
-                close();
 
-                var link = document.getElementById( 'location-link' ).value.trim(),
-                    phone = document.getElementById( 'location-phone' ).value.trim(),
-                    options = { link: link, phone: phone, newLocation: true },
-                    location = {
-                        id: guid(),
-                        reference: '',
-                        vicinity: address,
-                        name: name,
-                        geometry: {
-                            location: {
-                                lat: function () { return latitude },
-                                lon: function () { return latitude }
-                            }
-                        }
+                getGeocode( addressText, function ( geometry, formattedAddress ) {
 
-                    },
-                    locationHtml = getLocationItem( location, options ),
-                    div = document.createElement( 'div' );
+                    if ( geometry ) {
 
-                div.innerHTML = locationHtml;
-                showAnswerConfirm( div.firstChild );
+                        close();
 
-                //submit to google?
+                        var link = document.getElementById( 'location-link' ).value.trim(),
+                            phone = document.getElementById( 'location-phone' ).value.trim(),
+                            location = {
+                                id: guid(),
+                                reference: '',
+                                vicinity: ( formattedAddress ? formattedAddress : addressText ),
+                                name: name,
+                                link: link,
+                                phone: phone,
+                                geometry: {
+                                    location: {
+                                        lat: function () { return geometry.location.lat() },
+                                        lng: function () { return geometry.location.lng() }
+                                    }
+                                }
+                            },
+                            locationHtml = getLocationItem( location, { newLocation: true } ),
+                            div = document.createElement( 'div' );
+
+                        div.innerHTML = locationHtml;
+                        showAnswerConfirm( div.firstChild );
+
+                        //submit to google?
+
+                    } else {
+
+                        address.focus();
+                        error.removeClass( 'hide' );
+                        window.setTimeout( function () { error.removeClass( 'height-zero' ); }, 10 );
+
+                    };
+
+                } );
 
             };
 
         };
-
-            return '<li class="location-item list-item' + ( options ? ' ' + options.existingClass : '' ) + '" '
-            + 'data-location-id="' + location.id + '" '
-            + 'data-reference="' + location.reference + '" '
-            + 'data-address="' + location.vicinity + '" '
-            + 'data-latitude="' + location.geometry.location.lat() + '" '
-            + 'data-longitude="' + location.geometry.location.lng() + '" '
-            + 'data-name="' + location.name.htmlEncode() + '">'
-            + '<div class="location-body">' + location.name + '</div>'
-            + '<div class="location-info">' + location.vicinity + '</div>'
-            + ( options ? options.existingAnswer : '' )
-            + '</li>';
 
         function cancelClick( event ) {
 
@@ -674,9 +684,57 @@ function showAddAnswer( question ) {
 
         };
 
+        function addressKeyDown() {
+
+            if ( !error.hasClass( 'hide' ) ) {
+
+                error.addClass( 'height-zero' );
+                window.setTimeout( function () { error.addClass( 'hide' ); }, 600 );
+
+            };
+
+        };
+
+        function getGeocode( addressText, complete ) {
+
+            var geocoder = new google.maps.Geocoder(),
+                request = { 'address': addressText };
+
+            geocoder.geocode( request, function ( results, status ) {
+
+                if ( status == google.maps.GeocoderStatus.OK && results.length ) {
+
+                    for ( var resultIndex = 0; resultIndex < results.length; resultIndex++ ) {
+
+                        var geometry = results[resultIndex].geometry,
+                            formattedAddress = results[resultIndex].formatted_address;
+
+                        if ( geometry && geometry.location ) {
+
+                            complete( geometry, formattedAddress );
+                            return;
+
+                        };
+
+                    };
+
+                    //if it gets to here, no geo found                
+                    complete();
+
+                } else {
+
+                    complete();
+
+                };
+
+            } );
+
+        };
+
         function removeListeners() {
 
             addLocation.removeEventListener( 'submit', okClick, false );
+            address.removeEventListener( 'keydown', addressKeyDown, false );
             ok.removeEventListener( 'click', okClick, false );
             ok.removeEventListener( 'touchstart', selectButton, false );
             ok.removeEventListener( 'touchend', unselectButton, false );
@@ -693,6 +751,7 @@ function showAddAnswer( question ) {
         function addListeners() {
 
             addLocation.addEventListener( 'submit', okClick, false );
+            address.addEventListener( 'keydown', addressKeyDown, false );
             ok.addEventListener( 'click', okClick, false );
             ok.addEventListener( 'touchstart', selectButton, false );
             ok.addEventListener( 'touchend', unselectButton, false );
