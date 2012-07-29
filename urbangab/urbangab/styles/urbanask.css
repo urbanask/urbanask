@@ -165,25 +165,42 @@
     width: 260px;
 }
 
-.answer-count {
-    color: white;
-    font-size: 24px; 
-    line-height: 38px; 
-    text-align: center;
-}
-
 .answer-count-view {
-    background-image:             radial-gradient( center -12px, circle, white 0, black 38px );
-        background-image:    -moz-radial-gradient( center -12px, circle, white 0, black 38px );
-        background-image:     -ms-radial-gradient( center -12px, circle, white 0, black 38px );
-        background-image:      -o-radial-gradient( center -12px, circle, white 0, black 38px );
-        background-image: -webkit-radial-gradient( center -12px, circle, white 0, black 38px );
     background-color: black;
+    background-image: linear-gradient( 
+            rgba( 255, 255, 255, .35 ), 
+            rgba( 255, 255, 255, 0 ) );
+        background-image: -moz-linear-gradient( 
+            rgba( 255, 255, 255, .35 ), 
+            rgba( 255, 255, 255, 0 ) );
+        background-image: -ms-linear-gradient( 
+            rgba( 255, 255, 255, .35 ), 
+            rgba( 255, 255, 255, 0 ) );
+        background-image: -o-linear-gradient( 
+            rgba( 255, 255, 255, .35 ), 
+            rgba( 255, 255, 255, 0 ) );
+        background-image: -webkit-linear-gradient( 
+            rgba( 255, 255, 255, .35 ), 
+            rgba( 255, 255, 255, 0 ) );
+    border: 1px solid rgba( 0, 0, 0, 1 );  
     border-radius: 50%;
+    box-shadow:          inset 0 1px 1px rgba( 255, 255, 255, .35 ), 
+                         inset 0 -1px 1px rgba( 0, 0, 0, .2 );
+        -moz-box-shadow: inset 0 1px 1px rgba( 255, 255, 255, .35 ), 
+                         inset 0 -1px 1px rgba( 0, 0, 0, .2 );
+        -ms-box-shadow:  inset 0 1px 1px rgba( 255, 255, 255, .35 ), 
+                         inset 0 -1px 1px rgba( 0, 0, 0, .2 );
+        -o-box-shadow:   inset 0 1px 1px rgba( 255, 255, 255, .35 ), 
+                         inset 0 -1px 1px rgba( 0, 0, 0, .2 );
+    color: white;
     float: left;
+    font: bold 24px/38px Helvetica, Verdana, Tahoma;
     height: 38px; 
     margin: 2px 4px 0 2px;
     overflow: hidden;
+    text-align: center;
+    text-decoration: none;
+    text-shadow: 0 -1px 0 rgba( 0, 0, 0, .4 );
     width: 38px; 
 }
 
@@ -1443,7 +1460,6 @@ html {
     font-size: 12px;
     height: 20px;
     overflow: hidden;
-    text-overflow: ellipsis;
     white-space: nowrap;
 }
 
@@ -1452,7 +1468,11 @@ html {
     height: 18px;
     line-height: 19px;
     margin-left: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     vertical-align: top;
+    width: 237px;
 }
 
 .location-status-message-not-found {
