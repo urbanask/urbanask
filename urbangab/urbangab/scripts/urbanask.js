@@ -7352,15 +7352,27 @@ function toolbarClick( event ) {
 
             case 'add-answer-button':
 
-                question = _pages.last().options.object;
+                if ( isLoggedIn() ) {
 
-                if ( question.answered( _account[ACCOUNT_COLUMNS.userId] ) ) {
+                    question = _pages.last().options.object;
 
-                    showMessage( STRINGS.error.alreadyAnswered );
+                    if ( question.answered( _account[ACCOUNT_COLUMNS.userId] ) ) {
+
+                        showMessage( STRINGS.error.alreadyAnswered );
+
+                    } else {
+
+                        showAddAnswer( question );
+
+                    };
 
                 } else {
 
-                    showAddAnswer( question );
+                    showMessage( STRINGS.login.loginRequired.replace( '%1', STRINGS.login.loginRequiredAction.addAnswer ), function () {
+
+                        logoutApp();
+
+                    } );
 
                 };
 
@@ -7378,7 +7390,20 @@ function toolbarClick( event ) {
 
             case 'delete-answer-button':
 
-                deleteAnswer();
+                if ( isLoggedIn() ) {
+
+                    deleteAnswer();
+
+                } else {
+
+                    showMessage( STRINGS.login.loginRequired.replace( '%1', STRINGS.login.loginRequiredAction.deleteAnswer ), function () {
+
+                        logoutApp();
+
+                    } );
+
+                };
+
                 break;
 
             case 'directions-button':
@@ -7415,11 +7440,24 @@ function toolbarClick( event ) {
 
             case 'select-answer-button':
 
-                var answer = _pages.last().options.object;
-                question = _pages.last().options.question;
-                answerItem = document.getElementById( 'answer-view' ).getElementsByClassName( 'answer-item' )[0];
+                if ( isLoggedIn() ) {
 
-                saveAnswerSelect( question, answer, answerItem );
+                    var answer = _pages.last().options.object;
+                    question = _pages.last().options.question;
+                    answerItem = document.getElementById( 'answer-view' ).getElementsByClassName( 'answer-item' )[0];
+
+                    saveAnswerSelect( question, answer, answerItem );
+
+                } else {
+
+                    showMessage( STRINGS.login.loginRequired.replace( '%1', STRINGS.login.loginRequiredAction.deleteAnswer ), function () {
+
+                        logoutApp();
+
+                    } );
+
+                };
+
                 break;
 
             case 'select-answers-button':
@@ -7454,14 +7492,14 @@ function toolbarClick( event ) {
 
             case 'user-button':
 
-                if ( isLoggedId() ) {
+                if ( isLoggedIn() ) {
 
                     showPage( 'user-page', { id: item.getDataset( 'user-id' ), top: true } );
                     scrollUp();
 
                 } else {
 
-                    showMessage( STRINGS.login.loginRequired, function () {
+                    showMessage( STRINGS.login.loginRequired.replace( '%1', STRINGS.login.loginRequiredAction.profile ), function () {
 
                         logoutApp();
 
@@ -7473,18 +7511,30 @@ function toolbarClick( event ) {
 
             case 'vote-down-button':
 
-                question = _pages.last().options.object;
-                var voteDownQuestion = document.getElementById( 'question-view' ).getElementsByClassName( 'vote-down-question' )[0],
-                    voteDownAnswer = document.getElementById( 'answers' ).getElementsByClassName( 'vote-down-answer' )[0];
+                if ( isLoggedIn() ) {
 
-                if ( ( voteDownQuestion && voteDownQuestion.hasClass( 'hide' ) )
-                    || ( voteDownAnswer && voteDownAnswer.hasClass( 'hide' ) ) ) {
+                    question = _pages.last().options.object;
+                    var voteDownQuestion = document.getElementById( 'question-view' ).getElementsByClassName( 'vote-down-question' )[0],
+                        voteDownAnswer = document.getElementById( 'answers' ).getElementsByClassName( 'vote-down-answer' )[0];
 
-                    showVoteDown( question );
+                    if ( ( voteDownQuestion && voteDownQuestion.hasClass( 'hide' ) )
+                        || ( voteDownAnswer && voteDownAnswer.hasClass( 'hide' ) ) ) {
+
+                        showVoteDown( question );
+
+                    } else {
+
+                        hideVoteDown();
+
+                    };
 
                 } else {
 
-                    hideVoteDown();
+                    showMessage( STRINGS.login.loginRequired.replace( '%1', STRINGS.login.loginRequiredAction.vote ), function () {
+
+                        logoutApp();
+
+                    } );
 
                 };
 
@@ -7492,17 +7542,29 @@ function toolbarClick( event ) {
 
             case 'vote-down-answer-button':
 
-                answer = _pages.last().options.object;
-                question = _pages.last().options.question;
-                answerItem = document.getElementById( 'answer-view' ).getElementsByClassName( 'answer-item' )[0];
+                if ( isLoggedIn() ) {
 
-                if ( isMyAnswer( answer ) ) {
+                    answer = _pages.last().options.object;
+                    question = _pages.last().options.question;
+                    answerItem = document.getElementById( 'answer-view' ).getElementsByClassName( 'answer-item' )[0];
 
-                    showMessage( STRINGS.error.voteOnOwnAnswer );
+                    if ( isMyAnswer( answer ) ) {
+
+                        showMessage( STRINGS.error.voteOnOwnAnswer );
+
+                    } else {
+
+                        saveAnswerDownvote( question, answer, answerItem );
+
+                    };
 
                 } else {
 
-                    saveAnswerDownvote( question, answer, answerItem );
+                    showMessage( STRINGS.login.loginRequired.replace( '%1', STRINGS.login.loginRequiredAction.vote ), function () {
+
+                        logoutApp();
+
+                    } );
 
                 };
 
@@ -7510,17 +7572,29 @@ function toolbarClick( event ) {
 
             case 'vote-up-answer-button':
 
-                answer = _pages.last().options.object;
-                question = _pages.last().options.question;
-                answerItem = document.getElementById( 'answer-view' ).getElementsByClassName( 'answer-item' )[0];
+                if ( isLoggedIn() ) {
 
-                if ( isMyAnswer( answer ) ) {
+                    answer = _pages.last().options.object;
+                    question = _pages.last().options.question;
+                    answerItem = document.getElementById( 'answer-view' ).getElementsByClassName( 'answer-item' )[0];
 
-                    showMessage( STRINGS.error.voteOnOwnAnswer );
+                    if ( isMyAnswer( answer ) ) {
+
+                        showMessage( STRINGS.error.voteOnOwnAnswer );
+
+                    } else {
+
+                        saveAnswerUpvote( question, answer, answerItem );
+
+                    };
 
                 } else {
 
-                    saveAnswerUpvote( question, answer, answerItem );
+                    showMessage( STRINGS.login.loginRequired.replace( '%1', STRINGS.login.loginRequiredAction.vote ), function () {
+
+                        logoutApp();
+
+                    } );
 
                 };
 
@@ -7528,18 +7602,30 @@ function toolbarClick( event ) {
 
             case 'vote-up-button':
 
-                question = _pages.last().options.object;
-                var voteUpQuestion = document.getElementById( 'question-view' ).getElementsByClassName( 'vote-up-question' )[0],
-                    voteUpAnswer = document.getElementById( 'answers' ).getElementsByClassName( 'vote-up-answer' )[0];
+                if ( isLoggedIn() ) {
 
-                if ( ( voteUpQuestion && voteUpQuestion.hasClass( 'hide' ) )
-                    || ( voteUpAnswer && voteUpAnswer.hasClass( 'hide' ) ) ) {
+                    question = _pages.last().options.object;
+                    var voteUpQuestion = document.getElementById( 'question-view' ).getElementsByClassName( 'vote-up-question' )[0],
+                        voteUpAnswer = document.getElementById( 'answers' ).getElementsByClassName( 'vote-up-answer' )[0];
 
-                    showVoteUp( question );
+                    if ( ( voteUpQuestion && voteUpQuestion.hasClass( 'hide' ) )
+                        || ( voteUpAnswer && voteUpAnswer.hasClass( 'hide' ) ) ) {
+
+                        showVoteUp( question );
+
+                    } else {
+
+                        hideVoteUp();
+
+                    };
 
                 } else {
 
-                    hideVoteUp();
+                    showMessage( STRINGS.login.loginRequired.replace( '%1', STRINGS.login.loginRequiredAction.vote ), function () {
+
+                        logoutApp();
+
+                    } );
 
                 };
 

@@ -132,7 +132,15 @@
         {
             "createEmailAccount": "Create Account with Email",
             "twitter": "Login with Twitter",
-            "loginRequired": "You must login to do this. Would you like to login now?"
+            "loginRequired": "You must login to %1.<br /><br />Would you like to login now?",
+            "loginRequiredAction": 
+            {
+                "profile": "view your profile",
+                "addAnswer": "add an answer",
+                "deleteAnswer": "delete an answer",
+                "selectAnswer": "select an answer",
+                "vote": "vote"    
+            }
         },
         "local": "local",
         "months": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
