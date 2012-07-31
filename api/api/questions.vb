@@ -82,7 +82,7 @@ Public Class questions : Inherits api.messageHandler
                 If IsNumeric(id) Then '/api/questions/{id}
 
                     Select Case command
-                        Case ""
+                        Case "" '/api/questions/{id}
 
                             loadQuestion(context, connection, queries, userId)
 
@@ -677,7 +677,40 @@ Public Class questions : Inherits api.messageHandler
         ByRef userId As Int32) As Boolean
 
         Dim authorized As Boolean,
-            auth As New authorization(context, authorized, userId)
+            resource As String = context.Request.PathInfo,
+            auth As authorization
+
+        Select Case resource
+            Case "" '/api/questions
+
+                authorized = True
+
+            Case Else
+
+                Dim slash As Int32 = resource.IndexOf("/"c, 1),
+                    id As String = resource.Substring(1, If(slash - 1 > -1, slash - 1, resource.Length - 1)),
+                    command As String = If(slash = -1, "", resource.Substring(slash + 1))
+
+                If IsNumeric(id) Then '/api/questions/{id}
+
+                    Select Case command
+                        Case "" '/api/questions/{id}
+
+                            authorized = True
+
+                        Case Else
+
+                            auth = New authorization(context, authorized, userId)
+
+                    End Select
+
+                Else
+
+                    auth = New authorization(context, authorized, userId)
+
+                End If
+
+        End Select
 
         Return authorized
 

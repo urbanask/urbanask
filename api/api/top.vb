@@ -179,8 +179,7 @@ Public Class top : Inherits api.messageHandler
         context As System.Web.HttpContext,
         ByRef userId As Int32) As Boolean
 
-        Dim authorized As Boolean,
-            auth As New authorization(context, authorized, userId)
+        Dim authorized As Boolean = True
 
         Return authorized
 

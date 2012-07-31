@@ -798,13 +798,17 @@ function checkLogin() {
 
         loginTwitter( window.location.queryString()['oauth_token'] );
 
-    } else if ( _session.id && _session.key ) {
+//    } else if ( _session.id && _session.key ) {
 
-        startApp();
+//        startApp();
+
+//    } else {
+
+//        showPage( 'login-page' );
 
     } else {
 
-        showPage( 'login-page' );
+        startApp();
 
     };
 
@@ -1156,7 +1160,7 @@ function getQuestionItem( question, options ) {
 
     if ( question[QUESTION_COLUMNS.bounty] ) {
 
-        bounty = '<span class="bounty">+' + question[QUESTION_COLUMNS.bounty] + '</span>';
+        bounty = '<span class="bounty button-3d">+' + question[QUESTION_COLUMNS.bounty] + '</span>';
 
     };
 
@@ -1284,7 +1288,7 @@ function getTopUserItem( topTypeId, user, count ) {
     return '<li class="user-item list-item"'
         + 'data-id="' + user[TOP_USER_COLUMNS.userId] + '">'
         + '<div class="user-count">' + count + '</div>'
-        + '<img class="user-icon" src="' + API_URL + resource + '?x-session=' + getSession( resource ) + '" />'
+        + '<img class="user-icon" src="' + API_URL + resource + '" />'
         + '<div class="' + topScore + '">' + formatNumber( user[TOP_USER_COLUMNS.topScore] ) + '</div>'
         + '<div class="username">' + user[TOP_USER_COLUMNS.username] + '</div>'
         + '<ul class="user-info">'
@@ -1307,11 +1311,11 @@ function getVotes( votes ) {
 
     if ( votes > 0 ) {
 
-        return '<span class="votes votes-up">' + getVoteCount( votes ) + '</span>';
+        return '<span class="votes votes-up button-3d">' + getVoteCount( votes ) + '</span>';
 
     } else if ( votes < 0 ) {
 
-        return '<span class="votes votes-down">' + getVoteCount( votes ) + '</span>';
+        return '<span class="votes votes-down button-3d">' + getVoteCount( votes ) + '</span>';
 
     } else {
 
@@ -2091,6 +2095,12 @@ function initializeVersionCheck() {
 
 };
 
+function isLoggedIn() {
+
+    return _session.id && _session.key;
+
+};
+
 function isMe( user ) {
 
     return ( _account[ACCOUNT_COLUMNS.userId] == user[USER_COLUMNS.userId] );
@@ -2117,46 +2127,54 @@ function isScreenWidth( width ) {
 
 function loadAccount( complete ) {
 
-    var resource = '/api/account',
-        session = getSession( resource );
+    if ( isLoggedIn() ) {
 
-    ajax( API_URL + resource, {
+        var resource = '/api/account',
+            session = getSession( resource );
 
-        "type": "GET",
-        "headers": { "x-session": session },
-        "cache": false,
-        "async": false,
-        "success": function ( data, status ) {
+        ajax( API_URL + resource, {
 
-            var count = _account[ACCOUNT_COLUMNS.notifications]
-                ? _account[ACCOUNT_COLUMNS.notifications].items( 0, NOTIFICATION_COLUMNS.viewed ).length
-                : 0;
-            _account = window.JSON.parse( data )[0];
-            _account[ACCOUNT_COLUMNS.instructions].unviewed = function () {
+            "type": "GET",
+            "headers": { "x-session": session },
+            "cache": false,
+            "async": false,
+            "success": function ( data, status ) {
 
-                var instuctions = [];
+                var count = _account[ACCOUNT_COLUMNS.notifications]
+                    ? _account[ACCOUNT_COLUMNS.notifications].items( 0, NOTIFICATION_COLUMNS.viewed ).length
+                    : 0;
+                _account = window.JSON.parse( data )[0];
+                _account[ACCOUNT_COLUMNS.instructions].unviewed = function () {
 
-                for ( var index = 0; index < _account[ACCOUNT_COLUMNS.instructions].length; index++ ) {
+                    var instuctions = [];
 
-                    if ( !_account[ACCOUNT_COLUMNS.instructions][index] ) { instuctions.push( index ); };
+                    for ( var index = 0; index < _account[ACCOUNT_COLUMNS.instructions].length; index++ ) {
+
+                        if ( !_account[ACCOUNT_COLUMNS.instructions][index] ) { instuctions.push( index ); };
+
+                    };
+
+                    return instuctions;
 
                 };
 
-                return instuctions;
+                showNotifications( _account[ACCOUNT_COLUMNS.notifications].length > count );
+                if ( complete ) { complete(); };
 
-            };
+            },
+            "error": function ( response, status, error ) {
 
-            showNotifications( _account[ACCOUNT_COLUMNS.notifications].length > count );
-            if ( complete ) { complete(); };
+                if ( error == 'Unauthorized' ) { logoutApp() };
 
-        },
-        "error": function ( response, status, error ) {
+            }
 
-            if ( error == 'Unauthorized' ) { logoutApp() };
+        } );
 
-        }
+    } else {
 
-    } );
+        if ( complete ) { complete(); };
+
+    };
 
 };
 
@@ -2206,13 +2224,11 @@ function loadCachedData() {
 
 function loadQuestion( questionId, complete ) {
 
-    var resource = '/api/questions/' + questionId,
-        session = getSession( resource );
+    var resource = '/api/questions/' + questionId;
 
     ajax( API_URL + resource, {
 
         "type": "POST",
-        "headers": { "x-session": session },
         "cache": false,
         "success": function ( data, status ) {
 
@@ -2235,18 +2251,16 @@ function loadQuestion( questionId, complete ) {
 
 function loadQuestions() {
 
-    if ( _account[ACCOUNT_COLUMNS.regions].length ) {
+    if ( isLoggedIn() && _account[ACCOUNT_COLUMNS.regions].length ) {
 
         var region = _account[ACCOUNT_COLUMNS.regions][0],
             data = 'regionId=' + region[REGION_COLUMNS.id],
-            resource = '/api/questions',
-            session = getSession( resource );
+            resource = '/api/questions';
 
         ajax( API_URL + resource, {
 
             "type": "GET",
             "data": data,
-            "headers": { "x-session": session },
             "cache": false,
             "async": false,
             "success": function ( data, status ) {
@@ -2275,14 +2289,12 @@ function loadQuestions() {
 function loadNearbyQuestions() {
 
     var data = 'latitude=' + _currentLocation.latitude + '&longitude=' + _currentLocation.longitude,
-        resource = '/api/questions',
-        session = getSession( resource );
+        resource = '/api/questions';
 
     ajax( API_URL + resource, {
 
         "type": "GET",
         "data": data,
-        "headers": { "x-session": session },
         "cache": false,
         "success": function ( data, status ) {
 
@@ -2307,14 +2319,12 @@ function loadEverywhereQuestions() {
 
         var data = 'regionId=' + WORLD_REGION_ID
                 + '&count=' + ( QUESTION_ROW_COUNT - _nearbyQuestions.length ),
-            resource = '/api/questions',
-            session = getSession( resource );
+            resource = '/api/questions';
 
         ajax( API_URL + resource, {
 
             "type": "GET",
             "data": data,
-            "headers": { "x-session": session },
             "cache": false,
             "success": function ( data, status ) {
 
@@ -2346,13 +2356,11 @@ function loadTopUsers() {
     window.setTimeout( function () {
 
         var data = 'regionId=' + _currentLocation.regionId,
-            resource = '/api/top/topUsers',
-            session = getSession( resource );
+            resource = '/api/top/topUsers';
 
         ajax( API_URL + resource, {
 
             "type": "GET",
-            "headers": { "x-session": session },
             "data": data,
             "success": function ( data, status ) {
 
@@ -2382,15 +2390,12 @@ function loadUser( userId, complete ) {
 
     window.setTimeout( function () {
 
-        var resource = '/api/users/' + userId,
-            session = getSession( resource );
-
+        var resource = '/api/users/' + userId;
         showLoading( 'center', 'center' );
 
         ajax( API_URL + resource, {
 
             "type": "POST",
-            "headers": { "x-session": session },
             "success": function ( data, status ) {
 
                 var user = window.JSON.parse( data )[0];
@@ -2423,32 +2428,38 @@ function loadUser( userId, complete ) {
 
 function loadUserQuestions() {
 
-    var data = 'userId=' + _account[ACCOUNT_COLUMNS.userId]
-            + '&expirationDays=' + EXPIRATION_DAYS,
-        resource = '/api/questions',
-        session = getSession( resource );
+    if ( isLoggedIn() ) {
 
-    ajax( API_URL + resource, {
+        var data = 'userId=' + _account[ACCOUNT_COLUMNS.userId]
+                + '&expirationDays=' + EXPIRATION_DAYS,
+            resource = '/api/questions';
 
-        "type": "GET",
-        "data": data,
-        "headers": { "x-session": session },
-        "cache": false,
-        "async": false,
-        "success": function ( data, status ) {
+        ajax( API_URL + resource, {
 
-            _userQuestions = window.JSON.parse( data );
-            window.setLocalStorage( 'userQuestions', data );
-            showUserQuestions();
+            "type": "GET",
+            "data": data,
+            "cache": false,
+            "async": false,
+            "success": function ( data, status ) {
 
-        },
-        "error": function ( response, status, error ) {
+                _userQuestions = window.JSON.parse( data );
+                window.setLocalStorage( 'userQuestions', data );
+                showUserQuestions();
 
-            if ( error == 'Unauthorized' ) { logoutApp() };
+            },
+            "error": function ( response, status, error ) {
 
-        }
+                if ( error == 'Unauthorized' ) { logoutApp() };
 
-    } );
+            }
+
+        } );
+
+    } else {
+
+        document.getElementById( 'user-questions' ).addClass( 'hide' );
+
+    };
 
 };
 
@@ -4771,13 +4782,11 @@ function getGeolocation( geoComplete, options ) {
     function loadCurrentRegion( region ) {
 
         var resource = '/api/lookups/regions',
-            data = 'region=' + region,
-            session = getSession( resource );
+            data = 'region=' + region;
 
         ajax( API_URL + resource, {
 
             "type": "GET",
-            "headers": { "x-session": session },
             "data": data,
             "success": function ( data, status ) {
 
@@ -4903,13 +4912,11 @@ function loadRegions() {
 
     } else {
 
-        var resource = '/api/lookups/regions',
-            session = getSession( resource );
+        var resource = '/api/lookups/regions';
 
         ajax( API_URL + resource, {
 
             "type": "GET",
-            "headers": { "x-session": session },
             "success": function ( data, status ) {
 
                 var regions = window.JSON.parse( data ),
@@ -5627,7 +5634,7 @@ function showEditAccount() {
 
 function showInstructions() {
 
-    if ( _account[ACCOUNT_COLUMNS.instructions].unviewed().length ) {
+    if ( isLoggedIn() && _account[ACCOUNT_COLUMNS.instructions].unviewed().length ) {
 
         var type = _account[ACCOUNT_COLUMNS.instructions].unviewed()[0];
 
@@ -5908,7 +5915,7 @@ function showInstructions() {
 
     };
 
-    if ( _account[ACCOUNT_COLUMNS.instructions].unviewed().length ) {
+    if ( isLoggedIn() && _account[ACCOUNT_COLUMNS.instructions].unviewed().length ) {
 
         window.setTimeout( function () {
 
@@ -6903,15 +6910,15 @@ function showToolbar( toolbar, options ) {
 
             };
 
-            //                    if ( isMyAnswer( options.answer ) ) {
+            //if ( isMyAnswer( options.answer ) ) {
 
-            //                        document.getElementById( 'delete-answer-button' ).removeClass( 'hide' );
+            //    document.getElementById( 'delete-answer-button' ).removeClass( 'hide' );
 
-            //                    } else {
+            //} else {
 
-            //                        document.getElementById( 'delete-answer-button' ).addClass( 'hide' );
+            //    document.getElementById( 'delete-answer-button' ).addClass( 'hide' );
 
-            //                    };
+            //};
 
             document.getElementById( 'answer-user-button' ).setDataset( 'user-id', options.answer[ANSWER_COLUMNS.userId] );
 
@@ -7069,7 +7076,7 @@ function showUser( user ) {
         ? STRINGS.totalBadgesOne
         : STRINGS.totalBadges;
 
-    showNotifications();
+    if ( isMe( user ) ) { showNotifications(); };
 
     var html = getListItemHeader( STRINGS.reputation );
 
@@ -7160,7 +7167,7 @@ function showUser( user ) {
     window.setTimeout( function () {
 
         var resource = '/api/users/' + user[USER_COLUMNS.userId] + '/picture';
-        $( '#user-picture' ).src = API_URL + resource + '?x-session=' + getSession( resource );
+        $( '#user-picture' ).src = API_URL + resource;
         hideLoading();
 
     }, 50 );
@@ -7447,8 +7454,21 @@ function toolbarClick( event ) {
 
             case 'user-button':
 
-                showPage( 'user-page', { id: item.getDataset( 'user-id' ), top: true } );
-                scrollUp();
+                if ( isLoggedId() ) {
+
+                    showPage( 'user-page', { id: item.getDataset( 'user-id' ), top: true } );
+                    scrollUp();
+
+                } else {
+
+                    showMessage( STRINGS.login.loginRequired, function () {
+
+                        logoutApp();
+
+                    } );
+
+                };
+
                 break;
 
             case 'vote-down-button':

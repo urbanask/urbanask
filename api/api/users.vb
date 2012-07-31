@@ -543,19 +543,7 @@ Public Class users : Inherits api.messageHandler
         context As System.Web.HttpContext,
         ByRef userId As Int32) As Boolean
 
-        Dim authorized As Boolean,
-            resource As String = context.Request.PathInfo
-
-        Select resource
-            Case "/verifyemail" '/api/users/verifyemail
-
-                authorized = True
-
-            Case Else
-
-                Dim auth As New authorization(context, authorized, userId)
-
-        End Select
+        Dim authorized As Boolean = True
 
         Return authorized
 

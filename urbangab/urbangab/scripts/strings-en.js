@@ -131,7 +131,8 @@
         "login":
         {
             "createEmailAccount": "Create Account with Email",
-            "twitter": "Login with Twitter"
+            "twitter": "Login with Twitter",
+            "loginRequired": "You must login to do this. Would you like to login now?"
         },
         "local": "local",
         "months": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
