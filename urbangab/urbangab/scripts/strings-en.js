@@ -209,5 +209,6 @@
         "versionCaption": "version: ",
         "voteDownCaption": "-1",
         "voteUpCaption": "+1",
-        "xmark": "&#10008;"
+        "xmark": "&#10008;",
+        "xmarkDelete": "&times;"
     };

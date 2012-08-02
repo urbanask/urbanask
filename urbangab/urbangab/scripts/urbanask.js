@@ -1081,9 +1081,12 @@ function getLetter( letter ) {
 
 };
 
-function getListItemHeader( caption ) {
+function getListItemHeader( caption, button ) {
 
-    return '<li class="list-header">' + caption + '</li>';
+    return '<li class="list-header">'
+        + caption
+        + ( button ? button : '' ) 
+        + '</li>';
 
 };
 
@@ -6232,7 +6235,8 @@ function showNotifications( newItems ) {
 
     if ( notifications.length ) {
 
-        var html = getListItemHeader( STRINGS.user.notifications );
+        var button = '<button id="delete-notifications">' + STRINGS.xmarkDelete + '</button>',
+            html = getListItemHeader( STRINGS.user.notifications, button );
 
         for ( var index = 0; index < notifications.length; index++ ) {
 
