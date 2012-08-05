@@ -13,6 +13,7 @@ SELECT * FROM questionVote WHERE userId < 100
 SELECT * FROM userBadge WHERE userId < 100
 SELECT * FROM reputation WHERE userId < 100
 
+SELECT * FROM Gabs.lookup.region
 SELECT * FROM Gabs.processRegions.regionNew
 
 /*
@@ -24,7 +25,7 @@ UPDATE question SET bounty = 0 WHERE regionId = 14 AND bounty = 100
 SELECT username, authtypeId FROM [user] WHERE userId < 100
 SELECT * FROM question WHERE question LIKE '%chalk%'
 SELECT * FROM reputation WHERE itemId = 1105914
-SELECT * FROM [user] WHERE email LIKE '%thinkingstiff%'
+SELECT * FROM answer WHERE location LIKE '%ace%'
 SELECT * FROM userFacebook WHERE email LIKE '%thinkingstiff%'
 DELETE FROM question WHERE questionId = 1110251
 UPDATE [user] SET 

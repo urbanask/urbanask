@@ -1,0 +1,4 @@
+1.15
+
+new - clear all notifications button
+

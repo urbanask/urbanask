@@ -2941,6 +2941,34 @@ function notificationItemClick( event ) {
 
             };
 
+        } else if ( event.target.id == 'delete-notifications' ) {
+
+            var deleteNotifications = event.target,
+                userNotifications = document.getElementById( 'user-notifications' ),
+                notifications = userNotifications.getElementsByClassName( 'notification-item' );
+
+            userNotifications.style.height = userNotifications.clientHeight + 'px';
+
+            window.setTimeout( function () {
+
+                userNotifications.addClass( 'height-slide' ).addClass( 'height-zero' );
+
+            }, 100 );
+
+            window.setTimeout( function () {
+
+                userNotifications.addClass( 'hide' );
+
+                for ( var index = 0; index < notifications.length; index++ ) {
+
+                    saveNotificationViewed( notifications[index] );
+
+                };
+
+                userNotifications.removeClass( 'height-zero' ).removeClass( 'height-slide' );
+
+            }, 700 );
+
         };
 
         window.setTimeout( function () { unselectItem( event ); }, 100 );
@@ -3786,80 +3814,88 @@ function saveAnswerDownvote( question, answer, answerItem ) {
 
     hideVoteDown();
 
-    ajax( API_URL + resource, {
+    if ( isMyAnswer( answer ) ) {
 
-        "type": "GET",
-        "headers": { "x-session": session },
-        "success": function ( data, status ) {
+        showMessage( STRINGS.error.voteOnOwnAnswer );
 
-            var location = answerItem.getElementsByClassName( 'location-name' )[0],
-                voteBox = location.getElementsByClassName( 'votes' )[0],
-                voted = answer[ANSWER_COLUMNS.voted],
-                vote = ( voted == -1 ? 0 : -1 ),
-                currentVotes = answer[ANSWER_COLUMNS.votes],
-                newVotes = currentVotes - voted + vote; //downvote
+    } else {
 
-            answer[ANSWER_COLUMNS.votes] = newVotes;
-            answer[ANSWER_COLUMNS.voted] = vote;
+        ajax( API_URL + resource, {
 
-            if ( newVotes == 0 ) { //remove vote box
+            "type": "GET",
+            "headers": { "x-session": session },
+            "success": function ( data, status ) {
 
-                if ( voteBox ) { location.removeChild( voteBox ) };
+                var location = answerItem.getElementsByClassName( 'location-name' )[0],
+                    voteBox = location.getElementsByClassName( 'votes' )[0],
+                    voted = answer[ANSWER_COLUMNS.voted],
+                    vote = ( voted == -1 ? 0 : -1 ),
+                    currentVotes = answer[ANSWER_COLUMNS.votes],
+                    newVotes = currentVotes - voted + vote; //downvote
 
-            } else if ( !voteBox ) { //show vote box
+                answer[ANSWER_COLUMNS.votes] = newVotes;
+                answer[ANSWER_COLUMNS.voted] = vote;
 
-                location.firstChild.insertAdjacentHTML( 'afterEnd', getVotes( newVotes ) );
+                if ( newVotes == 0 ) { //remove vote box
 
-            } else { //update vote box
+                    if ( voteBox ) { location.removeChild( voteBox ) };
 
-                var voteElement = document.createElement( 'div' );
-                voteElement.innerHTML = getVotes( newVotes );
-                voteBox.parentNode.replaceChild( voteElement.firstChild, voteBox );
+                } else if ( !voteBox ) { //show vote box
 
-            };
+                    location.firstChild.insertAdjacentHTML( 'afterEnd', getVotes( newVotes ) );
 
-            if ( voted != -1 ) { //downvote
+                } else { //update vote box
 
-                showNotification( STRINGS.notificationDownvote, { tight: true } );
+                    var voteElement = document.createElement( 'div' );
+                    voteElement.innerHTML = getVotes( newVotes );
+                    voteBox.parentNode.replaceChild( voteElement.firstChild, voteBox );
 
-            };
+                };
 
-            window.setTimeout( function () {
+                if ( voted != -1 ) { //downvote
 
-                showQuestion( question );
+                    showNotification( STRINGS.notificationDownvote, { tight: true } );
 
-            }, 100 );
+                };
 
-        },
-        "error": function ( response, status, error ) {
+                window.setTimeout( function () {
 
-            switch ( error ) {
+                    showQuestion( question );
 
-                case 'Unauthorized':
+                }, 100 );
 
-                    logoutApp();
-                    break;
+            },
+            "error": function ( response, status, error ) {
 
-                case 'Forbidden':
-                case 'Precondition Failed':
+                switch ( error ) {
 
-                    if ( isMyAnswer( answer ) ) {
+                    case 'Unauthorized':
 
-                        showMessage( STRINGS.error.voteOnOwnAnswer );
+                        logoutApp();
+                        break;
 
-                    };
+                    case 'Forbidden':
+                    case 'Precondition Failed':
 
-                    break;
+                        if ( isMyAnswer( answer ) ) {
 
-                default:
+                            showMessage( STRINGS.error.voteOnOwnAnswer );
 
-                    showMessage( STRINGS.error.answerVote );
+                        };
 
-            };
+                        break;
 
-        }
+                    default:
 
-    } );
+                        showMessage( STRINGS.error.answerVote );
+
+                };
+
+            }
+
+        } );
+
+    };
 
 };
 
@@ -3870,96 +3906,104 @@ function saveAnswerUpvote( question, answer, answerItem ) {
 
     hideVoteUp();
 
-    ajax( API_URL + resource, {
+    if ( isMyAnswer( answer ) ) {
 
-        "type": "GET",
-        "headers": { "x-session": session },
-        "success": function ( data, status ) {
+        showMessage( STRINGS.error.voteOnOwnAnswer );
 
-            var location = answerItem.getElementsByClassName( 'location-name' )[0],
-                voteBox = location.getElementsByClassName( 'votes' )[0],
-                voted = answer[ANSWER_COLUMNS.voted],
-                vote = ( voted == 1 ? 0 : 1 ),
-                currentVotes = answer[ANSWER_COLUMNS.votes],
-                newVotes = currentVotes - voted + vote;
+    } else {
 
-            answer[ANSWER_COLUMNS.votes] = newVotes;
-            answer[ANSWER_COLUMNS.voted] = vote;
+        ajax( API_URL + resource, {
 
-            if ( newVotes == 0 ) { //remove vote box
+            "type": "GET",
+            "headers": { "x-session": session },
+            "success": function ( data, status ) {
 
-                if ( voteBox ) { location.removeChild( voteBox ) };
+                var location = answerItem.getElementsByClassName( 'location-name' )[0],
+                    voteBox = location.getElementsByClassName( 'votes' )[0],
+                    voted = answer[ANSWER_COLUMNS.voted],
+                    vote = ( voted == 1 ? 0 : 1 ),
+                    currentVotes = answer[ANSWER_COLUMNS.votes],
+                    newVotes = currentVotes - voted + vote;
 
-            } else if ( !voteBox ) { //show vote box
+                answer[ANSWER_COLUMNS.votes] = newVotes;
+                answer[ANSWER_COLUMNS.voted] = vote;
 
-                location.firstChild.insertAdjacentHTML( 'afterEnd', getVotes( newVotes ) );
+                if ( newVotes == 0 ) { //remove vote box
 
-            } else { //update vote box
+                    if ( voteBox ) { location.removeChild( voteBox ) };
 
-                var voteElement = document.createElement( 'div' );
-                voteElement.innerHTML = getVotes( newVotes );
-                voteBox.parentNode.replaceChild( voteElement.firstChild, voteBox );
+                } else if ( !voteBox ) { //show vote box
 
-            };
+                    location.firstChild.insertAdjacentHTML( 'afterEnd', getVotes( newVotes ) );
 
-            if ( voted != 1 ) { //upvote
+                } else { //update vote box
 
-                showNotification( STRINGS.notificationUpvote, { tight: true } );
-
-                if ( _account[ACCOUNT_COLUMNS.facebook][FACEBOOK_COLUMNS.facebookId]
-                    && question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.facebookId]
-                    && question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.openGraphId]
-                    && answer[ANSWER_COLUMNS.openGraphId] ) {
-
-                    postToFacebook( 
-                        'post-open-graph',
-                        'like',
-                        {
-                            openGraphId: answer[ANSWER_COLUMNS.openGraphId],
-                            questionFacebookId: question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.facebookId]
-                        }
-                    );
+                    var voteElement = document.createElement( 'div' );
+                    voteElement.innerHTML = getVotes( newVotes );
+                    voteBox.parentNode.replaceChild( voteElement.firstChild, voteBox );
 
                 };
 
-            };
+                if ( voted != 1 ) { //upvote
 
-            window.setTimeout( function () {
+                    showNotification( STRINGS.notificationUpvote, { tight: true } );
 
-                showQuestion( question );
+                    if ( _account[ACCOUNT_COLUMNS.facebook][FACEBOOK_COLUMNS.facebookId]
+                        && question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.facebookId]
+                        && question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.openGraphId]
+                        && answer[ANSWER_COLUMNS.openGraphId] ) {
 
-            }, 100 );
-
-        },
-        "error": function ( response, status, error ) {
-
-            switch ( error ) {
-
-                case 'Unauthorized':
-
-                    logoutApp();
-                    break;
-
-                case 'Forbidden':
-                case 'Precondition Failed':
-
-                    if ( isMyAnswer( answer ) ) {
-
-                        showMessage( STRINGS.error.voteOnOwnAnswer );
+                        postToFacebook( 
+                            'post-open-graph',
+                            'like',
+                            {
+                                openGraphId: answer[ANSWER_COLUMNS.openGraphId],
+                                questionFacebookId: question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.facebookId]
+                            }
+                        );
 
                     };
 
-                    break;
+                };
 
-                default:
+                window.setTimeout( function () {
 
-                    showMessage( STRINGS.error.answerVote );
+                    showQuestion( question );
 
-            };
+                }, 100 );
 
-        }
+            },
+            "error": function ( response, status, error ) {
 
-    } );
+                switch ( error ) {
+
+                    case 'Unauthorized':
+
+                        logoutApp();
+                        break;
+
+                    case 'Forbidden':
+                    case 'Precondition Failed':
+
+                        if ( isMyAnswer( answer ) ) {
+
+                            showMessage( STRINGS.error.voteOnOwnAnswer );
+
+                        };
+
+                        break;
+
+                    default:
+
+                        showMessage( STRINGS.error.answerVote );
+
+                };
+
+            }
+
+        } );
+
+    };
 
 };
 
@@ -4127,6 +4171,8 @@ function saveNotificationViewed( notificationItem ) {
 
                     };
 
+                    updateScrollUser();
+
                 },
                 "error": function ( response, status, error ) {
 
@@ -4143,6 +4189,7 @@ function saveNotificationViewed( notificationItem ) {
     if ( !_account[ACCOUNT_COLUMNS.notifications].items( 0, NOTIFICATION_COLUMNS.viewed ).length ) {
 
         document.getElementById( 'user-notifications' ).addClass( 'hide' );
+        updateScrollUser();
 
     };
 
@@ -4259,80 +4306,88 @@ function saveQuestionDownvote( question ) {
 
     hideVoteDown();
 
-    ajax( API_URL + resource, {
+    if ( isMyQuestion( question ) ) {
 
-        "type": "GET",
-        "headers": { "x-session": session },
-        "success": function ( data, status ) {
+        showMessage( STRINGS.error.voteOnOwnQuestion );
 
-            var body = document.getElementById( 'question-view' ).getElementsByClassName( 'question-item-body' )[0],
-                voteBox = body.getElementsByClassName( 'votes' )[0],
-                voted = question[QUESTION_COLUMNS.voted],
-                currentVotes = question[QUESTION_COLUMNS.votes],
-                vote = ( voted == -1 ? 0 : -1 ),
-                newVotes = currentVotes - voted + vote; //downvote
+    } else {
 
-            question[QUESTION_COLUMNS.votes] = newVotes;
-            question[QUESTION_COLUMNS.voted] = vote;
+        ajax( API_URL + resource, {
 
-            if ( newVotes == 0 ) { //remove vote box
+            "type": "GET",
+            "headers": { "x-session": session },
+            "success": function ( data, status ) {
 
-                if ( voteBox ) { body.removeChild( voteBox ); };
+                var body = document.getElementById( 'question-view' ).getElementsByClassName( 'question-item-body' )[0],
+                    voteBox = body.getElementsByClassName( 'votes' )[0],
+                    voted = question[QUESTION_COLUMNS.voted],
+                    currentVotes = question[QUESTION_COLUMNS.votes],
+                    vote = ( voted == -1 ? 0 : -1 ),
+                    newVotes = currentVotes - voted + vote; //downvote
 
-            } else if ( !voteBox ) { //show vote box
+                question[QUESTION_COLUMNS.votes] = newVotes;
+                question[QUESTION_COLUMNS.voted] = vote;
 
-                body.insertAdjacentHTML( 'afterBegin', getVotes( newVotes ) );
+                if ( newVotes == 0 ) { //remove vote box
 
-            } else { //update vote box
+                    if ( voteBox ) { body.removeChild( voteBox ); };
 
-                var voteElement = document.createElement( 'div' );
-                voteElement.innerHTML = getVotes( newVotes );
-                voteBox.parentNode.replaceChild( voteElement.firstChild, voteBox );
+                } else if ( !voteBox ) { //show vote box
 
-            };
+                    body.insertAdjacentHTML( 'afterBegin', getVotes( newVotes ) );
 
-            if ( voted != -1 ) { //downvote
+                } else { //update vote box
 
-                showNotification( STRINGS.notificationDownvote, { tight: true } );
+                    var voteElement = document.createElement( 'div' );
+                    voteElement.innerHTML = getVotes( newVotes );
+                    voteBox.parentNode.replaceChild( voteElement.firstChild, voteBox );
 
-            };
+                };
 
-            window.setTimeout( function () {
+                if ( voted != -1 ) { //downvote
 
-                showQuestion( question );
+                    showNotification( STRINGS.notificationDownvote, { tight: true } );
 
-            }, 100 );
+                };
 
-        },
-        "error": function ( response, status, error ) {
+                window.setTimeout( function () {
 
-            switch ( error ) {
+                    showQuestion( question );
 
-                case 'Unauthorized':
+                }, 100 );
 
-                    logoutApp();
-                    break;
+            },
+            "error": function ( response, status, error ) {
 
-                case 'Forbidden':
-                case 'Precondition Failed':
+                switch ( error ) {
 
-                    if ( isMyQuestion( question ) ) {
+                    case 'Unauthorized':
 
-                        showMessage( STRINGS.error.voteOnOwnQuestion );
+                        logoutApp();
+                        break;
 
-                    };
+                    case 'Forbidden':
+                    case 'Precondition Failed':
 
-                    break;
+                        if ( isMyQuestion( question ) ) {
 
-                default:
+                            showMessage( STRINGS.error.voteOnOwnQuestion );
 
-                    showMessage( STRINGS.error.saveQuestionUpvote );
+                        };
 
-            };
+                        break;
 
-        }
+                    default:
 
-    } );
+                        showMessage( STRINGS.error.saveQuestionUpvote );
+
+                };
+
+            }
+
+        } );
+
+    };
 
 };
 
@@ -4343,95 +4398,103 @@ function saveQuestionUpvote( question ) {
 
     hideVoteUp();
 
-    ajax( API_URL + resource, {
+    if ( isMyQuestion( question ) ) {
 
-        "type": "GET",
-        "headers": { "x-session": session },
-        "success": function ( data, status ) {
+        showMessage( STRINGS.error.voteOnOwnQuestion );
 
-            var body = document.getElementById( 'question-view' ).getElementsByClassName( 'question-item-body' )[0],
-                voteBox = body.getElementsByClassName( 'votes' )[0],
-                voted = question[QUESTION_COLUMNS.voted],
-                currentVotes = question[QUESTION_COLUMNS.votes],
-                vote = ( voted == 1 ? 0 : 1 ),
-                newVotes = currentVotes - voted + vote; //upvote
+    } else {
 
-            question[QUESTION_COLUMNS.votes] = newVotes;
-            question[QUESTION_COLUMNS.voted] = vote;
+        ajax( API_URL + resource, {
 
-            if ( newVotes == 0 ) { //remove vote box
+            "type": "GET",
+            "headers": { "x-session": session },
+            "success": function ( data, status ) {
 
-                if ( voteBox ) { body.removeChild( voteBox ); };
+                var body = document.getElementById( 'question-view' ).getElementsByClassName( 'question-item-body' )[0],
+                    voteBox = body.getElementsByClassName( 'votes' )[0],
+                    voted = question[QUESTION_COLUMNS.voted],
+                    currentVotes = question[QUESTION_COLUMNS.votes],
+                    vote = ( voted == 1 ? 0 : 1 ),
+                    newVotes = currentVotes - voted + vote; //upvote
 
-            } else if ( !voteBox ) { //show vote box
+                question[QUESTION_COLUMNS.votes] = newVotes;
+                question[QUESTION_COLUMNS.voted] = vote;
 
-                body.insertAdjacentHTML( 'afterBegin', getVotes( newVotes ) );
+                if ( newVotes == 0 ) { //remove vote box
 
-            } else { //update vote box
+                    if ( voteBox ) { body.removeChild( voteBox ); };
 
-                var voteElement = document.createElement( 'div' );
-                voteElement.innerHTML = getVotes( newVotes );
-                voteBox.parentNode.replaceChild( voteElement.firstChild, voteBox );
+                } else if ( !voteBox ) { //show vote box
 
-            };
+                    body.insertAdjacentHTML( 'afterBegin', getVotes( newVotes ) );
 
-            if ( voted != 1 ) { //upvote
+                } else { //update vote box
 
-                showNotification( STRINGS.notificationUpvote, { tight: true } );
-
-                if ( _account[ACCOUNT_COLUMNS.facebook][FACEBOOK_COLUMNS.facebookId]
-                    && question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.facebookId]
-                    && question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.openGraphId] ) {
-
-                    postToFacebook( 
-                        'post-open-graph',
-                        'like',
-                        {
-                            openGraphId: question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.openGraphId],
-                            questionFacebookId: question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.facebookId]
-                        }
-                    );
+                    var voteElement = document.createElement( 'div' );
+                    voteElement.innerHTML = getVotes( newVotes );
+                    voteBox.parentNode.replaceChild( voteElement.firstChild, voteBox );
 
                 };
 
-            };
+                if ( voted != 1 ) { //upvote
 
-            window.setTimeout( function () {
+                    showNotification( STRINGS.notificationUpvote, { tight: true } );
 
-                showQuestion( question );
+                    if ( _account[ACCOUNT_COLUMNS.facebook][FACEBOOK_COLUMNS.facebookId]
+                        && question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.facebookId]
+                        && question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.openGraphId] ) {
 
-            }, 100 );
-
-        },
-        "error": function ( response, status, error ) {
-
-            switch ( error ) {
-
-                case 'Unauthorized':
-
-                    logoutApp();
-                    break;
-
-                case 'Forbidden':
-                case 'Precondition Failed':
-
-                    if ( isMyQuestion( question ) ) {
-
-                        showMessage( STRINGS.error.voteOnOwnQuestion );
+                        postToFacebook( 
+                            'post-open-graph',
+                            'like',
+                            {
+                                openGraphId: question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.openGraphId],
+                                questionFacebookId: question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.facebookId]
+                            }
+                        );
 
                     };
 
-                    break;
+                };
 
-                default:
+                window.setTimeout( function () {
 
-                    showMessage( STRINGS.error.saveQuestionUpvote );
+                    showQuestion( question );
 
-            };
+                }, 100 );
 
-        }
+            },
+            "error": function ( response, status, error ) {
 
-    } );
+                switch ( error ) {
+
+                    case 'Unauthorized':
+
+                        logoutApp();
+                        break;
+
+                    case 'Forbidden':
+                    case 'Precondition Failed':
+
+                        if ( isMyQuestion( question ) ) {
+
+                            showMessage( STRINGS.error.voteOnOwnQuestion );
+
+                        };
+
+                        break;
+
+                    default:
+
+                        showMessage( STRINGS.error.saveQuestionUpvote );
+
+                };
+
+            }
+
+        } );
+
+    };
 
 };
 
