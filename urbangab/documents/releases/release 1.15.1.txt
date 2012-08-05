@@ -1,2 +1,6 @@
 1.15.1
 
+bug - voting on own new answer gives an error
+bug - nearby questions showing logged in user's questions
+bug - FB auth sometimes not logging into app after return
+

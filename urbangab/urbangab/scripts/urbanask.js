@@ -810,6 +810,146 @@ function checkLogin() {
 
         startApp();
 
+        checkFacebookAuthorization( function () {
+
+            startApp();
+
+        } );
+
+    };
+
+};
+
+function checkFacebookAuthorization( authorizedCallback ) {
+
+    var facebookFrame = createFrame();
+
+    addListeners();
+    failSafe();
+
+    function sendMessage() {
+
+        facebookFrame.contentWindow.postMessage( '{"type": "authorize"}', FACEBOOK_AUTH_URL );
+
+    };
+
+    function onMessage( event ) {
+
+        if ( event.origin == ROOT_URL ) {
+
+            var message = window.JSON.parse( event.data );
+
+            switch ( message.type ) {
+                case 'authorized':
+
+                    removeListeners();
+                    deleteFrame();
+                    loadSession( message );
+
+                    break;
+
+                case 'unauthorized':
+
+                    removeListeners();
+                    deleteFrame();
+
+                    //delete _session?
+                    break;
+
+                case 'not-ready':
+
+                    window.setTimeout( sendMessage, 200 );
+                    break;
+
+            };
+
+        };
+
+    };
+
+    function loadSession( message ) {
+
+        var resource = '/logins/loginFB',
+            data = 'location=' + message.location
+                + '&email=' + message.email
+                + '&accessToken=' + message.password,
+            authorization = window.Crypto.util.bytesToBase64( 
+                window.Crypto.charenc.UTF8.stringToBytes( message.facebookId + ':' + message.username + ':' + message.password ) );
+
+        ajax( API_URL + resource, {
+
+            "type": "GET",
+            "headers": { "x-authorization": authorization },
+            "data": data,
+            "complete": function ( response, status ) {
+
+                if ( status != 'error' ) {
+
+                    var session = response.getResponseHeader( 'x-session' ).split( ':' );
+
+                    _session.id = session[0];
+                    _session.key = session[1];
+                    window.setLocalStorage( 'sessionId', _session.id );
+                    window.setLocalStorage( 'sessionKey', _session.key );
+
+                    if ( authorizedCallback ) { authorizedCallback(); };
+
+                };
+
+            },
+            "error": function ( response, status, error ) {
+
+                //delete _session?
+
+            }
+
+        } );
+
+    };
+
+    function addListeners() {
+
+        window.addEventListener( 'message', onMessage, false );
+        facebookFrame.addEventListener( 'load', sendMessage, false );
+
+    };
+
+    function removeListeners() {
+
+        window.removeEventListener( 'message', onMessage, false );
+        facebookFrame.removeEventListener( 'load', sendMessage, false );
+
+    };
+
+    function createFrame() {
+
+        var html = '<iframe id="facebook-frame" class="hide" src="' + FACEBOOK_POST_URL + '"></iframe>';
+        document.body.insertAdjacentHTML( 'beforeEnd', html );
+        return document.getElementById( 'facebook-frame' );
+
+    };
+
+    function deleteFrame() {
+
+        facebookFrame.parentNode.removeChild( facebookFrame );
+        facebookFrame = undefined;
+
+    };
+
+    function failSafe() {
+
+        //frame load or messaging failed
+        window.setTimeout( function () {
+
+            if ( facebookFrame ) {
+
+                removeListeners();
+                deleteFrame();
+
+            };
+
+        }, 10 * 1000 );
+
     };
 
 };
@@ -2100,7 +2240,7 @@ function initializeVersionCheck() {
 
 function isLoggedIn() {
 
-    return _session.id && _session.key;
+    return !!_session.id && !!_session.key;
 
 };
 
@@ -2252,7 +2392,7 @@ function loadQuestion( questionId, complete ) {
 
 };
 
-function loadQuestions() {
+function loadRegionQuestions() {
 
     if ( isLoggedIn() && _account[ACCOUNT_COLUMNS.regions].length ) {
 
@@ -2291,7 +2431,9 @@ function loadQuestions() {
 
 function loadNearbyQuestions() {
 
-    var data = 'latitude=' + _currentLocation.latitude + '&longitude=' + _currentLocation.longitude,
+    var data = 'latitude=' + _currentLocation.latitude
+            + '&longitude=' + _currentLocation.longitude
+            + ( isLoggedIn() ? '&currentUserId=' + _account[ACCOUNT_COLUMNS.userId] : '' ),
         resource = '/api/questions';
 
     ajax( API_URL + resource, {
@@ -2321,7 +2463,8 @@ function loadEverywhereQuestions() {
     if ( _nearbyQuestions.length < QUESTION_ROW_COUNT ) {
 
         var data = 'regionId=' + WORLD_REGION_ID
-                + '&count=' + ( QUESTION_ROW_COUNT - _nearbyQuestions.length ),
+                + '&count=' + ( QUESTION_ROW_COUNT - _nearbyQuestions.length )
+                + ( isLoggedIn() ? '&currentUserId=' + _account[ACCOUNT_COLUMNS.userId] : '' ),
             resource = '/api/questions';
 
         ajax( API_URL + resource, {
@@ -2683,56 +2826,38 @@ function authorizeTwitter( event ) {
 
 function loginTwitter( token ) {
 
-    if ( _currentLocation.latitude ) {
+    var resource = '/logins/loginTwitter',
+        data = 'oauth_token=' + token;
 
-        login();
+    ajax( API_URL + resource, {
 
-    } else {
+        "type": "GET",
+        "data": data,
+        "complete": function ( response, status ) {
 
-        getGeolocation( function () {
+            if ( status != "error" ) {
 
-            login();
+                var session = response.getResponseHeader( 'x-session' ).split( ':' );
 
-        }, { quick: true } );
+                _session.id = session[0];
+                _session.key = session[1];
+                window.setLocalStorage( 'sessionId', _session.id );
+                window.setLocalStorage( 'sessionKey', _session.key );
 
-    };
+                startApp();
+                window.history.replaceState( '', '', window.location.pathname );
 
-    function login() {
+            };
 
-        var resource = '/logins/loginTwitter',
-            data = 'oauth_token=' + token;
+        },
+        "error": function ( response, status, error ) {
 
-        ajax( API_URL + resource, {
+            showPage( 'login-page', { logout: true } );
+            document.getElementById( 'login-error' ).innerHTML = error;
 
-            "type": "GET",
-            "data": data,
-            "complete": function ( response, status ) {
+        }
 
-                if ( status != "error" ) {
-
-                    var session = response.getResponseHeader( 'x-session' ).split( ':' );
-
-                    _session.id = session[0];
-                    _session.key = session[1];
-                    window.setLocalStorage( 'sessionId', _session.id );
-                    window.setLocalStorage( 'sessionKey', _session.key );
-
-                    startApp();
-                    window.history.replaceState( '', '', window.location.pathname );
-
-                };
-
-            },
-            "error": function ( response, status, error ) {
-
-                showPage( 'login-page', { logout: true } );
-                document.getElementById( 'login-error' ).innerHTML = error;
-
-            }
-
-        } );
-
-    };
+    } );
 
 };
 
@@ -2859,60 +2984,42 @@ function loadSessionFacebook( facebookId, username, password, location, email ) 
 
     deleteFacebookFrame();
 
-    if ( _currentLocation.latitude ) {
+    var resource = '/logins/loginFB',
+        data = 'location=' + location
+            + '&email=' + email
+            + '&accessToken=' + password,
+        authorization = window.Crypto.util.bytesToBase64( 
+            window.Crypto.charenc.UTF8.stringToBytes( facebookId + ':' + username + ':' + password ) );
 
-        loadSession();
+    ajax( API_URL + resource, {
 
-    } else {
+        "type": "GET",
+        "headers": { "x-authorization": authorization },
+        "data": data,
+        "complete": function ( response, status ) {
 
-        getGeolocation( function () {
+            if ( status != "error" ) {
 
-            loadSession();
+                var session = response.getResponseHeader( 'x-session' ).split( ':' ),
+                    newAccount = window.JSON.parse( response.responseText ).newAccount;
 
-        }, { quick: true } );
+                _session.id = session[0];
+                _session.key = session[1];
+                window.setLocalStorage( 'sessionId', _session.id );
+                window.setLocalStorage( 'sessionKey', _session.key );
 
-    };
+                startApp();
 
-    function loadSession() {
+            };
 
-        var resource = '/logins/loginFB',
-            data = 'location=' + location
-                + '&email=' + email
-                + '&accessToken=' + password,
-            authorization = window.Crypto.util.bytesToBase64( 
-                window.Crypto.charenc.UTF8.stringToBytes( facebookId + ':' + username + ':' + password ) );
+        },
+        "error": function ( response, status, error ) {
 
-        ajax( API_URL + resource, {
+            document.getElementById( 'login-error' ).innerHTML = error;
 
-            "type": "GET",
-            "headers": { "x-authorization": authorization },
-            "data": data,
-            "complete": function ( response, status ) {
+        }
 
-                if ( status != "error" ) {
-
-                    var session = response.getResponseHeader( 'x-session' ).split( ':' ),
-                        newAccount = window.JSON.parse( response.responseText ).newAccount;
-
-                    _session.id = session[0];
-                    _session.key = session[1];
-                    window.setLocalStorage( 'sessionId', _session.id );
-                    window.setLocalStorage( 'sessionKey', _session.key );
-
-                    startApp();
-
-                };
-
-            },
-            "error": function ( response, status, error ) {
-
-                document.getElementById( 'login-error' ).innerHTML = error;
-
-            }
-
-        } );
-
-    };
+    } );
 
 };
 
@@ -3069,6 +3176,7 @@ function orientationChange() {
 function postToFacebook( type, object, options ) {
 
     var facebookFrame = createFrame();
+
     addListeners();
     failSafe();
 
@@ -3408,7 +3516,7 @@ function refresh() {
     _everywhereQuestions.length = 0;
 
     loadUserQuestions();
-    loadQuestions();
+    loadRegionQuestions();
     loadNearbyQuestions();
     loadEverywhereQuestions();
 
@@ -3420,7 +3528,7 @@ function refresh() {
 
 function refreshQuestions() {
 
-    loadQuestions();
+    loadRegionQuestions();
     loadNearbyQuestions();
     loadEverywhereQuestions();
 
@@ -3432,7 +3540,7 @@ function refreshQuestions() {
             _nearbyQuestions.length = 0;
             _everywhereQuestions.length = 0;
 
-            loadQuestions();
+            loadRegionQuestions();
             loadNearbyQuestions();
             loadEverywhereQuestions();
 
@@ -4764,7 +4872,12 @@ function resetUsersTop() {
 function setupGeolocation() {
 
     window.setTimeout( getGeolocation, 4 * SECOND );
-    _geoTimer = window.setInterval( getGeolocation, 5 * 60 * SECOND ); //every 5 minutes
+
+    if ( !_geoTimer ) {
+
+        _geoTimer = window.setInterval( getGeolocation, 5 * 60 * SECOND ); //every 5 minutes
+
+    };
 
 };
 
@@ -5132,7 +5245,7 @@ function showAccountPage() {
 
                 if ( newRegion ) {
 
-                    loadQuestions();
+                    loadRegionQuestions();
                     loadNearbyQuestions();
                     loadEverywhereQuestions();
                     loadTopUsers();

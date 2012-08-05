@@ -44,7 +44,14 @@ Public MustInherit Class messageHandler : Implements System.Web.IHttpHandler
 
         If isAuthorized(context, userId) Then
 
-            Dim request As String = getRequest(context)
+            Dim request As String = getRequest(context),
+                queries As Collections.Specialized.NameValueCollection = context.Request.QueryString
+
+            If userId = 0 Then
+
+                Int32.TryParse(queries("currentUserId"), userId)
+
+            End If
 
             If isValid(context, request) Then
 
