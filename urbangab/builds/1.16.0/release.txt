@@ -1,0 +1,9 @@
+1.16
+
+- more reliable Facebook login
+- better Facebook Open Graph integration
+- question/answer upvotes on urbanAsk become likes on Facebook
+- add locations if they don't exist or if outside your region.
+- login not required for viewing questions/answers/leaderboard/profiles
+- "clear all notifications" button
+- various bug fixes

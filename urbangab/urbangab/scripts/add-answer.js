@@ -72,7 +72,7 @@ function showAddAnswer( question ) {
 
             for ( var index = 0; index < results.length; index++ ) {
 
-                var options;
+                var options = '';
 
                 if ( question[QUESTION_COLUMNS.answers].item( results[index].id, ANSWER_COLUMNS.locationId ) ) {
 

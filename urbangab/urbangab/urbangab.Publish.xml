@@ -4,12 +4,13 @@
     <file relUrl="images/ios/icon-72.png" publishTime="04/13/2012 00:49:03" />
     <file relUrl="index.aspx" publishTime="05/02/2012 16:05:46" />
     <file relUrl="images/icon-57.png" publishTime="04/13/2012 00:48:42" />
-    <file relUrl="images/ios/splash-640x960.png" publishTime="05/01/2012 15:03:59" />
     <file relUrl="images/download/iphone-screen-shot-3.PNG" publishTime="05/29/2012 13:24:00" />
     <file relUrl="images/download/android-screen-shot-3.PNG" publishTime="05/29/2012 13:23:02" />
     <file relUrl="web.config" publishTime="04/27/2012 13:44:08" />
+    <file relUrl="images/share-logo.png" publishTime="03/05/2012 13:08:30" />
     <file relUrl="scripts/add-answer.js" publishTime="06/24/2012 18:59:41" />
     <file relUrl="images/splash-320x480.png" publishTime="05/01/2012 16:47:41" />
+    <file relUrl="images/download/red_foil_sticker.png" publishTime="05/22/2012 14:13:42" />
     <file relUrl="scripts/urbanask.js" publishTime="07/05/2012 20:09:27" />
     <file relUrl="images/icon-114.png" publishTime="04/13/2012 00:49:25" />
     <file relUrl="styles/download.css" publishTime="05/30/2012 07:32:27" />
@@ -20,6 +21,7 @@
     <file relUrl="images/download/on-the-web.png" publishTime="05/22/2012 14:13:42" />
     <file relUrl="images/apple.png" publishTime="06/26/2012 13:50:30" />
     <file relUrl="download.html" publishTime="05/30/2012 07:09:35" />
+    <file relUrl="styles/urbanask-compiled.css" publishTime="06/30/2012 01:26:11" />
     <file relUrl="images/download/android-screen-shot-4.PNG" publishTime="05/29/2012 13:23:16" />
     <file relUrl="config.xml" publishTime="07/05/2012 20:09:46" />
     <file relUrl="images/download/android-screen-shot-5.PNG" publishTime="05/29/2012 13:23:30" />
@@ -33,7 +35,6 @@
     <file relUrl="tos.html" publishTime="04/03/2012 21:17:10" />
     <file relUrl="images/download/iphone-screen-shot-1.PNG" publishTime="05/29/2012 13:18:06" />
     <file relUrl="images/winphone/splash-320x480.jpg" publishTime="05/01/2012 16:45:49" />
-    <file relUrl="questions.aspx" publishTime="05/01/2012 08:38:22" />
     <file relUrl="scripts/urbanask-compiled.js" publishTime="07/05/2012 20:09:47" />
     <file relUrl="support.html" publishTime="04/17/2012 19:15:54" />
     <file relUrl="images/download/android.png" publishTime="05/29/2012 12:59:56" />
@@ -43,17 +44,19 @@
     <file relUrl="images/splash-fullscreen.png" publishTime="04/10/2012 18:16:02" />
     <file relUrl="images/android/splash-320x480.png" publishTime="04/10/2012 18:16:02" />
     <file relUrl="images/splash.png" publishTime="02/09/2012 20:26:13" />
+    <file relUrl="scripts/block-start.js" publishTime="07/03/2012 19:49:21" />
     <file relUrl="images/download/iphone-screen-shot-2.PNG" publishTime="05/29/2012 13:23:45" />
     <file relUrl="images/download/qr-apple.png" publishTime="05/22/2012 14:13:42" />
-    <file relUrl="images/ios/splash-1024x768.png" publishTime="05/01/2012 15:18:18" />
+    <file relUrl="questions.aspx" publishTime="05/01/2012 08:38:22" />
     <file relUrl="images/android.png" publishTime="06/26/2012 13:50:08" />
     <file relUrl="images/download/qr-google.png" publishTime="05/22/2012 14:13:42" />
     <file relUrl="images/blackberry/icon-57.png" publishTime="04/13/2012 00:48:42" />
     <file relUrl="ads.html" publishTime="03/27/2012 20:43:39" />
     <file relUrl="images/icon-72.png" publishTime="04/13/2012 00:49:03" />
     <file relUrl="frame.html" publishTime="05/02/2012 15:45:09" />
-    <file relUrl="images/download/red_foil_sticker.png" publishTime="05/22/2012 14:13:42" />
+    <file relUrl="images/ios/splash-640x960.png" publishTime="05/01/2012 15:03:59" />
     <file relUrl="images/ios/icon-114.png" publishTime="04/13/2012 00:49:25" />
+    <file relUrl="images/ios/splash-1024x768.png" publishTime="05/01/2012 15:18:18" />
     <file relUrl="images/logo.png" publishTime="06/26/2012 13:48:35" />
     <file relUrl="icon-72.png" publishTime="05/15/2012 13:45:37" />
     <file relUrl="splash-320x480.png" publishTime="05/01/2012 16:47:41" />
@@ -63,23 +66,20 @@
     <file relUrl="bin/urbangab.dll" publishTime="07/01/2012 18:59:03" />
     <file relUrl="images/ios/icon-57.png" publishTime="04/13/2012 00:48:42" />
     <file relUrl="images/webos/icon-57.png" publishTime="04/13/2012 00:48:42" />
-    <file relUrl="images/ios/splash-768x1024.png" publishTime="05/01/2012 15:14:52" />
+    <file relUrl="scripts/download.js" publishTime="05/30/2012 07:21:24" />
     <file relUrl="images/download/iphone.png" publishTime="05/22/2012 14:13:42" />
-    <file relUrl="images/webos/splash-320x480.png" publishTime="04/10/2012 18:16:02" />
     <file relUrl="images/download/qr-amazon.png" publishTime="05/22/2012 14:13:42" />
-    <file relUrl="images/share-logo.png" publishTime="03/05/2012 13:08:30" />
-    <file relUrl="images/download/android-screen-shot-2.PNG" publishTime="05/29/2012 13:22:25" />
-    <file relUrl="images/icon.png" publishTime="02/09/2012 20:34:35" />
+    <file relUrl="images/webos/splash-320x480.png" publishTime="04/10/2012 18:16:02" />
     <file relUrl="images/download/qr-web.png" publishTime="05/22/2012 14:13:42" />
     <file relUrl="fb-login.html" publishTime="07/05/2012 18:15:24" />
     <file relUrl="cache.manifest" publishTime="07/05/2012 20:09:46" />
     <file relUrl="scripts/strings-en.js" publishTime="06/27/2012 01:59:32" />
-    <file relUrl="scripts/download.js" publishTime="05/30/2012 07:21:24" />
-    <file relUrl="styles/urbanask-compiled.css" publishTime="06/30/2012 01:26:11" />
-    <file relUrl="scripts/block-start.js" publishTime="07/03/2012 19:49:21" />
+    <file relUrl="images/icon.png" publishTime="02/09/2012 20:34:35" />
+    <file relUrl="images/download/android-screen-shot-2.PNG" publishTime="05/29/2012 13:22:25" />
+    <file relUrl="images/ios/splash-768x1024.png" publishTime="05/01/2012 15:14:52" />
     <file relUrl="images/download/iphone-screen-shot-5.PNG" publishTime="05/29/2012 13:24:38" />
     <file relUrl="images/splash-phonegap.png" publishTime="03/30/2012 15:23:56" />
   </publishProfile>
-  <publishProfile publishUrl="http://69.65.42.214" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="urbanask.com/" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="True" profileName="gigenet" publishMethod="MSDeploy" replaceMatchingFiles="True" userName="Administrator" savePWD="True" userPWD="AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAj+r2ZPH7/ky8qnZ+xMyeKwAAAAACAAAAAAAQZgAAAAEAACAAAADfjdwzmWFzxZ/rSfw4wkqlYDba4bG5McGwgD6HM8zeXAAAAAAOgAAAAAIAACAAAADPZSUL44yLsPjRG6geJpFTP1enDLsw6oBJGhrosZLr6DAAAABuJnAnHUtSYd6eHgnYegoE3NXlKvLnW6UjgIIaSFe4KAI0JQABL5FKMk2ABkVkOChAAAAAlehLrNLMucCxViVp+GvuV4r0XrMQrfQI12RuKo+DB21ZS4T+yYutYeOb7hgD+sAiTEdB4ltDyxpXQ7sIRAFRYA==" SelectedForPublish="False" />
-  <publishProfile publishUrl="https://75.144.228.69" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="Default Web Site/urbangab" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="True" msdeploySkipExtraFilesOnServer="False" msdeployMarkAsApp="True" profileName="75.144.228.69" publishMethod="MSDeploy" replaceMatchingFiles="True" userName="Administrator" savePWD="True" userPWD="AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAw1EBQO0NWkiuOYXna3tNzgAAAAACAAAAAAAQZgAAAAEAACAAAADrwl0BLIEdLs5RVLG65MdVVI1zV4JuoMUd1AtQbkFawAAAAAAOgAAAAAIAACAAAAAyjgxSGqXWxCGriXEsWxEMkrB6qr1SMr+wuUEbHmWtBCAAAABayGd+7SySxlc73lZszBXZH2TGXyC7BuVykq6jDQF/hEAAAACwkazqoBRtRctRFKFqHtLYC+qFnhSKP2X0bDXc2GsnhoTHxfCzQFRIz1NoJ/H3ocFPS58G2rRmjc2kZ8WuRhDX" SelectedForPublish="True" />
+  <publishProfile publishUrl="http://69.65.42.214" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="urbanask.com/" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="True" profileName="gigenet" publishMethod="MSDeploy" replaceMatchingFiles="True" userName="Administrator" savePWD="True" userPWD="AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAj+r2ZPH7/ky8qnZ+xMyeKwAAAAACAAAAAAAQZgAAAAEAACAAAADfjdwzmWFzxZ/rSfw4wkqlYDba4bG5McGwgD6HM8zeXAAAAAAOgAAAAAIAACAAAADPZSUL44yLsPjRG6geJpFTP1enDLsw6oBJGhrosZLr6DAAAABuJnAnHUtSYd6eHgnYegoE3NXlKvLnW6UjgIIaSFe4KAI0JQABL5FKMk2ABkVkOChAAAAAlehLrNLMucCxViVp+GvuV4r0XrMQrfQI12RuKo+DB21ZS4T+yYutYeOb7hgD+sAiTEdB4ltDyxpXQ7sIRAFRYA==" SelectedForPublish="True" />
+  <publishProfile publishUrl="https://75.144.228.69" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="Default Web Site/urbangab" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="True" msdeploySkipExtraFilesOnServer="False" msdeployMarkAsApp="True" profileName="75.144.228.69" publishMethod="MSDeploy" replaceMatchingFiles="True" userName="Administrator" savePWD="True" userPWD="AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAw1EBQO0NWkiuOYXna3tNzgAAAAACAAAAAAAQZgAAAAEAACAAAADrwl0BLIEdLs5RVLG65MdVVI1zV4JuoMUd1AtQbkFawAAAAAAOgAAAAAIAACAAAAAyjgxSGqXWxCGriXEsWxEMkrB6qr1SMr+wuUEbHmWtBCAAAABayGd+7SySxlc73lZszBXZH2TGXyC7BuVykq6jDQF/hEAAAACwkazqoBRtRctRFKFqHtLYC+qFnhSKP2X0bDXc2GsnhoTHxfCzQFRIz1NoJ/H3ocFPS58G2rRmjc2kZ8WuRhDX" SelectedForPublish="False" />
 </publishData>

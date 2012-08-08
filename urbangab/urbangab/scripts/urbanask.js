@@ -812,7 +812,13 @@ function checkLogin() {
 
         checkFacebookAuthorization( function () {
 
-            startApp();
+            loadAccount( function () {
+
+                document.getElementById( 'user-button' ).setDataset( 'user-id', _account[ACCOUNT_COLUMNS.userId] );
+                refreshQuestions();
+                refreshUserQuestions();
+
+            } );
 
         } );
 
@@ -2431,30 +2437,38 @@ function loadRegionQuestions() {
 
 function loadNearbyQuestions() {
 
-    var data = 'latitude=' + _currentLocation.latitude
-            + '&longitude=' + _currentLocation.longitude
-            + ( isLoggedIn() ? '&currentUserId=' + _account[ACCOUNT_COLUMNS.userId] : '' ),
-        resource = '/api/questions';
+    if ( _currentLocation.latitude ) {
 
-    ajax( API_URL + resource, {
+        var data = 'latitude=' + _currentLocation.latitude
+                + '&longitude=' + _currentLocation.longitude
+                + ( isLoggedIn() ? '&currentUserId=' + _account[ACCOUNT_COLUMNS.userId] : '' ),
+            resource = '/api/questions';
 
-        "type": "GET",
-        "data": data,
-        "cache": false,
-        "success": function ( data, status ) {
+        ajax( API_URL + resource, {
 
-            _nearbyQuestions = window.JSON.parse( data );
-            window.setLocalStorage( 'nearby-questions', data );
-            showQuestions( STRINGS.questionsNearby, _nearbyQuestions, document.getElementById( 'nearby-questions' ) );
+            "type": "GET",
+            "data": data,
+            "cache": false,
+            "success": function ( data, status ) {
 
-        },
-        "error": function ( response, status, error ) {
+                _nearbyQuestions = window.JSON.parse( data );
+                window.setLocalStorage( 'nearby-questions', data );
+                showQuestions( STRINGS.questionsNearby, _nearbyQuestions, document.getElementById( 'nearby-questions' ) );
 
-            if ( error == 'Unauthorized' ) { logoutApp() };
+            },
+            "error": function ( response, status, error ) {
 
-        }
+                if ( error == 'Unauthorized' ) { logoutApp() };
 
-    } );
+            }
+
+        } );
+
+    } else {
+
+        document.getElementById( 'nearby-questions' ).addClass( 'hide' );
+
+    };
 
 };
 
