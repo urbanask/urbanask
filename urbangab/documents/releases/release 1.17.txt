@@ -1,0 +1,5 @@
+1.17
+
+new - google maps uses address instead of lat/lon
+new - faster load times for slow 3G connections
+

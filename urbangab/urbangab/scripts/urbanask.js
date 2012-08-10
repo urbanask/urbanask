@@ -798,14 +798,6 @@ function checkLogin() {
 
         loginTwitter( window.location.queryString()['oauth_token'] );
 
-//    } else if ( _session.id && _session.key ) {
-
-//        startApp();
-
-//    } else {
-
-//        showPage( 'login-page' );
-
     } else {
 
         startApp();
@@ -2369,6 +2361,9 @@ function loadCachedData() {
 
     _cache.load();
 
+    showQuestions( STRINGS.questionsNearby, _nearbyQuestions, document.getElementById( 'nearby-questions' ) );
+    showQuestions( STRINGS.questionsEverywhere, _everywhereQuestions, document.getElementById( 'everywhere-questions' ) );
+
 };
 
 function loadQuestion( questionId, complete ) {
@@ -2604,7 +2599,8 @@ function loadUserQuestions() {
 
                 _userQuestions = window.JSON.parse( data );
                 window.setLocalStorage( 'userQuestions', data );
-                showUserQuestions();
+
+                showQuestions( _account[ACCOUNT_COLUMNS.username], _userQuestions, document.getElementById( 'user-questions' ) );
 
             },
             "error": function ( response, status, error ) {
@@ -4171,9 +4167,9 @@ function saveAnswerSelect( question, answer, answerItem ) {
 
                 };
 
-                if( question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.openGraphId] ) {
+                if ( question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.openGraphId] ) {
 
-                    postToFacebook(
+                    postToFacebook( 
                         'post-open-graph',
                         'comment',
                         {
@@ -4183,7 +4179,7 @@ function saveAnswerSelect( question, answer, answerItem ) {
                                 .replace( '%1', answer[ANSWER_COLUMNS.location] )
                                 .replace( '%2', answer[ANSWER_COLUMNS.locationAddress] )
 
-                        } 
+                        }
                     );
 
                 } else {
@@ -4214,14 +4210,19 @@ function saveAnswerSelect( question, answer, answerItem ) {
             window.setTimeout( function () {
 
                 showQuestion( question );
-                if ( questionItem ) showUserQuestions();
+
+                if ( questionItem ) {
+
+                    showQuestions( _account[ACCOUNT_COLUMNS.username], _userQuestions, document.getElementById( 'user-questions' ) );
+
+                };
 
             }, 100 );
 
         },
         "error": function ( response, status, error ) {
 
-            if( error == 'Unauthorized' ) { logoutApp(); };
+            if ( error == 'Unauthorized' ) { logoutApp(); };
 
         }
 
@@ -5557,35 +5558,65 @@ function showContact() {
         website = document.getElementById( 'contact-website' ),
         map = document.getElementById( 'contact-map' ),
         answer = _pages.last().options.object,
-        currentLatitude = ( _currentLocation.latitude ? _currentLocation.latitude : answer[ANSWER_COLUMNS.latitude] ),
-        currentLongitude = ( _currentLocation.longitude ? _currentLocation.longitude : answer[ANSWER_COLUMNS.longitude] ),
-        url = 'maps.google.com/?saddr='
-            + currentLatitude + ',' + currentLongitude
+        url = '';
+        
+    initialize();
+
+    function initialize() {
+
+        var currentLatitude = ( _currentLocation.latitude ? _currentLocation.latitude : answer[ANSWER_COLUMNS.latitude] ),
+            currentLongitude = ( _currentLocation.longitude ? _currentLocation.longitude : answer[ANSWER_COLUMNS.longitude] );
+            
+        url = 'maps.google.com/?saddr=' + currentLatitude + ',' + currentLongitude
             + '&daddr=' + answer[ANSWER_COLUMNS.latitude] + ',' + answer[ANSWER_COLUMNS.longitude];
+        map.href = 'maps://' + url;
 
-    contact.removeClass( 'hide' );
-    window.setTimeout( function () { contact.addClass( 'contact-slide' ); }, 20 );
-    addListeners();
+        getGeocode( currentLatitude, currentLongitude, function ( startAddress ) {
 
-    map.href = 'maps://' + url;
+            getGeocode( answer[ANSWER_COLUMNS.latitude], answer[ANSWER_COLUMNS.longitude], function ( endAddress ) {
 
-    if ( answer[ANSWER_COLUMNS.phone] ) {
+                if ( !startAddress ) {
 
-        call.href = 'tel:' + answer[ANSWER_COLUMNS.phone];
+                    startAddress = currentLatitude + ',' + currentLongitude;
 
-    } else {
+                };
 
-        call.href = '';
+                if ( !endAddress ) {
 
-    };
+                    endAddress = answer[ANSWER_COLUMNS.latitude] + ',' + answer[ANSWER_COLUMNS.longitude]; 
+                    
+                };
 
-    if ( answer[ANSWER_COLUMNS.link] ) {
+                url = 'maps.google.com/?saddr=' + startAddress + '&daddr=' + endAddress;
+                map.href = 'maps://' + url;
 
-        website.removeClass( 'hide' );
+            } );
 
-    } else {
+        } );
 
-        website.addClass( 'hide' );
+        contact.removeClass( 'hide' );
+        window.setTimeout( function () { contact.addClass( 'contact-slide' ); }, 20 );
+        addListeners();
+
+        if ( answer[ANSWER_COLUMNS.phone] ) {
+
+            call.href = 'tel:' + answer[ANSWER_COLUMNS.phone];
+
+        } else {
+
+            call.href = '';
+
+        };
+
+        if ( answer[ANSWER_COLUMNS.link] ) {
+
+            website.removeClass( 'hide' );
+
+        } else {
+
+            website.addClass( 'hide' );
+
+        };
 
     };
 
@@ -5648,6 +5679,39 @@ function showContact() {
         window.setTimeout( function () { contact.addClass( 'hide' ); }, 600 );
 
         removeListeners();
+
+    };
+
+    function getGeocode( latitude, longitude, complete ) {
+
+        var geocoder = new google.maps.Geocoder(),
+            request = { 'location': new google.maps.LatLng( latitude, longitude ) };
+
+        geocoder.geocode( request, function ( results, status ) {
+
+            if ( status == google.maps.GeocoderStatus.OK && results.length ) {
+
+                for ( var resultIndex = 0; resultIndex < results.length; resultIndex++ ) {
+
+                    if ( results[resultIndex].formatted_address ) {
+
+                        complete( results[resultIndex].formatted_address );
+                        return;
+
+                    };
+
+                };
+
+                //if it gets to here, no geo found                
+                complete();
+
+            } else {
+
+                complete();
+
+            };
+
+        } );
 
     };
 
@@ -6627,7 +6691,6 @@ function showPage( page, options, back ) {
         default:
 
             _pages.replace( page, { caption: STRINGS.backButtonQuestions } )
-
             slidePage( page, previousPage );
 
             window.setTimeout( function () {
@@ -7036,33 +7099,6 @@ function showExternalFooter() {
         }, 4000 );
 
     };
-
-};
-
-function showUserQuestions() {
-
-    var html = '',
-        userQuestions = document.getElementById( 'user-questions' );
-
-    if ( _userQuestions.length ) {
-
-        html += getListItemHeader( _account[ACCOUNT_COLUMNS.username] );
-
-        for ( var index = 0; index < _userQuestions.length; index++ ) {
-
-            html += getQuestionItem( _userQuestions[index] );
-
-        };
-
-        userQuestions.removeClass( 'hide' );
-
-    } else {
-
-        userQuestions.addClass( 'hide' );
-
-    };
-
-    userQuestions.innerHTML = html;
 
 };
 
@@ -8483,5 +8519,5 @@ i]; else { var n = a[i - 3] ^ a[i - 8] ^ a[i - 14] ^ a[i - 16]; a[i] = n << 1 | 
 } )();
 (function () { var d = window.Crypto, m = d.util, f = d.charenc, b = f.UTF8, c = f.Binary; d.HMAC = function ( a, d, e, h ) { d.constructor == String && ( d = b.stringToBytes( d ) ); e.constructor == String && ( e = b.stringToBytes( e ) ); e.length > 4 * a._blocksize && ( e = a( e, { asBytes: !0 } ) ); for ( var f = e.slice( 0 ), e = e.slice( 0 ), g = 0; g < 4 * a._blocksize; g++ ) f[g] ^= 92, e[g] ^= 54; a = a( f.concat( a( e.concat( d ), { asBytes: !0 } ) ), { asBytes: !0 } ); return h && h.asBytes ? a : h && h.asString ? c.bytesToString( a ) : m.bytesToHex( a ) } } )();
 
-window.setTimeout( initialize, 100 );
+window.setTimeout( initialize, 75 );
 
