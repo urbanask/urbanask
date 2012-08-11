@@ -25,9 +25,7 @@ var _hostname = window.location.hostname,
     _currentLocation = {},
     _dimensions = {
 
-        "questionMapWidth": 308,
-        "questionMapFullWidth": 320,
-        "questionMapFullHeight": 372
+        "questionMapWidth": 308
 
     },
     _session = {},
@@ -527,23 +525,6 @@ function addEventListeners( page, previousPage ) {
             };
 
             break;
-
-        case 'question-map-page':
-
-            backButton = document.getElementById( 'back-button' );
-            backButton.addEventListener( 'click', goBack, false );
-
-            if ( window.deviceInfo.mobile ) {
-
-                backButton.addEventListener( 'touchstart', selectButton, false );
-                backButton.addEventListener( 'touchend', unselectButton, false );
-
-            } else {
-
-                backButton.addEventListener( 'mousedown', selectButton, false );
-                backButton.addEventListener( 'mouseup', unselectButton, false );
-
-            };
 
         case 'questions-page':
 
@@ -1896,11 +1877,6 @@ function initializeDimensions() {
 
     _dimensions.questionMapWidth = view.clientWidth - ( 2 * MARGIN );
     document.getElementById( 'question-map' ).style.width = _dimensions.questionMapWidth + 'px';
-
-    _dimensions.questionMapFullWidth = view.clientWidth;
-    _dimensions.questionMapFullHeight = view.clientHeight;
-    document.getElementById( 'question-map-full' ).style.width = _dimensions.questionMapFullWidth + 'px';
-    document.getElementById( 'question-map-full' ).style.height = _dimensions.questionMapFullHeight + 'px';
 
     var topUsersViewHeight = view.clientHeight - 88;
     document.getElementById( 'top-users-view' ).style.height = topUsersViewHeight + 'px';
@@ -3504,15 +3480,7 @@ function questionItemClick( event ) {
 
             saveQuestionDownvote( question );
 
-        } else {
-
-            showPage( 'question-map-page' );
-
         };
-
-    } else if ( event.target.id == 'question-map' ) {
-
-        showPage( 'question-map-page' );
 
     };
 
@@ -3714,23 +3682,6 @@ function removeEventListeners( page ) {
             };
 
             break;
-
-        case 'question-map-page':
-
-            backButton = document.getElementById( 'back-button' );
-            backButton.removeEventListener( 'click', goBack, false );
-
-            if ( window.deviceInfo.mobile ) {
-
-                backButton.removeEventListener( 'touchstart', selectButton, false );
-                backButton.removeEventListener( 'touchend', unselectButton, false );
-
-            } else {
-
-                backButton.removeEventListener( 'mousedown', selectButton, false );
-                backButton.removeEventListener( 'mouseup', unselectButton, false );
-
-            };
 
         case 'questions-page':
 
@@ -6623,20 +6574,6 @@ function showPage( page, options, back ) {
 
             break;
 
-        case 'question-map-page':
-
-            _pages.add( page, {} );
-
-            showQuestionMapFull();
-
-            setView( 'normal' );
-            initializeBackButton();
-            showToolbar( 'main' );
-
-            slidePage( page, previousPage );
-
-            break;
-
         case 'top-page':
 
             showTopUsers( _currentLocation.regionName );
@@ -6904,18 +6841,6 @@ function showQuestion( question ) {
             + question.latitude + ',' + question.longitude
             + markers;
     questionMap.setAttribute( 'src', mapUrl );
-
-};
-
-function showQuestionMapFull() {
-
-    var mapUrl = document.getElementById( 'question-map' ).getAttribute( 'src' ),
-        start = mapUrl.indexOf( 'size=' ) + 5,
-        end = mapUrl.indexOf( '&', start ),
-        size = mapUrl.substring( start, end );
-
-    mapUrl = mapUrl.replace( size, _dimensions.questionMapFullWidth + 'x' + _dimensions.questionMapFullHeight );
-    document.getElementById( 'question-map-full' ).setAttribute( 'src', mapUrl );
 
 };
 

@@ -1908,23 +1908,9 @@ html {
     border-bottom: 1px solid black;
     border-right: 1px solid black;
     box-shadow: 2px 2px 3px rgba( 0, 0, 0, .7 );
-    cursor: pointer;
     display: block;
     height: 140px;
     margin: 6px auto 0 auto;
-}
-
-#question-map-full {
-    display: block;
-    margin: 0 auto;
-}
-
-#question-map-page {
-    height: 100%;
-    left: 0;
-    position: absolute;
-    top: 0;
-    width: 100%;
 }
 
 #question-share {
