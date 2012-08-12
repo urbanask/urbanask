@@ -34,7 +34,7 @@ var _hostname = window.location.hostname,
     _questions = [],
     _nearbyQuestions = [],
     _everywhereQuestions = [],
-    _scrollAnswers,
+    _scrollQuestion,
     _scrollQuestions,
     _scrollTopUsers,
     _scrollUser,
@@ -56,7 +56,8 @@ var _hostname = window.location.hostname,
         "regions": 7,
         "notifications": 8,
         "instructions": 9,
-        "facebook": 10
+        "facebook": 10,
+        "phone": 11
 
     },
     ANSWER_COLUMNS = {
@@ -152,6 +153,11 @@ var _hostname = window.location.hostname,
         "viewed": 5,
         "timestamp": 6
 
+    },
+    PHONE_COLUMNS = {
+        "number": 0,
+        "notifications": 1,
+        "verified": 2
     },
     QUESTION_ROW_COUNT = 50,
     QUESTION_COLUMNS = {
@@ -2125,9 +2131,9 @@ function initializeScrolling() {
 
                 window.clearInterval( timer );
 
-                if ( !_scrollAnswers ) { //in case timer is called twice
+                if ( !_scrollQuestion ) { //in case timer is called twice
 
-                    _scrollAnswers = new iScroll( 'answers-view' );
+                    _scrollQuestion = new iScroll( 'question-page' );
                     _scrollQuestions = new iScroll( 'questions-view' );
                     _scrollTopUsers = new iScroll( 'top-users-view' );
                     _scrollUser = new iScroll( 'user-info-view' );
@@ -2612,6 +2618,8 @@ function localizeStrings() {
     $( '#create-username' ).setAttribute( 'placeholder', STRINGS.usernameLabel );
     $( '#create-password' ).setAttribute( 'placeholder', STRINGS.passwordLabel );
     $( '#edit-account-caption' ).innerHTML = STRINGS.editAccountCaption;
+    $( '#edit-phone' ).setAttribute( 'placeholder', STRINGS.edit.phonePlaceholder );
+    $( '#edit-phone-caption' ).innerHTML = STRINGS.edit.phoneCaption;
     $( '#edit-username' ).setAttribute( 'placeholder', STRINGS.edit.usernameCaption );
     $( '#edit-tagline' ).setAttribute( 'placeholder', STRINGS.edit.taglineCaption );
     $( '#edit-region-caption' ).innerHTML = STRINGS.edit.regionCaption;
@@ -3150,7 +3158,7 @@ function orientationChange() {
 
         window.previousInnerWidth = window.innerWidth;
         initializeDimensions();
-        updateScrollAnswers();
+        updateScrollQuestion();
         updateScrollQuestions();
         updateScrollTopUsers();
         updateScrollUser();
@@ -3437,22 +3445,8 @@ function questionClick( event ) {
 
         if ( question ) {
 
-            switch ( question.closestByTagName( 'ul' ).id ) {
-
-                case 'questions':
-                case 'user-questions':
-                case 'nearby-questions':
-                case 'everywhere-questions':
-
-                    showPage( 'question-page', { id: question.getDataset( 'id' ) } );
-                    break;
-
-                case 'users-questions':
-
-                    showPage( 'question-page', { id: question.getDataset( 'id' ) } );
-                    break;
-
-            };
+            showPage( 'question-page', { id: question.getDataset( 'id' ) } );
+            scrollUp();
 
         };
 
@@ -4579,7 +4573,7 @@ function scrollUp() {
 
             if ( window.deviceInfo.iscroll ) {
 
-                _scrollQuestions.scrollToElement( document.getElementById( 'questions-view' ), 700 );
+                _scrollQuestions.scrollTo( 0, 0, 700 );
 
             } else {
 
@@ -4595,11 +4589,11 @@ function scrollUp() {
 
             if ( window.deviceInfo.iscroll ) {
 
-                _scrollAnswers.scrollToElement( document.getElementById( 'answers-view' ), 700 );
+                _scrollQuestion.scrollTo( 0, 0, 700 );
 
             } else {
 
-                document.getElementById( 'answers-view' ).scrollTop = 0;
+                document.getElementById( 'question-scroll' ).scrollTop = 0;
 
             };
 
@@ -4609,7 +4603,7 @@ function scrollUp() {
 
             if ( window.deviceInfo.iscroll ) {
 
-                _scrollTopUsers.scrollToElement( document.getElementById( 'top-users-view' ), 700 );
+                _scrollTopUsers.scrollTo( 0, 0, 700 );
 
             } else {
 
@@ -4623,7 +4617,7 @@ function scrollUp() {
 
             if ( window.deviceInfo.iscroll ) {
 
-                _scrollUser.scrollToElement( document.getElementById( 'user-info-view' ), 700 );
+                _scrollUser.scrollTo( 0, 0, 700 );
 
             } else {
 
@@ -5123,6 +5117,7 @@ function showAccountPage() {
         account = document.getElementById( 'account' ),
         username = document.getElementById( 'edit-username' ),
         tagline = document.getElementById( 'edit-tagline' ),
+        phone = document.getElementById( 'edit-phone' ),
         region = document.getElementById( 'edit-region' ),
         save = document.getElementById( 'save-edit' ),
         cancel = document.getElementById( 'account-cancel' ),
@@ -5135,6 +5130,7 @@ function showAccountPage() {
 
         username.value = _account[ACCOUNT_COLUMNS.username];
         tagline.value = _account[ACCOUNT_COLUMNS.tagline];
+        phone.value = _account[ACCOUNT_COLUMNS.phone][PHONE_COLUMNS.number];
         loadRegions();
 
         accountPage.removeClass( 'hide' );
@@ -6769,7 +6765,6 @@ function showQuestion( question ) {
         BORDER = 1,
         view = document.getElementById( 'view' ),
         questionView = document.getElementById( 'question-view' ),
-        answersView = document.getElementById( 'answers-view' ),
         answers = document.getElementById( 'answers' ),
         noAnswers = document.getElementById( 'no-answers' ),
         questionMap = document.getElementById( 'question-map' );
@@ -6785,16 +6780,6 @@ function showQuestion( question ) {
         questionView.removeClass( 'question-view-full' ).addClass( 'question-view-normal' );
 
     };
-
-    window.setTimeout( function () {
-
-        var answersViewTop = questionView.clientHeight + questionMap.clientHeight + ( 3 * MARGIN ) + ( 4 * BORDER ),
-            answersViewHeight = view.clientHeight - answersViewTop + MARGIN;
-
-        answersView.style.top = answersViewTop + 'px';
-        answersView.style.height = answersViewHeight + 'px';
-
-    }, 10 );
 
     if ( question[QUESTION_COLUMNS.answers].length ) {
 
@@ -6831,7 +6816,6 @@ function showQuestion( question ) {
     };
 
     answers.innerHTML = html;
-    updateScrollAnswers();
 
     var mapUrl = 'http://maps.google.com/maps/api/staticmap?center='
             + question.latitude + ',' + question.longitude
@@ -6841,6 +6825,8 @@ function showQuestion( question ) {
             + question.latitude + ',' + question.longitude
             + markers;
     questionMap.setAttribute( 'src', mapUrl );
+
+    updateScrollQuestion();
 
 };
 
@@ -8012,13 +7998,13 @@ function updateScrollUser() {
 
 };
 
-function updateScrollAnswers() {
+function updateScrollQuestion() {
 
     if ( window.deviceInfo.iscroll ) {
 
         setTimeout( function () {
 
-            _scrollAnswers.refresh();
+            _scrollQuestion.refresh();
 
         }, 0 );
 
@@ -8069,6 +8055,7 @@ function userAnswerClick( event ) {
         if ( answerItem ) {
 
             showPage( 'question-page', { id: answerItem.getDataset( 'question-id' ) } );
+            scrollUp();
 
         };
 

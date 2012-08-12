@@ -239,10 +239,6 @@
     padding: 0;
 }
 
-#answers-view {
-    overflow-y: auto;
-}
-
 #answer-text {
     -webkit-appearance: none;
     -webkit-user-select: text !important;
@@ -974,6 +970,13 @@ body {
     margin-top: 35px;
 }
 
+.edit-caption {
+    color: white;
+    margin: 8px 0;
+    text-align: center;
+    text-shadow: 2px 2px 3px rgba( 0, 0, 0, .7 );
+}
+
 .edit-input {
     -webkit-appearance: none;
     -webkit-user-select: text;
@@ -1021,13 +1024,6 @@ body {
     margin-bottom: 5px;
     outline: none;
     width: 100%;
-}
-
-#edit-region-caption {
-    color: white;
-    margin: 8px 0;
-    text-align: center;
-    text-shadow: 2px 2px 3px rgba( 0, 0, 0, .7 );
 }
 
 #edit-region-caption::after {

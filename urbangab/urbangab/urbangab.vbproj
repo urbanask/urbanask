@@ -187,6 +187,9 @@
       <DependentUpon>questions.aspx</DependentUpon>
       <SubType>ASPXCodebehind</SubType>
     </Compile>
+    <Compile Include="sms.ashx.vb">
+      <DependentUpon>sms.ashx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">
@@ -211,6 +214,7 @@
       <CustomToolNamespace>My</CustomToolNamespace>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
+    <Content Include="sms.ashx" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

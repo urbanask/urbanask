@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-version="1.17.2" manifest="cache.manifest">
+<html lang="en" data-version="1.17.50" manifest="cache.manifest">
 <head>
     <title>urbanAsk</title>
     
@@ -41,15 +41,15 @@
         </section>
 
         <section id="question-page" class="hide">
-            <ul id="question-view"></ul>
-            <img id="question-map" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12P4DwQACfsD/WMmxY8AAAAASUVORK5CYII=" />
-            <div id="answers-view">
+            <div id="question-scroll" class="scroll">
+                <ul id="question-view"></ul>
+                <img id="question-map" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12P4DwQACfsD/WMmxY8AAAAASUVORK5CYII=" />
                 <ul id="answers" class="scroll"></ul>
                 <div id="no-answers" class="hide"></div>
-            </div>
-            <div id="question-share" class="hide">
-                <div id="question-share-facebook" class="question-share-button">post to facebook</div>
-                <div id="question-share-twitter" class="question-share-button">post to twitter</div>
+                <div id="question-share" class="hide">
+                    <div id="question-share-facebook" class="question-share-button">post to facebook</div>
+                    <div id="question-share-twitter" class="question-share-button">post to twitter</div>
+                </div>
             </div>
         </section>
 
@@ -99,7 +99,9 @@
                     <form id="account">
                         <input id="edit-username" class="edit-input" placeholder="username">
                         <input id="edit-tagline" class="edit-input" placeholder="tagline">
-                        <div id="edit-region-caption"></div>
+                        <div id="edit-phone-caption" class="edit-caption"></div>
+                        <input id="edit-phone" class="edit-input" placeholder="mobile number">
+                        <div id="edit-region-caption" class="edit-caption"></div>
                         <select id="edit-region">
                         </select>
                         <button id="save-edit" class="button">save</button>

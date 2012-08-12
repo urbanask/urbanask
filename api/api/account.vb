@@ -27,7 +27,12 @@ Public Class account : Inherits api.messageHandler
             & """reputation""," _
             & """metricDistances""," _
             & """languageId""," _
-            & """tagline""" _
+            & """tagline""," _
+            & """regions""," _
+            & """notifications""," _
+            & """instructions""," _
+            & """facebook""," _
+            & """phone""" _
             & "]"
 
     Protected Overrides Sub process(
@@ -270,6 +275,25 @@ Public Class account : Inherits api.messageHandler
 
                         response &= String.Concat(
                             """", user("facebookId"), """"
+                            )
+
+                    End If
+
+                End If
+
+                response &= "],["
+
+                'phone
+                If user.NextResult() Then
+
+                    If user.HasRows() Then
+
+                        user.Read()
+
+                        response &= String.Concat(
+                            """", user("number"), """,",
+                            user("notifications"), ",",
+                            user("verified")
                             )
 
                     End If
