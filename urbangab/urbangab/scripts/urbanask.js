@@ -2267,19 +2267,7 @@ function loadAccount( complete ) {
                     ? _account[ACCOUNT_COLUMNS.notifications].items( 0, NOTIFICATION_COLUMNS.viewed ).length
                     : 0;
                 _account = window.JSON.parse( data )[0];
-                _account[ACCOUNT_COLUMNS.instructions].unviewed = function () {
-
-                    var instuctions = [];
-
-                    for ( var index = 0; index < _account[ACCOUNT_COLUMNS.instructions].length; index++ ) {
-
-                        if ( !_account[ACCOUNT_COLUMNS.instructions][index] ) { instuctions.push( index ); };
-
-                    };
-
-                    return instuctions;
-
-                };
+                initializeAccount();
 
                 showNotifications( _account[ACCOUNT_COLUMNS.notifications].length > count );
                 if ( complete ) { complete(); };
@@ -2618,8 +2606,8 @@ function localizeStrings() {
     $( '#create-username' ).setAttribute( 'placeholder', STRINGS.usernameLabel );
     $( '#create-password' ).setAttribute( 'placeholder', STRINGS.passwordLabel );
     $( '#edit-account-caption' ).innerHTML = STRINGS.editAccountCaption;
-    $( '#edit-phone' ).setAttribute( 'placeholder', STRINGS.edit.phonePlaceholder );
-    $( '#edit-phone-caption' ).innerHTML = STRINGS.edit.phoneCaption;
+    $( '#edit-phone-number' ).setAttribute( 'placeholder', STRINGS.edit.phoneNumberPlaceholder );
+    $( '#edit-phone-number-caption' ).innerHTML = STRINGS.edit.phoneNumberCaption;
     $( '#edit-username' ).setAttribute( 'placeholder', STRINGS.edit.usernameCaption );
     $( '#edit-tagline' ).setAttribute( 'placeholder', STRINGS.edit.taglineCaption );
     $( '#edit-region-caption' ).innerHTML = STRINGS.edit.regionCaption;
@@ -2711,6 +2699,34 @@ function login( event ) {
         } );
 
     };
+
+};
+
+function initializeAccount() {
+
+    _account[ACCOUNT_COLUMNS.instructions].unviewed = function () {
+
+        var instuctions = [];
+
+        for ( var index = 0; index < _account[ACCOUNT_COLUMNS.instructions].length; index++ ) {
+
+            if ( !_account[ACCOUNT_COLUMNS.instructions][index] ) { instuctions.push( index ); };
+
+        };
+
+        return instuctions;
+
+    };
+
+    window.Object.defineProperty( _account[ACCOUNT_COLUMNS.phone], 'number', {
+
+        get: function () {
+
+            return this[PHONE_COLUMNS.number] ? this[PHONE_COLUMNS.number] : '';
+
+        }
+
+    } );
 
 };
 
@@ -5117,7 +5133,7 @@ function showAccountPage() {
         account = document.getElementById( 'account' ),
         username = document.getElementById( 'edit-username' ),
         tagline = document.getElementById( 'edit-tagline' ),
-        phone = document.getElementById( 'edit-phone' ),
+        phoneNumber = document.getElementById( 'edit-phone-number' ),
         region = document.getElementById( 'edit-region' ),
         save = document.getElementById( 'save-edit' ),
         cancel = document.getElementById( 'account-cancel' ),
@@ -5130,7 +5146,7 @@ function showAccountPage() {
 
         username.value = _account[ACCOUNT_COLUMNS.username];
         tagline.value = _account[ACCOUNT_COLUMNS.tagline];
-        phone.value = _account[ACCOUNT_COLUMNS.phone][PHONE_COLUMNS.number];
+        phoneNumber.value = _account[ACCOUNT_COLUMNS.phone].number;
         loadRegions();
 
         accountPage.removeClass( 'hide' );
@@ -5169,7 +5185,10 @@ function showAccountPage() {
         var resource = '/api/account/save',
             regionId = region.options[region.selectedIndex].value,
             regionName = region.options[region.selectedIndex].text.trim(),
-            data = 'username=' + username.value + '&tagline=' + tagline.value + '&regionId=' + regionId,
+            data = 'username=' + username.value
+                + '&tagline=' + tagline.value
+                + '&regionId=' + regionId
+                + '&phoneNumber=' + window.encodeURIComponent( phoneNumber.value.trim() ),
             session = getSession( resource );
 
         ajax( API_URL + resource, {
@@ -5183,6 +5202,16 @@ function showAccountPage() {
 
                 _account[ACCOUNT_COLUMNS.username] = username.value;
                 _account[ACCOUNT_COLUMNS.tagline] = tagline.value;
+
+                if ( _account[ACCOUNT_COLUMNS.phone].length ) {
+
+                    _account[ACCOUNT_COLUMNS.phone][PHONE_COLUMNS.number] = phoneNumber.value;
+
+                } else {
+
+                    _account[ACCOUNT_COLUMNS.phone] = [phoneNumber.value, 1, 0];
+
+                };
 
                 if ( regionId == -1 ) {
 

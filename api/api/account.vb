@@ -105,6 +105,7 @@ Public Class account : Inherits api.messageHandler
 
         Dim username As String = queries("username"),
             tagline As String = queries("tagline"),
+            phoneNumber As String = queries("phoneNumber"),
             regionId As String = queries("regionId")
 
         Using command As New SqlClient.SqlCommand(SAVE_ACCOUNT, connection)
@@ -115,6 +116,7 @@ Public Class account : Inherits api.messageHandler
             command.Parameters.AddWithValue("@userId", userId)
             command.Parameters.AddWithValue("@username", username)
             command.Parameters.AddWithValue("@tagline", tagline)
+            command.Parameters.AddWithValue("@phoneNumber", phoneNumber)
             command.Parameters.AddWithValue("@regionId", regionId)
 
             command.ExecuteNonQuery()

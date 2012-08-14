@@ -61,8 +61,8 @@
         "distanceFeet": "ft",
         "edit":
         {
-            "phoneCaption": "I want to be able to ask questions by sending a text message:",
-            "phonePlaceholder": "mobile # (ex: 14156305242)",
+            "phoneNumberCaption": "I want to be able to ask questions by sending a text message:",
+            "phoneNumberPlaceholder": "mobile # (ex: +14156305242)",
             "usernameCaption": "username",
             "taglineCaption": "say something about yourself",
             "regionCaption": "In addition to questions near me, show me the following region",

@@ -65,6 +65,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
@@ -107,6 +108,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="questions.vb" />
+    <Compile Include="sms.vb" />
     <Compile Include="top.vb" />
     <Compile Include="users.vb" />
   </ItemGroup>

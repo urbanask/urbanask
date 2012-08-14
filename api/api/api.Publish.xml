@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <publishData>
   <publishProfile publishUrl="C:\inetpub\wwwroot\api" deleteExistingFiles="True" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Windows7" publishMethod="FileSystem" replaceMatchingFiles="False" userName="" savePWD="False" userPWD="" SelectedForPublish="False">
-    <file relUrl="bin/api.dll" publishTime="03/09/2012 19:53:16" />
-    <file relUrl="bin/api.pdb" publishTime="03/09/2012 19:53:16" />
-    <file relUrl="web.config" publishTime="01/21/2012 18:02:45" />
     <file relUrl="bin/removeHttpHeaders.dll" publishTime="09/16/2011 17:43:51" />
+    <file relUrl="bin/api.dll" publishTime="03/09/2012 19:53:16" />
+    <file relUrl="web.config" publishTime="01/21/2012 18:02:45" />
+    <file relUrl="bin/api.pdb" publishTime="03/09/2012 19:53:16" />
   </publishProfile>
   <publishProfile publishUrl="https://75.144.228.69" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="Default Web Site/api" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="True" msdeploySkipExtraFilesOnServer="False" msdeployMarkAsApp="True" profileName="75.144.228.69" publishMethod="MSDeploy" replaceMatchingFiles="True" userName="Administrator" savePWD="True" userPWD="AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAmuRNkqdzZkWZ2Gz7QSpuQQAAAAACAAAAAAAQZgAAAAEAACAAAAAl+COCQ0Ir+fvn6D/Vu/um+x3D7d4AG+sL4J2KGc/p6AAAAAAOgAAAAAIAACAAAABUNlbIjT7ltMbSNCxsnBqScDZdKNBz8fINfSIfWyoIIiAAAABx4EtMROQAIObZI86IVkCDqY5NbsrEr/gr6hRKnJAE8UAAAAB+g5pEXvHHWGaGF7MBtE5KrCUO1QDH06ujfQzuODLaUGH77bCe/xvTJNug217VMf6BBpxu537gv+W7mSNTw4RZ" SelectedForPublish="True" />
   <publishProfile publishUrl="http://69.65.42.214" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="urbanask.com/api" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="False" msdeployMarkAsApp="True" profileName="gigenet" publishMethod="MSDeploy" replaceMatchingFiles="True" userName="Administrator" savePWD="True" userPWD="AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAj+r2ZPH7/ky8qnZ+xMyeKwAAAAACAAAAAAAQZgAAAAEAACAAAAAzF4avFGuojj/tN2qKUJSMeD//r6pj8IdDFMl0LUFi3QAAAAAOgAAAAAIAACAAAAAbCTXGrBLPDRF9PFMK80HgbhP9N1GqXbnm9I8PKS0GmTAAAAAJqR2hxdbh0jBW9HrDklerkV7HzrAJeGAmCUpEK1ecThNkqJ5EFhF8yApDN2Gj4pFAAAAAObAxtQxST5TlYxE7KAy3CRE2BLiOslYFTs27vkl/3/Wlz/IPuKQ6zCa0zaMLOrJnDLM9OqB98jsgIy9rt13aHQ==" SelectedForPublish="False" />
