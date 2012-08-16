@@ -4,15 +4,18 @@ GO
 SET ANSI_NULLS OFF
 GO
 
---DECLARE	@userId			AS ForeignKey = 1
---DECLARE	@answerId		AS ForeignKey = 4248908
---DECLARE	@success		AS BIT				
+--DECLARE	@userId			    AS ForeignKey = 24
+--DECLARE	@username			AS VARCHAR(100) = 'Emil Sinclair'
+--DECLARE	@tagline			AS VARCHAR(256) = 'something'
+--DECLARE	@phoneNumber		AS VARCHAR(50) = '+19164022982'
+--DECLARE	@regionId			AS ForeignKey = 1
 
 CREATE PROCEDURE [api].[saveAccount]
 	(
 	@userId			AS ForeignKey,
 	@username		AS VARCHAR(100),
 	@tagline		AS VARCHAR(256),
+	@phoneNumber 	AS VARCHAR(50),
 	@regionId		AS ForeignKey
 	)
 AS
@@ -66,4 +69,83 @@ BEGIN
 
 
 END
+
+
+
+IF EXISTS(
+
+    SELECT
+        userPhone.userPhoneId       AS userPhoneId
+        
+    FROM
+        Gabs.dbo.userPhone          AS userPhone
+        WITH                        ( NOLOCK, INDEX( ix_userPhone ) )
+        
+    WHERE
+        userPhone.userId            = @userId
+
+)
+BEGIN
+
+
+
+    IF NOT EXISTS(
+
+        SELECT
+            userPhone.userPhoneId       AS userPhoneId
+            
+        FROM
+            Gabs.dbo.userPhone          AS userPhone
+            WITH                        ( NOLOCK, INDEX( ix_userPhone ) )
+            
+        WHERE
+                userPhone.userId        = @userId
+            AND userPhone.number        = @phoneNumber
+
+    )
+    BEGIN
+    
+    
+    
+        UPDATE
+            Gabs.dbo.userPhone
+        
+        SET
+            number                  = @phoneNumber
+            
+        WHERE
+            userPhone.userId        = @userId
+    
+    
+    
+    END
+
+
+
+END
+ELSE
+BEGIN
+
+
+
+    INSERT INTO
+        Gabs.dbo.userPhone
+        (
+        userId,
+        number,
+        verified
+        )
+        
+    VALUES
+        (
+        @userId,
+        @phoneNumber,
+        0 --false
+        )
+    
+    
+    
+END
+
+
 GO

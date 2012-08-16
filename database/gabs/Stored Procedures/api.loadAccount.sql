@@ -174,4 +174,22 @@ OPTION
 	  ( FORCE ORDER, LOOP JOIN, MAXDOP 1 )
 
 
+-- phone
+
+SELECT
+    userPhone.number                    AS number,
+    userPhone.notifications             AS notifications,
+    userPhone.verified                  AS verified
+    
+FROM
+    Gabs.dbo.userPhone                  AS userPhone
+    WITH                                ( NOLOCK, INDEX( ix_userPhone ) )
+    
+WHERE
+        userPhone.userId                 = @userId
+    
+OPTION
+    ( FORCE ORDER, LOOP JOIN, MAXDOP 1 )
+
+
 GO
