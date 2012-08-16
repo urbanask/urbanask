@@ -61,4 +61,7 @@ FROM
 
 
 
+
+GO
+GRANT EXECUTE ON  [login].[createSession] TO [api]
 GO

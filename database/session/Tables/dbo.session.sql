@@ -6,8 +6,11 @@ CREATE TABLE [dbo].[session]
 [timestamp] [datetime2] NOT NULL CONSTRAINT [df_session_timestamp] DEFAULT (getdate())
 ) ON [PRIMARY]
 GO
-ALTER TABLE [dbo].[session] ADD CONSTRAINT [pk_session] PRIMARY KEY CLUSTERED  ([sessionId]) ON [PRIMARY]
-GO
+GRANT SELECT ON  [dbo].[session] TO [api]
+GRANT INSERT ON  [dbo].[session] TO [api]
 GRANT SELECT ON  [dbo].[session] TO [login]
 GRANT INSERT ON  [dbo].[session] TO [login]
+GO
+
+ALTER TABLE [dbo].[session] ADD CONSTRAINT [pk_session] PRIMARY KEY CLUSTERED  ([sessionId]) ON [PRIMARY]
 GO
