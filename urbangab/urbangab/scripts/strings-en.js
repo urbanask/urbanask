@@ -68,11 +68,10 @@
             "regionCaption": "In addition to questions near me, show me the following region",
             "regionNone": "&lt;none&gt;"
         },
-        "editAccountCaption": "edit",
+        "editAccountCaption": "settings",
         "emailLabel": "email",
         "error":
         {
-            "alreadyAnswered": "You already answered this question.",
             "answerSelect": "There was an error saving your selection.",
             "answerVote": "There was an error saving your vote.",
             "deleteAnswer": "There was an error deleting your question.",
@@ -165,6 +164,11 @@
         "passwordLabel": "password",
         "questionHeader": "questions",
         "questionLabel": "I want...",
+        "questionPage": {
+
+            "addNewAnswerCaption": "Add an Answer"
+
+        },
         "questionPosted": "Posted",
         "questionsNearby": "nearby",
         "questionsEverywhere": "everywhere",

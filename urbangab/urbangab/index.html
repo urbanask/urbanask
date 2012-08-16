@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-version="1.17.59" manifest="cache.manifest">
+<html lang="en" data-version="1.18.0" manifest="cache.manifest">
 <head>
     <title>urbanAsk</title>
     
@@ -44,6 +44,10 @@
             <div id="question-scroll" class="scroll">
                 <ul id="question-view"></ul>
                 <img id="question-map" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12P4DwQACfsD/WMmxY8AAAAASUVORK5CYII=" />
+                <div id="add-new-answer" class="button-3d hide">
+                    <div id="add-new-answer-image"></div>
+                    <div id="add-new-answer-caption">Add an Answer</div>
+                </div>
                 <ul id="answers" class="scroll"></ul>
                 <div id="no-answers" class="hide"></div>
                 <div id="question-share" class="hide">
@@ -242,7 +246,6 @@
 
         <ul id="toolbar-question" class="toolbar hide">
                <li class="toolbar-item toolbar-question-item" id="select-answers-button"></li><!--
-            --><li class="toolbar-item toolbar-question-item" id="add-answer-button"></li><!--
             --><li class="toolbar-item toolbar-question-item" id="vote-up-button"></li><!--
             --><li class="toolbar-item toolbar-question-item" id="vote-down-button"></li><!--
             --><li class="toolbar-item toolbar-question-item" id="question-user-button"></li><!--

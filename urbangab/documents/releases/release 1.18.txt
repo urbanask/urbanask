@@ -1,3 +1,9 @@
 1.18
 
+new - ask questions with SMS. Text question to 415.630.5242 in the format: question @ location
 new - whole page scroll on question view
+new - more obvious "Add Answer" button
+
+bug - region question list show my questions
+
+

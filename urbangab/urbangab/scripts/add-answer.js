@@ -321,6 +321,8 @@ function showAddAnswer( question ) {
 
                 }, 750 );
 
+                hideAddNewAnswerButton();
+
                 showNotification( STRINGS.notificationAnswerQuestion, { footer: STRINGS.notification.answerSaved } );
                 showToolbar( 'question', { question: question } );
 
@@ -374,6 +376,25 @@ function showAddAnswer( question ) {
             }
 
         } );
+
+    };
+
+    function hideAddNewAnswerButton() {
+
+        var addNewAnswer = document.getElementById( 'add-new-answer' );
+
+        window.setTimeout( function () {
+
+            addNewAnswer.addClass( 'height-slide' ).addClass( 'height-zero' );
+
+        }, 100 );
+
+        window.setTimeout( function () {
+
+            addNewAnswer.addClass( 'hide' );
+            addNewAnswer.removeClass( 'height-zero' ).removeClass( 'height-slide' );
+
+        }, 700 );
 
     };
 

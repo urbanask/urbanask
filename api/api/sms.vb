@@ -33,6 +33,7 @@ Public Class sms : Implements System.Web.IHttpHandler
 
     Private Const COMMAND_TIMEOUT As Int32 = 60,
         CHECK_PHONE_NUMBER As String = "Gabs.api.checkPhoneNumber",
+        VERIFY_PHONE_NUMBER As String = "Gabs.api.verifyPhoneNumber",
         LOAD_SESSION As String = "session.login.loadSession",
         CREATE_SESSION As String = "session.login.createSession",
         GOOGLE_MAPS_URL As String = "http://maps.googleapis.com/maps/api/geocode/json?address=%1&sensor=false",
@@ -54,6 +55,8 @@ Public Class sms : Implements System.Web.IHttpHandler
             Case "HELP"
 
             Case "VERIFY"
+
+                verifyNumber(context, params)
 
             Case Else
 
@@ -107,6 +110,41 @@ Public Class sms : Implements System.Web.IHttpHandler
         End Using
 
         'check users' default location
+
+    End Sub
+
+    Private Sub verifyNumber(
+        context As Web.HttpContext,
+        params As Collections.Specialized.NameValueCollection)
+
+        Dim phoneNumber As String = params("From")
+
+        Using connection As New System.Data.SqlClient.SqlConnection(CONNECTION_STRING),
+            command As New SqlClient.SqlCommand(VERIFY_PHONE_NUMBER, connection)
+
+            connection.Open()
+
+            command.CommandType = CommandType.StoredProcedure
+            command.CommandTimeout = COMMAND_TIMEOUT
+
+            command.Parameters.AddWithValue("@phoneNumber", phoneNumber)
+            command.Parameters.Add("@success", SqlDbType.Int).Direction = ParameterDirection.Output
+
+            command.ExecuteNonQuery()
+
+            If command.Parameters("@success").Value.ToString() = "1" Then
+
+                sendResponse(context, "Your number has been verified and you can now text questions to urbanAsk.")
+
+            Else
+
+                sendResponse(context, String.Concat(
+                    "Your mobile number is not recognized. ",
+                    "Login to urbanAsk and add your number to your account."))
+
+            End If
+
+        End Using
 
     End Sub
 

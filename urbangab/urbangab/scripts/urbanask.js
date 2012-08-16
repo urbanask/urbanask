@@ -490,14 +490,17 @@ function addEventListeners( page, previousPage ) {
 
         case 'question-page':
 
+            backButton = document.getElementById( 'back-button' );
+            backButton.addEventListener( 'click', goBack, false );
+
             answers = document.getElementById( 'answers' );
             answers.addEventListener( 'click', answerClick, false );
 
             var questionView = document.getElementById( 'question-view' );
             questionView.addEventListener( 'click', questionItemClick, false );
 
-            backButton = document.getElementById( 'back-button' );
-            backButton.addEventListener( 'click', goBack, false );
+            var addNewAnswer = document.getElementById( 'add-new-answer' );
+            addNewAnswer.addEventListener( 'click', onAddNewAnswerClick, false );
 
             document.getElementById( 'question-map' ).addEventListener( 'click', questionItemClick, false );
 
@@ -515,6 +518,9 @@ function addEventListeners( page, previousPage ) {
                 backButton.addEventListener( 'touchstart', selectButton, false );
                 backButton.addEventListener( 'touchend', unselectButton, false );
 
+                addNewAnswer.addEventListener( 'touchstart', selectButton, false );
+                addNewAnswer.addEventListener( 'touchend', unselectButton, false );
+
             } else {
 
                 answers.addEventListener( 'mouseover', hoverItem, false );
@@ -527,6 +533,9 @@ function addEventListeners( page, previousPage ) {
 
                 backButton.addEventListener( 'mousedown', selectButton, false );
                 backButton.addEventListener( 'mouseup', unselectButton, false );
+
+                addNewAnswer.addEventListener( 'mousedown', selectButton, false );
+                addNewAnswer.addEventListener( 'mouseup', unselectButton, false );
 
             };
 
@@ -2368,7 +2377,8 @@ function loadRegionQuestions() {
     if ( isLoggedIn() && _account[ACCOUNT_COLUMNS.regions].length ) {
 
         var region = _account[ACCOUNT_COLUMNS.regions][0],
-            data = 'regionId=' + region[REGION_COLUMNS.id],
+            data = 'regionId=' + region[REGION_COLUMNS.id]
+                + ( isLoggedIn() ? '&currentUserId=' + _account[ACCOUNT_COLUMNS.userId] : '' ),
             resource = '/api/questions';
 
         ajax( API_URL + resource, {
@@ -2593,6 +2603,7 @@ function localizeStrings() {
 
     $( '#add-location-cancel' ).textContent = STRINGS.cancelButtonCaption;
     $( '#add-location-ok' ).textContent = STRINGS.okButtonCaption;
+    $( '#add-new-answer-caption' ).textContent = STRINGS.questionPage.addNewAnswerCaption;
     $( '#answer-confirm-cancel' ).textContent = STRINGS.cancelButtonCaption;
     $( '#answer-confirm-ok' ).textContent = STRINGS.okButtonCaption;
     $( '#answer-text' ).setAttribute( 'placeholder', STRINGS.answerLabel );
@@ -3091,6 +3102,24 @@ function notificationItemClick( event ) {
         window.setTimeout( function () { unselectItem( event ); }, 100 );
 
     }, 100 );
+
+};
+
+function onAddNewAnswerClick() {
+
+    if ( isLoggedIn() ) {
+
+        showAddAnswer( _pages.last().options.object );
+
+    } else {
+
+        showMessage( STRINGS.login.loginRequired.replace( '%1', STRINGS.login.loginRequiredAction.addAnswer ), function () {
+
+            logoutApp();
+
+        } );
+
+    };
 
 };
 
@@ -3660,6 +3689,9 @@ function removeEventListeners( page ) {
             var questionView = document.getElementById( 'question-view' );
             questionView.removeEventListener( 'click', questionItemClick, false );
 
+            var addNewAnswer = document.getElementById( 'add-new-answer' );
+            addNewAnswer.removeEventListener( 'click', onAddNewAnswerClick, false );
+
             document.getElementById( 'question-map' ).removeEventListener( 'click', questionItemClick, false );
 
             if ( window.deviceInfo.phonegap ) {
@@ -3676,6 +3708,9 @@ function removeEventListeners( page ) {
                 backButton.removeEventListener( 'touchstart', selectButton, false );
                 backButton.removeEventListener( 'touchend', unselectButton, false );
 
+                addNewAnswer.removeEventListener( 'touchstart', selectButton, false );
+                addNewAnswer.removeEventListener( 'touchend', unselectButton, false );
+
             } else {
 
                 answers.removeEventListener( 'mouseover', hoverItem, false );
@@ -3688,6 +3723,9 @@ function removeEventListeners( page ) {
 
                 backButton.removeEventListener( 'mousedown', selectButton, false );
                 backButton.removeEventListener( 'mouseup', unselectButton, false );
+
+                addNewAnswer.removeEventListener( 'mousedown', selectButton, false );
+                addNewAnswer.removeEventListener( 'mouseup', unselectButton, false );
 
             };
 
@@ -6796,7 +6834,8 @@ function showQuestion( question ) {
         questionView = document.getElementById( 'question-view' ),
         answers = document.getElementById( 'answers' ),
         noAnswers = document.getElementById( 'no-answers' ),
-        questionMap = document.getElementById( 'question-map' );
+        questionMap = document.getElementById( 'question-map' ),
+        addNewAnswer = document.getElementById( 'add-new-answer' );
 
     if ( question[QUESTION_COLUMNS.question].length > 25 ) {
 
@@ -6807,6 +6846,24 @@ function showQuestion( question ) {
 
         questionView.innerHTML = getQuestionItem( question );
         questionView.removeClass( 'question-view-full' ).addClass( 'question-view-normal' );
+
+    };
+
+    if ( isMyQuestion( question ) ) {
+
+        addNewAnswer.addClass( 'hide' );
+
+    } else {
+
+        if ( isLoggedIn() && question.answered( _account[ACCOUNT_COLUMNS.userId] ) ) {
+
+            addNewAnswer.addClass( 'hide' );
+
+        } else {
+
+            addNewAnswer.removeClass( 'hide' );
+
+        };
 
     };
 
@@ -7107,21 +7164,14 @@ function showToolbar( toolbar, options ) {
                 document.getElementById( 'select-answers-button' ).removeClass( 'hide' );
                 document.getElementById( 'question-share-button' ).removeClass( 'hide' );
 
-                document.getElementById( 'add-answer-button' ).addClass( 'hide' );
                 document.getElementById( 'question-user-button' ).addClass( 'hide' );
 
             } else {
 
-                document.getElementById( 'add-answer-button' ).removeClass( 'hide' );
                 document.getElementById( 'question-user-button' ).removeClass( 'hide' );
 
                 document.getElementById( 'select-answers-button' ).addClass( 'hide' );
                 document.getElementById( 'question-share-button' ).addClass( 'hide' );
-
-                disabled = question.answered( _account[ACCOUNT_COLUMNS.userId] );
-                button = document.getElementById( 'add-answer-button' );
-                disabled ? button.addClass( 'disabled' ) : button.removeClass( 'disabled' );
-                button.setDataset( 'question-id', question.questionId );
 
                 document.getElementById( 'question-user-button' ).setDataset( 'user-id', question.userId );
 
@@ -7519,34 +7569,6 @@ function toolbarClick( event ) {
             question;
 
         switch ( item.id ) {
-
-            case 'add-answer-button':
-
-                if ( isLoggedIn() ) {
-
-                    question = _pages.last().options.object;
-
-                    if ( question.answered( _account[ACCOUNT_COLUMNS.userId] ) ) {
-
-                        showMessage( STRINGS.error.alreadyAnswered );
-
-                    } else {
-
-                        showAddAnswer( question );
-
-                    };
-
-                } else {
-
-                    showMessage( STRINGS.login.loginRequired.replace( '%1', STRINGS.login.loginRequiredAction.addAnswer ), function () {
-
-                        logoutApp();
-
-                    } );
-
-                };
-
-                break;
 
             case 'answer-user-button':
 
