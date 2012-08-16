@@ -798,17 +798,21 @@ function checkLogin() {
 
         startApp();
 
-        checkFacebookAuthorization( function () {
+        if ( !isLoggedIn() ) {
 
-            loadAccount( function () {
+            checkFacebookAuthorization( function () {
 
-                document.getElementById( 'user-button' ).setDataset( 'user-id', _account[ACCOUNT_COLUMNS.userId] );
-                refreshQuestions();
-                refreshUserQuestions();
+                loadAccount( function () {
+
+                    document.getElementById( 'user-button' ).setDataset( 'user-id', _account[ACCOUNT_COLUMNS.userId] );
+                    refreshQuestions();
+                    refreshUserQuestions();
+
+                } );
 
             } );
 
-        } );
+        };
 
     };
 
@@ -2735,7 +2739,13 @@ function initializeAccount() {
 
             return this[PHONE_COLUMNS.number] ? this[PHONE_COLUMNS.number] : '';
 
+        },
+        set: function ( number ) {
+
+            this[PHONE_COLUMNS.number] = number ? number : '';
+
         }
+
 
     } );
 
@@ -5243,11 +5253,13 @@ function showAccountPage() {
 
                 if ( _account[ACCOUNT_COLUMNS.phone].length ) {
 
-                    _account[ACCOUNT_COLUMNS.phone][PHONE_COLUMNS.number] = phoneNumber.value;
+                    _account[ACCOUNT_COLUMNS.phone].number = phoneNumber.value.trim();
 
                 } else {
 
-                    _account[ACCOUNT_COLUMNS.phone] = [phoneNumber.value, 1, 0];
+                    _account[ACCOUNT_COLUMNS.phone].number = phoneNumber.value.trim();
+                    _account[ACCOUNT_COLUMNS.phone][PHONE_COLUMNS.notifications] = 1;
+                    _account[ACCOUNT_COLUMNS.phone][PHONE_COLUMNS.verified] = 0;
 
                 };
 
@@ -5342,6 +5354,7 @@ function showAccountPage() {
 
             username.addEventListener( 'touchstart', iScrollFix, false );
             tagline.addEventListener( 'touchstart', iScrollFix, false );
+            phoneNumber.addEventListener( 'touchstart', iScrollFix, false );
             region.addEventListener( 'touchstart', iScrollFix, false );
 
         };
@@ -5382,6 +5395,7 @@ function showAccountPage() {
 
             username.removeEventListener( 'touchstart', iScrollFix, false );
             tagline.removeEventListener( 'touchstart', iScrollFix, false );
+            phoneNumber.addEventListener( 'touchstart', iScrollFix, false );
             region.removeEventListener( 'touchstart', iScrollFix, false );
 
         };

@@ -134,12 +134,17 @@ Public Class sms : Implements System.Web.IHttpHandler
 
             If command.Parameters("@success").Value.ToString() = "1" Then
 
-                sendResponse(context, "Your number has been verified and you can now text questions to urbanAsk.")
+                sendResponse(context, String.Concat(
+                    "Your number, ",
+                    phoneNumber,
+                    ", has been verified and you can now text questions to urbanAsk."))
 
             Else
 
                 sendResponse(context, String.Concat(
-                    "Your mobile number is not recognized. ",
+                    "Your mobile number, ",
+                    phoneNumber,
+                    ", is not recognized. ",
                     "Login to urbanAsk and add your number to your account."))
 
             End If
@@ -221,19 +226,25 @@ Public Class sms : Implements System.Web.IHttpHandler
             If command.Parameters("@userId").Value.ToString() = "0" Then
 
                 sendResponse(context, String.Concat(
-                    "Your mobile number is not recognized. ",
+                    "Your mobile number, ",
+                    phoneNumber,
+                    ", is not recognized. ",
                     "Login to urbanAsk and add your number to your account."))
 
             ElseIf command.Parameters("@verified").Value.ToString() = "0" Then
 
                 sendResponse(context, String.Concat(
-                    "Your mobile number is not yet verified. ",
+                    "Your mobile number, ",
+                    phoneNumber,
+                    ", is not yet verified. ",
                     "Respond with VERIFY to verify this number and then resend your question."))
 
             ElseIf command.Parameters("@stop").Value.ToString() = "1" Then
 
                 sendResponse(context, String.Concat(
-                    "Your mobile number has been previously set to ignore messages from urbanAsk. ",
+                    "Your mobile number, ",
+                    phoneNumber,
+                    ", has been previously set to ignore messages from urbanAsk. ",
                     "If you would like to reactivate your number, respond with START."))
 
             Else
