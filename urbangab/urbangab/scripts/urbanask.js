@@ -2605,6 +2605,7 @@ function loadUserQuestions() {
 
 function localizeStrings() {
 
+    $( '#add-contact' ).textContent = STRINGS.edit.addContact;
     $( '#add-location-cancel' ).textContent = STRINGS.cancelButtonCaption;
     $( '#add-location-ok' ).textContent = STRINGS.okButtonCaption;
     $( '#add-new-answer-caption' ).textContent = STRINGS.questionPage.addNewAnswerCaption;
@@ -4422,8 +4423,15 @@ function saveQuestion( event ) {
 
         } else {
 
-            getGeolocation();
-            showMessage( STRINGS.error.geoNotFound );
+            if ( window.deviceInfo.brand == 'ios' ) {
+
+                showMessage( STRINGS.error.geoLocationIos );                
+
+            } else {
+
+                showMessage( STRINGS.error.geoLocationDefault );
+
+            };
 
         };
 
@@ -5182,6 +5190,7 @@ function showAccountPage() {
         username = document.getElementById( 'edit-username' ),
         tagline = document.getElementById( 'edit-tagline' ),
         phoneNumber = document.getElementById( 'edit-phone-number' ),
+        addContact = document.getElementById( 'add-contact' ),
         region = document.getElementById( 'edit-region' ),
         save = document.getElementById( 'save-edit' ),
         cancel = document.getElementById( 'account-cancel' ),
@@ -5196,6 +5205,16 @@ function showAccountPage() {
         tagline.value = _account[ACCOUNT_COLUMNS.tagline];
         phoneNumber.value = _account[ACCOUNT_COLUMNS.phone].number;
         loadRegions();
+
+        if ( window.deviceInfo.phonegap ) {
+
+            addContact.removeClass( 'hide' );
+
+        } else {
+
+            addContact.addClass( 'hide' );
+
+        };
 
         accountPage.removeClass( 'hide' );
         addEventListeners();
@@ -5320,6 +5339,45 @@ function showAccountPage() {
 
     };
 
+    function addToContacts( event ) {
+
+        event.preventDefault();
+
+        if ( window.deviceInfo.phonegap ) {
+
+            var contact = navigator.contacts.create( {
+                "organizations": [{
+                    "name": "urbanAsk"
+                }],
+                "phoneNumbers": [{
+                    "type": "SMS",
+                    "value": "+14156305242"
+                }],
+                "urls": [{
+                    "type": "home page",
+                    "value": "http://urbanAsk.com"
+                }],
+                "emails": [{
+                    "type": "work",
+                    "value": "support@urbanask.com"
+                }],
+                "photos": [{
+                    "type": "url",
+                    "value": "http://urbanAsk.com/images/icon.png"
+                }]
+            } );
+
+            contact.save( function () {
+
+            },
+            function () {
+
+            } );
+
+        };
+
+    };
+
     function postToWall( event ) {
 
         event.preventDefault();
@@ -5365,6 +5423,12 @@ function showAccountPage() {
         save.addEventListener( 'mousedown', selectButton, false );
         save.addEventListener( 'mouseup', unselectButton, false );
 
+        addContact.addEventListener( 'click', addToContacts, false );
+        addContact.addEventListener( 'touchstart', selectButton, false );
+        addContact.addEventListener( 'touchend', unselectButton, false );
+        addContact.addEventListener( 'mousedown', selectButton, false );
+        addContact.addEventListener( 'mouseup', unselectButton, false );
+
         inviteButton.addEventListener( 'click', inviteFriends, false );
         inviteButton.addEventListener( 'touchstart', selectButton, false );
         inviteButton.addEventListener( 'touchend', unselectButton, false );
@@ -5405,6 +5469,12 @@ function showAccountPage() {
         save.removeEventListener( 'touchend', unselectButton, false );
         save.removeEventListener( 'mousedown', selectButton, false );
         save.removeEventListener( 'mouseup', unselectButton, false );
+
+        addContact.removeEventListener( 'click', addToContacts, false );
+        addContact.removeEventListener( 'touchstart', selectButton, false );
+        addContact.removeEventListener( 'touchend', unselectButton, false );
+        addContact.removeEventListener( 'mousedown', selectButton, false );
+        addContact.removeEventListener( 'mouseup', unselectButton, false );
 
         inviteButton.removeEventListener( 'click', inviteFriends, false );
         inviteButton.removeEventListener( 'touchstart', selectButton, false );

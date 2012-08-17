@@ -61,6 +61,7 @@
         "distanceFeet": "ft",
         "edit":
         {
+            "addContact": "add urbanAsk to contacts",
             "phoneNumberCaption": "I want to be able to ask questions by sending a text message:",
             "phoneNumberPlaceholder": "mobile # (ex: +14156305242)",
             "usernameCaption": "username",
@@ -75,7 +76,8 @@
             "answerSelect": "There was an error saving your selection.",
             "answerVote": "There was an error saving your vote.",
             "deleteAnswer": "There was an error deleting your question.",
-            "geoLocation": "Could not determine your GPS location. Check to see if location services are locked or disabled.",
+            "geoLocationDefault": "Could not determine your GPS location. Verify that location services are enabled for urbanAsk.",
+            "geoLocationIos": "Could not determine your GPS location. Check your devices Location Services Settings for urbanAsk.",
             "geoNotFound": "Could not determine your current location. Please try again in a few moments.",
             "loadAccount": "There was an error loading your account information.",
             "loadTopUsers": "There was an error loading top users.",
