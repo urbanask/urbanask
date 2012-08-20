@@ -75,9 +75,10 @@
         {
             "answerSelect": "There was an error saving your selection.",
             "answerVote": "There was an error saving your vote.",
+            "contactAdded": "There was an error adding the contact.",
             "deleteAnswer": "There was an error deleting your question.",
             "geoLocationDefault": "Could not determine your GPS location. Verify that location services are enabled for urbanAsk.",
-            "geoLocationIos": "Could not determine your GPS location. Check your devices Location Services Settings for urbanAsk.",
+            "geoLocationIos": "Could not determine your GPS location. Check Location Services settings for urbanAsk.",
             "geoNotFound": "Could not determine your current location. Please try again in a few moments.",
             "loadAccount": "There was an error loading your account information.",
             "loadTopUsers": "There was an error loading top users.",
@@ -155,11 +156,14 @@
         "notificationUpvote": "+1",
         "notification":
         {
-            "questionSaved": "question posted",
             "answerSaved": "answer posted",
-            "newVersion": "There is a new version of urbanAsk.",
+            "contactAdded": "urbanAsk was added to your contacts",
+            "contactUpdated": "The urbanAsk contact has been updated",
+            "contactExists": "The urbanAsk contact already exists",
             "downloading": "downloading...",
-            "postedToFacebook": "Successfully posted to your wall."
+            "newVersion": "There is a new version of urbanAsk.",
+            "postedToFacebook": "Successfully posted to your wall.",
+            "questionSaved": "question posted"
         },
         "okButtonCaption": "ok",
         "optionalNote": "optional note...",
@@ -173,6 +177,13 @@
         },
         "questionPosted": "Posted",
         "questionsNearby": "nearby",
+        "questionsPage": {
+
+            "viewNearbyQuestions": "view questions near me",
+            "nearbyQuestionsInstructions": "urbanAsk needs access to your location to display questions near you.<br /><br />"
+                + "Is this OK?<br /><br /> Your device OS may also ask permission."
+
+        },
         "questionsEverywhere": "everywhere",
         "toolbar":
         {

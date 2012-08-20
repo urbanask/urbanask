@@ -41,6 +41,7 @@ Public Class questions : Inherits api.messageHandler
             & """voted""," _
             & """votes""," _
             & """answers""," _
+            & """region""" _
             & "]",
         MESSAGE_LENGTH_MAX As Int32 = 600,
         RANGE_MAX As Int32 = 50,
@@ -456,6 +457,8 @@ Public Class questions : Inherits api.messageHandler
                     question("votes"), ",",
                     question("answers"), ",[")
 
+                Dim region As String = MyBase.jsonEncode(CStr(question("region")))
+
                 'answers
                 If question.NextResult() Then
 
@@ -514,7 +517,12 @@ Public Class questions : Inherits api.messageHandler
 
                 End If
 
-                response &= "]]"
+                response &= "],"
+
+                'additional question fields
+                response &= String.Concat("""", region, """")
+
+                response &= "]"
 
             End If
 

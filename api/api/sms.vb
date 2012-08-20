@@ -137,7 +137,7 @@ Public Class sms : Implements System.Web.IHttpHandler
                 sendResponse(context, String.Concat(
                     "Your number, ",
                     phoneNumber,
-                    ", has been verified and you can now text questions to urbanAsk."))
+                    ", has been verified. You can now text questions to urbanAsk."))
 
             Else
 
@@ -226,26 +226,20 @@ Public Class sms : Implements System.Web.IHttpHandler
             If command.Parameters("@userId").Value.ToString() = "0" Then
 
                 sendResponse(context, String.Concat(
-                    "Your mobile number, ",
-                    phoneNumber,
-                    ", is not recognized. ",
+                    "Your mobile number, ", phoneNumber, ", is not recognized. ",
                     "Login to urbanAsk and add your number to your account."))
 
             ElseIf command.Parameters("@verified").Value.ToString() = "0" Then
 
                 sendResponse(context, String.Concat(
-                    "Your mobile number, ",
-                    phoneNumber,
-                    ", is not yet verified. ",
-                    "Respond with VERIFY to verify this number and then resend your question."))
+                    "Your mobile number, ", phoneNumber, ", is not verified. ",
+                    "Respond with VERIFY and then resend your question."))
 
             ElseIf command.Parameters("@stop").Value.ToString() = "1" Then
 
                 sendResponse(context, String.Concat(
-                    "Your mobile number, ",
-                    phoneNumber,
-                    ", has been previously set to ignore messages from urbanAsk. ",
-                    "If you would like to reactivate your number, respond with START."))
+                    "Your mobile number, ", phoneNumber, ", is set to ignore messages from urbanAsk. ",
+                    "To activate your number respond with START."))
 
             Else
 
@@ -294,8 +288,8 @@ Public Class sms : Implements System.Web.IHttpHandler
             Else
 
                 sendResponse(context, String.Concat(
-                    "Your location, """, location, """, is not recognized. Please resend your question in the format: ",
-                    "question @ location. Location can be a postal code, city or neighborhood. ",
+                    """", location, """ is not recognized. ",
+                    "Format: question @ location. Location is a postal code, city or neighborhood. ",
                     "Ex: tacos @ 95814"))
 
             End If
@@ -303,8 +297,8 @@ Public Class sms : Implements System.Web.IHttpHandler
         Else
 
             sendResponse(context, String.Concat(
-                "You need to add a location to your question in the format: ",
-                "question @ location. Location can be a postal code, city or neighborhood. ",
+                "Add a location. ",
+                "Format: question @ location. Location is a postal code, city or neighborhood. ",
                 "Ex: tacos @ 95814"))
 
         End If

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-version="1.18.14" manifest="cache.manifest">
+<html lang="en" data-version="1.19.11" manifest="cache.manifest">
 <head>
     <title>urbanAsk</title>
     
@@ -33,6 +33,7 @@
             <div id="questions-view">
                 <div id="questions-scroll" class="scroll">
                     <ul id="user-questions" class="hide"></ul>
+                    <div id="view-nearby-questions" class="button-3d hide">view questions near me</div>
                     <ul id="nearby-questions" class="hide"></ul>
                     <ul id="questions" class="hide"></ul>
                     <ul id="everywhere-questions" class="hide"></ul>
@@ -43,6 +44,7 @@
         <section id="question-page" class="hide">
             <div id="question-scroll" class="scroll">
                 <ul id="question-view"></ul>
+                <div id="question-region"></div>
                 <img id="question-map" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12P4DwQACfsD/WMmxY8AAAAASUVORK5CYII=" />
                 <div id="add-new-answer" class="button-3d hide">
                     <div id="add-new-answer-image"></div>
@@ -270,7 +272,7 @@
 
 </div> <!-- viewport -->
 
-<script src="http://maps.googleapis.com/maps/api/js?libraries=places,geometry&sensor=true"></script>
+<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAwkQkzOY5Xmgff3BfO9rPP_faFwvIGCug&libraries=places,geometry&sensor=true"></script>
 <script src="scripts/urbanask-compiled.js"></script>
 <script src="phonegap.js"></script>
 <script src="childbrowser.js"></script>

@@ -1,2 +1,7 @@
 1.19
 
+new - questions now ordered newest first
+new - region is overlaid on question map
+new - Add urbanAsk To Contacts button (for SMS) on account edit page
+
+bug - Google Maps sometimes displaying throttle image

@@ -114,6 +114,7 @@ var _hostname = window.location.hostname,
     FACEBOOK_LOGIN_URL = 'http://urbanask.com/fb-login.html',
     FACEBOOK_POST_URL = 'http://urbanask.com/fb-login.html',
     FACEBOOK_REDIRECT_URL = 'http://' + ( _hostname == '75.144.228.69' ? '75.144.228.69:55555/urbangab' : 'urbanask.com' ) + '/index.html',
+    GOOGLE_API_KEY = 'AIzaSyAwkQkzOY5Xmgff3BfO9rPP_faFwvIGCug',
     INSTRUCTION_RATE = 30000,
     INSTRUCTION_TYPES = {
 
@@ -143,6 +144,7 @@ var _hostname = window.location.hostname,
     },
     LOCATION_RADIUS = 50000,
     LOCATION_TYPES = 'establishment',
+    MINUTE = 60000,
     NOTIFICATION_COLUMNS = {
 
         "userNotificationId": 0,
@@ -178,7 +180,8 @@ var _hostname = window.location.hostname,
         "votes": 13,
         "answerCount": 14,
         "answers": 15,
-        "facebook": 16
+        "facebook": 16,
+        "region": 17
 
     },
     RANDOM_DISTANCE = 600, //feet
@@ -211,6 +214,7 @@ var _hostname = window.location.hostname,
     },
     ROOT_URL = 'http://urbanask.com',
     SECOND = 1000,
+    SMS_NUMBER = '+14156305242',
     TOP_TYPES = {
 
         "reputation": 1,
@@ -549,6 +553,9 @@ function addEventListeners( page, previousPage ) {
             questions = document.getElementById( 'questions' );
             questions.addEventListener( 'click', questionClick, false );
 
+            var viewNearbyQuestions = document.getElementById( 'view-nearby-questions' );
+            viewNearbyQuestions.addEventListener( 'click', viewNearbyQuestionsClick, false );
+
             var nearbyQuestions = document.getElementById( 'nearby-questions' );
             nearbyQuestions.addEventListener( 'click', questionClick, false );
 
@@ -563,6 +570,9 @@ function addEventListeners( page, previousPage ) {
             ask.addEventListener( 'submit', saveQuestion, false );
 
             if ( window.deviceInfo.mobile ) {
+
+                viewNearbyQuestions.addEventListener( 'touchstart', selectButton, false );
+                viewNearbyQuestions.addEventListener( 'touchend', unselectButton, false );
 
                 //ask.addEventListener( 'touchstart', selectAskText, false );
 
@@ -579,6 +589,9 @@ function addEventListeners( page, previousPage ) {
 
                 everywhereQuestions.addEventListener( 'mouseover', hoverItem, false );
                 everywhereQuestions.addEventListener( 'mouseout', unhoverItem, false );
+
+                viewNearbyQuestions.addEventListener( 'mouseover', selectButton, false );
+                viewNearbyQuestions.addEventListener( 'mouseout', unselectButton, false );
 
                 //ask.addEventListener( 'mousedown', selectAskText, false );
 
@@ -2231,6 +2244,12 @@ function initializeVersionCheck() {
 
 };
 
+function isLocationAvailable() {
+
+    return !!_currentLocation.latitude;
+
+};
+
 function isLoggedIn() {
 
     return !!_session.id && !!_session.key;
@@ -2416,36 +2435,43 @@ function loadRegionQuestions() {
 
 function loadNearbyQuestions() {
 
-    if ( _currentLocation.latitude ) {
+    if ( isLocationAvailable() ) {
 
-        var data = 'latitude=' + _currentLocation.latitude
-                + '&longitude=' + _currentLocation.longitude
-                + ( isLoggedIn() ? '&currentUserId=' + _account[ACCOUNT_COLUMNS.userId] : '' ),
-            resource = '/api/questions';
+        document.getElementById( 'view-nearby-questions' ).addClass( 'hide' );
 
-        ajax( API_URL + resource, {
+        getGeolocation( function () {
 
-            "type": "GET",
-            "data": data,
-            "cache": false,
-            "success": function ( data, status ) {
+            var data = 'latitude=' + _currentLocation.latitude
+                    + '&longitude=' + _currentLocation.longitude
+                    + ( isLoggedIn() ? '&currentUserId=' + _account[ACCOUNT_COLUMNS.userId] : '' ),
+                resource = '/api/questions';
 
-                _nearbyQuestions = window.JSON.parse( data );
-                window.setLocalStorage( 'nearby-questions', data );
-                showQuestions( STRINGS.questionsNearby, _nearbyQuestions, document.getElementById( 'nearby-questions' ) );
+            ajax( API_URL + resource, {
 
-            },
-            "error": function ( response, status, error ) {
+                "type": "GET",
+                "data": data,
+                "cache": false,
+                "success": function ( data, status ) {
 
-                if ( error == 'Unauthorized' ) { logoutApp() };
+                    _nearbyQuestions = window.JSON.parse( data );
+                    window.setLocalStorage( 'nearby-questions', data );
+                    showQuestions( STRINGS.questionsNearby, _nearbyQuestions, document.getElementById( 'nearby-questions' ) );
 
-            }
+                },
+                "error": function ( response, status, error ) {
+
+                    if ( error == 'Unauthorized' ) { logoutApp() };
+
+                }
+
+            } );
 
         } );
 
     } else {
 
         document.getElementById( 'nearby-questions' ).addClass( 'hide' );
+        document.getElementById( 'view-nearby-questions' ).removeClass( 'hide' );
 
     };
 
@@ -2663,6 +2689,7 @@ function localizeStrings() {
     $( '#total-badges-caption' ).textContent = STRINGS.totalBadges;
     $( '#twitter-login' ).innerHTML = STRINGS.login.twitter;
     $( '#user-id-caption' ).textContent = STRINGS.userIdCaption;
+    $( '#view-nearby-questions' ).textContent = STRINGS.questionsPage.viewNearbyQuestions;
 
 };
 
@@ -2697,11 +2724,7 @@ function login( event ) {
                     window.setLocalStorage( 'sessionId', _session.id );
                     window.setLocalStorage( 'sessionKey', _session.key );
 
-                    getGeolocation( function () {
-
-                        startApp();
-
-                    }, { quick: true } );
+                    startApp();
 
                 };
 
@@ -3750,6 +3773,9 @@ function removeEventListeners( page ) {
             var userQuestions = document.getElementById( 'user-questions' );
             userQuestions.removeEventListener( 'click', questionClick, false );
 
+            var viewNearbyQuestions = document.getElementById( 'view-nearby-questions' );
+            viewNearbyQuestions.removeEventListener( 'click', viewNearbyQuestionsClick, false );
+
             var nearbyQuestions = document.getElementById( 'nearby-questions' );
             nearbyQuestions.removeEventListener( 'click', questionClick, false );
 
@@ -3764,6 +3790,9 @@ function removeEventListeners( page ) {
             ask.removeEventListener( 'submit', saveQuestion, false );
 
             if ( window.deviceInfo.mobile ) {
+
+                viewNearbyQuestions.removeEventListener( 'touchstart', selectButton, false );
+                viewNearbyQuestions.removeEventListener( 'touchend', unselectButton, false );
 
                 //ask.removeEventListener( 'touchstart', selectAskText, false );
 
@@ -3780,6 +3809,9 @@ function removeEventListeners( page ) {
 
                 everywhereQuestions.removeEventListener( 'mouseover', hoverItem, false );
                 everywhereQuestions.removeEventListener( 'mouseout', unhoverItem, false );
+
+                viewNearbyQuestions.removeEventListener( 'mouseover', selectButton, false );
+                viewNearbyQuestions.removeEventListener( 'mouseout', unselectButton, false );
 
                 //ask.removeEventListener( 'mousedown', selectAskText, false );
 
@@ -4336,7 +4368,7 @@ function saveQuestion( event ) {
 
     if ( document.getElementById( 'ask-text' ).value.trim() ) {
 
-        if ( _currentLocation.latitude ) {
+        if ( isLocationAvailable() ) {
 
             var questionText = document.getElementById( 'ask-text' ).value.trim(),
                 latitude = _currentLocation.latitude + getRandomLatitude(),
@@ -4907,7 +4939,7 @@ function setupGeolocation() {
 
     if ( !_geoTimer ) {
 
-        _geoTimer = window.setInterval( getGeolocation, 5 * 60 * SECOND ); //every 5 minutes
+        _geoTimer = window.setInterval( getGeolocation, 5 * MINUTE ); 
 
     };
 
@@ -4940,9 +4972,9 @@ function getGeolocation( geoComplete, options ) {
         },
         function ( error ) {
 
-            if ( window.deviceInfo.mode != 'webview' && !_currentLocation.latitude ) {
+            if ( window.deviceInfo.mode != 'webview' && !isLocationAvailable() ) {
 
-                showMessage( STRINGS.error.geoLocation );
+                showMessage( STRINGS.error.geoLocationDefault );
 
             };
 
@@ -4977,9 +5009,9 @@ function getGeolocation( geoComplete, options ) {
         },
         function ( error ) {
 
-            if ( window.deviceInfo.mode != 'webview' && !_currentLocation.latitude ) {
+            if ( window.deviceInfo.mode != 'webview' && !isLocationAvailable() ) {
 
-                showMessage( STRINGS.error.geoLocation );
+                showMessage( STRINGS.error.geoLocationDefault );
 
             };
 
@@ -5345,34 +5377,78 @@ function showAccountPage() {
 
         if ( window.deviceInfo.phonegap ) {
 
-            var contact = navigator.contacts.create( {
-                "organizations": [{
-                    "name": "urbanAsk"
-                }],
-                "phoneNumbers": [{
-                    "type": "SMS",
-                    "value": "+14156305242"
-                }],
-                "urls": [{
-                    "type": "home page",
-                    "value": "http://urbanAsk.com"
-                }],
-                "emails": [{
-                    "type": "work",
-                    "value": "support@urbanask.com"
-                }],
-                "photos": [{
-                    "type": "url",
-                    "value": "http://urbanAsk.com/images/icon.png"
-                }]
-            } );
+            navigator.contacts.find( ["organizations", "phoneNumbers"], function ( contacts ) {
 
-            contact.save( function () {
+                if ( contacts.length ) {
+
+                    if ( contacts[0].phoneNumbers.length == 0
+                        || unformatPhoneNumber( window.JSON.stringify( contacts[0].phoneNumbers[0].value ) ) != unformatPhoneNumber( SMS_NUMBER ) ) {
+
+                        contacts[0].phoneNumbers = [{
+                            "type": "other",
+                            "value": SMS_NUMBER
+                        }];
+
+                        contacts[0].save( function ( contact ) {
+
+                            showNotification( STRINGS.notification.contactUpdated, { size: 'tiny' } );
+
+                        },
+                        function ( error ) {
+
+                            showNotification( STRINGS.error.contactAdded, { size: 'tiny' } );
+
+                        } );
+
+                    } else {
+
+                        showNotification( STRINGS.notification.contactExists, { size: 'tiny' } );
+
+                    };
+
+                } else {
+
+                    var contact = navigator.contacts.create( {
+                        "organizations": [{
+                            "name": "urbanAsk"
+                        }],
+                        "phoneNumbers": [{
+                            "type": "other",
+                            "value": SMS_NUMBER
+                        }],
+                        "urls": [{
+                            "type": "home page",
+                            "value": "http://urbanAsk.com"
+                        }],
+                        "emails": [{
+                            "type": "work",
+                            "value": "support@urbanask.com"
+                        }],
+                        "photos": [{
+                            "type": "url",
+                            "value": "http://urbanAsk.com/images/icon.png"
+                        }]
+                    } );
+
+                    contact.save( function ( contact ) {
+
+                        showNotification( STRINGS.notification.contactAdded, { size: 'tiny' } );
+
+                    },
+                    function ( error ) {
+
+                        showNotification( STRINGS.error.contactAdded, { size: 'tiny' } );
+
+                    } );
+
+                };
 
             },
-            function () {
+            function ( error ) {
 
-            } );
+                showNotification( STRINGS.error.contactAdded, { size: 'tiny' } );
+
+            }, { "filter": "urbanAsk" } );
 
         };
 
@@ -5914,12 +5990,7 @@ function showCreateEmailAccount( event ) {
                         document.getElementById( 'login-password' ).value = password;
 
                         close();
-
-                        getGeolocation( function () {
-
-                            startApp();
-
-                        }, { quick: true } );
+                        startApp();
 
                     } else {
 
@@ -6987,8 +7058,10 @@ function showQuestion( question ) {
 
     answers.innerHTML = html;
 
-    var mapUrl = 'http://maps.google.com/maps/api/staticmap?center='
-            + question.latitude + ',' + question.longitude
+    document.getElementById( 'question-region' ).textContent = question[QUESTION_COLUMNS.region];
+    var mapUrl = 'http://maps.google.com/maps/api/staticmap?'
+            + 'key=' + GOOGLE_API_KEY
+            + '&center=' + question.latitude + ',' + question.longitude
             + '&size=' + _dimensions.questionMapWidth + 'x140'
             + ( window.deviceInfo.mobile ? '&scale=2' : '' )
             + '&maptype=roadmap&sensor=true&style=hue:blue' + zoom + '&markers=color:black|size:mid|'
@@ -8041,6 +8114,24 @@ function totalReputationClick( event ) {
 
 };
 
+function unformatPhoneNumber( number ) {
+
+    var unformattedNumber = '';
+
+    for ( var index = 0; index < number.length; index++ ) {
+
+        if ( !isNaN( number[index] ) ) {
+
+            unformattedNumber += number[index];
+
+        };
+
+    };
+
+    return unformattedNumber;
+
+};
+
 function unhoverElement( event ) {
 
     var item = event.target.closestByClassName( 'selectable' );
@@ -8197,6 +8288,21 @@ function userAnswerClick( event ) {
         window.setTimeout( function () { unselectItem( event ); }, 100 );
 
     }, 100 );
+
+};
+
+function viewNearbyQuestionsClick( event ) {
+
+    showMessage( STRINGS.questionsPage.nearbyQuestionsInstructions, function () {
+
+        getGeolocation( function () {
+
+            loadNearbyQuestions();
+            getGeolocation();
+
+        }, { quick: true } );
+
+    } );
 
 };
 

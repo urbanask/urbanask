@@ -1926,6 +1926,16 @@ html {
     margin: 6px auto 0 auto;
 }
 
+#question-region {
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    margin: 5px 0 0 15px;
+    position: absolute;
+    text-shadow: 0px 0px 6px black;
+    z-index: 1;
+}
+
 #question-share {
     background-color: rgba( 0, 0, 0, .8 );
     bottom: -114px;
@@ -2921,6 +2931,16 @@ html {
 .view-header {
     bottom: 0 !important;
     z-index: 10;
+}
+
+#view-nearby-questions {
+    background-color: black;
+    box-shadow: 2px 2px 3px rgba( 0, 0, 0, .7 );
+    display: block;
+    height: 40px;
+    line-height: 40px;
+    margin: 3px 5px 6px 5px;
+    position: relative;
 }
 
 #viewport {
