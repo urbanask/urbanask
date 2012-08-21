@@ -1,0 +1,11 @@
+0.1.28
+
+new - iOS black bar
+new - iOS iPad native version
+new - removed the install page when viewing in iPhone browser (since it's a fluid layout now)
+new - faster app loading
+
+various bug fixes
+
+
+

@@ -1,0 +1,67 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>Twitter Sample</title>
+
+    <!--this includes the app id LYmBn0COBIkkcRXpImTAJA-->
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
+	<script type="text/javascript" src="jsOAuth-1.3.3.js"></script>
+
+</head>
+<body>
+
+    <div id="twitter-connect-placeholder"></div><div id="login"></div>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            var options = {
+
+                consumerKey: 'LYmBn0COBIkkcRXpImTAJA',
+                consumerSecret: 'wsIo3xDOPD6BPviujjk5L1kwXEMYuTTIwToCGq0pxY',
+                callbackUrl: 'http://urbanask.com'
+
+            };
+
+            var oauth = OAuth(options);
+
+            oauth.post('https://twitter.com/oauth/request_token', '',
+
+			    function (data) { //success
+
+			        var parameters = data.text.split("&");
+			        var parameterDictionary = {};
+
+			        for (var index = 0; index < parameters.length; index++) {
+			            
+			            var parameter = parameters[index].split("=");
+			            var name = parameter[0];
+			            var value = parameter[1];
+			            parameterDictionary[name] = value;
+
+			        }
+
+			        if (parameterDictionary["oauth_callback_confirmed"] == "true") {
+
+			            //alert(parameters[0]);
+
+			            window.location = 'https://twitter.com/oauth/authenticate?oauth_token=' + parameterDictionary["oauth_token"];
+
+			        }
+
+			    },
+
+			    function (data) { alert('darn'); console.dir(data) } //failure
+
+		    );
+
+
+        });
+ 
+    </script>
+
+</body>
+</html>

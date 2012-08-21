@@ -1,0 +1,10 @@
+beta 1.6
+
+new - Use the app in Facebook at http://apps.facebook.com/urbanask (bug in Chrome right now)
+new - Invite friends to use app on Account Edit page
+new - FB/Twitter/G+ Like buttons on desktop version (go vote that shit up, yo!)
+new - FB Page https://www.facebook.com/urbanaskapp (go Like it)
+
+
+
+

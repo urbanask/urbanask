@@ -1,0 +1,114 @@
+a, 
+a:link,
+a:visited,
+a:hover,
+a:active {
+    text-decoration: none;
+}
+
+#app-store-link {
+    background-image: url("../images/app-store.png");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 125px auto;
+    display: block;
+    height: 50px;
+    margin: 0 auto;
+    padding-top: 20px;
+}
+
+body {
+    color: white;
+    overflow: auto !important;
+    text-align: center;
+    vertical-align: top;
+}
+
+#button-store-link {
+    height: 88px;
+    
+    width: 88px;
+    position: relative;
+    bottom: 495px;
+    left: 215px;
+    display: block;
+}
+
+.bullet-point {
+    font-size: 20px;
+    text-align: left;
+}
+
+#free-button {
+    background-image: url("../images/red_foil_sticker.png");
+    background-repeat: no-repeat;
+    height: 88px;
+    width: 88px;
+    text-shadow: #601C1C 0px -1px 0;
+    color: white;
+    transform: rotate(9deg);
+        -webkit-transform: rotate(9deg);
+        -o-transform: rotate(9deg);
+        -moz-transform: rotate(9deg);
+        -ms-transform: rotate(9deg);
+}
+
+#free-button-text {
+    font-size: 22px;
+    line-height: 88px;
+    text-align: center;
+    transform: rotate(9deg);
+        -webkit-transform: rotate(9deg);
+        -o-transform: rotate(9deg);
+        -moz-transform: rotate(9deg);
+        -ms-transform: rotate(9deg);
+}
+
+#landing-logo {
+    display: block;
+    height: 125px;
+    margin: 0 auto;
+    padding-bottom: 10px;
+}
+
+#phone-preview {
+    background-image: url("../images/iphone.png");
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    display: inline-block;
+    height: 622px;
+    padding-top: 50px;
+    vertical-align: top;
+    width: 281px;
+}
+
+#phone-screen {
+    height: 358px;
+    margin: 0 auto;
+    padding-top: 99px;
+    width: 239px;
+}
+
+#screen-shot {
+    display: block;
+    height: 100%;
+    margin: 0 auto;
+    position: relative;
+    width: 100%;
+}
+
+#text-body {
+    display: inline-block;
+    height: 600px;
+    padding-right: 50px;
+    padding-top: 25px;
+    vertical-align: top;
+    width: 350px;
+}
+
+.urban-info {
+    font-size: 16px;
+    text-align: left;
+}
+
+

@@ -1,0 +1,152 @@
+﻿<!doctype html />
+<html lang="en">
+<head>
+    <title>urbanAsk</title>
+
+    <meta name="apple-mobile-web-app-capable"           content="yes" />
+    <meta name="viewport"                               content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+    <meta name="apple-mobile-web-app-status-bar-style"  content="black" />
+
+    <link rel="apple-touch-icon"                        href="images/icon.png" />
+    <link rel="apple-touch-startup-image"               href="images/splash.png" /> 
+    <link rel="icon"                                    type="image/png" href="images/icon.png" />
+    <link rel="stylesheet"                              href="styles/urbanask.css" />
+
+    <style>
+        
+        #frame {
+            border: 0;
+            margin: 0;
+            padding: 0;
+        }
+
+   </style>
+
+</head>
+<body>
+<iframe id="frame" src="http://75.144.228.69:55555/urbangab/_index.html"></iframe>
+<script>
+
+    function initializeDimensions() {
+
+        var frame = document.getElementById( 'frame' );
+
+        if ( window.deviceInfo.mobile ) {
+
+            frame.style.width = window.innerWidth + 'px';
+            frame.style.height = window.innerHeight + 'px';
+
+        } else {
+
+            frame.style.width = '320px';
+            frame.style.height = '460px';
+
+        };
+
+    };
+
+    function initializeEnvironment() {
+
+        window.previousInnerWidth = window.innerWidth;
+        var userAgent = window.navigator.userAgent.toLowerCase();
+        window.deviceInfo = {};
+
+        //window.deviceInfo.type - handheld, tablet, desktop
+        //window.deviceInfo.brand - ios, android, microsoft, webos, blackberry
+        //window.deviceInfo.mode - browser, standalone, webview
+
+        //window.deviceInfo.mobile - window.deviceInfo.type == handheld || window.deviceInfo.type == tablet
+        //window.deviceInfo.phonegap - ( window.deviceInfo.type == ios || android ) && window.deviceInfo.mode == webview
+
+        if ( /ipad/.test( userAgent ) || ( /android/.test( userAgent ) && !/mobile/.test( userAgent ) ) ) {
+
+            window.deviceInfo.type = 'tablet';
+
+        } else if ( /iphone|ipod|webos|blackberry|android/.test( userAgent ) ) {
+
+            window.deviceInfo.type = 'handheld';
+
+        } else {
+
+            window.deviceInfo.type = 'desktop';
+
+        };
+
+        if ( /iphone|ipod|ipad/.test( userAgent ) ) {
+
+            var safari = /safari/.test( userAgent );
+            window.deviceInfo.brand = 'ios';
+
+            if ( window.navigator.standalone ) {
+
+                window.deviceInfo.mode = 'standalone';
+
+            } else if ( safari ) {
+
+                window.deviceInfo.mode = 'browser';
+
+            } else if ( !safari ) {
+
+                window.deviceInfo.mode = 'webview';
+
+            };
+
+        } else if ( /android/.test( userAgent ) ) {
+
+            window.deviceInfo.brand = 'android';
+            window.deviceInfo.mode = 'browser';
+
+        } else if ( /webos/.test( userAgent ) ) {
+
+            window.deviceInfo.brand = 'webos';
+            window.deviceInfo.mode = 'browser';
+
+        } else if ( /blackberry/.test( userAgent ) ) {
+
+            window.deviceInfo.brand = 'blackberry';
+            window.deviceInfo.mode = 'browser';
+
+        } else {
+
+            window.deviceInfo.brand = 'unknown';
+            window.deviceInfo.mode = 'browser';
+
+        };
+
+        window.deviceInfo.mobile = ( window.deviceInfo.type == 'handheld' || window.deviceInfo.type == 'tablet' );
+        window.deviceInfo.phonegap = ( window.deviceInfo.brand == 'ios' && window.deviceInfo.mode == 'webview' );
+
+    };
+
+    function orientationChange() {
+
+        if ( window.innerWidth != window.previousInnerWidth ) {
+
+            window.previousInnerWidth = window.innerWidth;
+            initializeDimensions();
+
+        };
+
+    };
+
+    function initialize() {
+
+        window.addEventListener( 'orientationchange', orientationChange, false );
+        window.addEventListener( 'resize', orientationChange, false );
+
+        initializeEnvironment();
+        initializeDimensions();
+
+        window.history.replaceState( '', '', window.location.pathname );
+
+    };
+
+    initialize();
+
+</script>
+
+<script src="phonegap.js"></script>
+<script src="childbrowser.js"></script>
+
+</body>
+</html>

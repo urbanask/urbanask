@@ -1,0 +1,10 @@
+C:\Users\kwalton\Dropbox\Matt\TwitterDotNetSample\TwitterDotNetSample\bin\TwitterDotNetSample.dll
+C:\Users\kwalton\Dropbox\Matt\TwitterDotNetSample\TwitterDotNetSample\bin\TwitterDotNetSample.pdb
+C:\Users\kwalton\Dropbox\Matt\TwitterDotNetSample\TwitterDotNetSample\bin\TwitterDotNetSample.xml
+C:\Users\kwalton\Dropbox\Matt\TwitterDotNetSample\TwitterDotNetSample\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\kwalton\Dropbox\Matt\TwitterDotNetSample\TwitterDotNetSample\obj\Debug\TwitterDotNetSample.Resources.resources
+C:\Users\kwalton\Dropbox\Matt\TwitterDotNetSample\TwitterDotNetSample\obj\Debug\GenerateResource.read.1.tlog
+C:\Users\kwalton\Dropbox\Matt\TwitterDotNetSample\TwitterDotNetSample\obj\Debug\GenerateResource.write.1.tlog
+C:\Users\kwalton\Dropbox\Matt\TwitterDotNetSample\TwitterDotNetSample\obj\Debug\TwitterDotNetSample.dll
+C:\Users\kwalton\Dropbox\Matt\TwitterDotNetSample\TwitterDotNetSample\obj\Debug\TwitterDotNetSample.xml
+C:\Users\kwalton\Dropbox\Matt\TwitterDotNetSample\TwitterDotNetSample\obj\Debug\TwitterDotNetSample.pdb

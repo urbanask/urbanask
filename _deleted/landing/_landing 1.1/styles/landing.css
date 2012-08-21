@@ -1,0 +1,58 @@
+body {
+    background-color: black;
+    color: white;
+    overflow: auto;
+    vertical-align: top;
+    text-align: center;
+}
+#screen-shot {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+}
+#text-body {
+    width: 350px;
+    height: 600px;
+    vertical-align: top;
+    padding-right: 50px;
+    padding-top: 25px;
+    display: inline-block;
+}
+.bullet-point {
+    text-align: left;
+    font-size: 20px;
+}
+.urban-info {
+    text-align: left;
+    font-size: 16px;
+}
+#logo {
+    display: block;
+    margin: 0 auto;
+    padding-bottom: 10px;
+    height: 125px;
+}
+#phone-preview {
+    width: 281px;
+    vertical-align: top;
+    height: 622px;
+    display: inline-block;
+    background-image: url('images/iphone.png');
+}
+#phone-screen {
+    padding-top: 99px;
+    width: 239px;
+    height: 358px;
+    margin: 0 auto;
+}
+#app-store-link {
+    display: block;
+    background-image: url('images/app-store.png');
+    height: 50px;
+    background-size: 125px;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin: 0 auto;
+}

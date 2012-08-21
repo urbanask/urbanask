@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "EmailVerification", "EmailVerification\EmailVerification.vbproj", "{AE5E1BCA-EEE6-4372-BE09-28FC9C35506C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AE5E1BCA-EEE6-4372-BE09-28FC9C35506C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE5E1BCA-EEE6-4372-BE09-28FC9C35506C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE5E1BCA-EEE6-4372-BE09-28FC9C35506C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE5E1BCA-EEE6-4372-BE09-28FC9C35506C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

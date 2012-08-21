@@ -1,0 +1,3 @@
+﻿To get this sample working:
+Update and run Database.sql
+Update ConnectionString in web.config

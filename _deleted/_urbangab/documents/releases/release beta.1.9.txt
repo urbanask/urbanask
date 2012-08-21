@@ -1,0 +1,16 @@
+beta 1.9
+
+new - changed "1st bounty" badge to "25 bounties"
+new gold badge - "100 bounties"
+new diamond badge - "500 bounties"
+new silver badge "25 upvoted answers"
+new gold badge "100 upvoted answers"
+new diamond badge "500 upvoted answers"
+bug - won't open on older Androids
+bug - won't open on IE9
+bug - won't open on iPhone 3GS
+bug - layout issues in Firefox on Mac
+bug - layout issues in Windows 7
+
+
+

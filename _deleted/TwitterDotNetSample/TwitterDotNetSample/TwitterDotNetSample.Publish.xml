@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<publishData>
+  <publishProfile publishUrl="C:\Users\walton_keith\Dropbox\Matt\TwitterDotNetSample\Publish" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="FileSystem" replaceMatchingFiles="True" userName="" savePWD="False" userPWD="" SelectedForPublish="True">
+    <file relUrl="bin/Newtonsoft.Json.dll" publishTime="05/07/2012 07:40:37" />
+    <file relUrl="bin/Twitterizer2.dll" publishTime="05/07/2012 07:40:37" />
+    <file relUrl="Scripts/jquery-1.4.1-vsdoc.js" publishTime="05/07/2012 07:21:39" />
+    <file relUrl="bin/TwitterDotNetSample.dll" publishTime="05/07/2012 08:51:26" />
+    <file relUrl="bin/TwitterDotNetSample.pdb" publishTime="05/07/2012 08:51:26" />
+    <file relUrl="Web.config" publishTime="05/07/2012 08:31:22" />
+    <file relUrl="Scripts/jquery-1.4.1.min.js" publishTime="05/07/2012 07:21:39" />
+    <file relUrl="Default.aspx" publishTime="05/07/2012 08:46:22" />
+    <file relUrl="Site.Master" publishTime="05/07/2012 07:22:32" />
+    <file relUrl="Global.asax" publishTime="05/07/2012 07:21:39" />
+    <file relUrl="Scripts/jquery-1.4.1.js" publishTime="05/07/2012 07:21:39" />
+    <file relUrl="bin/TwitterDotNetSample.xml" publishTime="05/07/2012 08:51:26" />
+  </publishProfile>
+</publishData>

@@ -1,0 +1,232 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>
+    </SchemaVersion>
+    <ProjectGuid>{5EF48248-A5B6-47F4-A5EA-B5B783C42DA2}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{F184B08F-C81C-45F6-A57F-5ABD9991F28F}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>urbangab</RootNamespace>
+    <AssemblyName>urbangab</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <MyType>Custom</MyType>
+    <UseIISExpress>false</UseIISExpress>
+    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\</OutputPath>
+    <DocumentationFile>
+    </DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>None</DebugType>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>false</DefineTrace>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DocumentationFile>
+    </DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionExplicit>On</OptionExplicit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionCompare>Binary</OptionCompare>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionStrict>On</OptionStrict>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionInfer>Off</OptionInfer>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+  </ItemGroup>
+  <ItemGroup>
+    <Import Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ads.html" />
+    <Content Include="config.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="download.html" />
+    <Content Include="fb-login.html" />
+    <Content Include="frame.html" />
+    <Content Include="icon-72.png" />
+    <Content Include="images\amazon.png" />
+    <Content Include="images\android.png" />
+    <Content Include="images\android\icon-57.png" />
+    <Content Include="images\android\splash-320x480.png" />
+    <Content Include="images\app-store.png" />
+    <Content Include="images\apple.png" />
+    <Content Include="images\blackberry\icon-57.png" />
+    <Content Include="images\blackberry\splash-320x480.png" />
+    <Content Include="images\google-play.png" />
+    <Content Include="images\icon-114.png" />
+    <Content Include="images\icon-57.png" />
+    <Content Include="images\icon-72.png" />
+    <Content Include="images\icon-large.png" />
+    <Content Include="images\ios\icon-114.png" />
+    <Content Include="images\ios\icon-57.png" />
+    <Content Include="images\ios\icon-72.png" />
+    <Content Include="images\ios\splash-1024x768.png" />
+    <Content Include="images\ios\splash-320x480.png" />
+    <Content Include="images\ios\splash-640x960.png" />
+    <Content Include="images\ios\splash-768x1024.png" />
+    <Content Include="images\iphone.png" />
+    <Content Include="images\on-the-web.png" />
+    <Content Include="images\qr-amazon.png" />
+    <Content Include="images\qr-apple.png" />
+    <Content Include="images\qr-google.png" />
+    <Content Include="images\qr-web.png" />
+    <Content Include="images\red_foil_sticker.png" />
+    <Content Include="images\screen-shot.jpg" />
+    <Content Include="images\share-logo.png" />
+    <Content Include="images\splash-320x480.png" />
+    <Content Include="images\splash-fullscreen.png" />
+    <Content Include="images\splash-phonegap.png" />
+    <Content Include="images\webos\icon-114.png" />
+    <Content Include="images\webos\icon-57.png" />
+    <Content Include="images\webos\splash-320x480.png" />
+    <Content Include="images\winphone\icon-114.png" />
+    <Content Include="images\winphone\splash-320x480.jpg" />
+    <Content Include="index.aspx" />
+    <Content Include="images\icon.png" />
+    <Content Include="images\logo.png" />
+    <Content Include="images\splash.png" />
+    <Content Include="index.html" />
+    <Content Include="questions.aspx" />
+    <Content Include="scripts\urbanask-compiled.js" />
+    <Content Include="scripts\urbanask.js" />
+    <Content Include="scripts\strings-en.js" />
+    <Content Include="splash-320x480.png" />
+    <Content Include="styles\urbanask.css" />
+    <Content Include="styles\download.css" />
+    <Content Include="support.html" />
+    <Content Include="tos.html" />
+    <Content Include="web.config" />
+    <Content Include="web.Debug.config">
+      <DependentUpon>web.config</DependentUpon>
+    </Content>
+    <Content Include="web.Release.config">
+      <DependentUpon>web.config</DependentUpon>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="My Project\Application.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Application.myapp</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\MyExtensions\MyWebExtension.vb">
+      <VBMyExtensionTemplateID>Microsoft.VisualBasic.Web.MyExtension</VBMyExtensionTemplateID>
+      <VBMyExtensionTemplateVersion>1.0.0.0</VBMyExtensionTemplateVersion>
+    </Compile>
+    <Compile Include="My Project\Resources.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Settings.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="questions.aspx.designer.vb">
+      <DependentUpon>questions.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="questions.aspx.vb">
+      <DependentUpon>questions.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="My Project\Resources.resx">
+      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="cache.manifest" />
+    <None Include="My Project\Application.myapp">
+      <Generator>MyApplicationCodeGenerator</Generator>
+      <LastGenOutput>Application.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="My Project\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <CustomToolNamespace>My</CustomToolNamespace>
+      <LastGenOutput>Settings.Designer.vb</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>57193</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>
+          </IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>cd $(ProjectDir)scripts\
+attrib -r urbanask-compiled.js
+copy /b strings-en.js + urbanask.js urbanask-compiled.js
+if $(ConfigurationName) == Release java -jar $(SolutionDir)..\Common\yuicompressor-2.4.7.jar urbanask-compiled.js -o urbanask-compiled.js --line-break 300</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

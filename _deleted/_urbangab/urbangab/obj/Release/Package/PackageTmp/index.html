@@ -1,0 +1,255 @@
+﻿<!doctype html>
+<html lang="en" data-version="1.0.0" manifest="cache.manifest">
+<head>
+    <title>urbanAsk</title>
+    
+    <meta name="apple-mobile-web-app-capable"           content="yes" />
+    <meta name="viewport"                               content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+    <meta name="apple-mobile-web-app-status-bar-style"  content="black" />
+    <meta name="format-detection"                       content="telephone=no">
+    <link rel="apple-touch-icon"                        href="images/icon.png" />
+    <link rel="apple-touch-startup-image"               href="images/splash.png" /> 
+    <link rel="icon"                                    type="image/png" href="images/icon.png" />
+    <link rel="stylesheet"                              href="styles/urbanask.css" />
+
+</head>
+<body>
+
+<div id="viewport">
+
+    <header id="header">
+        <div id="back-button" class="hide"><div id="back-button-arrow"></div><div id="back-button-gradient"></div><div id="back-button-text"></div></div>
+        <h1 id="title"></h1>
+        <div id="refresh-button"><div id="refresh-button-text"></div></div>
+    </header>
+    
+    <div id="view">
+
+        <section id="questions-page" class="hide">
+            <form id="ask">
+                <input autocorrect="on" id="ask-text" maxlength="50" type="text" />
+                <button class="ask-button-slide" id="ask-button" type="submit"><span id="ask-button-image"></span></button>
+            </form>
+            <div id="questions-view">
+                <div id="questions-scroll" class="scroll">
+                    <div id="no-questions" class="hide"></div>
+                    <ul id="user-questions"></ul>
+                    <ul id="questions"></ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="question-page" class="hide">
+            <ul id="question-view"></ul>
+            <img id="question-map" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12P4DwQACfsD/WMmxY8AAAAASUVORK5CYII=" />
+            <div id="answers-view">
+                <div id="no-answers" class="hide"></div>
+                <ul id="answers" class="scroll"></ul>
+            </div>
+            <div id="question-share" class="hide">
+                <div id="question-share-facebook" class="question-share-button">post to facebook</div>
+                <div id="question-share-twitter" class="question-share-button">post to twitter</div>
+            </div>
+        </section>
+
+        <section id="answer-page" class="hide">
+            <ul id="answer-view"></ul>
+            <div id="answer-map-canvas"></div>
+            <ul id="travel-mode-toolbar">
+                <li id="travel-mode-drive" class="travel-mode-item travel-mode-selected" data-travel-mode="DRIVING"></li><!--
+                --><li id="travel-mode-bike" class="travel-mode-item" data-travel-mode="BICYCLING"></li><!--
+                --><li id="travel-mode-walk" class="travel-mode-item" data-travel-mode="WALKING"></li>
+            </ul>
+            <div id="directions-page" class="top-slide">
+                <div id="directions-view"><ol id="directions" class="scroll"></ol></div>
+            </div>
+            <div id="contact" class="hide">
+                <div id="contact-call" class="contact-button">call</div>
+                <div id="contact-website" class="contact-button">website</div>
+                <div id="contact-map" class="contact-button">Google Maps</div>
+            </div>
+        </section>
+
+        <section id="question-map-page" class="hide"><img alt="" id="question-map-full" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12P4DwQACfsD/WMmxY8AAAAASUVORK5CYII=" /></section>
+
+        <section id="top-page" class="hide">
+            <div id="top-region"></div>
+            <ul id="top-type" class="toggle-bar">
+                   <li id="top-type-reputation" class="top-type-item toggle-button" data-id="1">reputation</li><!--
+                --><li id="top-type-questions" class="top-type-item toggle-button" data-id="2">questions</li><!--
+                --><li id="top-type-answers" class="top-type-item toggle-button" data-id="3">answers</li><!--
+                --><li id="top-type-badges" class="top-type-item toggle-button" data-id="4">badges</li>
+            </ul>
+            <div id="top-users-view">
+                <div id="no-top-users" class="hide"></div>
+                <ul id="top-users" class="scroll"></ul>
+            </div>
+            <ul id="top-interval" class="toggle-bar">
+                   <li id="top-interval-day" class="top-interval-item toggle-button" data-id="1">day</li><!--
+                --><li id="top-interval-week" class="top-interval-item toggle-button" data-id="2">week</li><!--
+                --><li id="top-interval-month" class="top-interval-item toggle-button" data-id="3">month</li><!--
+                --><li id="top-interval-year" class="top-interval-item toggle-button" data-id="4">year</li><!--
+                --><li id="top-interval-all" class="top-interval-item toggle-button" data-id="0">all</li>
+            </ul>
+        </section>
+
+        <section id="account-page" class="hide">
+            <div id="account-view">
+                <div id="account-cancel"></div>
+                <div id="account-scroll">
+                    <form id="account">
+                        <input id="edit-username" class="edit-input" placeholder="username">
+                        <input id="edit-tagline" class="edit-input" placeholder="tagline">
+                        <select id="edit-region">
+                        </select>
+                        <button id="save-edit" class="button">save</button>
+                        <div class="section-header-black"></div>
+                        <button id="invite" class="button">invite friends</button>
+                        <button id="post" class="button">post to wall</button>
+                        <button id="logout" class="button">log out</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section id="user-page" class="hide">
+            <div id="user-summary-view">
+                <img id="user-picture" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12P4DwQACfsD/WMmxY8AAAAASUVORK5CYII=" /><!--
+                --><div id="edit-account" class="hide"><div id="edit-account-caption">edit</div></div>
+                <div id="username" class="account-info"></div>
+                <div id="signup-info" class="account-info">
+                    <span id="member-since"></span><span id="user-id-caption"></span><span id="user-id-value"></span>
+                </div>
+                <div id="tagline" class="account-info"></div>
+                <div id="reputation" class="selectable"><span id="reputation-value"></span><span id="reputation-caption">reputation</span></div><!--
+                --><div id="total-questions" class="selectable"><span id="total-questions-value"></span><span id="total-questions-caption">questions</span></div><!--
+                --><div id="total-answers" class="selectable"><span id="total-answers-value"></span><span id="total-answers-caption">answers</span></div><!--
+                --><div id="total-badges" class="selectable"><span id="total-badges-value"></span><span id="total-badges-caption">badges</span></div>
+            </div>
+
+            <div id="user-info-view">
+                <div id="user-info-scroll" class="scroll">
+                    <ul id="user-notifications" class="hide"></ul><!--
+                    --><ul id="user-reputations"></ul><!--
+                    --><ul id="users-questions"></ul><!--
+                    --><ul id="user-answers"></ul><!--
+                    --><ul id="user-badges"></ul>
+                    <div id="app-version"></div>
+                </div>
+            </div>
+            
+        </section>
+
+        <section id ="login-page" class="hide">
+            <form id="auth-view">
+                <button id="fb-login">Login with Facebook</button>
+                <button id="create-email-account">Create Account with Email</button>
+            </form>
+            <form id="login-view">
+                <input autocorrect="off" autocapitalize="none" class="login-field" id="login-username" type="text" maxlength="100" /><!--
+             --><input class="login-field" id="login-password" type="password" maxlength="100" /><!--
+             --><button id="login-button" type="submit"></button>
+                <span id="login-error"></span>
+            </form>
+        </section>
+
+        <section id="create-account-page" class="hide">
+            <form id="create-account">
+                <input id="create-username" class="create-account-input" autocorrect="off" autocapitalize="none" class="login-field" type="text" maxlength="100" />
+                <input id="create-password" class="create-account-input" autocorrect="off" autocapitalize="none" class="login-field" type="text" maxlength="100" />
+                <input id="create-email" class="create-account-input" autocorrect="off" autocapitalize="none" class="login-field" type="text" maxlength="256" />
+                <button id="save-account" class="button" type="submit"></button>
+                <span id="create-error"></span>
+                <div id="create-account-cancel"></div>
+            </form>
+        </section>
+
+        <section id="install-page" class="hide"></section>
+
+        <section id="post-facebook-page" class="hide fade fadeable-500">
+            <form id="post-facebook">
+                <div id="post-facebook-body">
+                    <textarea id="post-facebook-message" placeholder="optional message"></textarea>
+                </div>
+                <button id="post-facebook-ok" type="submit"></button><!--
+                --><button id="post-facebook-cancel"></button>
+            </form>
+        </section>
+
+        <div id="notification" class="fade fadeable hide"><div id="notification-body"></div><div id="notification-footer"></div></div>
+        <div id="message" class="fade fadeable hide">
+            <div id="message-body"></div><!--
+            --><div id="message-ok-button"></div><!--
+            --><div id="message-cancel-button"></div>
+        </div>
+        <div id="loading" class="loading hide"></div>
+        <div id="vote" class="fade fadeable hide"><div id="vote-up">+1</div><div id="vote-down">-1</div></div>
+
+    </div> <!--view-->
+    
+    <section id="add-answer-page" class="top-slide hide">
+        <form id="answer">
+            <input autocorrect="off" id="answer-text" type="text" maxlength="50" /><!--
+            --><div id="cancel-answer-button">Cancel</div>
+        </form>
+        <div id="locations-view">
+            <ul id="locations" class="scroll"></ul>
+        </div>
+        <div id="answer-confirm-page" class="fade fadeable-500 hide">
+            <form id="answer-confirm">
+                <div id="answer-confirm-body">
+                    <ul id="answer-confirm-location"></ul>
+                    <input id="location-note" type="text" maxlength="40" placeholder="optional note..." />
+                    <img id="answer-confirm-map" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12P4DwQACfsD/WMmxY8AAAAASUVORK5CYII=" />
+                </div>
+                <button id="answer-confirm-ok" type="submit"></button><!--
+                --><button id="answer-confirm-cancel"></button>
+            </form>
+        </div>
+    </section>
+
+    <footer id="toolbar">
+        <ul id="toolbar-main" class="toolbar">
+               <li class="toolbar-item toolbar-main-item" id="questions-button"></li><!--
+            --><li class="toolbar-item toolbar-main-item" id="top-button"></li><!--
+            --><li class="toolbar-item toolbar-main-item" id="user-button"><div id="notification-badge" class="hide"></div></li>
+        </ul>
+
+        <ul id="toolbar-question" class="toolbar hide">
+               <li class="toolbar-item toolbar-question-item" id="add-answer-button"></li><!--
+            --><li class="toolbar-item toolbar-question-item" id="vote-up-button"></li><!--
+            --><li class="toolbar-item toolbar-question-item" id="vote-down-button"></li><!--
+            --><li class="toolbar-item toolbar-question-item" id="question-user-button"></li><!--
+            --><li class="toolbar-item toolbar-question-item" id="flag-button"></li>
+        </ul>
+
+        <ul id="toolbar-my-question" class="toolbar hide">
+               <li class="toolbar-item toolbar-question-item" id="select-answers-button"></li><!--
+            --><li class="toolbar-item toolbar-question-item" id="question-share-button"></li><!--
+            --><li class="toolbar-item toolbar-question-item" id="delete-question-button"></li><!--
+            --><li class="toolbar-item toolbar-question-item" id="edit-question-button"></li>
+        </ul>
+
+        <ul id="toolbar-answer" class="toolbar hide">
+               <li class="toolbar-item toolbar-answer-item" id="select-answer-button"></li><!--
+            --><li class="toolbar-item toolbar-answer-item" id="directions-button"></li><!--
+            --><li class="toolbar-item toolbar-answer-item" id="vote-up-answer-button"></li><!--
+            --><li class="toolbar-item toolbar-answer-item" id="vote-down-answer-button"></li><!--
+            --><li class="toolbar-item toolbar-answer-item" id="answer-user-button"></li><!--
+            --><li class="toolbar-item toolbar-answer-item" id="delete-answer-button"></li><!--
+            --><li class="toolbar-item toolbar-answer-item" id="contact-button"></li>
+        </ul>
+
+    </footer>
+
+    <div id="splash"><img id="splash-logo" alt="" src="images/splash.png" /></div>
+
+</div> <!-- viewport -->
+
+<script src="http://maps.googleapis.com/maps/api/js?libraries=places,geometry&sensor=true"></script>
+<script src="scripts/urbanask-compiled.js"></script>
+<script src="phonegap.js"></script>
+<script src="childbrowser.js"></script>
+
+</body>
+</html>

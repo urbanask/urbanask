@@ -1,0 +1,52 @@
+C:\urbanask\EmailVerification\EmailVerification\EmailVerification\bin\EmailVerification.dll
+C:\urbanask\EmailVerification\EmailVerification\EmailVerification\bin\EmailVerification.pdb
+C:\urbanask\EmailVerification\EmailVerification\EmailVerification\bin\EmailVerification.xml
+C:\urbanask\EmailVerification\EmailVerification\EmailVerification\obj\Debug\ResolveAssemblyReference.cache
+C:\urbanask\EmailVerification\EmailVerification\EmailVerification\obj\Debug\EmailVerification.Resources.resources
+C:\urbanask\EmailVerification\EmailVerification\EmailVerification\obj\Debug\GenerateResource.read.1.tlog
+C:\urbanask\EmailVerification\EmailVerification\EmailVerification\obj\Debug\GenerateResource.write.1.tlog
+C:\urbanask\EmailVerification\EmailVerification\EmailVerification\obj\Debug\EmailVerification.dll
+C:\urbanask\EmailVerification\EmailVerification\EmailVerification\obj\Debug\EmailVerification.xml
+C:\urbanask\EmailVerification\EmailVerification\EmailVerification\obj\Debug\EmailVerification.pdb
+C:\urbanask\EmailVerification\EmailVerification\EmailVerification\bin\Parameters.dll
+C:\Users\walton_keith\Dropbox\Projects (1)\EmailVerification\EmailVerification\bin\EmailVerification.dll
+C:\Users\walton_keith\Dropbox\Projects (1)\EmailVerification\EmailVerification\bin\EmailVerification.pdb
+C:\Users\walton_keith\Dropbox\Projects (1)\EmailVerification\EmailVerification\bin\EmailVerification.xml
+C:\Users\walton_keith\Dropbox\Projects (1)\EmailVerification\EmailVerification\bin\Parameters.dll
+C:\Users\walton_keith\Dropbox\Projects (1)\EmailVerification\EmailVerification\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\walton_keith\Dropbox\Projects (1)\EmailVerification\EmailVerification\obj\Debug\EmailVerification.Resources.resources
+C:\Users\walton_keith\Dropbox\Projects (1)\EmailVerification\EmailVerification\obj\Debug\GenerateResource.read.1.tlog
+C:\Users\walton_keith\Dropbox\Projects (1)\EmailVerification\EmailVerification\obj\Debug\GenerateResource.write.1.tlog
+C:\Users\walton_keith\Dropbox\Projects (1)\EmailVerification\EmailVerification\obj\Debug\EmailVerification.dll
+C:\Users\walton_keith\Dropbox\Projects (1)\EmailVerification\EmailVerification\obj\Debug\EmailVerification.xml
+C:\Users\walton_keith\Dropbox\Projects (1)\EmailVerification\EmailVerification\obj\Debug\EmailVerification.pdb
+C:\Users\Cary Ford\Dropbox\Matt\EmailVerification\EmailVerification\bin\EmailVerification.dll
+C:\Users\Cary Ford\Dropbox\Matt\EmailVerification\EmailVerification\bin\EmailVerification.pdb
+C:\Users\Cary Ford\Dropbox\Matt\EmailVerification\EmailVerification\bin\EmailVerification.xml
+C:\Users\Cary Ford\Dropbox\Matt\EmailVerification\EmailVerification\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Cary Ford\Dropbox\Matt\EmailVerification\EmailVerification\obj\Debug\EmailVerification.Resources.resources
+C:\Users\Cary Ford\Dropbox\Matt\EmailVerification\EmailVerification\obj\Debug\GenerateResource.read.1.tlog
+C:\Users\Cary Ford\Dropbox\Matt\EmailVerification\EmailVerification\obj\Debug\GenerateResource.write.1.tlog
+C:\Users\Cary Ford\Dropbox\Matt\EmailVerification\EmailVerification\obj\Debug\EmailVerification.dll
+C:\Users\Cary Ford\Dropbox\Matt\EmailVerification\EmailVerification\obj\Debug\EmailVerification.xml
+C:\Users\Cary Ford\Dropbox\Matt\EmailVerification\EmailVerification\obj\Debug\EmailVerification.pdb
+C:\Users\walton_keith\Dropbox\Matt\EmailVerification\EmailVerification\bin\EmailVerification.dll
+C:\Users\walton_keith\Dropbox\Matt\EmailVerification\EmailVerification\bin\EmailVerification.pdb
+C:\Users\walton_keith\Dropbox\Matt\EmailVerification\EmailVerification\bin\EmailVerification.xml
+C:\Users\walton_keith\Dropbox\Matt\EmailVerification\EmailVerification\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\walton_keith\Dropbox\Matt\EmailVerification\EmailVerification\obj\Debug\EmailVerification.Resources.resources
+C:\Users\walton_keith\Dropbox\Matt\EmailVerification\EmailVerification\obj\Debug\GenerateResource.read.1.tlog
+C:\Users\walton_keith\Dropbox\Matt\EmailVerification\EmailVerification\obj\Debug\GenerateResource.write.1.tlog
+C:\Users\walton_keith\Dropbox\Matt\EmailVerification\EmailVerification\obj\Debug\EmailVerification.dll
+C:\Users\walton_keith\Dropbox\Matt\EmailVerification\EmailVerification\obj\Debug\EmailVerification.xml
+C:\Users\walton_keith\Dropbox\Matt\EmailVerification\EmailVerification\obj\Debug\EmailVerification.pdb
+Y:\Dropbox\urbanAsk Shared\EmailVerification\EmailVerification\bin\EmailVerification.dll
+Y:\Dropbox\urbanAsk Shared\EmailVerification\EmailVerification\bin\EmailVerification.pdb
+Y:\Dropbox\urbanAsk Shared\EmailVerification\EmailVerification\bin\EmailVerification.xml
+Y:\Dropbox\urbanAsk Shared\EmailVerification\EmailVerification\obj\Debug\ResolveAssemblyReference.cache
+Y:\Dropbox\urbanAsk Shared\EmailVerification\EmailVerification\obj\Debug\EmailVerification.Resources.resources
+Y:\Dropbox\urbanAsk Shared\EmailVerification\EmailVerification\obj\Debug\GenerateResource.read.1.tlog
+Y:\Dropbox\urbanAsk Shared\EmailVerification\EmailVerification\obj\Debug\GenerateResource.write.1.tlog
+Y:\Dropbox\urbanAsk Shared\EmailVerification\EmailVerification\obj\Debug\EmailVerification.dll
+Y:\Dropbox\urbanAsk Shared\EmailVerification\EmailVerification\obj\Debug\EmailVerification.xml
+Y:\Dropbox\urbanAsk Shared\EmailVerification\EmailVerification\obj\Debug\EmailVerification.pdb

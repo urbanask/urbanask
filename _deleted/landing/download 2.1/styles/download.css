@@ -1,0 +1,184 @@
+a, a:active, a:hover, a:link, a:visited {text-decoration: none;}
+
+.store-link {
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 125px auto;
+    display: block;
+    height: 50px;
+    padding-top: 8px;
+    margin: 0 auto;
+}
+
+#amazon-store-link {
+    background-image: url("../images/amazon.png");
+}
+
+.store-qr {
+    height: 125px;
+    margin: 0 auto;
+    width: 125px; 
+    border: none;   
+}
+
+
+#app-links {
+    display: inline-block;
+    margin-left: 20px;
+    margin-top: 135px;
+    vertical-align: top;
+    width: 300px;
+}
+
+#apple-store-link {
+    background-image: url("../images/app-store.gif");
+}
+
+body {
+    color: white;
+    overflow: auto !important;
+    text-align: center;
+    vertical-align: top;
+}
+
+#button-store-link {
+    bottom: 495px;
+    display: block;
+    height: 88px;
+    left: 215px;
+    position: relative;
+    width: 88px;
+}
+
+.bullet-point {
+    font-size: 20px;
+    text-align: left;
+}
+
+#free-button {
+    background-image: url("../images/red_foil_sticker.png");
+    background-repeat: no-repeat;
+    color: white;
+    height: 88px;
+    text-shadow: #601C1C 0px -1px 0;
+    transform: rotate(9deg);
+        -webkit-transform: rotate(9deg);
+        -o-transform: rotate(9deg);
+        -moz-transform: rotate(9deg);
+        -ms-transform: rotate(9deg);
+    width: 88px;
+
+}
+
+#free-button-text {
+    font-size: 22px;
+    line-height: 88px;
+    text-align: center;
+    transform: rotate(9deg);
+        -webkit-transform: rotate(9deg);
+        -o-transform: rotate(9deg);
+        -moz-transform: rotate(9deg);
+        -ms-transform: rotate(9deg);
+}
+
+#google-store-link {
+    background-image: url("../images/google-play.png");
+}
+
+#landing-logo {
+    display: block;
+    height: 125px;
+    margin: 0 auto 20px auto;
+}
+
+.links-text {
+    font-size: 20px;
+    
+}
+
+#phone-preview {
+    background-image: url("../images/iphone.png");
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    display: inline-block;
+    height: 622px;
+    margin-top: 50px;
+    vertical-align: top;
+    width: 281px;
+}
+
+#phone-screen {
+    height: 358px;
+    margin: 99px auto 0 auto;
+    width: 239px;
+}
+
+#screen-shot 
+{	
+    background-repeat: no-repeat;
+    display: block;
+    height: 100%;
+    margin: 0 auto;
+    position: relative;
+    width: 100%;
+}
+
+.screen-shot-1
+{	
+    background-image: url("../images/screen-shot-1.jpg");
+}
+
+.screen-shot-2
+{	
+    background-image: url("../images/screen-shot-2.jpg");
+}
+
+.screen-shot-3
+{	
+    background-image: url("../images/screen-shot-3.jpg");
+}
+
+.screen-shot-4
+{	
+    background-image: url("../images/screen-shot-4.jpg");
+}
+
+.screen-shot-5
+{	
+    background-image: url("../images/screen-shot-5.jpg");
+}
+
+.stores 
+{
+	list-style: none;
+    display: inline-block;
+    vertical-align: top;
+    width: 300px;
+    margin: 0;
+    padding: 0;
+}
+
+.stores li
+{
+    padding: 5px 10px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+#text-body {
+    display: inline-block;
+    height: 600px;
+    padding-right: 50px;
+    margin-top: 25px;
+    vertical-align: top;
+    width: 350px;
+}
+
+.urban-info {
+    font-size: 16px;
+    text-align: left;
+}
+
+#web-store-link {
+    background-image: url("../images/on-the-web.png");
+}

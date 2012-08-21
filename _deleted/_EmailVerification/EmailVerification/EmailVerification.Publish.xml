@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<publishData>
+  <publishProfile publishUrl="C:\Users\walton_keith\Dropbox\Matt\EmailVerification\Publish" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="Default Web Site/EmailVerification" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="True" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="True" profileName="Profile1" publishMethod="FileSystem" replaceMatchingFiles="True" userName="D666\Administrator" savePWD="False" userPWD="" SelectedForPublish="True">
+    <file relUrl="Web.config" publishTime="04/30/2012 11:52:52" />
+    <file relUrl="bin/EmailVerification.pdb" publishTime="04/30/2012 11:52:52" />
+    <file relUrl="bin/EmailVerification.xml" publishTime="04/30/2012 11:52:52" />
+    <file relUrl="Account/Web.config" publishTime="04/25/2012 08:34:26" />
+    <file relUrl="Account/Register.aspx" publishTime="04/02/2012 08:50:54" />
+    <file relUrl="Database.sql" publishTime="04/02/2012 12:31:22" />
+    <file relUrl="Scripts/jquery-1.4.1.min.js" publishTime="04/02/2012 08:50:54" />
+    <file relUrl="Account/ChangePasswordSuccess.aspx" publishTime="04/02/2012 08:50:54" />
+    <file relUrl="Account/Login.aspx" publishTime="04/02/2012 08:50:54" />
+    <file relUrl="Scripts/jquery-1.4.1.js" publishTime="04/02/2012 08:50:54" />
+    <file relUrl="Account/ChangePassword.aspx" publishTime="04/02/2012 08:50:54" />
+    <file relUrl="Scripts/jquery-1.4.1-vsdoc.js" publishTime="04/02/2012 08:50:54" />
+    <file relUrl="ToDo.txt" publishTime="04/02/2012 12:28:31" />
+    <file relUrl="Default.aspx" publishTime="04/02/2012 12:33:34" />
+    <file relUrl="VerifyEmail.aspx" publishTime="04/02/2012 12:33:19" />
+    <file relUrl="bin/EmailVerification.dll" publishTime="04/30/2012 11:52:52" />
+    <file relUrl="bin/Parameters.dll" publishTime="03/29/2012 13:44:05" />
+  </publishProfile>
+</publishData>

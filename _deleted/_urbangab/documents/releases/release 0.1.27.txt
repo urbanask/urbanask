@@ -1,0 +1,9 @@
+0.1.27
+
+new - app available in Apple App Store, Google Play App Store, and Amazon Android App Store!
+new - internal notifications of new answers on your questions, upvotes, your answer selected, earned a badge
+new - iOS and Android vibration on new notifications
+
+bug - iOS - FB auth on first install of app hangs
+various bug fixes
+

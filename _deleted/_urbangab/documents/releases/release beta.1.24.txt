@@ -1,0 +1,8 @@
+beta 1.24
+
+new - fluid layout - improved look for high res androids and iPads	
+new - full landscape support
+new - account screen doesn't show up if account already exists
+
+bug - facebook login screen logo is stretched
+

@@ -1,0 +1,11 @@
+beta 1.22
+
+new - question location is slightly anonymized for privacy
+new - clicking notifications dismisses them (before they fade)
+new - top users cached and load faster
+
+bug - iOS app: auth hanging sometimes
+bug - iOS app: auth not forwarding to app
+bug - iOS app: splash screen layout
+
+

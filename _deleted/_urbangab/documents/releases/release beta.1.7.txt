@@ -1,0 +1,7 @@
+beta 1.7
+
+new - post to Facebook wall about app - on account edit screen
+new - changed "1st question" badge to "10 questions"
+new - changed "1st selected" badge to "25 selected"
+new - changed "beta" badge to require at least 200 reputation. Left everyone that already has one alone.
+

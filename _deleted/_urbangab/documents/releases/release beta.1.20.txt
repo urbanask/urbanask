@@ -1,0 +1,11 @@
+beta 1.20
+
+new - user button on question and answer page
+
+bug - back button to user page crashes
+bug - Chrome/Win scrollbar issue with post/tweet button
+bug - IE9 unable to open
+bug - error if "\" character is in question
+bug - open graph not posting questions
+
+

@@ -34,6 +34,11 @@
         },
         "answerHeader": "answers",
         "answerLabel": "Answer...",
+        "answerPage": {
+            "directionsLocation": "urbanAsk needs to access your location to get directions.<br /><br />"
+                + "Is this OK?<br /><br />"
+                + "Your device OS may also ask permission."
+        },
         "answerPosted": "Posted",
         "backButtonAnswer": "Answer",
         "backButtonQuestion": "Question",
@@ -77,9 +82,7 @@
             "answerVote": "There was an error saving your vote.",
             "contactAdded": "There was an error adding the contact.",
             "deleteAnswer": "There was an error deleting your question.",
-            "geoLocationDefault": "Could not determine your GPS location. Verify that location services are enabled for urbanAsk.",
-            "geoLocationIos": "Could not determine your GPS location. Check Location Services settings for urbanAsk.",
-            "geoNotFound": "Could not determine your current location. Please try again in a few moments.",
+            "geoLocation": "Could not determine your location. Verify that location services are enabled on your device for urbanAsk.",
             "loadAccount": "There was an error loading your account information.",
             "loadTopUsers": "There was an error loading top users.",
             "loadQuestion": "There was an error loading this question.",
@@ -139,6 +142,7 @@
             "loginRequired": "You must login to %1.<br /><br />Would you like to login now?",
             "loginRequiredAction": 
             {
+                "askQuestion": "ask a question",
                 "profile": "view your profile",
                 "addAnswer": "add an answer",
                 "deleteAnswer": "delete an answer",
@@ -163,7 +167,8 @@
             "downloading": "downloading...",
             "newVersion": "There is a new version of urbanAsk.",
             "postedToFacebook": "Successfully posted to your wall.",
-            "questionSaved": "question posted"
+            "questionSaved": "question saved",
+            "savingQuestion": "saving question..."
         },
         "okButtonCaption": "ok",
         "optionalNote": "optional note...",
@@ -179,6 +184,9 @@
         "questionsNearby": "nearby",
         "questionsPage": {
 
+            "askQuestionLocation": "urbanAsk needs to access your location to post this question.<br /><br />"
+                + "Is this OK?<br /><br />"
+                + "Your device OS may also ask permission.",
             "viewNearbyQuestions": "view questions near me",
             "nearbyQuestionsInstructions": "urbanAsk needs access to your location to display questions near you.<br /><br />"
                 + "Is this OK?<br /><br /> Your device OS may also ask permission."

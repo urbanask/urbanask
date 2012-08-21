@@ -4368,104 +4368,134 @@ function saveQuestion( event ) {
 
     if ( document.getElementById( 'ask-text' ).value.trim() ) {
 
-        if ( isLocationAvailable() ) {
+        document.getElementById( 'ask-button' ).focus();
 
-            var questionText = document.getElementById( 'ask-text' ).value.trim(),
-                latitude = _currentLocation.latitude + getRandomLatitude(),
-                longitude = _currentLocation.longitude + getRandomLongitude();
+        if ( isLoggedIn() ) {
 
-            getRegion( { latitude: latitude, longitude: longitude }, function ( region ) {
+            var questionText = document.getElementById( 'ask-text' ).value.trim();
 
-                var message = latitude + '~' + longitude + '~' + region + '~' + questionText,
-                    resource = '/messaging/questions',
-                    session = getSession( resource );
+            //if @ get region
 
-                document.getElementById( 'ask-button' ).focus();
-                scrollUp();
+            if ( isLocationAvailable() ) {
 
-                ajax( API_URL + resource, {
+                showNotification( STRINGS.notificationAskQuestion, { footer: STRINGS.notification.savingQuestion } );
 
-                    "type": "POST",
-                    "data": message,
-                    "headers": { "x-session": session },
-                    "cache": false,
-                    "success": function ( data, status ) {
+                getGeolocation( function () {
 
-                        var html = '',
-                            questions = document.getElementById( 'user-questions' ),
-                            question = [];
-
-                        question[QUESTION_COLUMNS.questionId] = 0;
-                        question[QUESTION_COLUMNS.userId] = _account[ACCOUNT_COLUMNS.userId];
-                        question[QUESTION_COLUMNS.username] = _account[ACCOUNT_COLUMNS.username];
-                        question[QUESTION_COLUMNS.reputation] = formatNumber( getReputation() );
-                        question[QUESTION_COLUMNS.question] = questionText;
-                        question[QUESTION_COLUMNS.link] = '';
-                        question[QUESTION_COLUMNS.latitude] = latitude;
-                        question[QUESTION_COLUMNS.longitude] = longitude;
-                        question[QUESTION_COLUMNS.timestamp] = new window.Date();
-                        question[QUESTION_COLUMNS.resolved] = 0;
-                        question[QUESTION_COLUMNS.expired] = 0;
-                        question[QUESTION_COLUMNS.bounty] = 0;
-                        question[QUESTION_COLUMNS.answerCount] = 0;
-                        question[QUESTION_COLUMNS.answers] = [];
-
-                        if ( _userQuestions.length == 0 ) {
-
-                            html += getListItemHeader( _account[ACCOUNT_COLUMNS.username] );
-
-                        };
-
-                        html += getQuestionItem( question, { newItem: true } );
-                        document.getElementById( 'ask-text' ).value = '';
-                        hideAskButton();
-
-                        if ( _userQuestions.length == 0 ) {
-
-                            questions.insertAdjacentHTML( 'afterBegin', html );
-
-                        } else {
-
-                            questions.firstChild.insertAdjacentHTML( 'afterEnd', html );
-
-                        };
-
-                        _userQuestions.unshift( question );
-                        window.setTimeout( function () { questions.childNodes[1].removeClass( 'height-zero' ) }, 50 );
-                        showNotification( STRINGS.notificationAskQuestion, { footer: STRINGS.notification.questionSaved } );
-
-                        getNewQuestionId( questionText, function ( questionId ) {
-
-                            postToFacebook( 'post-open-graph', 'question', { value: questionText, id: questionId } );
-
-                        } );
-
-                    },
-                    "error": function ( response, status, error ) {
-
-                        error == 'Unauthorized'
-                            ? logoutApp()
-                            : showMessage( STRINGS.error.saveQuestion + ' ( error: ' + status + ', ' + error + ')' );
-
-                    }
+                    save( questionText );
 
                 } );
 
-            } );
-
-        } else {
-
-            if ( window.deviceInfo.brand == 'ios' ) {
-
-                showMessage( STRINGS.error.geoLocationIos );                
-
             } else {
 
-                showMessage( STRINGS.error.geoLocationDefault );
+                showMessage( STRINGS.questionsPage.askQuestionLocation, function () {
+
+                    showNotification( STRINGS.notificationAskQuestion, { footer: STRINGS.notification.savingQuestion } );
+
+                    getGeolocation( function () {
+
+                        save( questionText );
+
+                    } );
+
+                } );
 
             };
 
+        } else {
+
+            showMessage( STRINGS.login.loginRequired.replace( '%1', STRINGS.login.loginRequiredAction.askQuestion ), function () {
+
+                logoutApp();
+
+            } );
+
         };
+
+    };
+
+    function save( questionText ) {
+
+        var latitude = _currentLocation.latitude + getRandomLatitude(),
+            longitude = _currentLocation.longitude + getRandomLongitude();
+
+        getRegion( { latitude: latitude, longitude: longitude }, function ( region ) {
+
+            var message = latitude + '~' + longitude + '~' + region + '~' + questionText,
+                resource = '/messaging/questions',
+                session = getSession( resource );
+
+            scrollUp();
+
+            ajax( API_URL + resource, {
+
+                "type": "POST",
+                "data": message,
+                "headers": { "x-session": session },
+                "cache": false,
+                "success": function ( data, status ) {
+
+                    var html = '',
+                        questions = document.getElementById( 'user-questions' ),
+                        question = [];
+
+                    question[QUESTION_COLUMNS.questionId] = 0;
+                    question[QUESTION_COLUMNS.userId] = _account[ACCOUNT_COLUMNS.userId];
+                    question[QUESTION_COLUMNS.username] = _account[ACCOUNT_COLUMNS.username];
+                    question[QUESTION_COLUMNS.reputation] = formatNumber( getReputation() );
+                    question[QUESTION_COLUMNS.question] = questionText;
+                    question[QUESTION_COLUMNS.link] = '';
+                    question[QUESTION_COLUMNS.latitude] = latitude;
+                    question[QUESTION_COLUMNS.longitude] = longitude;
+                    question[QUESTION_COLUMNS.timestamp] = new window.Date();
+                    question[QUESTION_COLUMNS.resolved] = 0;
+                    question[QUESTION_COLUMNS.expired] = 0;
+                    question[QUESTION_COLUMNS.bounty] = 0;
+                    question[QUESTION_COLUMNS.answerCount] = 0;
+                    question[QUESTION_COLUMNS.answers] = [];
+
+                    if ( _userQuestions.length == 0 ) {
+
+                        html += getListItemHeader( _account[ACCOUNT_COLUMNS.username] );
+
+                    };
+
+                    html += getQuestionItem( question, { newItem: true } );
+                    document.getElementById( 'ask-text' ).value = '';
+                    hideAskButton();
+
+                    if ( _userQuestions.length == 0 ) {
+
+                        questions.insertAdjacentHTML( 'afterBegin', html );
+
+                    } else {
+
+                        questions.firstChild.insertAdjacentHTML( 'afterEnd', html );
+
+                    };
+
+                    _userQuestions.unshift( question );
+                    window.setTimeout( function () { questions.childNodes[1].removeClass( 'height-zero' ) }, 50 );
+                    showNotification( STRINGS.notificationAskQuestion, { footer: STRINGS.notification.questionSaved } );
+
+                    getNewQuestionId( questionText, function ( questionId ) {
+
+                        postToFacebook( 'post-open-graph', 'question', { value: questionText, id: questionId } );
+
+                    } );
+
+                },
+                "error": function ( response, status, error ) {
+
+                    error == 'Unauthorized'
+                        ? logoutApp()
+                        : showMessage( STRINGS.error.saveQuestion + ' ( error: ' + status + ', ' + error + ')' );
+
+                }
+
+            } );
+
+        } );
 
     };
 
@@ -4974,7 +5004,7 @@ function getGeolocation( geoComplete, options ) {
 
             if ( window.deviceInfo.mode != 'webview' && !isLocationAvailable() ) {
 
-                showMessage( STRINGS.error.geoLocationDefault );
+                showMessage( STRINGS.error.geoLocation );
 
             };
 
@@ -5011,7 +5041,7 @@ function getGeolocation( geoComplete, options ) {
 
             if ( window.deviceInfo.mode != 'webview' && !isLocationAvailable() ) {
 
-                showMessage( STRINGS.error.geoLocationDefault );
+                showMessage( STRINGS.error.geoLocation );
 
             };
 
@@ -5625,50 +5655,62 @@ function showAnswerMap( answer, travelMode ) {
         map = new google.maps.Map( mapCanvas, options );
 
     mapCanvas.removeClass( 'fadeable' ).addClass( 'fade' ).addClass( 'fadeable' );
-    bounds.extend( currentLocation );
-    bounds.extend( answerLocation );
-    map.fitBounds( bounds );
+
+    if ( isLocationAvailable() ) {
+
+        bounds.extend( currentLocation );
+        bounds.extend( answerLocation );
+        map.fitBounds( bounds );
+
+    };
+
     window.setTimeout( function () { mapCanvas.removeClass( 'fade' ); }, 100 );
+
+    var directionItems = document.getElementById( 'directions' );
+    directionItems.innerHTML = '';
 
     google.maps.event.addListenerOnce( map, 'tilesloaded', function () {
 
-        var directionItems = document.getElementById( 'directions' ),
-            directionOptions = {
+        if ( isLocationAvailable() ) {
 
-                origin: currentLocation,
-                destination: answerLocation,
-                travelMode: travelMode,
-                unitSystem: google.maps.UnitSystem.IMPERIAL
+            var directionOptions = {
+                    origin: currentLocation,
+                    destination: answerLocation,
+                    travelMode: travelMode,
+                    unitSystem: google.maps.UnitSystem.IMPERIAL
+                },
+                directions = new google.maps.DirectionsService();
 
-            },
-            directions = new google.maps.DirectionsService();
+            directions.route( directionOptions, function ( result, status ) {
 
-        directionItems.innerHTML = '';
+                if ( status == google.maps.DirectionsStatus.OK ) {
 
-        directions.route( directionOptions, function ( result, status ) {
+                    var directionsDisplayOptions = { polylineOptions: { strokeColor: "black", strokeOpacity: ".5"} },
+                            directionsDisplay = new google.maps.DirectionsRenderer( directionsDisplayOptions );
 
-            if ( status == google.maps.DirectionsStatus.OK ) {
+                    directionsDisplay.setMap( null );
+                    directionsDisplay.setMap( map );
+                    directionsDisplay.setDirections( result );
 
-                var directionsDisplayOptions = { polylineOptions: { strokeColor: "black", strokeOpacity: ".5"} },
-                    directionsDisplay = new google.maps.DirectionsRenderer( directionsDisplayOptions );
+                    for ( var index = 0; index < result.routes[0].legs[0].steps.length; index++ ) {
 
-                directionsDisplay.setMap( null );
-                directionsDisplay.setMap( map );
-                directionsDisplay.setDirections( result );
+                        var step = '<li class="direction-item">'
+                                + '<b>' + ( index + 1 ) + '.</b> '
+                                + result.routes[0].legs[0].steps[index].instructions
+                                + '</li>';
+                        directionItems.insertAdjacentHTML( 'beforeEnd', step );
 
-                for ( var index = 0; index < result.routes[0].legs[0].steps.length; index++ ) {
-
-                    var step = '<li class="direction-item">'
-                            + '<b>' + ( index + 1 ) + '.</b> '
-                            + result.routes[0].legs[0].steps[index].instructions
-                            + '</li>';
-                    directionItems.insertAdjacentHTML( 'beforeEnd', step );
+                    };
 
                 };
 
-            };
+            } );
 
-        } );
+        } else {
+
+            var marker = new google.maps.Marker( { map: map, position: answerLocation } );
+
+        };
 
     } );
 
@@ -7687,7 +7729,7 @@ function startApp() {
 
     loadAccount( function () {
 
-        setupGeolocation();
+        //setupGeolocation();
         refreshQuestions();
         refreshUserQuestions();
         showRefreshButton();
@@ -7757,15 +7799,22 @@ function toolbarClick( event ) {
 
             case 'directions-button':
 
-                var directions = document.getElementById( 'directions-page' );
+                if ( isLocationAvailable() ) {
 
-                if ( directions.hasClass( 'top-slide' ) ) {
-
-                    directions.removeClass( 'top-slide' );
+                    toggleDirections();
 
                 } else {
 
-                    directions.addClass( 'top-slide' );
+                    showMessage( STRINGS.answerPage.directionsLocation, function () {
+
+                        getGeolocation( function () {
+
+                            setTravelMode( document.getElementById( 'travel-mode-drive' ) );
+                            getGeolocation();
+
+                        }, { quick: true } );
+
+                    } );
 
                 };
 
@@ -7981,6 +8030,22 @@ function toolbarClick( event ) {
                 break;
 
         };
+
+    };
+
+};
+
+function toggleDirections() {
+
+    var directions = document.getElementById( 'directions-page' );
+
+    if ( directions.hasClass( 'top-slide' ) ) {
+
+        directions.removeClass( 'top-slide' );
+
+    } else {
+
+        directions.addClass( 'top-slide' );
 
     };
 

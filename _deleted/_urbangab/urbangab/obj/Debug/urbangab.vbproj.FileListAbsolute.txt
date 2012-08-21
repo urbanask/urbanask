@@ -1,0 +1,8 @@
+Y:\Dropbox\Projects\urbangab\urbangab\bin\urbangab.dll
+Y:\Dropbox\Projects\urbangab\urbangab\bin\urbangab.pdb
+Y:\Dropbox\Projects\urbangab\urbangab\obj\Debug\ResolveAssemblyReference.cache
+Y:\Dropbox\Projects\urbangab\urbangab\obj\Debug\urbangab.Resources.resources
+Y:\Dropbox\Projects\urbangab\urbangab\obj\Debug\GenerateResource.read.1.tlog
+Y:\Dropbox\Projects\urbangab\urbangab\obj\Debug\GenerateResource.write.1.tlog
+Y:\Dropbox\Projects\urbangab\urbangab\obj\Debug\urbangab.dll
+Y:\Dropbox\Projects\urbangab\urbangab\obj\Debug\urbangab.pdb

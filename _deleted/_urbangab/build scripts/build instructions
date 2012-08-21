@@ -1,0 +1,16 @@
+build instructions
+
+1. change version and versionCode in config.xml
+2. compile Release
+3. zip contents: cache.manifest, config.xml, images/, index.html, scrtips/, styles/
+4. change PhoneGap key to UrbanAsk App Store
+5. Turn off Debug build on PhoneGap
+6. upload zip file to PhoneGap
+
+iOS
+7. send binary using Application Loader
+
+Android
+7. run android zipalign on .apk file
+8. upload to Amazon and Google Play
+

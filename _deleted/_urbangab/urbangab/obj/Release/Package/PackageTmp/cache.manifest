@@ -1,0 +1,22 @@
+﻿CACHE MANIFEST
+#ver 1.0.0
+
+CACHE:
+index.html
+
+images/icon.png
+images/splash.png
+
+styles/urbanask.css
+
+scripts/strings-en.js
+scripts/urbanask.js
+scripts/urbanask-compiled.js
+
+NETWORK:
+api/
+
+fb-login.html
+index.aspx
+
+*

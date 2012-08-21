@@ -1,0 +1,201 @@
+a, a:active, a:hover, a:link, a:visited {text-decoration: none;}
+
+#amazon-store-link {
+    background-image: url("../images/amazon.png");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 125px auto;
+    display: block;
+    height: 50px;
+    padding-top: 8px;
+    margin: 0 auto;
+}
+
+#amazon-store-qr {
+    background-image: url("../images/qr-amazon.png");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 125px auto;
+    height: 125px;
+    margin: 0 auto;
+    width: 125px;
+}
+
+
+#app-links {
+    display: inline-block;
+    padding-left: 20px;
+    padding-top: 135px;
+    vertical-align: top;
+    width: 300px;
+}
+
+#apple-store-link {
+    background-image: url("../images/app-store.png");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 125px auto;
+    display: block;
+    height: 50px;
+    margin: 0 auto;
+    padding-top: 8px;
+}
+
+#apple-store-qr {
+    background-image: url("../images/qr-apple.png");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 125px auto;
+    height: 125px;
+    margin: 0 auto;
+    width: 125px;
+}
+
+
+body {
+    color: white;
+    overflow: auto !important;
+    text-align: center;
+    vertical-align: top;
+}
+
+#button-store-link {
+    bottom: 495px;
+    display: block;
+    height: 88px;
+    left: 215px;
+    position: relative;
+    width: 88px;
+}
+
+.bullet-point {
+    font-size: 20px;
+    text-align: left;
+}
+
+#free-button {
+    background-image: url("../images/red_foil_sticker.png");
+    background-repeat: no-repeat;
+    color: white;
+    height: 88px;
+    text-shadow: #601C1C 0px -1px 0;
+    transform: rotate(9deg);
+        -webkit-transform: rotate(9deg);
+        -o-transform: rotate(9deg);
+        -moz-transform: rotate(9deg);
+        -ms-transform: rotate(9deg);
+    width: 88px;
+
+}
+
+#free-button-text {
+    font-size: 22px;
+    line-height: 88px;
+    text-align: center;
+    transform: rotate(9deg);
+        -webkit-transform: rotate(9deg);
+        -o-transform: rotate(9deg);
+        -moz-transform: rotate(9deg);
+        -ms-transform: rotate(9deg);
+}
+
+#google-store-link {
+    background-image: url("../images/google-play.png");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 125px auto;
+    display: block;
+    height: 50px;
+    margin: 0 auto;
+    padding-top: 8px;
+}
+
+#google-store-qr {
+    background-image: url("../images/qr-google.png");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 125px auto;
+    height: 125px;
+    margin: 0 auto;
+    width: 125px;
+}
+
+
+#landing-logo {
+    display: block;
+    height: 125px;
+    margin: 0 auto;
+    padding-bottom: 10px;
+}
+
+.links-text {
+    font-size: 20px;
+    
+}
+
+#phone-preview {
+    background-image: url("../images/iphone.png");
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    display: inline-block;
+    height: 622px;
+    padding-top: 50px;
+    vertical-align: top;
+    width: 281px;
+}
+
+#phone-screen {
+    height: 358px;
+    margin: 0 auto;
+    padding-top: 99px;
+    width: 239px;
+}
+
+#screen-shot {
+    display: block;
+    height: 100%;
+    margin: 0 auto;
+    position: relative;
+    width: 100%;
+}
+
+.store-group {
+    display: inline-block;
+    padding: 10px;
+    vertical-align: top;
+}
+
+#text-body {
+    display: inline-block;
+    height: 600px;
+    padding-right: 50px;
+    padding-top: 25px;
+    vertical-align: top;
+    width: 350px;
+}
+
+.urban-info {
+    font-size: 16px;
+    text-align: left;
+}
+
+#web-store-link {
+    background-image: url("../images/on-the-web.png");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 125px auto;
+    display: block;
+    height: 50px;
+    margin: 0 auto;
+    padding-top: 8px;
+}
+
+#web-store-qr {
+    background-image: url("../images/qr-web.png");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 125px auto;
+    height: 125px;
+    margin: 0 auto;
+    width: 125px;
+}
