@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-version="1.19.31" manifest="cache.manifest">
+<html lang="en" data-version="1.12.15" manifest="cache.manifest">
 <head>
     <title>urbanAsk</title>
     
@@ -100,7 +100,7 @@
 
         <section id="account-page" class="hide">
             <div id="account-view">
-                <div id="account-cancel"></div>
+                <div id="account-cancel" class="cancel"></div>
                 <div id="account-scroll">
                     <form id="account">
                         <input id="edit-username" class="edit-input" placeholder="username">
@@ -150,18 +150,22 @@
         </section>
 
         <section id ="login-page" class="hide">
-            <form id="auth-view">
-                <button id="fb-login" class="login-button">Login with Facebook</button>
-                <button id="twitter-login" class="login-button">Login with Twitter</button>
-                <button id="create-email-account" class="login-button">Create Account with Email</button>
-            </form>
-            <form id="login-view">
-                <input autocorrect="off" autocapitalize="none" class="login-field" id="login-username" type="text" maxlength="100" /><!--
-             --><input class="login-field" id="login-password" type="password" maxlength="100" /><!--
-             --><button id="login-button" type="submit"></button>
-                <span id="login-error"></span>
-            </form>
-            <div id="app-version-login" class="app-version"></div>
+            <div id="login-page-view">
+                <div id="login-page-cancel" class="cancel"></div>
+                <form id="auth-view">
+                    <button id="fb-login" class="login-button">Login with Facebook</button>
+                    <button id="twitter-login" class="login-button">Login with Twitter</button>
+                    <button id="create-email-account" class="login-button">Login with Email</button>
+                    <button id="login-mobile" class="login-button">Login with Mobile Number</button>
+                </form>
+                <form id="login-view">
+                    <input autocorrect="off" autocapitalize="none" class="login-field" id="login-username" type="text" maxlength="100" /><!--
+                 --><input class="login-field" id="login-password" type="password" maxlength="100" /><!--
+                 --><button id="login-button" type="submit"></button>
+                    <span id="login-error"></span>
+                </form>
+                <div id="app-version-login" class="app-version"></div>
+            </div>
         </section>
 
         <section id="create-account-page" class="hide">

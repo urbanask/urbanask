@@ -90,6 +90,7 @@
             "loadRegions": "There was an error loading regions.",
             "loadUser": "There was an error loading this user.",
             "noAnswersToSelect": "There are no answers to select.",
+            "questionLocationNotFound": "Location '%1' not found. Check your spelling or be more specific.",
             "saveAnswer": "There was an error saving this answer.",
             "saveQuestion": "There was an error saving this question.",
             "saveQuestionUpvote": "There was an error saving your vote.",
@@ -137,7 +138,8 @@
         "letters": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
         "login":
         {
-            "createEmailAccount": "Create Account with Email",
+            "createEmailAccount": "Login with Email",
+            "loginMobile": "Login with Mobile #",
             "twitter": "Login with Twitter",
             "loginRequired": "You must login to %1.<br /><br />Would you like to login now?",
             "loginRequiredAction": 

@@ -444,54 +444,6 @@ function addEventListeners( page, previousPage ) {
 
             break;
 
-        case 'login-page':
-
-            var loginButton = document.getElementById( 'login-button' );
-            loginButton.addEventListener( 'click', login, false );
-
-            var facebookButton = document.getElementById( 'fb-login' );
-            facebookButton.addEventListener( 'click', loginFacebook, false );
-
-            var twitterLogin = document.getElementById( 'twitter-login' );
-            twitterLogin.addEventListener( 'click', authorizeTwitter, false );
-
-            var emailButton = document.getElementById( 'create-email-account' );
-            emailButton.addEventListener( 'click', showCreateEmailAccount, false );
-
-            window.addEventListener( 'message', authorizeFacebook, false );
-
-            if ( window.deviceInfo.mobile ) {
-
-                loginButton.addEventListener( 'touchstart', selectButton, false );
-                loginButton.addEventListener( 'touchend', unselectButton, false );
-
-                facebookButton.addEventListener( 'touchstart', selectButton, false );
-                facebookButton.addEventListener( 'touchend', unselectButton, false );
-
-                twitterLogin.addEventListener( 'touchstart', selectButton, false );
-                twitterLogin.addEventListener( 'touchend', unselectButton, false );
-
-                emailButton.addEventListener( 'touchstart', selectButton, false );
-                emailButton.addEventListener( 'touchend', unselectButton, false );
-
-            } else {
-
-                loginButton.addEventListener( 'mousedown', selectButton, false );
-                loginButton.addEventListener( 'mouseup', unselectButton, false );
-
-                facebookButton.addEventListener( 'mousedown', selectButton, false );
-                facebookButton.addEventListener( 'mouseup', unselectButton, false );
-
-                twitterLogin.addEventListener( 'mousedown', selectButton, false );
-                twitterLogin.addEventListener( 'mouseup', unselectButton, false );
-
-                emailButton.addEventListener( 'mousedown', selectButton, false );
-                emailButton.addEventListener( 'mouseup', unselectButton, false );
-
-            };
-
-            break;
-
         case 'question-page':
 
             backButton = document.getElementById( 'back-button' );
@@ -1800,12 +1752,6 @@ function hideSplashPage() {
 
 };
 
-function hideRefreshButton() {
-
-    document.getElementById( 'refresh-button' ).addClass( 'hide' );
-
-};
-
 function hoverElement( event ) {
 
     var item = event.target.closestByClassName( 'selectable' );
@@ -2663,6 +2609,7 @@ function localizeStrings() {
     $( '#location-link' ).setAttribute( 'placeholder', STRINGS.addAnswer.locationLinkCaption );
     $( '#location-phone' ).setAttribute( 'placeholder', STRINGS.addAnswer.locationPhoneCaption );
     $( '#location-note' ).setAttribute( 'placeholder', STRINGS.optionalNote );
+    $( '#login-mobile' ).innerHTML = STRINGS.login.loginMobile;
     $( '#login-username' ).setAttribute( 'placeholder', STRINGS.usernameLabel );
     $( '#login-password' ).setAttribute( 'placeholder', STRINGS.passwordLabel );
     $( '#member-since-caption' ).innerHTML = STRINGS.user.memberSince;
@@ -2942,6 +2889,7 @@ function logoutApp() {
     _session.id = '';
     _session.key = '';
 
+    //refresh();
     showPage( 'login-page', { logout: true } );
 
 };
@@ -3664,54 +3612,6 @@ function removeEventListeners( page ) {
 
             break;
 
-        case 'login-page':
-
-            var loginButton = document.getElementById( 'login-button' );
-            loginButton.removeEventListener( 'click', login, false );
-
-            var facebookButton = document.getElementById( 'fb-login' );
-            facebookButton.removeEventListener( 'click', loginFacebook, false );
-
-            var twitterLogin = document.getElementById( 'twitter-login' );
-            twitterLogin.removeEventListener( 'click', authorizeTwitter, false );
-
-            var emailButton = document.getElementById( 'create-email-account' );
-            emailButton.removeEventListener( 'click', showCreateEmailAccount, false );
-
-            window.removeEventListener( 'message', authorizeFacebook, false );
-
-            if ( window.deviceInfo.mobile ) {
-
-                loginButton.removeEventListener( 'touchstart', selectButton, false );
-                loginButton.removeEventListener( 'touchend', unselectButton, false );
-
-                facebookButton.removeEventListener( 'touchstart', selectButton, false );
-                facebookButton.removeEventListener( 'touchend', unselectButton, false );
-
-                twitterLogin.removeEventListener( 'touchstart', selectButton, false );
-                twitterLogin.removeEventListener( 'touchend', unselectButton, false );
-
-                emailButton.removeEventListener( 'touchstart', selectButton, false );
-                emailButton.removeEventListener( 'touchend', unselectButton, false );
-
-            } else {
-
-                loginButton.removeEventListener( 'mousedown', selectButton, false );
-                loginButton.removeEventListener( 'mouseup', unselectButton, false );
-
-                facebookButton.removeEventListener( 'mousedown', selectButton, false );
-                facebookButton.removeEventListener( 'mouseup', unselectButton, false );
-
-                twitterLogin.removeEventListener( 'mousedown', selectButton, false );
-                twitterLogin.removeEventListener( 'mouseup', unselectButton, false );
-
-                emailButton.removeEventListener( 'mousedown', selectButton, false );
-                emailButton.removeEventListener( 'mouseup', unselectButton, false );
-
-            };
-
-            break;
-
         case 'question-page':
 
             backButton = document.getElementById( 'back-button' );
@@ -4372,17 +4272,41 @@ function saveQuestion( event ) {
 
         if ( isLoggedIn() ) {
 
-            var questionText = document.getElementById( 'ask-text' ).value.trim();
+            var questionText = document.getElementById( 'ask-text' ).value.trim(),
+                latitude,
+                longitude;
 
-            //if @ get region
+            if ( questionText.indexOf( '@' ) > -1 ) {
 
-            if ( isLocationAvailable() ) {
+                showNotification( STRINGS.notificationAskQuestion, { footer: STRINGS.notification.savingQuestion } );
+
+                var location = questionText.split( '@' )[1].trim();
+                questionText = questionText.split( '@' )[0].trim();
+
+                getGeocode( { location: location }, function ( result ) {
+
+                    save( questionText, result.latitude, result.longitude, result.region );
+
+                }, function ( error ) {
+
+                    showMessage( STRINGS.error.questionLocationNotFound.replace( '%1', location ) );
+
+                } );
+
+            } else if ( isLocationAvailable() ) {
 
                 showNotification( STRINGS.notificationAskQuestion, { footer: STRINGS.notification.savingQuestion } );
 
                 getGeolocation( function () {
 
-                    save( questionText );
+                    latitude = _currentLocation.latitude + getRandomLatitude();
+                    longitude = _currentLocation.longitude + getRandomLongitude();
+
+                    getRegion( { latitude: latitude, longitude: longitude }, function ( region ) {
+
+                        save( questionText, latitude, longitude, region );
+
+                    } );
 
                 } );
 
@@ -4394,7 +4318,14 @@ function saveQuestion( event ) {
 
                     getGeolocation( function () {
 
-                        save( questionText );
+                        latitude = _currentLocation.latitude + getRandomLatitude();
+                        longitude = _currentLocation.longitude + getRandomLongitude();
+
+                        getRegion( { latitude: latitude, longitude: longitude }, function ( region ) {
+
+                            save( questionText, latitude, longitude, region );
+
+                        } );
 
                     } );
 
@@ -4414,86 +4345,79 @@ function saveQuestion( event ) {
 
     };
 
-    function save( questionText ) {
+    function save( questionText, latitude, longitude, region ) {
 
-        var latitude = _currentLocation.latitude + getRandomLatitude(),
-            longitude = _currentLocation.longitude + getRandomLongitude();
+        var message = latitude + '~' + longitude + '~' + region + '~' + questionText,
+            resource = '/messaging/questions',
+            session = getSession( resource );
 
-        getRegion( { latitude: latitude, longitude: longitude }, function ( region ) {
+        scrollUp();
 
-            var message = latitude + '~' + longitude + '~' + region + '~' + questionText,
-                resource = '/messaging/questions',
-                session = getSession( resource );
+        ajax( API_URL + resource, {
 
-            scrollUp();
+            "type": "POST",
+            "data": message,
+            "headers": { "x-session": session },
+            "cache": false,
+            "success": function ( data, status ) {
 
-            ajax( API_URL + resource, {
+                var html = '',
+                    questions = document.getElementById( 'user-questions' ),
+                    question = [];
 
-                "type": "POST",
-                "data": message,
-                "headers": { "x-session": session },
-                "cache": false,
-                "success": function ( data, status ) {
+                question[QUESTION_COLUMNS.questionId] = 0;
+                question[QUESTION_COLUMNS.userId] = _account[ACCOUNT_COLUMNS.userId];
+                question[QUESTION_COLUMNS.username] = _account[ACCOUNT_COLUMNS.username];
+                question[QUESTION_COLUMNS.reputation] = formatNumber( getReputation() );
+                question[QUESTION_COLUMNS.question] = questionText;
+                question[QUESTION_COLUMNS.link] = '';
+                question[QUESTION_COLUMNS.latitude] = latitude;
+                question[QUESTION_COLUMNS.longitude] = longitude;
+                question[QUESTION_COLUMNS.timestamp] = new window.Date();
+                question[QUESTION_COLUMNS.resolved] = 0;
+                question[QUESTION_COLUMNS.expired] = 0;
+                question[QUESTION_COLUMNS.bounty] = 0;
+                question[QUESTION_COLUMNS.answerCount] = 0;
+                question[QUESTION_COLUMNS.answers] = [];
 
-                    var html = '',
-                        questions = document.getElementById( 'user-questions' ),
-                        question = [];
+                if ( _userQuestions.length == 0 ) {
 
-                    question[QUESTION_COLUMNS.questionId] = 0;
-                    question[QUESTION_COLUMNS.userId] = _account[ACCOUNT_COLUMNS.userId];
-                    question[QUESTION_COLUMNS.username] = _account[ACCOUNT_COLUMNS.username];
-                    question[QUESTION_COLUMNS.reputation] = formatNumber( getReputation() );
-                    question[QUESTION_COLUMNS.question] = questionText;
-                    question[QUESTION_COLUMNS.link] = '';
-                    question[QUESTION_COLUMNS.latitude] = latitude;
-                    question[QUESTION_COLUMNS.longitude] = longitude;
-                    question[QUESTION_COLUMNS.timestamp] = new window.Date();
-                    question[QUESTION_COLUMNS.resolved] = 0;
-                    question[QUESTION_COLUMNS.expired] = 0;
-                    question[QUESTION_COLUMNS.bounty] = 0;
-                    question[QUESTION_COLUMNS.answerCount] = 0;
-                    question[QUESTION_COLUMNS.answers] = [];
+                    html += getListItemHeader( _account[ACCOUNT_COLUMNS.username] );
 
-                    if ( _userQuestions.length == 0 ) {
+                };
 
-                        html += getListItemHeader( _account[ACCOUNT_COLUMNS.username] );
+                html += getQuestionItem( question, { newItem: true } );
+                document.getElementById( 'ask-text' ).value = '';
+                hideAskButton();
 
-                    };
+                if ( _userQuestions.length == 0 ) {
 
-                    html += getQuestionItem( question, { newItem: true } );
-                    document.getElementById( 'ask-text' ).value = '';
-                    hideAskButton();
+                    questions.insertAdjacentHTML( 'afterBegin', html );
 
-                    if ( _userQuestions.length == 0 ) {
+                } else {
 
-                        questions.insertAdjacentHTML( 'afterBegin', html );
+                    questions.firstChild.insertAdjacentHTML( 'afterEnd', html );
 
-                    } else {
+                };
 
-                        questions.firstChild.insertAdjacentHTML( 'afterEnd', html );
+                _userQuestions.unshift( question );
+                window.setTimeout( function () { questions.childNodes[1].removeClass( 'height-zero' ) }, 50 );
+                showNotification( STRINGS.notificationAskQuestion, { footer: STRINGS.notification.questionSaved } );
 
-                    };
+                getNewQuestionId( questionText, function ( questionId ) {
 
-                    _userQuestions.unshift( question );
-                    window.setTimeout( function () { questions.childNodes[1].removeClass( 'height-zero' ) }, 50 );
-                    showNotification( STRINGS.notificationAskQuestion, { footer: STRINGS.notification.questionSaved } );
+                    postToFacebook( 'post-open-graph', 'question', { value: questionText, id: questionId } );
 
-                    getNewQuestionId( questionText, function ( questionId ) {
+                } );
 
-                        postToFacebook( 'post-open-graph', 'question', { value: questionText, id: questionId } );
+            },
+            "error": function ( response, status, error ) {
 
-                    } );
+                error == 'Unauthorized'
+                    ? logoutApp()
+                    : showMessage( STRINGS.error.saveQuestion + ' ( error: ' + status + ', ' + error + ')' );
 
-                },
-                "error": function ( response, status, error ) {
-
-                    error == 'Unauthorized'
-                        ? logoutApp()
-                        : showMessage( STRINGS.error.saveQuestion + ' ( error: ' + status + ', ' + error + ')' );
-
-                }
-
-            } );
+            }
 
         } );
 
@@ -4860,6 +4784,135 @@ function getQuestionsTop() {
 function resetQuestionsTop() {
 
     document.getElementById( 'questions-view' ).setDataset( 'scroll-top', 0 );
+
+};
+
+function getGeocode( location, success, error ) {
+
+    var geocoder = new google.maps.Geocoder(),
+        request;
+
+    if ( location.latitude ) {
+
+        request = { 'latLng': new google.maps.LatLng( location.latitude, location.longitude ) };
+
+    } else if ( location.address ) {
+
+        request = { 'address': location.address };
+
+    } else if ( location.location ) {
+
+        request = { 'address': location.location };
+
+    };
+
+    if ( request ) {
+
+        geocoder.geocode( request, function ( results, status ) {
+
+            if ( status == google.maps.GeocoderStatus.OK ) {
+
+                var resultIndex,
+                    types,
+                    typeIndex,
+                    geometry;
+
+                if ( location.location ) {
+
+                    for ( resultIndex = 0; resultIndex < results.length; resultIndex++ ) {
+
+                        geometry = results[resultIndex].geometry;
+
+                        if ( geometry ) {
+
+                            success( {
+
+                                'region': results[resultIndex].formatted_address,
+                                'latitude': geometry.location.lat(),
+                                'longitude': geometry.location.lng()
+
+                            } );
+
+                            return;
+
+                        };
+
+                    };
+
+                } else {
+
+                    //check top-level results
+                    for ( resultIndex = 0; resultIndex < results.length; resultIndex++ ) {
+
+                        types = results[resultIndex].types;
+
+                        for ( typeIndex = 0; typeIndex < types.length; typeIndex++ ) {
+
+                            if ( types[typeIndex] == 'locality' ) {
+
+                                geometry = results[resultIndex].geometry;
+
+                                success( {
+
+                                    'region': results[resultIndex].formatted_address,
+                                    'latitude': ( geometry ? geometry.location.lat() : 0 ),
+                                    'longitude': ( geometry ? geometry.location.lng() : 0 )
+
+                                } );
+
+                                return;
+
+                            };
+
+                        };
+
+                    };
+
+                    //no result, check addresses
+                    for ( resultIndex = 0; resultIndex < results.length; resultIndex++ ) {
+
+                        var addresses = results[resultIndex].address_components;
+
+                        for ( var addressIndex = 0; addressIndex < addresses.length; addressIndex++ ) {
+
+                            types = addresses[addressIndex].types;
+
+                            for ( typeIndex = 0; typeIndex < types.length; typeIndex++ ) {
+
+                                if ( types[typeIndex] == 'locality' ) {
+
+                                    geometry = results[resultIndex].geometry;
+
+                                    success( {
+
+                                        'region': results[resultIndex].formatted_address,
+                                        'latitude': ( geometry ? geometry.location.lat() : 0 ),
+                                        'longitude': ( geometry ? geometry.location.lng() : 0 )
+
+                                    } );
+
+                                    return;
+
+                                };
+
+                            };
+
+                        };
+
+                    };
+
+                };
+
+            } else {
+
+                error( status );
+                return;
+
+            };
+
+        } );
+
+    };
 
 };
 
@@ -5240,6 +5293,135 @@ function setRegion( region ) {
     } else {
 
         region.selectedIndex = 0;
+
+    };
+
+};
+
+function showLoginPage() {
+
+    var loginPage = document.getElementById( 'login-page' ),
+        cancel = document.getElementById( 'login-page-cancel' );
+
+    if ( loginPage.hasClass( 'hide' ) ) {
+
+        document.getElementById( 'refresh-button' ).addClass( 'hide' );
+        loginPage.removeClass( 'hide' );
+        addEventListeners();
+
+    } else {
+
+        document.getElementById( 'refresh-button' ).removeClass( 'hide' );
+        close();
+
+    };
+
+    function close() {
+
+        loginPage.addClass( 'hide' );
+        removeEventListeners();
+
+    };
+
+    function addEventListeners() {
+
+        loginPage.addEventListener( 'close', close, false );
+        cancel.addEventListener( 'click', close, false );
+
+        var loginButton = document.getElementById( 'login-button' );
+        loginButton.addEventListener( 'click', login, false );
+
+        var facebookButton = document.getElementById( 'fb-login' );
+        facebookButton.addEventListener( 'click', loginFacebook, false );
+
+        var twitterLogin = document.getElementById( 'twitter-login' );
+        twitterLogin.addEventListener( 'click', authorizeTwitter, false );
+
+        var emailButton = document.getElementById( 'create-email-account' );
+        emailButton.addEventListener( 'click', showCreateEmailAccount, false );
+
+        window.addEventListener( 'message', authorizeFacebook, false );
+
+        if ( window.deviceInfo.mobile ) {
+
+            loginButton.addEventListener( 'touchstart', selectButton, false );
+            loginButton.addEventListener( 'touchend', unselectButton, false );
+
+            facebookButton.addEventListener( 'touchstart', selectButton, false );
+            facebookButton.addEventListener( 'touchend', unselectButton, false );
+
+            twitterLogin.addEventListener( 'touchstart', selectButton, false );
+            twitterLogin.addEventListener( 'touchend', unselectButton, false );
+
+            emailButton.addEventListener( 'touchstart', selectButton, false );
+            emailButton.addEventListener( 'touchend', unselectButton, false );
+
+        } else {
+
+            loginButton.addEventListener( 'mousedown', selectButton, false );
+            loginButton.addEventListener( 'mouseup', unselectButton, false );
+
+            facebookButton.addEventListener( 'mousedown', selectButton, false );
+            facebookButton.addEventListener( 'mouseup', unselectButton, false );
+
+            twitterLogin.addEventListener( 'mousedown', selectButton, false );
+            twitterLogin.addEventListener( 'mouseup', unselectButton, false );
+
+            emailButton.addEventListener( 'mousedown', selectButton, false );
+            emailButton.addEventListener( 'mouseup', unselectButton, false );
+
+        };
+
+    };
+
+    function removeEventListeners() {
+
+        loginPage.removeEventListener( 'close', close, false );
+        cancel.removeEventListener( 'click', close, false );
+
+        var loginButton = document.getElementById( 'login-button' );
+        loginButton.removeEventListener( 'click', login, false );
+
+        var facebookButton = document.getElementById( 'fb-login' );
+        facebookButton.removeEventListener( 'click', loginFacebook, false );
+
+        var twitterLogin = document.getElementById( 'twitter-login' );
+        twitterLogin.removeEventListener( 'click', authorizeTwitter, false );
+
+        var emailButton = document.getElementById( 'create-email-account' );
+        emailButton.removeEventListener( 'click', showCreateEmailAccount, false );
+
+        window.removeEventListener( 'message', authorizeFacebook, false );
+
+        if ( window.deviceInfo.mobile ) {
+
+            loginButton.removeEventListener( 'touchstart', selectButton, false );
+            loginButton.removeEventListener( 'touchend', unselectButton, false );
+
+            facebookButton.removeEventListener( 'touchstart', selectButton, false );
+            facebookButton.removeEventListener( 'touchend', unselectButton, false );
+
+            twitterLogin.removeEventListener( 'touchstart', selectButton, false );
+            twitterLogin.removeEventListener( 'touchend', unselectButton, false );
+
+            emailButton.removeEventListener( 'touchstart', selectButton, false );
+            emailButton.removeEventListener( 'touchend', unselectButton, false );
+
+        } else {
+
+            loginButton.removeEventListener( 'mousedown', selectButton, false );
+            loginButton.removeEventListener( 'mouseup', unselectButton, false );
+
+            facebookButton.removeEventListener( 'mousedown', selectButton, false );
+            facebookButton.removeEventListener( 'mouseup', unselectButton, false );
+
+            twitterLogin.removeEventListener( 'mousedown', selectButton, false );
+            twitterLogin.removeEventListener( 'mouseup', unselectButton, false );
+
+            emailButton.removeEventListener( 'mousedown', selectButton, false );
+            emailButton.removeEventListener( 'mouseup', unselectButton, false );
+
+        };
 
     };
 

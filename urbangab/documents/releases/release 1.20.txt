@@ -1,2 +1,4 @@
 1.20
 
+new - Ask questions in a different region. Format: question @ location. Location can be a postal code, city, neighborhood or address.
+new - GPS not required for new accounts
