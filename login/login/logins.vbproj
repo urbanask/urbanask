@@ -70,6 +70,7 @@
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml" />
     <Reference Include="Twitterizer2">
       <HintPath>..\..\common\Twitterizer2.dll</HintPath>

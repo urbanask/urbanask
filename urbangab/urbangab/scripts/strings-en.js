@@ -102,7 +102,6 @@
         "facebook": {
             "authenticatingCaption": "Authenticating...",
             "loginCaption": "Login with Facebook",
-            "linkCaption": "Login with Facebook",
             "openGraphComment": "found this at %1 (%2).",
             "openGraphAnswerAsComment": "suggested %1 (%2).",
             "postQuestionToFacebook": "Post Question",
@@ -138,8 +137,8 @@
         "letters": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
         "login":
         {
-            "createEmailAccount": "Login with Email",
-            "loginMobile": "Login with Mobile #",
+            "createEmailAccount": "Signup with Email",
+            "loginMobile": "Signup with Mobile #",
             "twitter": "Login with Twitter",
             "loginRequired": "You must login to %1.<br /><br />Would you like to login now?",
             "loginRequiredAction": 
@@ -150,10 +149,12 @@
                 "deleteAnswer": "delete an answer",
                 "selectAnswer": "select an answer",
                 "vote": "vote"    
-            }
+            },
+            "verifyMobile": "You'll receive a text soon to verify your mobile number."
         },
         "local": "local",
         "months": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        "mobileNumber": "mobile # (ex: +14156305242)",
         "multiplication": "&#215;",
         "notificationAskQuestion": "?",
         "notificationAnswerQuestion": "@",
@@ -176,7 +177,7 @@
         "optionalNote": "optional note...",
         "passwordLabel": "password",
         "questionHeader": "questions",
-        "questionLabel": "I want...",
+        "questionLabel": "Where can I find...",
         "questionPage": {
 
             "addNewAnswerCaption": "Add an Answer"

@@ -1540,6 +1540,16 @@ function hideInstructions() {
 
 };
 
+function hideLoginPage() {
+
+    var loginPage = document.getElementById( 'login-page' ),
+        event = document.createEvent( 'HTMLEvents' );
+
+    event.initEvent( 'close', false, false );
+    loginPage.dispatchEvent( event );
+
+};
+
 function hideQuestionShare() {
 
     var share = document.getElementById( 'question-share' ),
@@ -2590,7 +2600,7 @@ function localizeStrings() {
     $( '#contact-website' ).innerHTML = STRINGS.contact.website;
     $( '#contact-map' ).innerHTML = STRINGS.contact.googleMaps;
     $( '#create-email' ).setAttribute( 'placeholder', STRINGS.emailLabel );
-    $( '#create-email-account' ).innerHTML = STRINGS.login.createEmailAccount;
+    $( '#create-email-account-caption' ).innerHTML = STRINGS.login.createEmailAccount;
     $( '#create-username' ).setAttribute( 'placeholder', STRINGS.usernameLabel );
     $( '#create-password' ).setAttribute( 'placeholder', STRINGS.passwordLabel );
     $( '#edit-account-caption' ).innerHTML = STRINGS.editAccountCaption;
@@ -2599,7 +2609,6 @@ function localizeStrings() {
     $( '#edit-username' ).setAttribute( 'placeholder', STRINGS.edit.usernameCaption );
     $( '#edit-tagline' ).setAttribute( 'placeholder', STRINGS.edit.taglineCaption );
     $( '#edit-region-caption' ).innerHTML = STRINGS.edit.regionCaption;
-    $( '#fb-login' ).innerHTML = STRINGS.facebook.authenticatingCaption;
     $( '#location-example-caption' ).innerHTML = STRINGS.addAnswer.locationExamples.caption;
     $( '#location-example-1' ).innerHTML = STRINGS.addAnswer.locationExamples.example1;
     $( '#location-example-2' ).innerHTML = STRINGS.addAnswer.locationExamples.example2;
@@ -2609,12 +2618,16 @@ function localizeStrings() {
     $( '#location-link' ).setAttribute( 'placeholder', STRINGS.addAnswer.locationLinkCaption );
     $( '#location-phone' ).setAttribute( 'placeholder', STRINGS.addAnswer.locationPhoneCaption );
     $( '#location-note' ).setAttribute( 'placeholder', STRINGS.optionalNote );
-    $( '#login-mobile' ).innerHTML = STRINGS.login.loginMobile;
+    $( '#login-mobile-caption' ).innerHTML = STRINGS.login.loginMobile;
+    $( '#login-facebook-caption' ).innerHTML = STRINGS.facebook.authenticatingCaption;
     $( '#login-username' ).setAttribute( 'placeholder', STRINGS.usernameLabel );
     $( '#login-password' ).setAttribute( 'placeholder', STRINGS.passwordLabel );
     $( '#member-since-caption' ).innerHTML = STRINGS.user.memberSince;
     $( '#message-ok-button' ).innerHTML = STRINGS.okButtonCaption;
     $( '#message-cancel-button' ).innerHTML = STRINGS.cancelButtonCaption;
+    $( '#mobile-username' ).setAttribute( 'placeholder', STRINGS.usernameLabel );
+    $( '#mobile-password' ).setAttribute( 'placeholder', STRINGS.passwordLabel );
+    $( '#mobile-number' ).setAttribute( 'placeholder', STRINGS.mobileNumber );
     $( '#post-facebook-cancel' ).textContent = STRINGS.cancelButtonCaption;
     $( '#post-facebook-ok' ).textContent = STRINGS.facebook.postCaption;
     $( '#post-facebook-message' ).setAttribute( 'placeholder', STRINGS.facebook.postFacebookMessageCaption );
@@ -2622,6 +2635,7 @@ function localizeStrings() {
     $( '#question-share-twitter' ).textContent = STRINGS.facebook.postQuestionToTwitter;
     $( '#reputation-caption' ).textContent = STRINGS.reputation;
     $( '#save-account' ).textContent = STRINGS.createAccount.saveAccount;
+    $( '#save-mobile-account' ).textContent = STRINGS.createAccount.saveAccount;
     $( '#top-interval-day' ).textContent = STRINGS.intervalDayCaption;
     $( '#top-interval-week' ).textContent = STRINGS.intervalWeekCaption;
     $( '#top-interval-month' ).textContent = STRINGS.intervalMonthCaption;
@@ -2634,7 +2648,7 @@ function localizeStrings() {
     $( '#total-answers-caption' ).textContent = STRINGS.totalAnswers;
     $( '#total-questions-caption' ).textContent = STRINGS.totalQuestions;
     $( '#total-badges-caption' ).textContent = STRINGS.totalBadges;
-    $( '#twitter-login' ).innerHTML = STRINGS.login.twitter;
+    $( '#twitter-login-caption' ).innerHTML = STRINGS.login.twitter;
     $( '#user-id-caption' ).textContent = STRINGS.userIdCaption;
     $( '#view-nearby-questions' ).textContent = STRINGS.questionsPage.viewNearbyQuestions;
 
@@ -2724,9 +2738,10 @@ function initializeAccount() {
 
 function initializeFacebook( options ) {
 
-    var login = document.getElementById( 'fb-login' );
+    var login = document.getElementById( 'fb-login' ),
+        loginCaption = document.getElementById( 'login-facebook-caption' );
 
-    login.innerHTML = STRINGS.facebook.authenticatingCaption;
+    loginCaption.innerHTML = STRINGS.facebook.authenticatingCaption;
     login.removeAttribute( 'data-facebook-id' );
     login.removeAttribute( 'data-username' );
     login.removeAttribute( 'data-password' );
@@ -2746,83 +2761,7 @@ function initializeFacebook( options ) {
 
         setFacebookButtonUnauthorized();
 
-    }, 15 * SECOND );
-
-};
-
-function loginFacebook( event ) {
-
-    event.preventDefault();
-
-    var login = document.getElementById( 'fb-login' );
-
-    if ( login.getDataset( 'facebook-id' ) ) {
-
-        loadSessionFacebook( 
-            login.getDataset( 'facebook-id' ),
-            login.getDataset( 'username' ),
-            login.getDataset( 'password' ),
-            login.getDataset( 'location' ),
-            login.getDataset( 'email' )
-        );
-
-    } else {
-
-        if ( window.deviceInfo.phonegap ) {
-
-            window.plugins.childBrowser.showWebPage( FACEBOOK_LOGIN_URL + '?button=login&version=' + _version );
-
-        } else {
-
-            window.location.href = FACEBOOK_LOGIN_URL + '?button=login';
-
-        };
-
-    };
-
-};
-
-function authorizeTwitter( event ) {
-
-    event.preventDefault();
-
-    var resource = '/logins/loginTwitter',
-        data = '';
-
-    if ( window.deviceInfo.phonegap ) {
-
-        data = 'returnUrl=' + URL_NOTHING;
-
-    } else {
-
-        data = 'returnUrl=' + TWITTER_RETURN_URL + '/index.html';
-
-    };
-
-    ajax( API_URL + resource, {
-
-        "type": "GET",
-        "data": data,
-        "success": function ( data, status ) {
-
-            if ( window.deviceInfo.phonegap ) {
-
-                window.plugins.childBrowser.showWebPage( window.JSON.parse( data ).url );
-
-            } else {
-
-                window.location.href = window.JSON.parse( data ).url;
-
-            };
-
-        },
-        "error": function ( response, status, error ) {
-
-            document.getElementById( 'login-error' ).innerHTML = error;
-
-        }
-
-    } );
+    }, 12 * SECOND );
 
 };
 
@@ -2854,7 +2793,7 @@ function loginTwitter( token ) {
         },
         "error": function ( response, status, error ) {
 
-            showPage( 'login-page', { logout: true } );
+            showLoginPage( { logout: true } );
             document.getElementById( 'login-error' ).innerHTML = error;
 
         }
@@ -2889,8 +2828,8 @@ function logoutApp() {
     _session.id = '';
     _session.key = '';
 
-    //refresh();
-    showPage( 'login-page', { logout: true } );
+    refresh();
+    showLoginPage( { logout: true } );
 
 };
 
@@ -2899,14 +2838,15 @@ function authorizeFacebook( event ) {
     if ( event.origin == ROOT_URL ) {
 
         var message = window.JSON.parse( event.data ),
-            login = document.getElementById( 'fb-login' );
+            login = document.getElementById( 'fb-login' ),
+            loginCaption = document.getElementById( 'login-facebook-caption' );
 
         switch ( message.type ) {
             case 'authorized':
 
                 if ( login.getDataset( 'facebook-logout' ) ) {
 
-                    login.innerHTML = STRINGS.facebook.loginCaption;
+                    loginCaption.innerHTML = STRINGS.facebook.loginCaption;
                     login.setDataset( 'facebook-id', message.facebookId );
                     login.setDataset( 'username', message.username );
                     login.setDataset( 'password', message.password );
@@ -2955,9 +2895,10 @@ function authorizeFacebook( event ) {
 
 function setFacebookButtonUnauthorized() {
 
-    var login = document.getElementById( 'fb-login' );
+    var login = document.getElementById( 'fb-login' ),
+        loginCaption = document.getElementById( 'login-facebook-caption' );
 
-    login.innerHTML = STRINGS.facebook.linkCaption;
+    loginCaption.innerHTML = STRINGS.facebook.loginCaption;
     login.disabled = false;
     login.removeClass( 'fb-login-disabled' );
 
@@ -2986,6 +2927,7 @@ function createFacebookFrame( complete ) {
 function loadSessionFacebook( facebookId, username, password, location, email ) {
 
     deleteFacebookFrame();
+    hideLoginPage();
 
     var resource = '/logins/loginFB',
         data = 'location=' + location
@@ -3508,6 +3450,8 @@ function questionItemClick( event ) {
 };
 
 function refresh() {
+
+    hideLoginPage();
 
     _questions.length = 0;
     _userQuestions.length = 0;
@@ -5298,20 +5242,20 @@ function setRegion( region ) {
 
 };
 
-function showLoginPage() {
+function showLoginPage( options ) {
 
     var loginPage = document.getElementById( 'login-page' ),
         cancel = document.getElementById( 'login-page-cancel' );
 
     if ( loginPage.hasClass( 'hide' ) ) {
 
-        document.getElementById( 'refresh-button' ).addClass( 'hide' );
         loginPage.removeClass( 'hide' );
         addEventListeners();
 
+        initializeFacebook( options );
+
     } else {
 
-        document.getElementById( 'refresh-button' ).removeClass( 'hide' );
         close();
 
     };
@@ -5320,6 +5264,83 @@ function showLoginPage() {
 
         loginPage.addClass( 'hide' );
         removeEventListeners();
+
+    };
+
+    function loginFacebook( event ) {
+
+        event.preventDefault();
+
+        var login = document.getElementById( 'fb-login' );
+
+        if ( login.getDataset( 'facebook-id' ) ) {
+
+            loadSessionFacebook(  
+                login.getDataset( 'facebook-id' ),
+                login.getDataset( 'username' ),
+                login.getDataset( 'password' ),
+                login.getDataset( 'location' ),
+                login.getDataset( 'email' )
+            );
+
+        } else {
+
+            if ( window.deviceInfo.phonegap ) {
+
+                window.plugins.childBrowser.showWebPage( FACEBOOK_LOGIN_URL + '?button=login&version=' + _version );
+
+            } else {
+
+                window.location.href = FACEBOOK_LOGIN_URL + '?button=login';
+
+            };
+
+        };
+
+    };
+
+    function authorizeTwitter( event ) {
+
+        event.preventDefault();
+        close();
+
+        var resource = '/logins/loginTwitter',
+        data = '';
+
+        if ( window.deviceInfo.phonegap ) {
+
+            data = 'returnUrl=' + URL_NOTHING;
+
+        } else {
+
+            data = 'returnUrl=' + TWITTER_RETURN_URL + '/index.html';
+
+        };
+
+        ajax( API_URL + resource, {
+
+            "type": "GET",
+            "data": data,
+            "success": function ( data, status ) {
+
+                if ( window.deviceInfo.phonegap ) {
+
+                    window.plugins.childBrowser.showWebPage( window.JSON.parse( data ).url );
+
+                } else {
+
+                    window.location.href = window.JSON.parse( data ).url;
+
+                };
+
+            },
+            "error": function ( response, status, error ) {
+
+                document.getElementById( 'login-error' ).innerHTML = error;
+
+            }
+
+        } );
 
     };
 
@@ -5340,6 +5361,9 @@ function showLoginPage() {
         var emailButton = document.getElementById( 'create-email-account' );
         emailButton.addEventListener( 'click', showCreateEmailAccount, false );
 
+        var loginMobile = document.getElementById( 'login-mobile' );
+        loginMobile.addEventListener( 'click', showCreateMobileAccount, false );
+
         window.addEventListener( 'message', authorizeFacebook, false );
 
         if ( window.deviceInfo.mobile ) {
@@ -5356,6 +5380,9 @@ function showLoginPage() {
             emailButton.addEventListener( 'touchstart', selectButton, false );
             emailButton.addEventListener( 'touchend', unselectButton, false );
 
+            loginMobile.addEventListener( 'touchstart', selectButton, false );
+            loginMobile.addEventListener( 'touchend', unselectButton, false );
+
         } else {
 
             loginButton.addEventListener( 'mousedown', selectButton, false );
@@ -5369,6 +5396,9 @@ function showLoginPage() {
 
             emailButton.addEventListener( 'mousedown', selectButton, false );
             emailButton.addEventListener( 'mouseup', unselectButton, false );
+
+            loginMobile.addEventListener( 'mousedown', selectButton, false );
+            loginMobile.addEventListener( 'mouseup', unselectButton, false );
 
         };
 
@@ -5391,6 +5421,9 @@ function showLoginPage() {
         var emailButton = document.getElementById( 'create-email-account' );
         emailButton.removeEventListener( 'click', showCreateEmailAccount, false );
 
+        var loginMobile = document.getElementById( 'login-mobile' );
+        loginMobile.removeEventListener( 'click', showCreateMobileAccount, false );
+
         window.removeEventListener( 'message', authorizeFacebook, false );
 
         if ( window.deviceInfo.mobile ) {
@@ -5407,6 +5440,9 @@ function showLoginPage() {
             emailButton.removeEventListener( 'touchstart', selectButton, false );
             emailButton.removeEventListener( 'touchend', unselectButton, false );
 
+            loginMobile.removeEventListener( 'touchstart', selectButton, false );
+            loginMobile.removeEventListener( 'touchend', unselectButton, false );
+
         } else {
 
             loginButton.removeEventListener( 'mousedown', selectButton, false );
@@ -5420,6 +5456,9 @@ function showLoginPage() {
 
             emailButton.removeEventListener( 'mousedown', selectButton, false );
             emailButton.removeEventListener( 'mouseup', unselectButton, false );
+
+            loginMobile.removeEventListener( 'mousedown', selectButton, false );
+            loginMobile.removeEventListener( 'mouseup', unselectButton, false );
 
         };
 
@@ -5499,7 +5538,7 @@ function showAccountPage() {
             data = 'username=' + username.value
                 + '&tagline=' + tagline.value
                 + '&regionId=' + regionId
-                + '&phoneNumber=' + window.encodeURIComponent( phoneNumber.value.trim() ),
+                + '&phoneNumber=' + window.encodeURIComponent( unformatPhoneNumber( phoneNumber.value.trim() ) ),
             session = getSession( resource );
 
         ajax( API_URL + resource, {
@@ -5516,11 +5555,11 @@ function showAccountPage() {
 
                 if ( _account[ACCOUNT_COLUMNS.phone].length ) {
 
-                    _account[ACCOUNT_COLUMNS.phone].number = phoneNumber.value.trim();
+                    _account[ACCOUNT_COLUMNS.phone].number = unformatPhoneNumber( phoneNumber.value.trim() );
 
                 } else {
 
-                    _account[ACCOUNT_COLUMNS.phone].number = phoneNumber.value.trim();
+                    _account[ACCOUNT_COLUMNS.phone].number = unformatPhoneNumber( phoneNumber.value.trim() );
                     _account[ACCOUNT_COLUMNS.phone][PHONE_COLUMNS.notifications] = 1;
                     _account[ACCOUNT_COLUMNS.phone][PHONE_COLUMNS.verified] = 0;
 
@@ -6169,29 +6208,30 @@ function showContact() {
 
 function showCreateEmailAccount( event ) {
 
+    hideLoginPage();
     event.preventDefault();
 
-    var createAccount = document.getElementById( 'create-account-page' ),
+    var createAccountPage = document.getElementById( 'create-account-page' ),
+        createAccount = document.getElementById( 'create-account' ),
         save = document.getElementById( 'save-account' ),
-        cancel = document.getElementById( 'create-account-cancel' );
+        cancel = document.getElementById( 'create-account-cancel' ),
+        username = document.getElementById( 'create-username' ),
+        password = document.getElementById( 'create-password' ),
+        email = document.getElementById( 'create-email' );
 
-    createAccount.removeClass( 'hide' );
+    createAccountPage.removeClass( 'hide' );
     addEventListeners();
 
     function saveAccount( event ) {
 
         event.preventDefault();
 
-        var username = document.getElementById( 'create-username' ).value,
-            password = document.getElementById( 'create-password' ).value,
-            email = document.getElementById( 'create-email' ).value;
-
-        if ( username && password && email ) {
+        if ( username.value && password.value && email.value ) {
 
             var resource = '/logins/login/add',
-                data = 'email=' + email,
-                authorization = window.Crypto.util.bytesToBase64( 
-                    window.Crypto.charenc.UTF8.stringToBytes( username + ':' + password ) );
+                data = 'email=' + email.value,
+                authorization = window.Crypto.util.bytesToBase64(
+                    window.Crypto.charenc.UTF8.stringToBytes( username.value + ':' + password.value ) );
 
             ajax( API_URL + resource, {
 
@@ -6218,14 +6258,14 @@ function showCreateEmailAccount( event ) {
 
                     } else {
 
-                        document.getElementById( 'create-error' ).innerHTML = status;
+                        document.getElementById( 'error-create-account' ).innerHTML = status;
 
                     };
 
                 },
                 "error": function ( response, status, error ) {
 
-                    document.getElementById( 'create-error' ).innerHTML = error;
+                    document.getElementById( 'error-create-account' ).innerHTML = error;
 
                 }
 
@@ -6238,11 +6278,17 @@ function showCreateEmailAccount( event ) {
     function close() {
 
         removeEventListeners();
-        createAccount.addClass( 'hide' );
+        createAccountPage.addClass( 'hide' );
+        username.value = '';
+        password.value = '';
+        email.value = '';
+        document.getElementById( 'error-create-account' ).innerHTML = '';
 
     };
 
     function addEventListeners() {
+
+        createAccount.addEventListener( 'submit', saveAccount, false );
 
         save.addEventListener( 'click', saveAccount, false );
         save.addEventListener( 'touchstart', selectButton, false );
@@ -6259,6 +6305,8 @@ function showCreateEmailAccount( event ) {
     };
 
     function removeEventListeners() {
+
+        createAccount.removeEventListener( 'submit', saveAccount, false );
 
         save.removeEventListener( 'click', saveAccount, false );
         save.removeEventListener( 'touchstart', selectButton, false );
@@ -6733,6 +6781,126 @@ function showLoading( top, left, element ) {
 
 };
 
+function showCreateMobileAccount( event ) {
+
+    hideLoginPage();
+    event.preventDefault();
+
+    var createAccountPage = document.getElementById( 'create-mobile-account-page' ),
+        createAccount = document.getElementById( 'create-mobile-account' ),
+        save = document.getElementById( 'save-mobile-account' ),
+        cancel = document.getElementById( 'cancel-mobile-account' ),
+        username = document.getElementById( 'mobile-username' ),
+        password = document.getElementById( 'mobile-password' ),
+        number = document.getElementById( 'mobile-number' );
+
+    createAccountPage.removeClass( 'hide' );
+    addEventListeners();
+
+    function saveAccount( event ) {
+
+        event.preventDefault();
+
+        if ( username.value && password.value && number.value ) {
+
+            var resource = '/logins/login/add',
+                data = 'mobileNumber=' + unformatPhoneNumber( number.value.trim() ),
+                authorization = window.Crypto.util.bytesToBase64(
+                    window.Crypto.charenc.UTF8.stringToBytes( username.value.trim() + ':' + password.value.trim() ) );
+
+            ajax( API_URL + resource, {
+
+                "type": "GET",
+                "headers": { "x-authorization": authorization },
+                "data": data,
+                "complete": function ( response, status ) {
+
+                    if ( status != "error" ) {
+
+                        var session = response.getResponseHeader( 'x-session' ).split( ':' ),
+                            username = window.JSON.parse( response.responseText ).username;
+
+                        _session.id = session[0];
+                        _session.key = session[1];
+                        window.setLocalStorage( 'sessionId', _session.id );
+                        window.setLocalStorage( 'sessionKey', _session.key );
+
+                        document.getElementById( 'login-username' ).value = username;
+                        document.getElementById( 'login-password' ).value = password;
+
+                        close();
+                        startApp();
+
+                        showMessage( STRINGS.login.verifyMobile );
+
+                    } else {
+
+                        document.getElementById( 'error-mobile-account' ).innerHTML = status;
+
+                    };
+
+                },
+                "error": function ( response, status, error ) {
+
+                    document.getElementById( 'error-mobile-account' ).innerHTML = error;
+
+                }
+
+            } );
+
+        };
+
+    };
+
+    function close() {
+
+        removeEventListeners();
+        createAccountPage.addClass( 'hide' );
+        username.value = '';
+        password.value = '';
+        number.value = '';
+        document.getElementById( 'error-mobile-account' ).innerHTML = '';
+
+    };
+
+    function addEventListeners() {
+
+        createAccount.addEventListener( 'submit', saveAccount, false );
+
+        save.addEventListener( 'click', saveAccount, false );
+        save.addEventListener( 'touchstart', selectButton, false );
+        save.addEventListener( 'touchend', unselectButton, false );
+        save.addEventListener( 'mousedown', selectButton, false );
+        save.addEventListener( 'mouseup', unselectButton, false );
+
+        cancel.addEventListener( 'click', close, false );
+        cancel.addEventListener( 'touchstart', selectButton, false );
+        cancel.addEventListener( 'touchend', unselectButton, false );
+        cancel.addEventListener( 'mousedown', selectButton, false );
+        cancel.addEventListener( 'mouseup', unselectButton, false );
+
+    };
+
+    function removeEventListeners() {
+
+        createAccount.removeEventListener( 'submit', saveAccount, false );
+
+        save.removeEventListener( 'click', saveAccount, false );
+        save.removeEventListener( 'touchstart', selectButton, false );
+        save.removeEventListener( 'touchend', unselectButton, false );
+        save.removeEventListener( 'mousedown', selectButton, false );
+        save.removeEventListener( 'mouseup', unselectButton, false );
+
+        cancel.removeEventListener( 'click', close, false );
+        cancel.removeEventListener( 'touchstart', selectButton, false );
+        cancel.removeEventListener( 'touchend', unselectButton, false );
+        cancel.removeEventListener( 'mousedown', selectButton, false );
+        cancel.removeEventListener( 'mouseup', unselectButton, false );
+
+    };
+
+};
+
 function showMessage( text, callback ) {
 
     var message = document.getElementById( 'message' ),
@@ -6978,18 +7146,6 @@ function showPage( page, options, back ) {
             initializeBackButton();
             document.getElementById( 'directions-page' ).addClass( 'top-slide' );
             showToolbar( 'answer', { question: question, answer: answer } );
-
-            break;
-
-        case 'login-page':
-
-            _pages.clear();
-
-            slidePage( page, previousPage );
-            setView( 'header' );
-            initializeBackButton();
-            hideRefreshButton();
-            initializeFacebook( options );
 
             break;
 
@@ -7941,6 +8097,8 @@ function toBase64UrlString( base64String ) {
 };
 
 function toolbarClick( event ) {
+
+    hideLoginPage();
 
     var item = event.target.closestByTagName( 'li' );
 

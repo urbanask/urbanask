@@ -6,6 +6,15 @@ Option Compare Binary
 
 #End Region
 
+#Region "imports"
+
+Imports System.Data
+Imports System.Web
+Imports System.Security
+Imports System.Text.Encoding
+
+#End Region
+
 Public Class login : Implements System.Web.IHttpHandler
 
 #Region "constants"
@@ -17,7 +26,8 @@ Public Class login : Implements System.Web.IHttpHandler
         COMMAND_TIMEOUT As Int32 = 60,
         METRIC_DEFAULT As Int32 = 0,
         LANGUAGE_DEFAULT As Int32 = 1,
-        EMAIL_AUTH_TYPE As Int32 = 1
+        AUTH_TYPE_EMAIL As Int32 = 1,
+        AUTH_TYPE_MOBILE As Int32 = 4
 
 #If CONFIG = "Release" Then
 
@@ -56,7 +66,7 @@ Public Class login : Implements System.Web.IHttpHandler
             AndAlso authorization <> "" Then
 
             Dim credentialSplit() As String = Text.Encoding.UTF8.GetString(
-                Convert.FromBase64String(fromBase64UrlString(authorization))).Split(":"c)
+                System.Convert.FromBase64String(fromBase64UrlString(authorization))).Split(":"c)
 
             If credentialSplit.Length = 2 Then
 
@@ -100,7 +110,7 @@ Public Class login : Implements System.Web.IHttpHandler
                                             password,
                                             checkAuthorization.Parameters("@hashType").Value.ToString(),
                                             checkAuthorization.Parameters("@salt").Value.ToString(),
-                                            Convert.ToInt32(checkAuthorization.Parameters("@iterations").Value))
+                                            System.Convert.ToInt32(checkAuthorization.Parameters("@iterations").Value))
 
                                     If hash.hash = checkAuthorization.Parameters("@hash").Value.ToString() Then
 
@@ -126,42 +136,15 @@ Public Class login : Implements System.Web.IHttpHandler
 
                         Case "/add" '/logins/login/add
 
-                            Dim hash As New Hashing.hash(username, password),
-                                email As String = context.Request.QueryString("email")
+                            If context.Request.QueryString("email") <> "" Then
 
-                            createUser.CommandType = Data.CommandType.StoredProcedure
-                            createUser.CommandTimeout = COMMAND_TIMEOUT
+                                saveEmailAccount(context, sessionConnection, createUser, updateHash, createSession, username, password)
 
-                            createUser.Parameters.AddWithValue("@suggestedUsername", username)
-                            createUser.Parameters.AddWithValue("@tagline", "")
-                            createUser.Parameters.AddWithValue("@hash", hash.hash)
-                            createUser.Parameters.AddWithValue("@salt", hash.salt)
-                            createUser.Parameters.AddWithValue("@iterations", hash.iterations)
-                            createUser.Parameters.AddWithValue("@hashType", hash.hashType)
-                            createUser.Parameters.AddWithValue("@metricDistances", METRIC_DEFAULT)
-                            createUser.Parameters.AddWithValue("@languageId", LANGUAGE_DEFAULT)
-                            createUser.Parameters.AddWithValue("@authTypeId", EMAIL_AUTH_TYPE)
-                            createUser.Parameters.AddWithValue("@email", email)
-                            createUser.Parameters.Add("@userId", Data.SqlDbType.Int).Direction = Data.ParameterDirection.Output
-                            createUser.Parameters.Add("@username", Data.SqlDbType.VarChar, 100).Direction = Data.ParameterDirection.Output
+                            ElseIf context.Request.QueryString("mobileNumber") <> "" Then
 
-                            createUser.ExecuteNonQuery()
-                            userId = CInt(createUser.Parameters("@userId").Value)
-
-                            If username <> createUser.Parameters("@username").Value.ToString() Then
-
-                                username = createUser.Parameters("@username").Value.ToString()
-                                hash = New Hashing.hash(username, password)
-
-                                updateHash.CommandType = Data.CommandType.StoredProcedure
-                                updateHash.CommandTimeout = COMMAND_TIMEOUT
-                                updateHash.Parameters.AddWithValue("@userId", userId)
-                                updateHash.Parameters.AddWithValue("@hash", hash.hash)
-                                updateHash.ExecuteNonQuery()
+                                saveMobileAccount(context, sessionConnection, createUser, updateHash, createSession, username, password)
 
                             End If
-
-                            loadSession(sessionConnection, createSession, context, userId, username)
 
                     End Select
 
@@ -178,6 +161,104 @@ Public Class login : Implements System.Web.IHttpHandler
             sendErrorResponse(context)
 
         End If
+
+    End Sub
+
+    Private Sub saveEmailAccount(
+        context As Web.HttpContext,
+        sessionConnection As Data.SqlClient.SqlConnection,
+        createUser As Data.SqlClient.SqlCommand,
+        updateHash As Data.SqlClient.SqlCommand,
+        createSession As Data.SqlClient.SqlCommand,
+        username As String,
+        password As String)
+
+        Dim hash As New Hashing.hash(username, password),
+            email As String = context.Request.QueryString("email"),
+            userId As Int32
+
+        createUser.CommandType = Data.CommandType.StoredProcedure
+        createUser.CommandTimeout = COMMAND_TIMEOUT
+
+        createUser.Parameters.AddWithValue("@suggestedUsername", username)
+        createUser.Parameters.AddWithValue("@tagline", "")
+        createUser.Parameters.AddWithValue("@hash", hash.hash)
+        createUser.Parameters.AddWithValue("@salt", hash.salt)
+        createUser.Parameters.AddWithValue("@iterations", hash.iterations)
+        createUser.Parameters.AddWithValue("@hashType", hash.hashType)
+        createUser.Parameters.AddWithValue("@metricDistances", METRIC_DEFAULT)
+        createUser.Parameters.AddWithValue("@languageId", LANGUAGE_DEFAULT)
+        createUser.Parameters.AddWithValue("@authTypeId", AUTH_TYPE_EMAIL)
+        createUser.Parameters.AddWithValue("@email", email)
+        createUser.Parameters.Add("@userId", Data.SqlDbType.Int).Direction = Data.ParameterDirection.Output
+        createUser.Parameters.Add("@username", Data.SqlDbType.VarChar, 100).Direction = Data.ParameterDirection.Output
+
+        createUser.ExecuteNonQuery()
+        userId = CInt(createUser.Parameters("@userId").Value)
+
+        If username <> createUser.Parameters("@username").Value.ToString() Then
+
+            username = createUser.Parameters("@username").Value.ToString()
+            hash = New Hashing.hash(username, password)
+
+            updateHash.CommandType = Data.CommandType.StoredProcedure
+            updateHash.CommandTimeout = COMMAND_TIMEOUT
+            updateHash.Parameters.AddWithValue("@userId", userId)
+            updateHash.Parameters.AddWithValue("@hash", hash.hash)
+            updateHash.ExecuteNonQuery()
+
+        End If
+
+        loadSession(sessionConnection, createSession, context, userId, username)
+
+    End Sub
+
+    Private Sub saveMobileAccount(
+        context As Web.HttpContext,
+        sessionConnection As Data.SqlClient.SqlConnection,
+        createUser As Data.SqlClient.SqlCommand,
+        updateHash As Data.SqlClient.SqlCommand,
+        createSession As Data.SqlClient.SqlCommand,
+        username As String,
+        password As String)
+
+        Dim hash As New Hashing.hash(username, password),
+            number As String = context.Request.QueryString("mobileNumber"),
+            userId As Int32
+
+        createUser.CommandType = Data.CommandType.StoredProcedure
+        createUser.CommandTimeout = COMMAND_TIMEOUT
+
+        createUser.Parameters.AddWithValue("@suggestedUsername", username)
+        createUser.Parameters.AddWithValue("@tagline", "")
+        createUser.Parameters.AddWithValue("@hash", hash.hash)
+        createUser.Parameters.AddWithValue("@salt", hash.salt)
+        createUser.Parameters.AddWithValue("@iterations", hash.iterations)
+        createUser.Parameters.AddWithValue("@hashType", hash.hashType)
+        createUser.Parameters.AddWithValue("@metricDistances", METRIC_DEFAULT)
+        createUser.Parameters.AddWithValue("@languageId", LANGUAGE_DEFAULT)
+        createUser.Parameters.AddWithValue("@authTypeId", AUTH_TYPE_MOBILE)
+        createUser.Parameters.AddWithValue("@mobileNumber", number)
+        createUser.Parameters.Add("@userId", Data.SqlDbType.Int).Direction = Data.ParameterDirection.Output
+        createUser.Parameters.Add("@username", Data.SqlDbType.VarChar, 100).Direction = Data.ParameterDirection.Output
+
+        createUser.ExecuteNonQuery()
+        userId = CInt(createUser.Parameters("@userId").Value)
+
+        If username <> createUser.Parameters("@username").Value.ToString() Then
+
+            username = createUser.Parameters("@username").Value.ToString()
+            hash = New Hashing.hash(username, password)
+
+            updateHash.CommandType = Data.CommandType.StoredProcedure
+            updateHash.CommandTimeout = COMMAND_TIMEOUT
+            updateHash.Parameters.AddWithValue("@userId", userId)
+            updateHash.Parameters.AddWithValue("@hash", hash.hash)
+            updateHash.ExecuteNonQuery()
+
+        End If
+
+        loadSession(sessionConnection, createSession, context, userId, username)
 
     End Sub
 

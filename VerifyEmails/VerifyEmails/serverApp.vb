@@ -142,6 +142,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
 
                         Catch exception As System.Exception
 
+                            MyBase.Log(exception.ToString, Diagnostics.EventLogEntryType.Warning)
                             row("emailStatusId") = _invalidStatus
 
                         End Try

@@ -2,4 +2,7 @@
 
 new - "Everywhere" leaderboard when you're not in a region
 new - fewer GPS checks (i.e. less battery drain)
+new - more mobile number formats work
+new - signup with your mobile number
+
 

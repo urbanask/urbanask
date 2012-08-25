@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-version="1.12.15" manifest="cache.manifest">
+<html lang="en" data-version="1.12.62" manifest="cache.manifest">
 <head>
     <title>urbanAsk</title>
     
@@ -153,14 +153,26 @@
             <div id="login-page-view">
                 <div id="login-page-cancel" class="cancel"></div>
                 <form id="auth-view">
-                    <button id="fb-login" class="login-button">Login with Facebook</button>
-                    <button id="twitter-login" class="login-button">Login with Twitter</button>
-                    <button id="create-email-account" class="login-button">Login with Email</button>
-                    <button id="login-mobile" class="login-button">Login with Mobile Number</button>
+                    <div id="fb-login" class="login-button button-3d">
+                        <div id="login-facebook-image"></div>
+                        <div id="login-facebook-caption">Login with Facebook</div>
+                    </div>
+                    <div id="twitter-login" class="login-button button-3d">
+                        <div id="twitter-login-image"></div>
+                        <div id="twitter-login-caption">Login with Twitter</div>
+                    </div>
+                    <div id="create-email-account" class="login-button button-3d">
+                        <div id="create-email-account-image"></div>
+                        <div id="create-email-account-caption">Signup with Email</div>
+                    </div>
+                    <div id="login-mobile" class="login-button button-3d">
+                        <div id="login-mobile-image"></div>
+                        <div id="login-mobile-caption">Signup with Email</div>
+                    </div>
                 </form>
                 <form id="login-view">
-                    <input autocorrect="off" autocapitalize="none" class="login-field" id="login-username" type="text" maxlength="100" /><!--
-                 --><input class="login-field" id="login-password" type="password" maxlength="100" /><!--
+                    <input id="login-username" class="login-field" type="text" autocorrect="off" autocapitalize="none" maxlength="100" /><!--
+                 --><input id="login-password" class="login-field" type="password" maxlength="100" /><!--
                  --><button id="login-button" type="submit"></button>
                     <span id="login-error"></span>
                 </form>
@@ -170,12 +182,23 @@
 
         <section id="create-account-page" class="hide">
             <form id="create-account">
-                <input id="create-username" class="create-account-input" autocorrect="off" autocapitalize="none" class="login-field" type="text" maxlength="100" />
-                <input id="create-password" class="create-account-input" autocorrect="off" autocapitalize="none" class="login-field" type="text" maxlength="100" />
-                <input id="create-email" class="create-account-input" autocorrect="off" autocapitalize="none" class="login-field" type="text" maxlength="256" />
-                <button id="save-account" class="button" type="submit"></button>
-                <span id="create-error"></span>
+                <input id="create-username" class="create-account-input" autocorrect="off" autocapitalize="none" type="text" maxlength="100" />
+                <input id="create-password" class="create-account-input" autocorrect="off" autocapitalize="none" type="text" maxlength="100" />
+                <input id="create-email" class="create-account-input" autocorrect="off" autocapitalize="none" type="text" maxlength="256" />
+                <div id="save-account" class="login-button button-3d"></div>
+                <span id="error-create-account"></span>
                 <div id="create-account-cancel"></div>
+            </form>
+        </section>
+
+        <section id="create-mobile-account-page" class="hide">
+            <form id="create-mobile-account">
+                <input id="mobile-username" class="create-account-input" autocorrect="off" autocapitalize="none" type="text" maxlength="100" />
+                <input id="mobile-password" class="create-account-input" autocorrect="off" autocapitalize="none"  type="text" maxlength="100" />
+                <input id="mobile-number" class="create-account-input" autocorrect="off" autocapitalize="none" type="text" maxlength="256" />
+                <div id="save-mobile-account" class="login-button button-3d"></div>
+                <span id="error-mobile-account"></span>
+                <div id="cancel-mobile-account"></div>
             </form>
         </section>
 

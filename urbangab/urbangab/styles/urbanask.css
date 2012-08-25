@@ -298,6 +298,7 @@
     border-left: 1px solid rgba( 0, 0, 0, .74 );
     border-bottom: 1px solid black;
     border-right: 1px solid black;
+    border-radius: 5px;
     box-shadow: 2px 2px 3px rgba( 0, 0, 0, .7 );
     height: 35px;
     margin: 4px 5px;
@@ -794,12 +795,13 @@ body {
     text-decoration: none;
 }
 
-#create-account {
+#create-account,
+#create-mobile-account {
     -webkit-appearance: none;
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAGklEQVQI12Pw8fH5X19fD8YMMAZIkAHGANEAiZwUkmznO8QAAAAASUVORK5CYII=);
     border: 4px solid black;
+    border-radius: 10px;
     box-shadow: 7px 7px 7px rgba( 0, 0, 0, .7 );
-    height: 165px;
     margin: 15px auto 0 auto;
     padding: 14px 10px 10px 10px;
     position: relative;
@@ -807,7 +809,8 @@ body {
     width: 262px;
 }
 
-#create-account-cancel {
+#create-account-cancel,
+#cancel-mobile-account {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAByDd+UAAACVklEQVRIx7WWz2saQRTH9yJq1VT8QVp/lQb1EIq/iifFW2/5C9p/wB8g5FbQg4ceczaXEAgEeqhtIRQ99FQo9eSelELryVPSQqVQA4Lk1bdkN+782tEkA0/G2Tfvs2/2OzNPAQBF1pLJJITDYVAURTPsJxIJWCeGpUMgEDAAVub3+2FjIGYjCyJNlDVz0OPxbAzTze12gxSQF6BQKECj0YBerwd6wz6O4TPePCGQlVk6nQZVVcGqoU82m7XM1OhEo1HKuVKpwLqtVqtRcVAPFJB0qlarWoCrxQ94ufsUXp/ys/w3/gApbwo+Dv9q/3Eub2m1n2AwaHqIS6PDXuW2jfFWZ0TBLiefIKV/CtczHarkcjnmlmFmNxgMlrDfUC+GqTddhZpgunny8PV8rsWw2WxUlhSwVCoZAS+GbyHpdlHQN+9/smFLq7e/GPMxFgUkN3iz2TQt2Z8RG8qy+mHfNBdjkeKh1NntdqnvJAMlYdgw1qpPJBIBxel0kmlzlZh/uMWENY773HkOh8PsLwucTT5DKeqlgfZHcHD2XR4os6Q8gfDUK1xSK9HIwHhQpmhE22I6ZsP2l99sOu4whdR6d3MikZvfcuOXnz8WqpGp3uVpo298u93OBpJHG74ZtvlUhb0nfqH0TdAHO3DS/8XMznS0iQ7vxUyFFzEflNvfuEpEaMwVgqNrmOXhzSspdOi9XE9oeFmSzplMRvoCJpdReAFblRjFYlGTOVli4Bg+26jEEGV6b0XUXZSJ8XgcNi6EUc6yIJ/PB7euvMmsQ6GQAcC+KBuW/QcN3sGUzec7hAAAAABJRU5ErkJggg==);    
     border-radius: 50%;
     cursor: pointer;
@@ -821,20 +824,24 @@ body {
 .create-account-input {
     -webkit-appearance: none;
     -webkit-user-select: text;
-    border: 1px solid black;
+    border-top: 1px solid rgba( 0, 0, 0, .74 );
+    border-left: 1px solid rgba( 0, 0, 0, .74 );
+    border-bottom: 1px solid black;
+    border-right: 1px solid black;
     border-radius: 0;
     box-shadow: 2px 2px 3px rgba( 0, 0, 0, .7 );
     display: block;
     font-size: 17px;
-    height: 33px;
-    line-height: 21px;
-    margin-bottom: 5px;
+    height: 35px;
+    line-height: 34px;
+    margin: 0;
     outline: none;
-    padding: 0 2px 0 2px;
-    width: 256px;
+    padding: 0 4px 0 4px;
+    width: 252px;
 }
 
-#create-account-page {
+#create-account-page,
+#create-mobile-account-page {
     background-color: rgba( 0, 0, 0, .4);
     height: 100%;
     left: 0;
@@ -848,8 +855,35 @@ body {
 
 #create-email-account {
     background-color: black;   
+}
+
+#create-email-account-image {
     background-image: url(data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/4ge4SUNDX1BST0ZJTEUAAQEAAAeoYXBwbAIgAABtbnRyUkdCIFhZWiAH2QACABkACwAaAAthY3NwQVBQTAAAAABhcHBsAAAAAAAAAAAAAAAAAAAAAAAA9tYAAQAAAADTLWFwcGwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAtkZXNjAAABCAAAAG9kc2NtAAABeAAABWxjcHJ0AAAG5AAAADh3dHB0AAAHHAAAABRyWFlaAAAHMAAAABRnWFlaAAAHRAAAABRiWFlaAAAHWAAAABRyVFJDAAAHbAAAAA5jaGFkAAAHfAAAACxiVFJDAAAHbAAAAA5nVFJDAAAHbAAAAA5kZXNjAAAAAAAAABRHZW5lcmljIFJHQiBQcm9maWxlAAAAAAAAAAAAAAAUR2VuZXJpYyBSR0IgUHJvZmlsZQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAbWx1YwAAAAAAAAAeAAAADHNrU0sAAAAoAAABeGhySFIAAAAoAAABoGNhRVMAAAAkAAAByHB0QlIAAAAmAAAB7HVrVUEAAAAqAAACEmZyRlUAAAAoAAACPHpoVFcAAAAWAAACZGl0SVQAAAAoAAACem5iTk8AAAAmAAAComtvS1IAAAAWAAACyGNzQ1oAAAAiAAAC3mhlSUwAAAAeAAADAGRlREUAAAAsAAADHmh1SFUAAAAoAAADSnN2U0UAAAAmAAAConpoQ04AAAAWAAADcmphSlAAAAAaAAADiHJvUk8AAAAkAAADomVsR1IAAAAiAAADxnB0UE8AAAAmAAAD6G5sTkwAAAAoAAAEDmVzRVMAAAAmAAAD6HRoVEgAAAAkAAAENnRyVFIAAAAiAAAEWmZpRkkAAAAoAAAEfHBsUEwAAAAsAAAEpHJ1UlUAAAAiAAAE0GFyRUcAAAAmAAAE8mVuVVMAAAAmAAAFGGRhREsAAAAuAAAFPgBWAWEAZQBvAGIAZQBjAG4A/QAgAFIARwBCACAAcAByAG8AZgBpAGwARwBlAG4AZQByAGkBDQBrAGkAIABSAEcAQgAgAHAAcgBvAGYAaQBsAFAAZQByAGYAaQBsACAAUgBHAEIAIABnAGUAbgDoAHIAaQBjAFAAZQByAGYAaQBsACAAUgBHAEIAIABHAGUAbgDpAHIAaQBjAG8EFwQwBDMEMAQ7BEwEPQQ4BDkAIAQ/BEAEPgREBDAEOQQ7ACAAUgBHAEIAUAByAG8AZgBpAGwAIABnAOkAbgDpAHIAaQBxAHUAZQAgAFIAVgBCkBp1KAAgAFIARwBCACCCcl9pY8+P8ABQAHIAbwBmAGkAbABvACAAUgBHAEIAIABnAGUAbgBlAHIAaQBjAG8ARwBlAG4AZQByAGkAcwBrACAAUgBHAEIALQBwAHIAbwBmAGkAbMd8vBgAIABSAEcAQgAg1QS4XNMMx3wATwBiAGUAYwBuAP0AIABSAEcAQgAgAHAAcgBvAGYAaQBsBeQF6AXVBeQF2QXcACAAUgBHAEIAIAXbBdwF3AXZAEEAbABsAGcAZQBtAGUAaQBuAGUAcwAgAFIARwBCAC0AUAByAG8AZgBpAGwAwQBsAHQAYQBsAOEAbgBvAHMAIABSAEcAQgAgAHAAcgBvAGYAaQBsZm6QGgAgAFIARwBCACBjz4/wZYdO9k4AgiwAIABSAEcAQgAgMNcw7TDVMKEwpDDrAFAAcgBvAGYAaQBsACAAUgBHAEIAIABnAGUAbgBlAHIAaQBjA5MDtQO9A7kDugPMACADwAPBA78DxgOvA7sAIABSAEcAQgBQAGUAcgBmAGkAbAAgAFIARwBCACAAZwBlAG4A6QByAGkAYwBvAEEAbABnAGUAbQBlAGUAbgAgAFIARwBCAC0AcAByAG8AZgBpAGUAbA5CDhsOIw5EDh8OJQ5MACAAUgBHAEIAIA4XDjEOSA4nDkQOGwBHAGUAbgBlAGwAIABSAEcAQgAgAFAAcgBvAGYAaQBsAGkAWQBsAGUAaQBuAGUAbgAgAFIARwBCAC0AcAByAG8AZgBpAGkAbABpAFUAbgBpAHcAZQByAHMAYQBsAG4AeQAgAHAAcgBvAGYAaQBsACAAUgBHAEIEHgQxBEkEOAQ5ACAEPwRABD4ERAQ4BDsETAAgAFIARwBCBkUGRAZBACAGKgY5BjEGSgZBACAAUgBHAEIAIAYnBkQGOQYnBkUARwBlAG4AZQByAGkAYwAgAFIARwBCACAAUAByAG8AZgBpAGwAZQBHAGUAbgBlAHIAZQBsACAAUgBHAEIALQBiAGUAcwBrAHIAaQB2AGUAbABzAGV0ZXh0AAAAAENvcHlyaWdodCAyMDA3IEFwcGxlIEluYy4sIGFsbCByaWdodHMgcmVzZXJ2ZWQuAFhZWiAAAAAAAADzUgABAAAAARbPWFlaIAAAAAAAAHRNAAA97gAAA9BYWVogAAAAAAAAWnUAAKxzAAAXNFhZWiAAAAAAAAAoGgAAFZ8AALg2Y3VydgAAAAAAAAABAc0AAHNmMzIAAAAAAAEMQgAABd7///MmAAAHkgAA/ZH///ui///9owAAA9wAAMBs/+EAgEV4aWYAAE1NACoAAAAIAAUBEgADAAAAAQABAAABGgAFAAAAAQAAAEoBGwAFAAAAAQAAAFIBKAADAAAAAQACAACHaQAEAAAAAQAAAFoAAAAAAAAAYAAAAAEAAABgAAAAAQACoAIABAAAAAEAAAAXoAMABAAAAAEAAAAQAAAAAP/bAEMAAgICAgIBAgICAgICAgMDBgQDAwMDBwUFBAYIBwgICAcICAkKDQsJCQwKCAgLDwsMDQ4ODg4JCxARDw4RDQ4ODv/bAEMBAgICAwMDBgQEBg4JCAkODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODv/AABEIABAAFwMBIgACEQEDEQH/xAAfAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgv/xAC1EAACAQMDAgQDBQUEBAAAAX0BAgMABBEFEiExQQYTUWEHInEUMoGRoQgjQrHBFVLR8CQzYnKCCQoWFxgZGiUmJygpKjQ1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4eLj5OXm5+jp6vHy8/T19vf4+fr/xAAfAQADAQEBAQEBAQEBAAAAAAAAAQIDBAUGBwgJCgv/xAC1EQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2gAMAwEAAhEDEQA/APH9A8PeBvDHgjQr1/AfhHxFoMum20l6bnQ7ee8sHaFWeRWdd0sZJZipOeSADtOO2e3+Ckfhf+2pfB/w2OilfMW8XQ7QpICeNp2Y5PQd+gzXy7p3jZdY8J6TaC+hg0eGyhSdzOFN3tRR5I5ysYIO4jlsbflA3NofbfDR1J7hxaSKwJ+zCcC1DHqyxD5Q/wDtdugUdaAPaLvwl4E8S2c97qPw+8KeH9EWINZ6dY6Lb293c/OB50kqKGiGDxGeowTgnAK8Qk8f/wBgaZcW9zqST6QUAjnFyrSREupEbZbLDj5c9F2jJxmigD//2Q==);
-    background-position: 10px center;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 40px;
+    left: 0;
+    position: absolute;
+    width: 40px;
+}
+
+#create-username,
+#mobile-username {
+    border-radius: 5px 5px 0 0;
+    border-bottom: 0;
+}
+
+#create-password,
+#mobile-password {
+    border-radius: 0;
+    border-bottom: 0;
+}
+
+#create-email,
+#mobile-number {
+    border-radius: 0 0 5px 5px;
+    border-bottom: 0;
+    margin-bottom: 5px;
 }
 
 #delete-notifications {
@@ -1094,8 +1128,16 @@ body {
 
 #fb-login {
     background-color: #3b5998;   
+}
+
+#login-facebook-image {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAAZCAYAAADqrKTxAAABqklEQVQ4y5WTTW8SURSG568bF93owlgX2pWk6qYxMXHR2EVLDR8lbapBNJFBBYQpH0OBgTBw55zHxUyHmYIFTnJzc5PznHPe995rAda6lfnwhVK5gV3v0+qMaPc9urcTrn/erAe+1zr8LwaT2SqQ+9oAQMQgoogqgSgLEwDguKM08OjFGb4xgCIaVlYU0LiT603T0PtPlTBRNbX3bj0+nnzj6LjCwdF1Gspf1cLRVOPaqsKzTIFkXlrPpR3pUYKoS3c45r5u60kmz/5hib2Dz5TtVlQdRA0gDEdTXr4r8vR1nudvCjx+dYrlA2DiUZaiFVVBJUgYAs2uizVdCIgiokmTUqGqBIEA0HB6WAt2i3bPxWoPZ4wmM9zxDH8+X1aPdhMsGEx83PGM6TygXHPSrpyXQvdUFNFQS6c/WHUveTjJ/UhAEkHjh6GzQjW+J5EIcjdA2RQUAMqNu1OnrSF7zXjeBqhYW0K6JZS9+LV7p2zxT/w17qDuJuj84g5ie+i0+Dt8OsZgTOies+lyc1f1ey8PXM9/GHp7bNPsD6k2Xap/e9SdAZeV1gr0D8TTcK2PhdoZAAAAAElFTkSuQmCC);
-    background-position: 14px center;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 40px;
+    left: 0;
+    position: absolute;
+    width: 40px;
 }
 
 .fb-like,
@@ -1139,37 +1181,6 @@ body {
 
 #header { 
     background-color: black;
-/*    background-image: linear-gradient( 
-            top, 
-            rgba( 255, 255, 255, .4 ) 0%, 
-            rgba( 255, 255, 255, .1 ) 50%,
-            rgba( 255, 255, 255, .0 ) 50.5%, 
-            rgba( 255, 255, 255, .0 ) 100% );
-        background-image: -webkit-linear-gradient( 
-            top, 
-            rgba( 255, 255, 255, .4 ) 0%, 
-            rgba( 255, 255, 255, .1 ) 50%,
-            rgba( 255, 255, 255, .0 ) 50.5%, 
-            rgba( 255, 255, 255, .0 ) 100% );
-        background-image: -moz-linear-gradient( 
-            top, 
-            rgba( 255, 255, 255, .4 ) 0%, 
-            rgba( 255, 255, 255, .1 ) 50%,
-            rgba( 255, 255, 255, .0 ) 50.5%, 
-            rgba( 255, 255, 255, .0 ) 100% );
-        background-image: -o-linear-gradient( 
-            top, 
-            rgba( 255, 255, 255, .4 ) 0%, 
-            rgba( 255, 255, 255, .1 ) 50%,
-            rgba( 255, 255, 255, .0 ) 50.5%, 
-            rgba( 255, 255, 255, .0 ) 100% );
-        background-image: -ms-linear-gradient( 
-            top, 
-            rgba( 255, 255, 255, .4 ) 0%, 
-            rgba( 255, 255, 255, .1 ) 50%,
-            rgba( 255, 255, 255, .0 ) 50.5%, 
-            rgba( 255, 255, 255, .0 ) 100% );
-*/
     background-image: linear-gradient( 
             rgba( 255, 255, 255, .35 ), 
             rgba( 255, 255, 255, 0 ) );
@@ -1185,6 +1196,7 @@ body {
         background-image: -webkit-linear-gradient( 
             rgba( 255, 255, 255, .35 ), 
             rgba( 255, 255, 255, 0 ) );
+    border-radius: 4px 4px 0 0;
     box-shadow:          inset 0 1px 1px rgba( 255, 255, 255, .35 ), 
                          inset 0 -1px 1px rgba( 0, 0, 0, .2 );
         -moz-box-shadow: inset 0 1px 1px rgba( 255, 255, 255, .35 ), 
@@ -1308,10 +1320,17 @@ html {
 
 #login-mobile {
     background-color: black;   
+}
+
+#login-mobile-image {
     /* call.png */
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAaCAYAAACtv5zzAAACHElEQVRIx62Vy6t5URTH/ReSuDMpZSAuMjLxfhTCgEReoTyKgceAlMJABkwYGKEoGUgUAxP/1bqtXft0zu/w4zp38Gk99ra/OmutvUUAIGJTLBZht9vB/X6HbrcL/67/FsZxOp1wPB7hdrtxwLxggUAgAJfLBa7XKwON1+u1MAGbzQan0wnO5zMDxhSMM5nMxyKi7XYLh8Phv+CejwWwoPv9nsOjnNfr/UhENBqNyD9ENpsN47PBfDgc/kwAC7xcLjmsVivGItlsFgR10WKxgEe0Wi3Q6/XC2zSXy8F8PifMZjNih8Oh4CHjDNpkMoHpdApoKRaL5e8mOZFIwHg85tDv9/9OAMG7ZzAYkM+DoC9kyHgCVqsVer0eDyGF5iXS6TS0223odDrEIvV6HZRKJfyJAFKtVqHZbBIajQaxOAsSieShyNfXF5hMJnhbQKPRQK1W45FMJkEsFnMOMhgMUCqVmHWFQgEvBRC73Q6VSgXK5TKx1I/FYoyISqUiOQrd9/39DS8F6CNUKBR4pFIp0Gq1gPXCOJ/PM9CYPlQvixQMBslB2K4UjNmw8+x92JVvdYLP5wMcRDbxeJzwzKfx2+1mNpshGo1CJBLh2Gc+WvzNr3raaDRCKBQibwO1bJ+d8/v9IJVKfz842IYejwfws1HwMHaM63K5/L0iPwOvD5fLBW63mwPewDKZ7L02fQedTgcOh4McrFaredP8A8mksXy5zOm3AAAAAElFTkSuQmCC);
-    background-size: 24px 26px;
-    background-position: 10px center;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 40px;
+    left: 0;
+    position: absolute;
+    width: 40px;
 }
 
 #logo {
@@ -1547,18 +1566,31 @@ html {
 }
 
 .login-button {
-    background-repeat: no-repeat;
-    border: 1px solid white;
-    box-shadow: 2px 2px 3px rgba( 0, 0, 0, .7 );
-    color: white;
+    border-radius: 3px;
+    box-shadow:          inset 0 1px 1px rgba( 255, 255, 255, .35 ), 
+                         inset 0 -1px 1px rgba( 0, 0, 0, .2 ),
+                         2px 2px 3px rgba( 0, 0, 0, .7 ),
+                         0 0 2px rgba( 0, 0, 0, .7 );
+        -moz-box-shadow: inset 0 1px 1px rgba( 255, 255, 255, .35 ), 
+                         inset 0 -1px 1px rgba( 0, 0, 0, .2 ),
+                         2px 2px 3px rgba( 0, 0, 0, .7 ),
+                         0 0 2px rgba( 0, 0, 0, .7 );
+        -ms-box-shadow:  inset 0 1px 1px rgba( 255, 255, 255, .35 ), 
+                         inset 0 -1px 1px rgba( 0, 0, 0, .2 ),
+                         2px 2px 3px rgba( 0, 0, 0, .7 ),
+                         0 0 2px rgba( 0, 0, 0, .7 );
+        -o-box-shadow:   inset 0 1px 1px rgba( 255, 255, 255, .35 ), 
+                         inset 0 -1px 1px rgba( 0, 0, 0, .2 ),
+                         2px 2px 3px rgba( 0, 0, 0, .7 ),
+                         0 0 2px rgba( 0, 0, 0, .7 );
     cursor: pointer;
     display: block;
-    font-size: 17px;
-    height: 45px; 
+    height: 40px;
+    line-height: 40px;
     margin: 0 auto 10px auto;
     padding: 0 10px 0 32px;
+    position: relative;
     text-align: center;
-    width: 100%;
 }
 
 #login-page {
@@ -1575,6 +1607,7 @@ html {
 #login-page-view {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAGklEQVQI12Pw8fH5X19fD8YMMAZIkAHGANEAiZwUkmznO8QAAAAASUVORK5CYII=);
     border: 4px solid black;
+    border-radius: 10px;
     box-shadow: 7px 7px 7px rgba( 0, 0, 0, .7 );
     margin: 15px auto 0 auto;
     padding: 10px;
@@ -1595,6 +1628,7 @@ html {
     background-size: 24px 26px;
     background-repeat: no-repeat;
     border: 1px solid black;
+    border-radius: 0 0 5px 0;
     box-shadow: 2px 2px 3px rgba( 0, 0, 0, .7 );
     color: white;
     display: inline-block;
@@ -1605,11 +1639,14 @@ html {
     width: 40px;
 }
 
-#login-error {
+#login-error,
+#error-create-account,
+#error-mobile-account {
     color: red;
     display: block;
-    line-height: 35px;
+    margin-top: 5px;
     padding-left: 4px;
+    text-shadow: 2px 2px 3px rgba( 0, 0, 0, .7 );
 }
 
 .login-field {
@@ -1620,7 +1657,8 @@ html {
     border-bottom: 1px solid black;
     border-right: 1px solid black;
     border-radius: 0;
-    box-shadow: 2px 2px 3px rgba( 0, 0, 0, .7 );
+    box-shadow: 2px 2px 3px rgba( 0, 0, 0, .7 ), 
+        0px 0px 2px rgba( 0, 0, 0, .7 );
     display: inline-block;
     font-size: 17px;
     height: 35px;
@@ -1633,10 +1671,12 @@ html {
 
 #login-username {
     border-bottom: 0;
+    border-radius: 5px 5px 0 0;
     width: 252px;
 }
 
 #login-password {
+    border-radius: 0 0 0 5px;
     width: 212px;
 }
 
@@ -2246,6 +2286,13 @@ html {
         -webkit-transform-origin:   0 0;
 }
 
+#save-account,
+#save-mobile-account {
+    background-color: black;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
 .scroll {
     cursor: pointer;
 }
@@ -2520,6 +2567,7 @@ html {
         background-image: -webkit-linear-gradient( 
             rgba( 255, 255, 255, .35 ), 
             rgba( 255, 255, 255, 0 ) );
+    border-radius: 0 0 4px 4px;
     box-shadow:          inset 0 1px 1px rgba( 255, 255, 255, .35 ), 
                          inset 0 -1px 1px rgba( 0, 0, 0, .2 );
         -moz-box-shadow: inset 0 1px 1px rgba( 255, 255, 255, .35 ), 
@@ -2793,11 +2841,18 @@ html {
 }
 
 #twitter-login {
+    background-color: #3C8FC9;
+}
+
+#twitter-login-image {
     /* twitter.png */
-    /* rgb( 51, 204, 255 ); */
-    background-color: rgba(192, 222, 237, 1);
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAZCAYAAABZ5IzrAAACrElEQVRIx7WWz2sTURDH86d5EgTBf0APehAUDyJ4KSgFfyDSgwdBsFgtoh5EBA9qQWulbUrEptU2mqZaTWtqiI2NTZttdt+bcSbbTTfZ93bfbpqBzY/N7uTzvvt9M5NCxFQ/jluLDj7/IbBQkzi2JvBhwUGT+/oC84JAvLDoY7EO+GxFJAc6n7Hx5JSNSWCGvzptGAmIlQbg+5LA6/MOHn3XxERAY6sCG5T3dVHgwEdzsDMzNu440IbpjuIW4KXZ8HzKkzfm91fJ+XNVibcXoz2QKcvWPcIHA3twAPv5hj7rc2mTT67LwArXyAsPltTJWEnpg1CFB7pLdrqQUSsVuuK3v0RghRzrO4Aj+U6w6d9BdZRQe9SseiwgNiffZAm19P6kxyftlufC1EGFeoPZoEpaoCfLLgkDdBtU+s6t/ANkJeOEd++rYmcpuPjBDjdptiKNEpsoo1KpbgPO/ZFY2JS4YQGOkj8jt/J98gp7Rpsc4sF0Q9m05iUCuvnJ9WQkEJt3lXaXTPKvBlGx3ML5kh7fcN5AoXKjTyS+UsAbYpbsEekh78hvyrbMB4Hnqb2wITFxc2X6dFkeiCreou7kHOyp25vWGhN1Kq4Vehs/Stv6xhkXaFTTglInaMw49CZ6LGjvOkrUEMmU8trKl78SD4+r/zM1QOPAXWoTR8ajoS7Ttcs12RMMF8CwWav18pjaxHdqAfcI7HS68+JT0zYOUdHi0SJpAfRgak3QdvmAhx4V3OfA62ev/KRhit+3bNC2C1MQDi6uZ2eih72OL1eyDlYtUCaXYNbJpaIZT5SEsUeVJ7kLbzsQ6Fky4ugOHk94kXF2svaHcyQvg4U1VlVUdwGnaNq8OhcPxLgOHZto4iDtLp6PeCrM0ZZt+avu+oy3cJrOP/0m8FpCCP/xHzReQq5BvS/OAAAAAElFTkSuQmCC);
-    background-position: 3px center;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 40px;
+    left: 0;
+    position: absolute;
+    width: 40px;
 }
 
 .unresolved {

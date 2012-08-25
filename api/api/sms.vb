@@ -71,7 +71,7 @@ Public Class sms : Implements System.Web.IHttpHandler
         params As Collections.Specialized.NameValueCollection,
         body As String)
 
-        Dim phoneNumber As String = params("From"),
+        Dim phoneNumber As String = unformatPhoneNumber(params("From")),
             userId As String = "",
             question As String = If(body.Contains("@"), body.Split("@"c)(0).Trim(), body),
             latitude As String = "",
@@ -117,7 +117,7 @@ Public Class sms : Implements System.Web.IHttpHandler
         context As Web.HttpContext,
         params As Collections.Specialized.NameValueCollection)
 
-        Dim phoneNumber As String = params("From")
+        Dim phoneNumber As String = unformatPhoneNumber(params("From"))
 
         Using connection As New System.Data.SqlClient.SqlConnection(CONNECTION_STRING),
             command As New SqlClient.SqlCommand(VERIFY_PHONE_NUMBER, connection)
@@ -306,6 +306,25 @@ Public Class sms : Implements System.Web.IHttpHandler
         Return returnValue
 
     End Function
+
+    Private Function unformatPhoneNumber(number As String) As String
+
+        Dim unformattedNumber As String = ""
+
+        For index As Int32 = 0 To number.Length - 1
+
+            If Microsoft.VisualBasic.IsNumeric(number(index)) Then
+
+                unformattedNumber &= number(index)
+
+            End If
+
+        Next index
+
+        Return unformattedNumber
+
+    End Function
+
 
     Private Function getGeocode(
         location As String,
