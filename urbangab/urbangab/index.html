@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-version="1.12.62" manifest="cache.manifest">
+<html lang="en" data-version="1.12.130" manifest="cache.manifest">
 <head>
     <title>urbanAsk</title>
     
@@ -32,26 +32,25 @@
             </form>
             <div id="questions-view">
                 <div id="questions-scroll" class="scroll">
-                    <ul id="user-questions" class="hide"></ul>
+                    <ul id="user-questions" class="list hide"></ul>
                     <div id="view-nearby-questions" class="button-3d hide">view questions near me</div>
-                    <ul id="nearby-questions" class="hide"></ul>
-                    <ul id="questions" class="hide"></ul>
-                    <ul id="everywhere-questions" class="hide"></ul>
+                    <ul id="nearby-questions" class="list hide"></ul>
+                    <ul id="questions" class="list hide"></ul>
+                    <ul id="everywhere-questions" class="list hide"></ul>
                 </div>
             </div>
         </section>
 
         <section id="question-page" class="hide">
             <div id="question-scroll" class="scroll">
-                <ul id="question-view"></ul>
+                <ul id="question-view" class="list"></ul>
                 <div id="question-region"></div>
-                <img id="question-map" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12P4DwQACfsD/WMmxY8AAAAASUVORK5CYII=" />
+                <img id="question-map" class="height-slide" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12P4DwQACfsD/WMmxY8AAAAASUVORK5CYII=" />
                 <div id="add-new-answer" class="button-3d hide">
                     <div id="add-new-answer-image"></div>
                     <div id="add-new-answer-caption">Add an Answer</div>
                 </div>
-                <ul id="answers" class="scroll"></ul>
-                <div id="no-answers" class="hide"></div>
+                <ul id="answers" class="list scroll"></ul>
                 <div id="question-share" class="hide">
                     <div id="question-share-facebook" class="question-share-button">post to facebook</div>
                     <div id="question-share-twitter" class="question-share-button">post to twitter</div>
@@ -60,7 +59,7 @@
         </section>
 
         <section id="answer-page" class="hide">
-            <ul id="answer-view"></ul>
+            <ul id="answer-view" class="list"></ul>
             <div id="answer-map-canvas"></div>
             <ul id="travel-mode-toolbar">
                 <li id="travel-mode-drive" class="travel-mode-item travel-mode-selected" data-travel-mode="DRIVING"></li><!--
@@ -86,7 +85,7 @@
                 --><li id="top-type-badges" class="top-type-item toggle-button" data-id="4">badges</li>
             </ul>
             <div id="top-users-view">
-                <ul id="top-users" class="scroll"></ul>
+                <ul id="top-users" class="list scroll"></ul>
                 <div id="no-top-users" class="hide"></div>
             </div>
             <ul id="top-interval" class="toggle-bar">
@@ -123,14 +122,14 @@
         <section id="user-page" class="hide">
             <div id="user-summary-view">
                 <img id="user-picture" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12P4DwQACfsD/WMmxY8AAAAASUVORK5CYII=" /><!--
-                --><div id="edit-account" class="hide"><div id="edit-account-caption">edit</div></div>
+                --><div id="edit-account" class="button-3d hide"><div id="edit-account-image"></div><div id="edit-account-caption">settings</div></div>
                 <div id="username" class="account-info"></div>
                 <div id="signup-info" class="account-info">
                     <span id="member-since-caption"></span><span id="member-since"></span><!--
                     --><span id="user-id-caption"></span><span id="user-id-value"></span>
                 </div>
                 <div id="tagline" class="account-info"></div>
-                <div id="reputation" class="selectable"><span id="reputation-value"></span><span id="reputation-caption">reputation</span></div><!--
+                   <div id="reputation" class="selectable"><span id="reputation-value"></span><span id="reputation-caption">reputation</span></div><!--
                 --><div id="total-questions" class="selectable"><span id="total-questions-value"></span><span id="total-questions-caption">questions</span></div><!--
                 --><div id="total-answers" class="selectable"><span id="total-answers-value"></span><span id="total-answers-caption">answers</span></div><!--
                 --><div id="total-badges" class="selectable"><span id="total-badges-value"></span><span id="total-badges-caption">badges</span></div>
@@ -138,11 +137,11 @@
 
             <div id="user-info-view">
                 <div id="user-info-scroll" class="scroll">
-                       <ul id="user-notifications" class="hide"></ul><!--
-                    --><ul id="user-reputations"></ul><!--
-                    --><ul id="users-questions"></ul><!--
-                    --><ul id="user-answers"></ul><!--
-                    --><ul id="user-badges"></ul>
+                       <ul id="user-notifications" class="list hide"></ul><!--
+                    --><ul id="user-reputations" class="list"></ul><!--
+                    --><ul id="users-questions" class="list"></ul><!--
+                    --><ul id="user-answers" class="list"></ul><!--
+                    --><ul id="user-badges" class="list"></ul>
                        <div id="app-version-user" class="app-version"></div>
                 </div>
             </div>

@@ -25,7 +25,8 @@ var _hostname = window.location.hostname,
     _currentLocation = {},
     _dimensions = {
 
-        "questionMapWidth": 308
+        "questionMapWidth": 308,
+        "questionMapHeightNormal": 140
 
     },
     _session = {},
@@ -1266,7 +1267,7 @@ function getQuestionItem( question, options ) {
 
     if ( question[QUESTION_COLUMNS.bounty] ) {
 
-        bounty = '<span class="bounty button-3d">+' + question[QUESTION_COLUMNS.bounty] + '</span>';
+        bounty = '<span class="bounty">+' + question[QUESTION_COLUMNS.bounty] + '</span>';
 
     };
 
@@ -1417,11 +1418,11 @@ function getVotes( votes ) {
 
     if ( votes > 0 ) {
 
-        return '<span class="votes votes-up button-3d">' + getVoteCount( votes ) + '</span>';
+        return '<span class="votes votes-up">' + getVoteCount( votes ) + '</span>';
 
     } else if ( votes < 0 ) {
 
-        return '<span class="votes votes-down button-3d">' + getVoteCount( votes ) + '</span>';
+        return '<span class="votes votes-down">' + getVoteCount( votes ) + '</span>';
 
     } else {
 
@@ -1860,7 +1861,7 @@ function initializeDimensions() {
             + '}';
     document.head.insertAdjacentHTML( 'beforeEnd', '<style>' + styles + '</style>' );
 
-    var questionsViewHeight = view.clientHeight - 45;
+    var questionsViewHeight = view.clientHeight - 46;
     document.getElementById( 'questions-view' ).style.height = questionsViewHeight + 'px';
 
     _dimensions.questionMapWidth = view.clientWidth - ( 2 * MARGIN );
@@ -5866,8 +5867,8 @@ function showAnswerMap( answer, travelMode ) {
             mapTypeControl: false,
             styles: [{
 
-                featureType: "all",
-                stylers: [{ hue: "#44ADFC"}]
+                featureType: "all"//,
+                //stylers: [{ hue: "#44ADFC"}]
 
             }]
 
@@ -7360,29 +7361,22 @@ function showPostFacebook() {
 
 function showQuestion( question ) {
 
-    var markers = '',
-        html = '',
-        zoom = '',
-        MARGIN = 6,
-        BORDER = 1,
-        view = document.getElementById( 'view' ),
+    var html = '',
         questionView = document.getElementById( 'question-view' ),
-        answers = document.getElementById( 'answers' ),
-        noAnswers = document.getElementById( 'no-answers' ),
-        questionMap = document.getElementById( 'question-map' ),
-        addNewAnswer = document.getElementById( 'add-new-answer' );
+        addNewAnswer = document.getElementById( 'add-new-answer' ),
+        answers = document.getElementById( 'answers' );
 
     if ( question[QUESTION_COLUMNS.question].length > 25 ) {
 
         questionView.innerHTML = getQuestionItem( question, { full: true } );
-        questionView.removeClass( 'question-view-normal' ).addClass( 'question-view-full' );
 
     } else {
 
         questionView.innerHTML = getQuestionItem( question );
-        questionView.removeClass( 'question-view-full' ).addClass( 'question-view-normal' );
 
     };
+
+    document.getElementById( 'question-region' ).textContent = question[QUESTION_COLUMNS.region];
 
     if ( isMyQuestion( question ) ) {
 
@@ -7405,51 +7399,90 @@ function showQuestion( question ) {
     if ( question[QUESTION_COLUMNS.answers].length ) {
 
         answers.removeClass( 'hide' );
-        noAnswers.addClass( 'hide' );
 
         for ( var index = 0; index < question[QUESTION_COLUMNS.answers].length; index++ ) {
 
             var answer = question[QUESTION_COLUMNS.answers][index],
                 letter = STRINGS.letters.charAt( index );
 
-            markers += '&markers=color:gray|size:mid|label:' + letter + '|'
-                + answer[ANSWER_COLUMNS.latitude] + "," + answer[ANSWER_COLUMNS.longitude];
             html += getAnswerItem( answer, question, { letter: letter } );
 
         };
 
     } else {
 
-        if ( isMyQuestion( question ) ) {
-
-            $( '#no-answers' ).innerHTML = STRINGS.answer.noAnswersMyQuestion;
-
-        } else {
-
-            $( '#no-answers' ).innerHTML = STRINGS.answer.noAnswers;
-
-        };
-
         answers.addClass( 'hide' );
-        noAnswers.removeClass( 'hide' );
-        zoom = '&zoom=12';
 
     };
 
     answers.innerHTML = html;
+    setQuestionMap( question, markers );
 
-    document.getElementById( 'question-region' ).textContent = question[QUESTION_COLUMNS.region];
-    var mapUrl = 'http://maps.google.com/maps/api/staticmap?'
-            + 'key=' + GOOGLE_API_KEY
-            + '&center=' + question.latitude + ',' + question.longitude
-            + '&size=' + _dimensions.questionMapWidth + 'x140'
-            + ( window.deviceInfo.mobile ? '&scale=2' : '' )
-            + '&maptype=roadmap&sensor=true&style=hue:blue' + zoom + '&markers=color:black|size:mid|'
-            + question.latitude + ',' + question.longitude
-            + markers;
-    questionMap.setAttribute( 'src', mapUrl );
+};
 
-    updateScrollQuestion();
+function setQuestionMap( question ) {
+
+    window.setTimeout( function () {
+
+        var view = document.getElementById( 'view' ),
+            questionMap = document.getElementById( 'question-map' ),
+            addNewAnswer = document.getElementById( 'add-new-answer' ),
+            MARGIN = 6,
+            mapHeight = 0,
+            zoom = '',
+            markers = '';
+
+        if ( question[QUESTION_COLUMNS.answers].length ) {
+
+            mapHeight = _dimensions.questionMapHeightNormal;
+
+        } else {
+
+            if ( isMyQuestion( question ) ) {
+
+                mapHeight = view.clientHeight - questionMap.positionTop - MARGIN;
+
+            } else {
+
+                mapHeight = view.clientHeight - questionMap.positionTop - addNewAnswer.clientHeight - ( 2 * MARGIN );
+
+            };
+
+        };
+
+        if ( question[QUESTION_COLUMNS.answers].length ) {
+
+            for ( var index = 0; index < question[QUESTION_COLUMNS.answers].length; index++ ) {
+
+                var answer = question[QUESTION_COLUMNS.answers][index],
+                    letter = STRINGS.letters.charAt( index );
+
+                markers += '&markers=color:gray|size:mid|label:' + letter + '|'
+                    + answer[ANSWER_COLUMNS.latitude] + "," + answer[ANSWER_COLUMNS.longitude];
+
+            };
+
+        } else {
+
+            zoom = '&zoom=12';
+
+        };
+
+        questionMap.style.height = mapHeight + 'px';
+        var mapUrl = 'http://maps.google.com/maps/api/staticmap?'
+                + 'key=' + GOOGLE_API_KEY
+                + '&center=' + question.latitude + ',' + question.longitude
+                + '&size=' + _dimensions.questionMapWidth + 'x' + mapHeight
+                + ( window.deviceInfo.mobile ? '&scale=2' : '' )
+                + '&maptype=roadmap&sensor=true' + zoom + '&markers=color:black|size:mid|'
+        //            + '&maptype=roadmap&sensor=true&style=hue:blue' + zoom + '&markers=color:black|size:mid|'
+                + question.latitude + ',' + question.longitude
+                + markers;
+        questionMap.setAttribute( 'src', mapUrl );
+
+        updateScrollQuestion();
+
+    }, 10 );
 
 };
 
@@ -8409,7 +8442,7 @@ function topIntervalClick( event ) {
 
         toggleButton.addClass( 'toggle-button-selected' );
         toggleButton.parentNode.setDataset( 'id', toggleButton.getDataset( 'id' ) );
-        showTopUsers( _currentLocation.regionName );
+        window.setTimeout( function () { showTopUsers( _currentLocation.regionName ); }, 10 );
 
     };
 
@@ -8433,7 +8466,7 @@ function topTypeClick( event ) {
 
         toggleButton.addClass( 'toggle-button-selected' );
         toggleButton.parentNode.setDataset( 'id', toggleButton.getDataset( 'id' ) );
-        showTopUsers( _currentLocation.regionName );
+        window.setTimeout( function () { showTopUsers( _currentLocation.regionName ); }, 10 );
 
     };
 
@@ -8876,11 +8909,11 @@ window.Object.defineProperty( Element.prototype, 'positionTop', {
 
 } );
 
-Element.prototype.documentOffsetTop = function () {
-
-    return this.offsetTop + ( this.offsetParent ? this.offsetParent.documentOffsetTop() : 0 );
-
-};
+window.Object.defineProperty( Element.prototype, 'documentOffsetTop', {
+    get: function () {
+        return this.offsetTop + ( this.offsetParent ? this.offsetParent.documentOffsetTop : 0 );
+    }
+} );
 
 String.prototype.trim = function () {
 

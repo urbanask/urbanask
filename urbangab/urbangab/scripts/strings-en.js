@@ -27,13 +27,8 @@
         "ageMinutes": "mins",
         "ageNow": "now",
         "android": "Android",
-        "answer":
-        {
-            "noAnswers": "No one has answered yet. <br /><br />Be the first!",
-            "noAnswersMyQuestion": "No one has answered yet. <br /><br />Check back soon."
-        },
         "answerHeader": "answers",
-        "answerLabel": "Answer...",
+        "answerLabel": "enter a location...",
         "answerPage": {
             "directionsLocation": "urbanAsk needs to access your location to get directions.<br /><br />"
                 + "Is this OK?<br /><br />"

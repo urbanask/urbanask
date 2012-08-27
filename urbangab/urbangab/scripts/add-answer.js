@@ -291,8 +291,8 @@ function showAddAnswer( question ) {
                 answer[ANSWER_COLUMNS.votes] = 0;
 
                 var questionItem = _nearbyQuestions.item( question.questionId )
-                    || _questions.item( question.questionId )
-                    || _everywhereQuestions.item( question.questionId );
+                        || _questions.item( question.questionId )
+                        || _everywhereQuestions.item( question.questionId );
                 if ( questionItem ) { updateAnswerCount( question.questionId ); };
                 question[QUESTION_COLUMNS.answers].push( answer );
                 question[QUESTION_COLUMNS.answerCount] += 1;
@@ -306,7 +306,6 @@ function showAddAnswer( question ) {
 
                 //show answer
                 document.getElementById( 'answers' ).removeClass( 'hide' );
-                document.getElementById( 'no-answers' ).addClass( 'hide' );
                 answers.insertAdjacentHTML( 'afterBegin', html );
                 window.setTimeout( function () { answers.firstChild.removeClass( 'height-zero' ) }, 500 );
                 questionMap.setAttribute( 'src', mapUrl + markers );
