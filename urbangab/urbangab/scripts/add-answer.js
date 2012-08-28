@@ -321,6 +321,7 @@ function showAddAnswer( question ) {
                 }, 750 );
 
                 hideAddNewAnswerButton();
+                resizeQuestionMap();
 
                 showNotification( STRINGS.notificationAnswerQuestion, { footer: STRINGS.notification.answerSaved } );
                 showToolbar( 'question', { question: question } );
@@ -394,6 +395,27 @@ function showAddAnswer( question ) {
             addNewAnswer.removeClass( 'height-zero' ).removeClass( 'height-slide' );
 
         }, 700 );
+
+    };
+
+    function resizeQuestionMap() {
+
+        var questionMap = document.getElementById( 'question-map' ),
+            questionRegion = document.getElementById( 'question-region' ),
+            mapHeight = _dimensions.questionMapHeightNormal;
+
+        questionMap.addClass( 'question-map-resize' ).addClass( 'fade' );
+        questionRegion.addClass( 'fadeable' ).addClass( 'fade' );
+
+        questionMap.style.height = mapHeight + 'px';
+        updateScrollQuestion();
+
+        setQuestionMap( question, mapHeight, function () {
+
+            questionMap.removeClass( 'fade' ).removeClass( 'question-map-resize' );
+            questionRegion.removeClass( 'fade' );
+
+        } );
 
     };
 

@@ -32,7 +32,7 @@
         "answerPage": {
             "directionsLocation": "urbanAsk needs to access your location to get directions.<br /><br />"
                 + "Is this OK?<br /><br />"
-                + "Your device OS may also ask permission."
+                + "Your device may also ask permission."
         },
         "answerPosted": "Posted",
         "backButtonAnswer": "Answer",
@@ -184,10 +184,10 @@
 
             "askQuestionLocation": "urbanAsk needs to access your location to post this question.<br /><br />"
                 + "Is this OK?<br /><br />"
-                + "Your device OS may also ask permission.",
+                + "Your device may also ask permission.",
             "viewNearbyQuestions": "view questions near me",
             "nearbyQuestionsInstructions": "urbanAsk needs access to your location to display questions near you.<br /><br />"
-                + "Is this OK?<br /><br /> Your device OS may also ask permission."
+                + "Is this OK?<br /><br /> Your device may also ask permission."
 
         },
         "questionsEverywhere": "everywhere",

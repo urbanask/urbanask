@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-version="1.12.130" manifest="cache.manifest">
+<html lang="en" data-version="1.12.197" manifest="cache.manifest">
 <head>
     <title>urbanAsk</title>
     
@@ -28,7 +28,7 @@
         <section id="questions-page" class="hide">
             <form id="ask">
                 <input autocorrect="on" id="ask-text" maxlength="50" type="text" />
-                <button class="ask-button-slide" id="ask-button" type="submit"><span id="ask-button-image"></span></button>
+                <button id="ask-button" class="ask-button-slide button-3d" type="submit"><span id="ask-button-image"></span></button>
             </form>
             <div id="questions-view">
                 <div id="questions-scroll" class="scroll">
@@ -45,7 +45,7 @@
             <div id="question-scroll" class="scroll">
                 <ul id="question-view" class="list"></ul>
                 <div id="question-region"></div>
-                <img id="question-map" class="height-slide" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12P4DwQACfsD/WMmxY8AAAAASUVORK5CYII=" />
+                <img id="question-map" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12P4DwQACfsD/WMmxY8AAAAASUVORK5CYII=" />
                 <div id="add-new-answer" class="button-3d hide">
                     <div id="add-new-answer-image"></div>
                     <div id="add-new-answer-caption">Add an Answer</div>
@@ -221,14 +221,13 @@
             --><div id="message-cancel-button"></div>
         </div>
         <div id="loading" class="loading hide"></div>
-        <div id="vote" class="fade fadeable hide"><div id="vote-up">+1</div><div id="vote-down">-1</div></div>
 
     </div> <!--view-->
     
     <section id="add-answer-page" class="top-slide hide">
         <form id="answer">
             <input autocorrect="off" id="answer-text" type="text" maxlength="50" /><!--
-            --><div id="cancel-answer-button">Cancel</div>
+            --><div id="cancel-answer-button" class="button-3d">Cancel</div>
         </form>
         <div id="locations-view">
             <ul id="locations" class="scroll"></ul>

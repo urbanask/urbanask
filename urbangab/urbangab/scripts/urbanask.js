@@ -1096,7 +1096,7 @@ function getAnswerItem( answer, question, options ) {
         + '<ul class="info">'
         + '<li class="info-item">' + getDistance( answer[ANSWER_COLUMNS.distance] ) + '</li>'
         + '<li class="info-item">' + answer[ANSWER_COLUMNS.username] + '</li>'
-        + '<li class="info-item reputation">' + formatNumber( answer[ANSWER_COLUMNS.reputation] ) + '</li>'
+        + '<li class="info-item">' + formatNumber( answer[ANSWER_COLUMNS.reputation] ) + '</li>'
         + '</ul>'
         + '</li>';
 
@@ -1289,7 +1289,7 @@ function getQuestionItem( question, options ) {
         + '</div>'
         + '<ul class="info">'
         + '<li class="info-item">' + question[QUESTION_COLUMNS.username] + '</li>'
-        + '<li class="info-item reputation">' + formatNumber( question[QUESTION_COLUMNS.reputation] ) + '</li>'
+        + '<li class="info-item">' + formatNumber( question[QUESTION_COLUMNS.reputation] ) + '</li>'
         + '</ul>'
         + '</li>';
 
@@ -4274,7 +4274,7 @@ function saveQuestion( event ) {
 
                     } );
 
-                } );
+                }, { wide: true } );
 
             };
 
@@ -4713,7 +4713,15 @@ function setQuestionsTop() {
     var questionsView = document.getElementById( 'questions-view' ),
         top = questionsView.getDataset( 'scroll-top' );
 
-    questionsView.scrollTop = top;
+    if ( window.deviceInfo.iscroll ) {
+
+        _scrollQuestions.scrollTo( 0, -top, 0 );
+
+    } else {
+
+        questionsView.scrollTop = top;
+
+    };
 
 };
 
@@ -4942,7 +4950,15 @@ function setUsersTop() {
     var usersView = document.getElementById( 'user-info-view' ),
         top = usersView.getDataset( 'scroll-top' );
 
-    usersView.scrollTop = top;
+    if ( window.deviceInfo.iscroll ) {
+
+        _scrollUser.scrollTo( 0, -top, 0 );
+
+    } else {
+
+        usersView.scrollTop = top;
+
+    };
 
 };
 
@@ -4958,18 +4974,6 @@ function getUsersTop() {
 function resetUsersTop() {
 
     document.getElementById( 'user-info-view' ).setDataset( 'scroll-top', 0 );
-
-};
-
-function setupGeolocation() {
-
-    window.setTimeout( getGeolocation, 4 * SECOND );
-
-    if ( !_geoTimer ) {
-
-        _geoTimer = window.setInterval( getGeolocation, 5 * MINUTE ); 
-
-    };
 
 };
 
@@ -6902,13 +6906,23 @@ function showCreateMobileAccount( event ) {
 
 };
 
-function showMessage( text, callback ) {
+function showMessage( text, callback, options ) {
 
     var message = document.getElementById( 'message' ),
         body = document.getElementById( 'message-body' ),
         okButton = document.getElementById( 'message-ok-button' ),
         cancelButton = document.getElementById( 'message-cancel-button' ),
         view = document.getElementById( 'view' );
+
+    if ( options && options.wide ) {
+
+        message.addClass( 'message-wide' );
+
+    } else {
+
+        message.removeClass( 'message-wide' );
+
+    };
 
     body.innerHTML = text;
     message.removeClass( 'hide' );
@@ -7361,22 +7375,62 @@ function showPostFacebook() {
 
 function showQuestion( question ) {
 
-    var html = '',
-        questionView = document.getElementById( 'question-view' ),
+    var questionView = document.getElementById( 'question-view' ),
         addNewAnswer = document.getElementById( 'add-new-answer' ),
-        answers = document.getElementById( 'answers' );
+        answers = document.getElementById( 'answers' ),
+        questionMap = document.getElementById( 'question-map' ),
+        questionRegion = document.getElementById( 'question-region' ),
+        view = document.getElementById( 'view' ),
+        MARGIN = 6,
+        BUTTON_HEIGHT = 42,
+        QUESTION_HEIGHT = 50,
+        QUESTION_HEIGHT_FULL = 70,
+        questionViewHeight,
+        html = '',
+        mapHeight = '';
+
+    questionMap.removeClass( 'fadeable' ).addClass( 'fade' );
+    questionRegion.removeClass( 'fadeable' ).addClass( 'fade' );
+    window.setTimeout( function () {
+
+        questionMap.addClass( 'fadeable' );
+        questionRegion.addClass( 'fadeable' ); 
+        
+    }, 10 );
+    questionMap.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12P4DwQACfsD/WMmxY8AAAAASUVORK5CYII=';
 
     if ( question[QUESTION_COLUMNS.question].length > 25 ) {
 
         questionView.innerHTML = getQuestionItem( question, { full: true } );
+        questionViewHeight = QUESTION_HEIGHT_FULL;
 
     } else {
 
         questionView.innerHTML = getQuestionItem( question );
+        questionViewHeight = QUESTION_HEIGHT;
 
     };
 
-    document.getElementById( 'question-region' ).textContent = question[QUESTION_COLUMNS.region];
+    if ( question[QUESTION_COLUMNS.answers].length ) {
+
+        mapHeight = _dimensions.questionMapHeightNormal;
+
+    } else {
+
+        if ( isMyQuestion( question ) ) {
+
+            mapHeight = view.clientHeight - questionViewHeight - ( 3 * MARGIN );
+
+        } else {
+
+            mapHeight = view.clientHeight - questionViewHeight - BUTTON_HEIGHT - ( 4 * MARGIN );
+
+        };
+
+    };
+
+    questionMap.style.height = mapHeight + 'px';
+    questionRegion.textContent = question[QUESTION_COLUMNS.region];
 
     if ( isMyQuestion( question ) ) {
 
@@ -7416,39 +7470,29 @@ function showQuestion( question ) {
     };
 
     answers.innerHTML = html;
-    setQuestionMap( question, markers );
+    updateScrollQuestion();
+
+    setQuestionMap( question, mapHeight, function () {
+
+        questionMap.removeClass( 'fade' );
+        questionRegion.removeClass( 'fade' );
+
+    } );
 
 };
 
-function setQuestionMap( question ) {
+function setQuestionMapSize() {
+
+};
+
+function setQuestionMap( question, mapHeight, complete ) {
 
     window.setTimeout( function () {
 
-        var view = document.getElementById( 'view' ),
-            questionMap = document.getElementById( 'question-map' ),
-            addNewAnswer = document.getElementById( 'add-new-answer' ),
-            MARGIN = 6,
-            mapHeight = 0,
+        var questionMap = document.getElementById( 'question-map' ),
+            questionRegion = document.getElementById( 'question-region' ),
             zoom = '',
             markers = '';
-
-        if ( question[QUESTION_COLUMNS.answers].length ) {
-
-            mapHeight = _dimensions.questionMapHeightNormal;
-
-        } else {
-
-            if ( isMyQuestion( question ) ) {
-
-                mapHeight = view.clientHeight - questionMap.positionTop - MARGIN;
-
-            } else {
-
-                mapHeight = view.clientHeight - questionMap.positionTop - addNewAnswer.clientHeight - ( 2 * MARGIN );
-
-            };
-
-        };
 
         if ( question[QUESTION_COLUMNS.answers].length ) {
 
@@ -7468,7 +7512,6 @@ function setQuestionMap( question ) {
 
         };
 
-        questionMap.style.height = mapHeight + 'px';
         var mapUrl = 'http://maps.google.com/maps/api/staticmap?'
                 + 'key=' + GOOGLE_API_KEY
                 + '&center=' + question.latitude + ',' + question.longitude
@@ -7480,7 +7523,11 @@ function setQuestionMap( question ) {
                 + markers;
         questionMap.setAttribute( 'src', mapUrl );
 
-        updateScrollQuestion();
+        window.setTimeout( function () {
+
+            complete();
+
+        }, 50 );
 
     }, 10 );
 
@@ -7847,7 +7894,6 @@ function showUser( user ) {
 
     var reputationValue = $( '#reputation-value' );
     reputationValue.textContent = formatNumber( user[USER_COLUMNS.reputation] );
-    reputationValue.className = 'reputation-value-' + user[USER_COLUMNS.reputation].toString().length;
 
     $( '#total-questions-value' ).textContent = formatNumber( user[USER_COLUMNS.totalQuestions] );
     $( '#total-answers-value' ).textContent = formatNumber( user[USER_COLUMNS.totalAnswers] );
@@ -8100,7 +8146,6 @@ function startApp() {
 
     loadAccount( function () {
 
-        //setupGeolocation();
         refreshQuestions();
         refreshUserQuestions();
         showRefreshButton();
@@ -8187,7 +8232,7 @@ function toolbarClick( event ) {
 
                         }, { quick: true } );
 
-                    } );
+                    }, { wide: true } );
 
                 };
 
@@ -8740,7 +8785,7 @@ function viewNearbyQuestionsClick( event ) {
 
         }, { quick: true } );
 
-    } );
+    }, { wide: true } );
 
 };
 
