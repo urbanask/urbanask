@@ -60,7 +60,11 @@
 
 #add-location {
     background-color: rgba( 0, 0, 0, .8 );
-    box-shadow: 7px 7px 7px rgba( 0, 0, 0, .7 );
+    border-radius: 10px;
+    box-shadow:          7px 7px 7px rgba( 0, 0, 0, .7 );
+        -moz-box-shadow: 7px 7px 7px rgba( 0, 0, 0, .7 );
+        -ms-box-shadow:  7px 7px 7px rgba( 0, 0, 0, .7 );
+        -o-box-shadow:   7px 7px 7px rgba( 0, 0, 0, .7 );
     margin: 0;
     position: absolute;
     width: 280px;
@@ -143,7 +147,11 @@
 
 #answer-confirm {
     background-color: rgba( 0, 0, 0, .8 );
-    box-shadow: 7px 7px 7px rgba( 0, 0, 0, .7 );
+    border-radius: 10px;
+    box-shadow:          7px 7px 7px rgba( 0, 0, 0, .7 );
+        -moz-box-shadow: 7px 7px 7px rgba( 0, 0, 0, .7 );
+        -ms-box-shadow:  7px 7px 7px rgba( 0, 0, 0, .7 );
+        -o-box-shadow:   7px 7px 7px rgba( 0, 0, 0, .7 );
     margin: 0;
     position: absolute;
     width: 280px;
@@ -169,6 +177,7 @@
 #answer-confirm-cancel {
     background-color: transparent;
     border: 1px solid white;
+    border-radius: 5px;
     color: white;
     cursor: pointer;
     display: inline-block;
@@ -183,11 +192,13 @@
 
 #answer-confirm-location {
     background-color: white;
+    border-radius: 5px;
     margin: 0;
     padding: 0;
 }
 
 #answer-confirm-map {
+    border-radius: 5px;
     height: 150px;
     width: 260px;
 }
@@ -858,6 +869,7 @@ body {
 .dialog-button {
     background-color: transparent;
     border: 1px solid white;
+    border-radius: 5px;
     color: white;
     cursor: pointer;
     display: inline-block;
@@ -1431,7 +1443,7 @@ html {
     -webkit-appearance: none;
     -webkit-user-select: text !important;
     border-width: 0;
-    border-radius: 0;
+    border-radius: 5px;
     font-size: 16px;
     height: 35px;
     line-height: 20px;
@@ -1464,7 +1476,7 @@ html {
     -webkit-appearance: none;
     -webkit-user-select: text !important;
     border-width: 0;
-    border-radius: 0;
+    border-radius: 5px;
     font-size: 16px;
     height: 35px;
     line-height: 20px;
@@ -1488,7 +1500,8 @@ html {
     padding: 0;
 }
 
-#location-status {
+#location-status,
+#phone-number-status {
     border-radius: 50%;
     display: inline-block;
     height: 18px;
@@ -1498,15 +1511,25 @@ html {
     width: 18px;
 }
 
-.location-status-not-found {
+#phone-number-status {
+    box-shadow:          2px 2px 3px rgba( 0, 0, 0, .7 );
+        -moz-box-shadow: 2px 2px 3px rgba( 0, 0, 0, .7 );
+        -ms-box-shadow:  2px 2px 3px rgba( 0, 0, 0, .7 );
+        -o-box-shadow:   2px 2px 3px rgba( 0, 0, 0, .7 );
+}
+
+.location-status-not-found,
+.phone-number-status-error {
     background-color: red;
 }
 
-.location-status-found {
+.location-status-found,
+.phone-number-status-verified {
     background-color: green;
 }
 
-#location-status-frame {
+#location-status-frame,
+#phone-number-status-frame {
     color: white;
     font-size: 12px;
     height: 20px;
@@ -1514,7 +1537,8 @@ html {
     white-space: nowrap;
 }
 
-#location-status-message {
+#location-status-message,
+#phone-number-status-message {
     display: inline-block;
     height: 18px;
     line-height: 19px;
@@ -1526,7 +1550,12 @@ html {
     width: 237px;
 }
 
-.location-status-message-not-found {
+#phone-number-status-message {
+    text-shadow: 2px 2px 3px rgba( 0, 0, 0, 1 );
+}
+
+.location-status-message-not-found,
+.phone-number-status-message-error {
     color: red;
     font-weight: bold;
 }
@@ -1796,7 +1825,7 @@ html {
     height: 12px;
     padding: 2px 3px 0 3px;
     position: absolute;
-    right: 10px;
+    right: 20px;
     text-align: center;
     min-width: 8px;
 }
@@ -1944,7 +1973,7 @@ html {
 }
 
 .question-item-body {
-    margin: 4px 0 0 0;
+    margin: 4px 4px 0 0;
     overflow: hidden;
 }
 
@@ -2248,8 +2277,10 @@ html {
 #save-account,
 #save-mobile-account {
     background-color: black;
+    display: block;
     margin: 0 !important;
     padding: 0 !important;
+    width: 100%;
 }
 
 .scroll {

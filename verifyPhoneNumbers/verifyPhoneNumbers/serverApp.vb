@@ -113,31 +113,14 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
                         token = Convert.ToBase64String(Text.Encoding.UTF8.GetBytes(String.Format("{0}:{1}", _smsApiKey, _smsApiToken))),
                         header = String.Format("Basic {0}", token)
 
-
-
-                    'Dim myCache As New Net.CredentialCache()
-                    'myCache.Add(New Uri(url), "Basic", New Net.NetworkCredential(_smsApiKey, _smsApiToken))
-                    'web.Credentials = myCache
-
-                    web.Headers.Add("Authorization", header)
+                    web.Headers.Add(Net.HttpRequestHeader.Authorization, header)
                     web.Headers(Net.HttpRequestHeader.ContentType) = "application/x-www-form-urlencoded"
 
-                    Try
+                    Dim json As String = web.UploadString(url, request)
 
-                        Dim json As String = web.UploadString(url, request)
-
-                        Dim row As Data.DataRow = deletePhoneNumbers.NewRow()
-                        row("userId") = userId
-                        deletePhoneNumbers.Rows.Add(row)
-
-                    Catch ex As Exception
-
-                        Stop
-
-                    End Try
-
-
-
+                    Dim row As Data.DataRow = deletePhoneNumbers.NewRow()
+                    row("userId") = userId
+                    deletePhoneNumbers.Rows.Add(row)
 
                 End While
 
@@ -157,8 +140,8 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
 
                     Using adapter As New Data.SqlClient.SqlDataAdapter()
 
-                        adapter.DeleteCommand = delete
                         adapter.UpdateBatchSize = _batchSize
+                        adapter.InsertCommand = delete
 
                         adapter.Update(deletePhoneNumbers)
 

@@ -105,7 +105,7 @@ Public Class account : Inherits api.messageHandler
 
         Dim username As String = queries("username"),
             tagline As String = queries("tagline"),
-            phoneNumber As String = queries("phoneNumber"),
+            phoneNumber As String = unformatPhoneNumber(queries("phoneNumber")),
             regionId As String = queries("regionId")
 
         Using command As New SqlClient.SqlCommand(SAVE_ACCOUNT, connection)
@@ -118,8 +118,15 @@ Public Class account : Inherits api.messageHandler
             command.Parameters.AddWithValue("@tagline", tagline)
             command.Parameters.AddWithValue("@phoneNumber", phoneNumber)
             command.Parameters.AddWithValue("@regionId", regionId)
+            command.Parameters.Add("@error", SqlDbType.VarChar, 256).Direction = ParameterDirection.Output
 
             command.ExecuteNonQuery()
+
+            If command.Parameters("@error").Value.ToString() <> "" Then
+
+                MyBase.sendErrorResponse(context, 412, command.Parameters("@error").Value.ToString())
+
+            End If
 
         End Using
 
@@ -169,8 +176,26 @@ Public Class account : Inherits api.messageHandler
 
     End Sub
 
+    Private Function unformatPhoneNumber(number As String) As String
+
+        Dim unformattedNumber As String = ""
+
+        For index As Int32 = 0 To number.Length - 1
+
+            If Microsoft.VisualBasic.IsNumeric(number(index)) Then
+
+                unformattedNumber &= number(index)
+
+            End If
+
+        Next index
+
+        Return unformattedNumber
+
+    End Function
+
     Private Sub loadColumns(
-        context As Web.HttpContext)
+            context As Web.HttpContext)
 
         sendSuccessResponse(context, JSON_ACCOUNT_COLUMNS)
 

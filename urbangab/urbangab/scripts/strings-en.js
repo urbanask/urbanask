@@ -1,5 +1,8 @@
 ﻿var STRINGS =
     {
+        "accountPage": {
+            "numberUnverified": "Number Unverified"
+        },
         "addAnswer":
         {
             "addCaption": "add",

@@ -325,7 +325,6 @@ Public Class sms : Implements System.Web.IHttpHandler
 
     End Function
 
-
     Private Function getGeocode(
         location As String,
         ByRef latitude As String,

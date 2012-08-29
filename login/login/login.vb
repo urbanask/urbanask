@@ -223,7 +223,7 @@ Public Class login : Implements System.Web.IHttpHandler
         password As String)
 
         Dim hash As New Hashing.hash(username, password),
-            number As String = context.Request.QueryString("mobileNumber"),
+            number As String = unformatPhoneNumber(context.Request.QueryString("mobileNumber")),
             userId As Int32
 
         createUser.CommandType = Data.CommandType.StoredProcedure
@@ -241,26 +241,54 @@ Public Class login : Implements System.Web.IHttpHandler
         createUser.Parameters.AddWithValue("@mobileNumber", number)
         createUser.Parameters.Add("@userId", Data.SqlDbType.Int).Direction = Data.ParameterDirection.Output
         createUser.Parameters.Add("@username", Data.SqlDbType.VarChar, 100).Direction = Data.ParameterDirection.Output
+        createUser.Parameters.Add("@error", Data.SqlDbType.VarChar, 256).Direction = Data.ParameterDirection.Output
 
         createUser.ExecuteNonQuery()
-        userId = CInt(createUser.Parameters("@userId").Value)
 
-        If username <> createUser.Parameters("@username").Value.ToString() Then
+        If createUser.Parameters("@error").Value.ToString() = "" Then
 
-            username = createUser.Parameters("@username").Value.ToString()
-            hash = New Hashing.hash(username, password)
+            userId = CInt(createUser.Parameters("@userId").Value)
 
-            updateHash.CommandType = Data.CommandType.StoredProcedure
-            updateHash.CommandTimeout = COMMAND_TIMEOUT
-            updateHash.Parameters.AddWithValue("@userId", userId)
-            updateHash.Parameters.AddWithValue("@hash", hash.hash)
-            updateHash.ExecuteNonQuery()
+            If username <> createUser.Parameters("@username").Value.ToString() Then
+
+                username = createUser.Parameters("@username").Value.ToString()
+                hash = New Hashing.hash(username, password)
+
+                updateHash.CommandType = Data.CommandType.StoredProcedure
+                updateHash.CommandTimeout = COMMAND_TIMEOUT
+                updateHash.Parameters.AddWithValue("@userId", userId)
+                updateHash.Parameters.AddWithValue("@hash", hash.hash)
+                updateHash.ExecuteNonQuery()
+
+            End If
+
+            loadSession(sessionConnection, createSession, context, userId, username)
+
+        Else
+
+            sendErrorResponse(context, createUser.Parameters("@error").Value.ToString())
 
         End If
 
-        loadSession(sessionConnection, createSession, context, userId, username)
-
     End Sub
+
+    Private Function unformatPhoneNumber(number As String) As String
+
+        Dim unformattedNumber As String = ""
+
+        For index As Int32 = 0 To number.Length - 1
+
+            If Microsoft.VisualBasic.IsNumeric(number(index)) Then
+
+                unformattedNumber &= number(index)
+
+            End If
+
+        Next index
+
+        Return unformattedNumber
+
+    End Function
 
     Private Sub loadSession( _
         sessionConnection As Data.SqlClient.SqlConnection, _
@@ -340,8 +368,27 @@ Public Class login : Implements System.Web.IHttpHandler
 
     End Sub
 
+    Private Sub sendErrorResponse(
+       context As Web.HttpContext, _
+       errorMessage As String)
+
+        context.Response.Headers.Remove("Server")
+
+        Dim response As String = "{""error"":""" & jsonEncode(errorMessage) & """}"
+        context.Response.Headers.Add("Content-Length", response.Length.ToString())
+
+#If CONFIG <> "Debug" Then
+
+        context.Response.ContentType = "application/json"
+
+#End If
+
+        context.Response.Write(response)
+
+    End Sub
+
     Protected Function jsonEncode(
-        json As String) As String
+         json As String) As String
 
         Return json _
             .Replace("&", "&amp;") _

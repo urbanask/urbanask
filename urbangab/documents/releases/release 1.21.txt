@@ -1,8 +1,8 @@
 1.21
 
-new - cleaner design
+new - UI improvements
 new - "Everywhere" leaderboard when you're not in a region
-new - fewer GPS checks (i.e. less battery drain)
+new - fewer GPS checks. You can use most of the app without location services.
 new - signup with your mobile number
 new - more mobile number formats work
 

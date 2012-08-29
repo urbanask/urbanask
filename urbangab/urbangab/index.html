@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-version="1.12.197" manifest="cache.manifest">
+<html lang="en" data-version="1.21.3" manifest="cache.manifest">
 <head>
     <title>urbanAsk</title>
     
@@ -106,10 +106,13 @@
                         <input id="edit-tagline" class="edit-input" placeholder="tagline">
                         <div id="edit-phone-number-caption" class="edit-caption"></div>
                         <input id="edit-phone-number" class="edit-input" placeholder="mobile number">
+                        <div id="phone-number-status-frame" class="height-slide height-zero hide">
+                            <div id="phone-number-status"></div><div id="phone-number-status-message"></div>
+                        </div>
                         <button id="add-contact" class="button">add urbanAsk to contacts</button>
                         <div id="edit-region-caption" class="edit-caption"></div>
                         <select id="edit-region"></select>
-                        <button id="save-edit" class="button">save</button>
+                        <button id="save-edit" class="button" type="submit">save</button>
                         <div class="section-header-black"></div>
                         <button id="invite" class="button">invite friends</button>
                         <button id="post" class="button">post to wall</button>
@@ -184,7 +187,7 @@
                 <input id="create-username" class="create-account-input" autocorrect="off" autocapitalize="none" type="text" maxlength="100" />
                 <input id="create-password" class="create-account-input" autocorrect="off" autocapitalize="none" type="text" maxlength="100" />
                 <input id="create-email" class="create-account-input" autocorrect="off" autocapitalize="none" type="text" maxlength="256" />
-                <div id="save-account" class="login-button button-3d"></div>
+                <input id="save-account" class="login-button button-3d" type="submit" value="create" />
                 <span id="error-create-account"></span>
                 <div id="create-account-cancel"></div>
             </form>
@@ -195,7 +198,7 @@
                 <input id="mobile-username" class="create-account-input" autocorrect="off" autocapitalize="none" type="text" maxlength="100" />
                 <input id="mobile-password" class="create-account-input" autocorrect="off" autocapitalize="none"  type="text" maxlength="100" />
                 <input id="mobile-number" class="create-account-input" autocorrect="off" autocapitalize="none" type="text" maxlength="256" />
-                <div id="save-mobile-account" class="login-button button-3d"></div>
+                <input id="save-mobile-account" class="login-button button-3d" type="submit" value="create" />
                 <span id="error-mobile-account"></span>
                 <div id="cancel-mobile-account"></div>
             </form>

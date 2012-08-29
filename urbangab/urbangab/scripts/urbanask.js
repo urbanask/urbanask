@@ -2635,8 +2635,8 @@ function localizeStrings() {
     $( '#question-share-facebook' ).textContent = STRINGS.facebook.postQuestionToFacebook;
     $( '#question-share-twitter' ).textContent = STRINGS.facebook.postQuestionToTwitter;
     $( '#reputation-caption' ).textContent = STRINGS.reputation;
-    $( '#save-account' ).textContent = STRINGS.createAccount.saveAccount;
-    $( '#save-mobile-account' ).textContent = STRINGS.createAccount.saveAccount;
+    $( '#save-account' ).value = STRINGS.createAccount.saveAccount;
+    $( '#save-mobile-account' ).value = STRINGS.createAccount.saveAccount;
     $( '#top-interval-day' ).textContent = STRINGS.intervalDayCaption;
     $( '#top-interval-week' ).textContent = STRINGS.intervalWeekCaption;
     $( '#top-interval-month' ).textContent = STRINGS.intervalMonthCaption;
@@ -2652,54 +2652,6 @@ function localizeStrings() {
     $( '#twitter-login-caption' ).innerHTML = STRINGS.login.twitter;
     $( '#user-id-caption' ).textContent = STRINGS.userIdCaption;
     $( '#view-nearby-questions' ).textContent = STRINGS.questionsPage.viewNearbyQuestions;
-
-};
-
-function login( event ) {
-
-    if ( event ) { event.preventDefault(); };
-
-    var resource = '/logins/login',
-        username = document.getElementById( 'login-username' ).value,
-        password = document.getElementById( 'login-password' ).value,
-        authorization = window.Crypto.util.bytesToBase64( window.Crypto.charenc.UTF8.stringToBytes( username + ':' + password ) );
-
-    deleteFacebookFrame();
-    document.getElementById( 'login-error' ).innerHTML = '';
-    document.getElementById( 'login-password' ).value = '';
-    document.getElementById( 'login-button' ).focus();
-
-    if ( username && password ) {
-
-        ajax( API_URL + resource, {
-
-            "type": "POST",
-            "headers": { "x-authorization": authorization },
-            "complete": function ( response, status ) {
-
-                if ( status != "error" ) {
-
-                    var session = response.getResponseHeader( 'x-session' ).split( ':' );
-
-                    _session.id = session[0];
-                    _session.key = session[1];
-                    window.setLocalStorage( 'sessionId', _session.id );
-                    window.setLocalStorage( 'sessionKey', _session.key );
-
-                    startApp();
-
-                };
-
-            },
-            "error": function ( response, status, error ) {
-
-                document.getElementById( 'login-error' ).innerHTML = error;
-
-            }
-
-        } );
-
-    };
 
 };
 
@@ -2928,7 +2880,6 @@ function createFacebookFrame( complete ) {
 function loadSessionFacebook( facebookId, username, password, location, email ) {
 
     deleteFacebookFrame();
-    hideLoginPage();
 
     var resource = '/logins/loginFB',
         data = 'location=' + location
@@ -2955,6 +2906,7 @@ function loadSessionFacebook( facebookId, username, password, location, email ) 
                 window.setLocalStorage( 'sessionKey', _session.key );
 
                 startApp();
+                hideLoginPage();
 
             };
 
@@ -5272,6 +5224,55 @@ function showLoginPage( options ) {
 
     };
 
+    function login( event ) {
+
+        event.preventDefault();
+
+        var resource = '/logins/login',
+            username = document.getElementById( 'login-username' ).value,
+            password = document.getElementById( 'login-password' ).value,
+            authorization = window.Crypto.util.bytesToBase64( window.Crypto.charenc.UTF8.stringToBytes( username + ':' + password ) );
+
+        deleteFacebookFrame();
+        document.getElementById( 'login-error' ).innerHTML = '';
+        document.getElementById( 'login-password' ).value = '';
+        document.getElementById( 'login-button' ).focus();
+
+        if ( username && password ) {
+
+            ajax( API_URL + resource, {
+
+                "type": "POST",
+                "headers": { "x-authorization": authorization },
+                "complete": function ( response, status ) {
+
+                    if ( status != "error" ) {
+
+                        var session = response.getResponseHeader( 'x-session' ).split( ':' );
+
+                        _session.id = session[0];
+                        _session.key = session[1];
+                        window.setLocalStorage( 'sessionId', _session.id );
+                        window.setLocalStorage( 'sessionKey', _session.key );
+
+                        startApp();
+                        close();
+
+                    };
+
+                },
+                "error": function ( response, status, error ) {
+
+                    document.getElementById( 'login-error' ).innerHTML = error;
+
+                }
+
+            } );
+
+        };
+
+    };
+
     function loginFacebook( event ) {
 
         event.preventDefault();
@@ -5307,10 +5308,9 @@ function showLoginPage( options ) {
     function authorizeTwitter( event ) {
 
         event.preventDefault();
-        close();
 
         var resource = '/logins/loginTwitter',
-        data = '';
+            data = '';
 
         if ( window.deviceInfo.phonegap ) {
 
@@ -5489,33 +5489,62 @@ function showAccountPage() {
 
     if( accountPage.hasClass( 'hide' ) ) {
 
-        username.value = _account[ACCOUNT_COLUMNS.username];
-        tagline.value = _account[ACCOUNT_COLUMNS.tagline];
-        phoneNumber.value = _account[ACCOUNT_COLUMNS.phone].number;
-        loadRegions();
+        loadAccount( function () {
 
-        if ( window.deviceInfo.phonegap ) {
+            username.value = _account[ACCOUNT_COLUMNS.username];
+            tagline.value = _account[ACCOUNT_COLUMNS.tagline];
+            phoneNumber.value = _account[ACCOUNT_COLUMNS.phone].number;
+            loadRegions();
 
-            addContact.removeClass( 'hide' );
+            if ( _account[ACCOUNT_COLUMNS.phone].number
+                && !_account[ACCOUNT_COLUMNS.phone][PHONE_COLUMNS.verified] ) {
 
-        } else {
+                showPhoneNumberError( STRINGS.accountPage.numberUnverified );
 
-            addContact.addClass( 'hide' );
+            } else {
 
-        };
+                hidePhoneNumberError();
+                
+            };
 
-        accountPage.removeClass( 'hide' );
-        addEventListeners();
+            if ( window.deviceInfo.phonegap ) {
 
-        if ( window.deviceInfo.iscroll ) {
+                addContact.removeClass( 'hide' );
 
-            scrollAccount = new iScroll( 'account-scroll' );
+            } else {
 
-        };
+                addContact.addClass( 'hide' );
+
+            };
+
+            accountPage.removeClass( 'hide' );
+            addEventListeners();
+
+            if ( window.deviceInfo.iscroll ) {
+
+                scrollAccount = new iScroll( 'account-scroll' );
+
+            };
+
+        } );
 
     } else {
 
         close();
+
+    };
+
+    function updateScrollAccount() {
+
+        if ( window.deviceInfo.iscroll ) {
+
+            setTimeout( function () {
+
+                scrollAccount.refresh();
+
+            }, 0 );
+
+        };
 
     };
 
@@ -5603,11 +5632,50 @@ function showAccountPage() {
             },
             "error": function ( response, status, error ) {
 
-                close();
+                if ( error == 'Unauthorized' ) {
+
+                    logoutApp();
+
+                } else if ( status == 412 ) {
+
+                    showPhoneNumberError( error );
+
+                } else {
+
+                    close();
+
+                };
 
             }
 
         } );
+
+    };
+
+    function showPhoneNumberError( error ) {
+
+        var statusFrame = document.getElementById( 'phone-number-status-frame' ),
+            status = document.getElementById( 'phone-number-status' ),
+            statusMessage = document.getElementById( 'phone-number-status-message' );
+
+        statusMessage.innerHTML = error;
+        statusMessage.addClass( 'phone-number-status-message-error' );
+        status.innerHTML = STRINGS.xmark;
+        status.removeClass( 'phone-number-status-verified' ).addClass( 'phone-number-status-error' );
+        statusFrame.removeClass( 'hide' );
+        window.setTimeout( function () { statusFrame.removeClass( 'height-zero' ); }, 10 );
+
+        updateScrollAccount();
+
+    };
+
+    function hidePhoneNumberError() {
+
+        var statusFrame = document.getElementById( 'phone-number-status-frame' ),
+            status = document.getElementById( 'phone-number-status' );
+
+        statusFrame.addClass( 'hide' ).addClass( 'height-zero' );
+        status.removeClass( 'phone-number-status-verified' ).addClass( 'phone-number-status-error' );
 
     };
 
@@ -5737,6 +5805,7 @@ function showAccountPage() {
     function addEventListeners() {
 
         accountPage.addEventListener( 'close', close, false );
+        account.addEventListener( 'submit', saveAccount, false );
         cancel.addEventListener( 'click', close, false );
         window.addEventListener( 'message', authorizeFacebook, false );
 
@@ -5784,6 +5853,7 @@ function showAccountPage() {
     function removeEventListeners() {
 
         accountPage.removeEventListener( 'close', close, false );
+        account.removeEventListener( 'submit', saveAccount, false );
         cancel.removeEventListener( 'click', close, false );
         window.removeEventListener( 'message', authorizeFacebook, false );
 
@@ -6822,21 +6892,30 @@ function showCreateMobileAccount( event ) {
 
                     if ( status != "error" ) {
 
-                        var session = response.getResponseHeader( 'x-session' ).split( ':' ),
-                            username = window.JSON.parse( response.responseText ).username;
+                        var data = window.JSON.parse( response.responseText );
 
-                        _session.id = session[0];
-                        _session.key = session[1];
-                        window.setLocalStorage( 'sessionId', _session.id );
-                        window.setLocalStorage( 'sessionKey', _session.key );
+                        if ( !data.error ) {
 
-                        document.getElementById( 'login-username' ).value = username;
-                        document.getElementById( 'login-password' ).value = password;
+                            var session = response.getResponseHeader( 'x-session' ).split( ':' );
 
-                        close();
-                        startApp();
+                            _session.id = session[0];
+                            _session.key = session[1];
+                            window.setLocalStorage( 'sessionId', _session.id );
+                            window.setLocalStorage( 'sessionKey', _session.key );
 
-                        showMessage( STRINGS.login.verifyMobile );
+                            document.getElementById( 'login-username' ).value = data.username;
+                            document.getElementById( 'login-password' ).value = password;
+
+                            close();
+                            startApp();
+
+                            showMessage( STRINGS.login.verifyMobile );
+
+                        } else {
+
+                            document.getElementById( 'error-mobile-account' ).innerHTML = data.error;
+
+                        };
 
                     } else {
 

@@ -13,11 +13,12 @@ SELECT * FROM questionVote WHERE userId < 100
 SELECT * FROM userBadge WHERE userId < 100
 SELECT * FROM reputation WHERE userId < 100
 
-SELECT * FROM Gabs.lookup.region
+SELECT * FROM Gabs.lookup.region ORDER BY name
 SELECT * FROM Gabs.processRegions.regionNew
 
 /*
-INSERT INTO Gabs.lookup.regionName VALUES ( 44, 'Santa Clara, CA, USA' );
+INSERT INTO Gabs.lookup.region ( parentRegionId, name ) VALUES ( 1, 'Newton Booth, Sacramento, CA, USA' );
+INSERT INTO Gabs.lookup.regionName VALUES ( 58, 'Newton Booth, Sacramento, CA, USA' );
 DBCC CHECKIDENT( 'Gabs.dbo.[user]', RESEED, 127 )
 DELETE FROM question WHERE questionId = 1109137
 DELETE FROM answer WHERE answerId = 4250081
