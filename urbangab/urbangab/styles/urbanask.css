@@ -58,6 +58,15 @@
     z-index: 100;
 }
 
+#add-contact {
+    background-color: black;
+    border-radius: 3px;
+    display: block;
+    height: 40px;
+    line-height: 40px;
+    margin-top: 3px;
+}
+
 #add-location {
     background-color: rgba( 0, 0, 0, .8 );
     border-radius: 10px;
@@ -596,6 +605,10 @@
     display: inline-block;
     max-width: 200px;
     width: 50%;
+}
+
+.badge-item:nth-last-child( 1 ):nth-child( even ) {
+    margin-right: 100%;
 }
 
 .badge-text {
@@ -1901,7 +1914,11 @@ html {
 #post-facebook {
     -webkit-appearance: none;
     background-color: rgba( 0, 0, 0, .8 );
-    box-shadow: 7px 7px 7px rgba( 0, 0, 0, .7 );
+    border-radius: 10px;
+    box-shadow:          7px 7px 7px rgba( 0, 0, 0, .7 );
+        -moz-box-shadow: 7px 7px 7px rgba( 0, 0, 0, .7 );
+        -ms-box-shadow:  7px 7px 7px rgba( 0, 0, 0, .7 );
+        -o-box-shadow:   7px 7px 7px rgba( 0, 0, 0, .7 );
     margin: 15px auto 0 auto;
     padding-top: 10px;
     position: relative;
@@ -1915,7 +1932,7 @@ html {
 #post-facebook-message {
     -webkit-appearance: none !important;
     -webkit-user-select: text !important;
-    border-radius: 0;
+    border-radius: 5px;
     border-width: 0;
     font-size: 16px;
     height: 66px;
@@ -1942,6 +1959,7 @@ html {
 #post-facebook-cancel {
     background-color: transparent;
     border: 1px solid white;
+    border-radius: 5px;
     color: white;
     cursor: pointer;
     display: inline-block;

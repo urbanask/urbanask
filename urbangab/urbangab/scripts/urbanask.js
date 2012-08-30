@@ -2366,7 +2366,7 @@ function loadRegionQuestions() {
             "type": "GET",
             "data": data,
             "cache": false,
-            "async": false,
+            "async": true,
             "success": function ( data, status ) {
 
                 _questions = window.JSON.parse( data );
@@ -2390,7 +2390,7 @@ function loadRegionQuestions() {
 
 };
 
-function loadNearbyQuestions() {
+function loadNearbyQuestions( complete ) {
 
     if ( isLocationAvailable() ) {
 
@@ -2408,11 +2408,13 @@ function loadNearbyQuestions() {
                 "type": "GET",
                 "data": data,
                 "cache": false,
+                "async": true,
                 "success": function ( data, status ) {
 
                     _nearbyQuestions = window.JSON.parse( data );
                     window.setLocalStorage( 'nearby-questions', data );
                     showQuestions( STRINGS.questionsNearby, _nearbyQuestions, document.getElementById( 'nearby-questions' ) );
+                    if ( complete ) { complete(); };
 
                 },
                 "error": function ( response, status, error ) {
@@ -2429,6 +2431,7 @@ function loadNearbyQuestions() {
 
         document.getElementById( 'nearby-questions' ).addClass( 'hide' );
         document.getElementById( 'view-nearby-questions' ).removeClass( 'hide' );
+        if ( complete ) { complete(); };
 
     };
 
@@ -2448,6 +2451,7 @@ function loadEverywhereQuestions() {
             "type": "GET",
             "data": data,
             "cache": false,
+            "async": true,
             "success": function ( data, status ) {
 
                 _everywhereQuestions = window.JSON.parse( data );
@@ -2561,7 +2565,7 @@ function loadUserQuestions() {
             "type": "GET",
             "data": data,
             "cache": false,
-            "async": false,
+            "async": true,
             "success": function ( data, status ) {
 
                 _userQuestions = window.JSON.parse( data );
@@ -2635,6 +2639,7 @@ function localizeStrings() {
     $( '#question-share-facebook' ).textContent = STRINGS.facebook.postQuestionToFacebook;
     $( '#question-share-twitter' ).textContent = STRINGS.facebook.postQuestionToTwitter;
     $( '#reputation-caption' ).textContent = STRINGS.reputation;
+    $( '#save-edit' ).innerHTML = STRINGS.accountPage.saveCaption;
     $( '#save-account' ).value = STRINGS.createAccount.saveAccount;
     $( '#save-mobile-account' ).value = STRINGS.createAccount.saveAccount;
     $( '#top-interval-day' ).textContent = STRINGS.intervalDayCaption;
@@ -3412,9 +3417,7 @@ function refresh() {
     _everywhereQuestions.length = 0;
 
     loadUserQuestions();
-    loadRegionQuestions();
-    loadNearbyQuestions();
-    loadEverywhereQuestions();
+    loadAllQuestions();
 
     showPage( 'questions-page' );
 
@@ -3422,11 +3425,24 @@ function refresh() {
 
 };
 
+function loadAllQuestions() {
+
+    window.setTimeout( function () {
+
+        loadRegionQuestions();
+        loadNearbyQuestions( function () {
+
+            loadEverywhereQuestions();
+
+        } );
+
+    }, 10 );
+
+};
+
 function refreshQuestions() {
 
-    loadRegionQuestions();
-    loadNearbyQuestions();
-    loadEverywhereQuestions();
+    loadAllQuestions();
 
     if ( !_questionTimer ) {
 
@@ -3436,10 +3452,7 @@ function refreshQuestions() {
             _nearbyQuestions.length = 0;
             _everywhereQuestions.length = 0;
 
-            loadRegionQuestions();
-            loadNearbyQuestions();
-            loadEverywhereQuestions();
-
+            loadAllQuestions();
             loadAccount();
 
         }, REFRESH_QUESTION_RATE );
@@ -4667,7 +4680,7 @@ function setQuestionsTop() {
 
     if ( window.deviceInfo.iscroll ) {
 
-        _scrollQuestions.scrollTo( 0, -top, 0 );
+        _scrollQuestions.scrollTo( 0, top, 0 );
 
     } else {
 
@@ -4680,7 +4693,17 @@ function setQuestionsTop() {
 function getQuestionsTop() {
 
     var questionsView = document.getElementById( 'questions-view' ),
+        top;
+
+    if ( window.deviceInfo.iscroll ) {
+
+        top = _scrollQuestions.y;
+
+    } else {
+
         top = questionsView.scrollTop;
+
+    };
 
     questionsView.setDataset( 'scroll-top', top );
 
@@ -5523,8 +5546,14 @@ function showAccountPage() {
             if ( window.deviceInfo.iscroll ) {
 
                 scrollAccount = new iScroll( 'account-scroll' );
+                scrollAccount.scrollToElement( username, 1 );
+
+            } else {
+
+                document.getElementById( 'account-scroll' ).scrollTop = 0;
 
             };
+
 
         } );
 
@@ -5622,9 +5651,7 @@ function showAccountPage() {
 
                 if ( newRegion ) {
 
-                    loadRegionQuestions();
-                    loadNearbyQuestions();
-                    loadEverywhereQuestions();
+                    loadAllQuestions();
                     loadTopUsers();
 
                 };
@@ -5663,9 +5690,13 @@ function showAccountPage() {
         status.innerHTML = STRINGS.xmark;
         status.removeClass( 'phone-number-status-verified' ).addClass( 'phone-number-status-error' );
         statusFrame.removeClass( 'hide' );
-        window.setTimeout( function () { statusFrame.removeClass( 'height-zero' ); }, 10 );
 
-        updateScrollAccount();
+        window.setTimeout( function () {
+
+            statusFrame.removeClass( 'height-zero' );
+            window.setTimeout( function () { updateScrollAccount(); }, 600 );
+
+        }, 10 );        
 
     };
 
@@ -7614,28 +7645,32 @@ function setQuestionMap( question, mapHeight, complete ) {
 
 function showQuestions( header, questions, element ) {
 
-    var html = '';
+    window.setTimeout( function () {
 
-    if ( questions.length ) {
+        var html = '';
 
-        html += getListItemHeader( header );
+        if ( questions.length ) {
 
-        for ( var index = 0; index < questions.length; index++ ) {
+            html += getListItemHeader( header );
 
-            html += getQuestionItem( questions[index] );
+            for ( var index = 0; index < questions.length; index++ ) {
+
+                html += getQuestionItem( questions[index] );
+
+            };
+
+            element.removeClass( 'hide' );
+
+        } else {
+
+            element.addClass( 'hide' );
 
         };
 
-        element.removeClass( 'hide' );
+        element.innerHTML = html;
+        updateScrollQuestions();
 
-    } else {
-
-        element.addClass( 'hide' );
-
-    };
-
-    element.innerHTML = html;
-    updateScrollQuestions();
+    }, 10 );
 
 };
 
