@@ -2352,7 +2352,7 @@ function loadQuestion( questionId, complete ) {
 
 };
 
-function loadRegionQuestions() {
+function loadRegionQuestions( complete ) {
 
     if ( isLoggedIn() && _account[ACCOUNT_COLUMNS.regions].length ) {
 
@@ -2372,6 +2372,7 @@ function loadRegionQuestions() {
                 _questions = window.JSON.parse( data );
                 window.setLocalStorage( 'questions', data );
                 showQuestions( region[REGION_COLUMNS.name], _questions, document.getElementById( 'questions' ) );
+                if ( complete ) { complete(); };
 
             },
             "error": function ( response, status, error ) {
@@ -2385,6 +2386,7 @@ function loadRegionQuestions() {
     } else {
 
         document.getElementById( 'questions' ).addClass( 'hide' );
+        if ( complete ) { complete(); };
 
     };
 
@@ -2552,7 +2554,7 @@ function loadUser( userId, complete ) {
 
 };
 
-function loadUserQuestions() {
+function loadUserQuestions( complete ) {
 
     if ( isLoggedIn() ) {
 
@@ -2570,8 +2572,8 @@ function loadUserQuestions() {
 
                 _userQuestions = window.JSON.parse( data );
                 window.setLocalStorage( 'userQuestions', data );
-
                 showQuestions( _account[ACCOUNT_COLUMNS.username], _userQuestions, document.getElementById( 'user-questions' ) );
+                if ( complete ) { complete(); };
 
             },
             "error": function ( response, status, error ) {
@@ -2585,6 +2587,7 @@ function loadUserQuestions() {
     } else {
 
         document.getElementById( 'user-questions' ).addClass( 'hide' );
+        if ( complete ) { complete(); };
 
     };
 
@@ -3416,11 +3419,13 @@ function refresh() {
     _nearbyQuestions.length = 0;
     _everywhereQuestions.length = 0;
 
-    loadUserQuestions();
-    loadAllQuestions();
+    loadUserQuestions( function () {
+
+        loadAllQuestions();
+
+    } );
 
     showPage( 'questions-page' );
-
     scrollUp();
 
 };
@@ -3429,10 +3434,13 @@ function loadAllQuestions() {
 
     window.setTimeout( function () {
 
-        loadRegionQuestions();
         loadNearbyQuestions( function () {
 
-            loadEverywhereQuestions();
+            loadRegionQuestions( function () {
+
+                loadEverywhereQuestions();
+
+            } );
 
         } );
 
@@ -4927,7 +4935,7 @@ function setUsersTop() {
 
     if ( window.deviceInfo.iscroll ) {
 
-        _scrollUser.scrollTo( 0, -top, 0 );
+        _scrollUser.scrollTo( 0, top, 0 );
 
     } else {
 
@@ -4940,7 +4948,17 @@ function setUsersTop() {
 function getUsersTop() {
 
     var usersView = document.getElementById( 'user-info-view' ),
+        top;
+
+    if ( window.deviceInfo.iscroll ) {
+
+        top = _scrollUser.y;
+
+    } else {
+
         top = usersView.scrollTop;
+
+    };
 
     usersView.setDataset( 'scroll-top', top );
 
@@ -5126,29 +5144,6 @@ function setTravelMode( travelItem ) {
 
     var answer = _pages.last().options.object;
     showAnswerMap( answer, travelItem.getDataset( 'travel-mode' ) );
-
-};
-
-function setView( view ) {
-
-    switch ( view ) {
-
-        case 'fullscreen':
-
-            document.getElementById( 'view' ).addClass( 'view-fullscreen' );
-            break;
-
-        case 'header':
-
-            document.getElementById( 'view' ).addClass( 'view-header' );
-            break;
-
-        default:
-
-            document.getElementById( 'view' ).removeClass( 'view-fullscreen' );
-            document.getElementById( 'view' ).removeClass( 'view-header' );
-
-    };
 
 };
 
@@ -7267,7 +7262,6 @@ function showPage( page, options, back ) {
             showAnswer( answer, question, options.answerLetter );
 
             hideContact();
-            setView( 'normal' );
             initializeBackButton();
             document.getElementById( 'directions-page' ).addClass( 'top-slide' );
             showToolbar( 'answer', { question: question, answer: answer } );
@@ -7306,7 +7300,6 @@ function showPage( page, options, back ) {
             hideAccountPage();
             resetQuestionsTop();
             resetUsersTop();
-            setView( 'normal' );
             initializeBackButton();
             showToolbar( 'main' );
 
@@ -7357,11 +7350,14 @@ function showPage( page, options, back ) {
 
                 hideAccountPage();
                 resetUsersTop();
-                setQuestionsTop();
-                setView( 'normal' );
                 initializeBackButton();
                 showToolbar( 'main' );
-                updateScrollQuestions();
+
+                updateScrollQuestions( function () {
+
+                    setQuestionsTop();
+
+                } );
 
             }, 10 );
 
@@ -7376,12 +7372,11 @@ function initializeQuestionPage( question, page, previousPage ) {
     getQuestionsTop();
     getUsersTop();
     hideQuestionShare()
-    setView( 'normal' );
     initializeBackButton();
     showToolbar( 'question', { question: question } );
 
     slidePage( page, previousPage );
-    updateScrollQuestions();
+    updateScrollQuestion();
 
 };
 
@@ -7390,9 +7385,6 @@ function initializeUserPage( user, page, previousPage ) {
     slidePage( page, previousPage );
 
     resetQuestionsTop();
-    setUsersTop();
-
-    setView( 'normal' );
     showToolbar( 'main' );
     initializeBackButton();
 
@@ -7406,6 +7398,12 @@ function initializeUserPage( user, page, previousPage ) {
         document.getElementById( 'user-notifications' ).addClass( 'hide' );
 
     };
+
+    updateScrollUser( function () {
+
+        setUsersTop();
+
+    } );
 
 };
 
@@ -7588,10 +7586,6 @@ function showQuestion( question ) {
         questionRegion.removeClass( 'fade' );
 
     } );
-
-};
-
-function setQuestionMapSize() {
 
 };
 
@@ -7989,20 +7983,10 @@ function showUser( user ) {
         userIdValue = document.getElementById( 'user-id-value' );
 
     memberSince.textContent = getMemberSince( user );
+    userIdValue.textContent = user[USER_COLUMNS.userId];
 
-    if ( user[USER_COLUMNS.userId] > 143400 && user[USER_COLUMNS.userId] < 147494 ) {
-
-        userIdCaption.addClass( 'hide' );
-        userIdValue.addClass( 'hide' );
-
-    } else {
-
-        userIdValue.textContent = user[USER_COLUMNS.userId];
-
-        userIdCaption.removeClass( 'hide' );
-        userIdValue.removeClass( 'hide' );
-
-    };
+    userIdCaption.removeClass( 'hide' );
+    userIdValue.removeClass( 'hide' );
 
     $( '#tagline' ).textContent = user[USER_COLUMNS.tagline];
 
@@ -8112,7 +8096,6 @@ function showUser( user ) {
     $( '#user-badges' ).removeClass( 'hide' );
 
     updateScrollUser();
-    setUsersTop();
 
     window.setTimeout( function () {
 
@@ -8779,13 +8762,14 @@ function unselectElement( event ) {
 
 };
 
-function updateScrollQuestions() {
+function updateScrollQuestions( complete ) {
 
     if ( window.deviceInfo.iscroll ) {
 
         setTimeout( function () {
 
             _scrollQuestions.refresh();
+            if ( complete ) { complete(); };
 
         }, 0 );
 
@@ -8807,13 +8791,14 @@ function updateScrollTopUsers() {
 
 };
 
-function updateScrollUser() {
+function updateScrollUser( complete ) {
 
     if ( window.deviceInfo.iscroll ) {
 
         setTimeout( function () {
 
             _scrollUser.refresh();
+            if ( complete ) { complete(); };
 
         }, 0 );
 

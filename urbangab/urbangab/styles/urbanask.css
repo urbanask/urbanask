@@ -3013,17 +3013,6 @@ html {
     width: 100%;
 }
 
-.view-fullscreen {
-    top: 0 !important;
-    bottom: 0 !important;
-    z-index: 10;
-}
-
-.view-header {
-    bottom: 0 !important;
-    z-index: 10;
-}
-
 #view-nearby-questions {
     background-color: black;
     border-radius: 3px;
