@@ -3,8 +3,8 @@
     xmlns       = "http://www.w3.org/ns/widgets"
     xmlns:gap   = "http://phonegap.com/ns/1.0"
     id          = "com.urbanask"
-    versionCode = "19"
-    version     = "1.21.56">
+    versionCode = "20"
+    version     = "1.22.2">
 
     <name>urbanAsk</name>
     <description>Find it. Share it.</description>

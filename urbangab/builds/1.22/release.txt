@@ -1,0 +1,10 @@
+
+- Signup with your mobile number
+- Ask questions with SMS. Text question to 415.630.5242 in the format: question @ location
+- Ask questions in a different region. Format: question @ location. Location can be a postal code, city, neighborhood or address
+- UI improvements
+- "Worldwide" leaderboard
+- Fewer GPS checks. You can use most of the app without location services.
+- Faster load times for slow 3G connections
+- More relevant questions at top of list
+- Various bug fixes

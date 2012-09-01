@@ -30,13 +30,18 @@
     height: 100%;
     overflow-x: hidden;
     overflow-y: auto;    
+    padding-right: 5px;
     width: 100%;
 }
 
 #account-view {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAGklEQVQI12Pw8fH5X19fD8YMMAZIkAHGANEAiZwUkmznO8QAAAAASUVORK5CYII=);
     border: 4px solid black;
-    box-shadow: 7px 7px 7px rgba( 0, 0, 0, .7 );
+    border-radius: 10px;
+    box-shadow:          7px 7px 7px rgba( 0, 0, 0, .7 );
+        -moz-box-shadow: 7px 7px 7px rgba( 0, 0, 0, .7 );
+        -ms-box-shadow:  7px 7px 7px rgba( 0, 0, 0, .7 );
+        -o-box-shadow:   7px 7px 7px rgba( 0, 0, 0, .7 );
     margin: 15px auto 0 auto;
     padding: 10px;
     position: relative;
@@ -1282,6 +1287,7 @@ html {
 
 #loading {
     background-color: rgba( 0, 0, 0, .8 );
+    border-radius: 10px;
     height: 60px;
     position: absolute;
     width: 60px;

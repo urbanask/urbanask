@@ -2494,7 +2494,6 @@ function loadTopUsers() {
 
                 _cache.topUsers.refresh( data );
                 showTopUsers( _currentLocation.regionName );
-                hideLoading();
 
             },
             "error": function ( response, status, error ) {
@@ -2515,11 +2514,11 @@ function loadTopUsers() {
 function loadUser( userId, complete ) {
 
     clearUser();
+    showLoading( 'center', 'center' );
 
     window.setTimeout( function () {
 
         var resource = '/api/users/' + userId;
-        showLoading( 'center', 'center' );
 
         ajax( API_URL + resource, {
 
@@ -2541,7 +2540,6 @@ function loadUser( userId, complete ) {
             "error": function ( response, status, error ) {
 
                 hideLoading();
-
                 error == 'Unauthorized'
                     ? logoutApp()
                     : showMessage( STRINGS.error.loadUser );
@@ -4688,7 +4686,7 @@ function setQuestionsTop() {
 
     if ( window.deviceInfo.iscroll ) {
 
-        _scrollQuestions.scrollTo( 0, top, 0 );
+        //_scrollQuestions.scrollTo( 0, top, 0 );
 
     } else {
 
@@ -4935,7 +4933,7 @@ function setUsersTop() {
 
     if ( window.deviceInfo.iscroll ) {
 
-        _scrollUser.scrollTo( 0, top, 0 );
+        //_scrollUser.scrollTo( 0, top, 0 );
 
     } else {
 
@@ -6352,7 +6350,7 @@ function showCreateEmailAccount( event ) {
                         window.setLocalStorage( 'sessionKey', _session.key );
 
                         document.getElementById( 'login-username' ).value = username;
-                        document.getElementById( 'login-password' ).value = password;
+                        document.getElementById( 'login-password' ).value = password.value;
 
                         close();
                         startApp();
@@ -6907,7 +6905,7 @@ function showCreateMobileAccount( event ) {
             var resource = '/logins/login/add',
                 data = 'mobileNumber=' + unformatPhoneNumber( number.value.trim() ),
                 authorization = window.Crypto.util.bytesToBase64(
-                    window.Crypto.charenc.UTF8.stringToBytes( username.value.trim() + ':' + password.value.trim() ) );
+                    window.Crypto.charenc.UTF8.stringToBytes( username.value + ':' + password.value ) );
 
             ajax( API_URL + resource, {
 
@@ -6930,7 +6928,7 @@ function showCreateMobileAccount( event ) {
                             window.setLocalStorage( 'sessionKey', _session.key );
 
                             document.getElementById( 'login-username' ).value = data.username;
-                            document.getElementById( 'login-password' ).value = password;
+                            document.getElementById( 'login-password' ).value = password.value;
 
                             close();
                             startApp();
@@ -7910,65 +7908,72 @@ function showToolbar( toolbar, options ) {
 
 function showTopUsers( header ) {
 
-    var noTopUsers = document.getElementById( 'no-top-users' ),
-        topUsers = document.getElementById( 'top-users' );
+    showLoading( 'center', 'center' );
 
-    if ( _cache.topUsers.refreshed ) {
+    window.setTimeout( function () {
 
-        var topTypeId = window.parseInt( document.getElementById( 'top-type' ).getDataset( 'id' ) ),
-            intervalId = window.parseInt( document.getElementById( 'top-interval' ).getDataset( 'id' ) ),
-            html = '';
+        var noTopUsers = document.getElementById( 'no-top-users' ),
+            topUsers = document.getElementById( 'top-users' );
 
-        scrollUp();
+        if ( _cache.topUsers.refreshed ) {
 
-        for ( var index = 0, rank = 0; index < _cache.topUsers.length(); index++ ) {
+            var topTypeId = window.parseInt( document.getElementById( 'top-type' ).getDataset( 'id' ) ),
+                intervalId = window.parseInt( document.getElementById( 'top-interval' ).getDataset( 'id' ) ),
+                html = '';
 
-            if ( _cache.topUsers.data[index][TOP_USER_COLUMNS.topTypeId] == topTypeId
-                && _cache.topUsers.data[index][TOP_USER_COLUMNS.intervalId] == intervalId ) {
+            scrollUp();
 
-                rank++;
-                html += getTopUserItem( topTypeId, _cache.topUsers.data[index], rank );
+            for ( var index = 0, rank = 0; index < _cache.topUsers.length(); index++ ) {
+
+                if ( _cache.topUsers.data[index][TOP_USER_COLUMNS.topTypeId] == topTypeId
+                    && _cache.topUsers.data[index][TOP_USER_COLUMNS.intervalId] == intervalId ) {
+
+                    rank++;
+                    html += getTopUserItem( topTypeId, _cache.topUsers.data[index], rank );
+
+                };
 
             };
 
-        };
+            if ( html.length ) {
 
-        if ( html.length ) {
+                topUsers.innerHTML = getListItemHeader( header ) + html;
 
-            topUsers.innerHTML = getListItemHeader( header ) + html;
+                noTopUsers.addClass( 'hide' );
+                topUsers.removeClass( 'hide' );
 
-            noTopUsers.addClass( 'hide' );
-            topUsers.removeClass( 'hide' );
+            } else {
+
+                topUsers.innerHTML = '';
+
+                noTopUsers.innerHTML = STRINGS.topUsers.noTopUsers
+                    .replace( "%1", STRINGS.topUsers.noTopUsersType[topTypeId - 1] )
+                    .replace( "%2", STRINGS.topUsers.noTopUsersInterval[intervalId] );
+                noTopUsers.removeClass( 'hide' );
+                topUsers.addClass( 'hide' );
+
+            };
+
+            updateScrollTopUsers();
+
+            window.setTimeout( function () {
+
+                if ( _cache.topUsers.isExpired() ) { loadTopUsers(); };
+
+            }, 1500 );
+
+            hideLoading();
 
         } else {
 
-            topUsers.innerHTML = '';
-
-            noTopUsers.innerHTML = STRINGS.topUsers.noTopUsers
-                .replace( "%1", STRINGS.topUsers.noTopUsersType[topTypeId - 1] )
-                .replace( "%2", STRINGS.topUsers.noTopUsersInterval[intervalId] );
-            noTopUsers.removeClass( 'hide' );
+            noTopUsers.addClass( 'hide' );
             topUsers.addClass( 'hide' );
+
+            loadTopUsers();
 
         };
 
-        updateScrollTopUsers();
-
-        window.setTimeout( function () {
-
-            if ( _cache.topUsers.isExpired() ) { loadTopUsers(); };
-
-        }, 1500 );
-
-    } else {
-
-        noTopUsers.innerHTML = STRINGS.topUsers.loading;
-        noTopUsers.removeClass( 'hide' );
-        topUsers.addClass( 'hide' );
-
-        loadTopUsers();
-
-    };
+    }, 500 );
 
 };
 
@@ -7976,134 +7981,138 @@ function showUser( user ) {
 
     showLoading( 'center', 'center' );
 
-    $( '#username' ).textContent = user[USER_COLUMNS.username];
-
-    var memberSince = document.getElementById( 'member-since' ),
-        userIdCaption = document.getElementById( 'user-id-caption' ),
-        userIdValue = document.getElementById( 'user-id-value' );
-
-    memberSince.textContent = getMemberSince( user );
-    userIdValue.textContent = user[USER_COLUMNS.userId];
-
-    userIdCaption.removeClass( 'hide' );
-    userIdValue.removeClass( 'hide' );
-
-    $( '#tagline' ).textContent = user[USER_COLUMNS.tagline];
-
-    var reputationValue = $( '#reputation-value' );
-    reputationValue.textContent = formatNumber( user[USER_COLUMNS.reputation] );
-
-    $( '#total-questions-value' ).textContent = formatNumber( user[USER_COLUMNS.totalQuestions] );
-    $( '#total-answers-value' ).textContent = formatNumber( user[USER_COLUMNS.totalAnswers] );
-    $( '#total-badges-value' ).textContent = formatNumber( user[USER_COLUMNS.totalBadges] );
-
-    $( '#total-questions-caption' ).textContent =
-        user[USER_COLUMNS.totalQuestions] == 1
-        ? STRINGS.totalQuestionsOne
-        : STRINGS.totalQuestions;
-    $( '#total-answers-caption' ).textContent =
-        user[USER_COLUMNS.totalAnswers] == 1
-        ? STRINGS.totalAnswersOne
-        : STRINGS.totalAnswers;
-    $( '#total-badges-caption' ).textContent =
-        user[USER_COLUMNS.totalBadges] == 1
-        ? STRINGS.totalBadgesOne
-        : STRINGS.totalBadges;
-
-    if ( isMe( user ) ) { showNotifications(); };
-
-    var html = getListItemHeader( STRINGS.reputation );
-
-    if ( user[USER_COLUMNS.reputations].length ) {
-
-        for ( var index = 0; index < user[USER_COLUMNS.reputations].length; index++ ) {
-
-            html += getReputationItem( user[USER_COLUMNS.reputations][index] );
-
-        };
-
-    } else {
-
-        html += getNoItems( isMe( user )
-            ? STRINGS.user.noReputationMe
-            : STRINGS.user.noReputationUser.replace( '%1', user[USER_COLUMNS.username] ) );
-
-    };
-
-    $( '#user-reputations' ).innerHTML = html;
-    html = getListItemHeader( STRINGS.questionHeader );
-
-    if ( user[USER_COLUMNS.questions].length ) {
-
-        for ( index = 0; index < user[USER_COLUMNS.questions].length; index++ ) {
-
-            html += getQuestionItem( user[USER_COLUMNS.questions][index] );
-
-        };
-
-    } else {
-
-        html += getNoItems( isMe( user )
-            ? STRINGS.user.noQuestionsMe
-            : STRINGS.user.noQuestionsUser.replace( '%1', user[USER_COLUMNS.username] ) );
-
-    };
-
-    $( '#users-questions' ).innerHTML = html;
-    html = getListItemHeader( STRINGS.answerHeader );
-
-    if ( user[USER_COLUMNS.answers].length ) {
-
-        for ( index = 0; index < user[USER_COLUMNS.answers].length; index++ ) {
-
-            html += getAnswerItem( user[USER_COLUMNS.answers][index], [], { newItem: false, questionId: true } );
-
-        };
-
-    } else {
-
-        html += getNoItems( isMe( user )
-            ? STRINGS.user.noAnswersMe
-            : STRINGS.user.noAnswersUser.replace( '%1', user[USER_COLUMNS.username] ) );
-
-    };
-
-    $( '#user-answers' ).innerHTML = html;
-    html = getListItemHeader( STRINGS.headerBadges );
-
-    if ( user[USER_COLUMNS.badges].length ) {
-
-        for ( index = 0; index < user[USER_COLUMNS.badges].length; index++ ) {
-
-            html += getBadgeItem( user[USER_COLUMNS.badges][index] );
-
-        };
-
-    } else {
-
-        html += getNoItems( isMe( user )
-            ? STRINGS.user.noBadgesMe
-            : STRINGS.user.noBadgesUser.replace( '%1', user[USER_COLUMNS.username] ) );
-
-    };
-
-    $( '#user-badges' ).innerHTML = html;
-
-    document.getElementById( 'signup-info' ).removeClass( 'hide' );
-    $( '#user-reputations' ).removeClass( 'hide' );
-    $( '#users-questions' ).removeClass( 'hide' );
-    $( '#user-answers' ).removeClass( 'hide' );
-    $( '#user-badges' ).removeClass( 'hide' );
-
-    updateScrollUser();
-
     window.setTimeout( function () {
 
-        var resource = '/api/users/' + user[USER_COLUMNS.userId] + '/picture';
-        $( '#user-picture' ).src = API_URL + resource;
-        hideLoading();
+        $( '#username' ).textContent = user[USER_COLUMNS.username];
 
-    }, 50 );
+        var memberSince = document.getElementById( 'member-since' ),
+            userIdCaption = document.getElementById( 'user-id-caption' ),
+            userIdValue = document.getElementById( 'user-id-value' );
+
+        memberSince.textContent = getMemberSince( user );
+        userIdValue.textContent = user[USER_COLUMNS.userId];
+
+        userIdCaption.removeClass( 'hide' );
+        userIdValue.removeClass( 'hide' );
+
+        $( '#tagline' ).textContent = user[USER_COLUMNS.tagline];
+
+        var reputationValue = $( '#reputation-value' );
+        reputationValue.textContent = formatNumber( user[USER_COLUMNS.reputation] );
+
+        $( '#total-questions-value' ).textContent = formatNumber( user[USER_COLUMNS.totalQuestions] );
+        $( '#total-answers-value' ).textContent = formatNumber( user[USER_COLUMNS.totalAnswers] );
+        $( '#total-badges-value' ).textContent = formatNumber( user[USER_COLUMNS.totalBadges] );
+
+        $( '#total-questions-caption' ).textContent =
+            user[USER_COLUMNS.totalQuestions] == 1
+            ? STRINGS.totalQuestionsOne
+            : STRINGS.totalQuestions;
+        $( '#total-answers-caption' ).textContent =
+            user[USER_COLUMNS.totalAnswers] == 1
+            ? STRINGS.totalAnswersOne
+            : STRINGS.totalAnswers;
+        $( '#total-badges-caption' ).textContent =
+            user[USER_COLUMNS.totalBadges] == 1
+            ? STRINGS.totalBadgesOne
+            : STRINGS.totalBadges;
+
+        if ( isMe( user ) ) { showNotifications(); };
+
+        var html = getListItemHeader( STRINGS.reputation );
+
+        if ( user[USER_COLUMNS.reputations].length ) {
+
+            for ( var index = 0; index < user[USER_COLUMNS.reputations].length; index++ ) {
+
+                html += getReputationItem( user[USER_COLUMNS.reputations][index] );
+
+            };
+
+        } else {
+
+            html += getNoItems( isMe( user )
+                ? STRINGS.user.noReputationMe
+                : STRINGS.user.noReputationUser.replace( '%1', user[USER_COLUMNS.username] ) );
+
+        };
+
+        $( '#user-reputations' ).innerHTML = html;
+        html = getListItemHeader( STRINGS.questionHeader );
+
+        if ( user[USER_COLUMNS.questions].length ) {
+
+            for ( index = 0; index < user[USER_COLUMNS.questions].length; index++ ) {
+
+                html += getQuestionItem( user[USER_COLUMNS.questions][index] );
+
+            };
+
+        } else {
+
+            html += getNoItems( isMe( user )
+                ? STRINGS.user.noQuestionsMe
+                : STRINGS.user.noQuestionsUser.replace( '%1', user[USER_COLUMNS.username] ) );
+
+        };
+
+        $( '#users-questions' ).innerHTML = html;
+        html = getListItemHeader( STRINGS.answerHeader );
+
+        if ( user[USER_COLUMNS.answers].length ) {
+
+            for ( index = 0; index < user[USER_COLUMNS.answers].length; index++ ) {
+
+                html += getAnswerItem( user[USER_COLUMNS.answers][index], [], { newItem: false, questionId: true } );
+
+            };
+
+        } else {
+
+            html += getNoItems( isMe( user )
+                ? STRINGS.user.noAnswersMe
+                : STRINGS.user.noAnswersUser.replace( '%1', user[USER_COLUMNS.username] ) );
+
+        };
+
+        $( '#user-answers' ).innerHTML = html;
+        html = getListItemHeader( STRINGS.headerBadges );
+
+        if ( user[USER_COLUMNS.badges].length ) {
+
+            for ( index = 0; index < user[USER_COLUMNS.badges].length; index++ ) {
+
+                html += getBadgeItem( user[USER_COLUMNS.badges][index] );
+
+            };
+
+        } else {
+
+            html += getNoItems( isMe( user )
+                ? STRINGS.user.noBadgesMe
+                : STRINGS.user.noBadgesUser.replace( '%1', user[USER_COLUMNS.username] ) );
+
+        };
+
+        $( '#user-badges' ).innerHTML = html;
+
+        document.getElementById( 'signup-info' ).removeClass( 'hide' );
+        $( '#user-reputations' ).removeClass( 'hide' );
+        $( '#users-questions' ).removeClass( 'hide' );
+        $( '#user-answers' ).removeClass( 'hide' );
+        $( '#user-badges' ).removeClass( 'hide' );
+
+        updateScrollUser();
+
+        window.setTimeout( function () {
+
+            var resource = '/api/users/' + user[USER_COLUMNS.userId] + '/picture';
+            $( '#user-picture' ).src = API_URL + resource;
+            hideLoading();
+
+        }, 50 );
+
+    }, 200 );
 
 };
 
@@ -8400,7 +8409,8 @@ function toolbarClick( event ) {
 
             case 'top-button':
 
-                showPage( 'top-page' );
+                showLoading( 'center', 'center' );
+                window.setTimeout( function () { showPage( 'top-page' ); }, 10 );
                 break;
 
             case 'user-button':
@@ -8584,7 +8594,7 @@ function topIntervalClick( event ) {
 
         toggleButton.addClass( 'toggle-button-selected' );
         toggleButton.parentNode.setDataset( 'id', toggleButton.getDataset( 'id' ) );
-        window.setTimeout( function () { showTopUsers( _currentLocation.regionName ); }, 10 );
+        showTopUsers( _currentLocation.regionName );
 
     };
 
@@ -8608,7 +8618,7 @@ function topTypeClick( event ) {
 
         toggleButton.addClass( 'toggle-button-selected' );
         toggleButton.parentNode.setDataset( 'id', toggleButton.getDataset( 'id' ) );
-        window.setTimeout( function () { showTopUsers( _currentLocation.regionName ); }, 10 );
+        showTopUsers( _currentLocation.regionName );
 
     };
 

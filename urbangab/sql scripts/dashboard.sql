@@ -3,6 +3,7 @@ SELECT * FROM [user] WHERE userId < 100000 ORDER BY userId DESC
 SELECT * FROM [userFacebook] WHERE userId < 100000 ORDER BY userId DESC
 SELECT * FROM [userTwitter] WHERE userId < 100000 ORDER BY userId DESC
 SELECT * FROM [userEmail] WHERE userId < 100000 ORDER BY userId DESC
+SELECT * FROM [userPhone] WHERE userId < 100000 ORDER BY userId DESC
 SELECT * FROM userRegion WHERE userId < 100000 ORDER BY userId DESC
 SELECT * FROM userPicture WHERE userId < 100000 ORDER BY userId DESC
 SELECT * FROM question WHERE userId < 100000 ORDER BY timestamp DESC
@@ -17,14 +18,15 @@ SELECT * FROM Gabs.lookup.region ORDER BY name
 SELECT * FROM Gabs.processRegions.regionNew
 
 /*
-INSERT INTO Gabs.lookup.region ( parentRegionId, name ) VALUES ( 1, 'Newton Booth, Sacramento, CA, USA' );
-INSERT INTO Gabs.lookup.regionName VALUES ( 58, 'Newton Booth, Sacramento, CA, USA' );
+INSERT INTO Gabs.lookup.region ( parentRegionId, name ) VALUES ( 1, 'Antelope, CA 95843, USA' );
+INSERT INTO Gabs.lookup.regionName VALUES ( 60, 'Antelope, CA 95843, USA' );
 DBCC CHECKIDENT( 'Gabs.dbo.[user]', RESEED, 127 )
 DELETE FROM question WHERE questionId = 1109137
 DELETE FROM answer WHERE answerId = 4250081
 UPDATE question SET bounty = 0 WHERE regionId = 14 AND bounty = 100
 SELECT username, authtypeId FROM [user] WHERE userId < 100
 SELECT * FROM question WHERE question LIKE '%chalk%'
+SELECT * FROM Gabs.login.verifyMobileNumber
 SELECT * FROM reputation WHERE itemId = 1105914
 SELECT * FROM answer WHERE location LIKE '%ace%'
 SELECT * FROM userFacebook WHERE email LIKE '%thinkingstiff%'
@@ -34,6 +36,7 @@ hash='bFxydZg4GPGQqojigQxzbIcQw62jD3C4WeyXvB0fpB+1YHMSgAh1PIPHvpOsqqpT+gxTKG2hRl
 salt='7iJyqg==',
 authTypeId = 2 WHERE userId = 7
 UPDATE [userFacebook] SET facebookId='_100003577822117' WHERE facebookId='100003577822117'
+UPDATE [userPhone] SET number='1111' WHERE number LIKE '%9164022982%'
 UPDATE [userTwitter] SET twitterId='_509992905' WHERE twitterId = '509992905'
 DELETE FROM [user] WHERE userId IN (49, 50)
 */

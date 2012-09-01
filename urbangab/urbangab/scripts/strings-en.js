@@ -69,7 +69,7 @@
             "phoneNumberCaption": "I want to be able to ask questions by sending a text message:",
             "phoneNumberPlaceholder": "mobile # (ex: +14156305242)",
             "usernameCaption": "username",
-            "taglineCaption": "say something about yourself",
+            "taglineCaption": "tagline",
             "regionCaption": "In addition to questions near me, show me the following region",
             "regionNone": "&lt;none&gt;"
         },
@@ -195,6 +195,7 @@
 
         },
         "questionsEverywhere": "everywhere",
+        "rightAngleBracket": "&#9002;",
         "toolbar":
         {
             "questions": "questions",
@@ -208,7 +209,6 @@
         "topUsers":
         {
             "everywhere": "everywhere",
-            "loading": "Loading...",
             "noTopUsers": "No one in your area has %1 %2 <br /><br />Why not be the first?",
             "noTopUsersType": ["earned any reputation", "asked any questions", "answered any questions", "earned any badges"],
             "noTopUsersInterval": ["yet.", "today.", "this week.", "this month.", "this year."]

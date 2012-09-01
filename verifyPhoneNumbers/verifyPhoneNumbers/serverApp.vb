@@ -21,6 +21,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         _logProcedureStatitics As Boolean,
         _viewVerifyPhoneNumbers As String,
         _deleteVerifyPhoneNumbers As String,
+        _saveVerifyPhoneNumberErrors As String,
         _workCount As Int32,
         _smsApiUrl As String,
         _smsApiKey As String,
@@ -51,6 +52,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         _connectionString = Parameters.Parameter.GetValue("connectionString")
         _viewVerifyPhoneNumbers = Parameters.Parameter.GetValue("viewVerifyPhoneNumbers")
         _deleteVerifyPhoneNumbers = Parameters.Parameter.GetValue("deleteVerifyPhoneNumbers")
+        _saveVerifyPhoneNumberErrors = Parameters.Parameter.GetValue("saveVerifyPhoneNumberErrors")
         _smsApiUrl = Parameters.Parameter.GetValue("smsApiUrl")
         _smsApiKey = Parameters.Parameter.GetValue("smsApiKey")
         _smsApiToken = Parameters.Parameter.GetValue("smsApiToken")
@@ -90,9 +92,12 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         Dim startTime As System.DateTime = System.DateTime.Now
 
         Using command As New SqlClient.SqlCommand(_viewVerifyPhoneNumbers, connection),
-            deletePhoneNumbers As New Data.DataTable("phoneNumbers")
+            deletePhoneNumbers As New Data.DataTable("phoneNumbers"),
+            errors As New Data.DataTable("errors")
 
             deletePhoneNumbers.Columns.Add("userId")
+            errors.Columns.Add("userId")
+            errors.Columns.Add("phoneNumber")
 
             command.CommandType = CommandType.StoredProcedure
             command.CommandTimeout = _commandTimeout
@@ -116,11 +121,22 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
                     web.Headers.Add(Net.HttpRequestHeader.Authorization, header)
                     web.Headers(Net.HttpRequestHeader.ContentType) = "application/x-www-form-urlencoded"
 
-                    Dim json As String = web.UploadString(url, request)
+                    Try
 
-                    Dim row As Data.DataRow = deletePhoneNumbers.NewRow()
-                    row("userId") = userId
-                    deletePhoneNumbers.Rows.Add(row)
+                        Dim json As String = web.UploadString(url, request)
+
+                    Catch ex As Exception
+
+                        Dim errorRow As Data.DataRow = errors.NewRow()
+                        errorRow("userId") = userId
+                        errorRow("phoneNumber") = phoneNumber
+                        errors.Rows.Add(errorRow)
+
+                    End Try
+
+                    Dim deleteRow As Data.DataRow = deletePhoneNumbers.NewRow()
+                    deleteRow("userId") = userId
+                    deletePhoneNumbers.Rows.Add(deleteRow)
 
                 End While
 
@@ -148,6 +164,32 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
                     End Using
 
                     Me.logProcedureStatistics(_deleteVerifyPhoneNumbers, startTime)
+
+                End Using
+
+            End If
+
+            If errors.Rows.Count > 0 Then
+
+                Using errorCommand As New SqlClient.SqlCommand(_saveVerifyPhoneNumberErrors, connection)
+
+                    errorCommand.CommandType = CommandType.StoredProcedure
+                    errorCommand.CommandTimeout = _commandTimeout
+                    errorCommand.UpdatedRowSource = UpdateRowSource.None
+
+                    errorCommand.Parameters.Add(New SqlClient.SqlParameter("@userId", Data.SqlDbType.Int, 0, "userId"))
+                    errorCommand.Parameters.Add(New SqlClient.SqlParameter("@phoneNumber", Data.SqlDbType.Int, 0, "phoneNumber"))
+
+                    Using adapter As New Data.SqlClient.SqlDataAdapter()
+
+                        adapter.UpdateBatchSize = _batchSize
+                        adapter.InsertCommand = errorCommand
+
+                        adapter.Update(errors)
+
+                    End Using
+
+                    Me.logProcedureStatistics(_saveVerifyPhoneNumberErrors, startTime)
 
                 End Using
 
