@@ -145,6 +145,7 @@ var _hostname = window.location.hostname,
     },
     LOCATION_RADIUS = 50000,
     LOCATION_TYPES = 'establishment',
+    MARGIN_X = 8,
     MINUTE = 60000,
     NOTIFICATION_COLUMNS = {
 
@@ -1835,8 +1836,9 @@ function initializeDimensions() {
         view = document.getElementById( 'view' ),
         viewportWidth,
         viewportHeight,
-        MARGIN = 6,
-        BORDER = 1;
+        ASK_HEIGHT = 47,
+        ASK_TEXT_MARGIN_X = 5,
+        ASK_BUTTON_WIDTH = 58;
 
     if ( window.deviceInfo.mobile ) {
 
@@ -1861,10 +1863,13 @@ function initializeDimensions() {
             + '}';
     document.head.insertAdjacentHTML( 'beforeEnd', '<style>' + styles + '</style>' );
 
-    var questionsViewHeight = view.clientHeight - 46;
+    var questionsViewHeight = view.clientHeight - ASK_HEIGHT;
     document.getElementById( 'questions-view' ).style.height = questionsViewHeight + 'px';
 
-    _dimensions.questionMapWidth = view.clientWidth - ( 2 * MARGIN );
+    var askTextWidth = view.clientWidth - ( 2 * MARGIN_X ) - ASK_BUTTON_WIDTH - ( ASK_TEXT_MARGIN_X * 2 );
+    document.getElementById( 'ask-text' ).style.width = askTextWidth + 'px';
+
+    _dimensions.questionMapWidth = view.clientWidth - ( 2 * MARGIN_X ) - ASK_BUTTON_WIDTH;
     document.getElementById( 'question-map' ).style.width = _dimensions.questionMapWidth + 'px';
 
     var topUsersViewHeight = view.clientHeight - 88;
@@ -1873,14 +1878,11 @@ function initializeDimensions() {
     var userInfoViewHeight = view.clientHeight - 117;
     document.getElementById( 'user-info-view' ).style.height = userInfoViewHeight + 'px';
 
-    var answerMapCanvasWidth = view.clientWidth - ( 2 * MARGIN );
+    var answerMapCanvasWidth = view.clientWidth - ( 2 * MARGIN_X );
     document.getElementById( 'answer-map-canvas' ).style.width = answerMapCanvasWidth + 'px';
 
-    var directionsPageWidth = view.clientWidth - ( 2 * MARGIN );
+    var directionsPageWidth = view.clientWidth - ( 2 * MARGIN_X );
     document.getElementById( 'directions-page' ).style.width = directionsPageWidth + 'px';
-
-    var askTextWidth = view.clientWidth - 78;
-    document.getElementById( 'ask-text' ).style.width = askTextWidth + 'px';
 
     var answerTextWidth = view.clientWidth - 72;
     document.getElementById( 'answer-text' ).style.width = answerTextWidth + 'px';
