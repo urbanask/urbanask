@@ -1,7 +1,10 @@
 ﻿var STRINGS =
     {
         "accountPage": {
+            "inviteCaption": "invite friends",
+            "logoutCaption": "logout",
             "numberUnverified": "Number Unverified",
+            "postCaption": "post to wall",
             "saveCaption": "save"
         },
         "addAnswer":

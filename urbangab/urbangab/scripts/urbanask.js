@@ -2615,6 +2615,7 @@ function localizeStrings() {
     $( '#edit-username' ).setAttribute( 'placeholder', STRINGS.edit.usernameCaption );
     $( '#edit-tagline' ).setAttribute( 'placeholder', STRINGS.edit.taglineCaption );
     $( '#edit-region-caption' ).innerHTML = STRINGS.edit.regionCaption;
+    $( '#invite-caption' ).innerHTML = STRINGS.accountPage.inviteCaption;
     $( '#location-example-caption' ).innerHTML = STRINGS.addAnswer.locationExamples.caption;
     $( '#location-example-1' ).innerHTML = STRINGS.addAnswer.locationExamples.example1;
     $( '#location-example-2' ).innerHTML = STRINGS.addAnswer.locationExamples.example2;
@@ -2628,12 +2629,14 @@ function localizeStrings() {
     $( '#login-facebook-caption' ).innerHTML = STRINGS.facebook.authenticatingCaption;
     $( '#login-username' ).setAttribute( 'placeholder', STRINGS.usernameLabel );
     $( '#login-password' ).setAttribute( 'placeholder', STRINGS.passwordLabel );
+    $( '#logout' ).innerHTML = STRINGS.accountPage.logoutCaption;
     $( '#member-since-caption' ).innerHTML = STRINGS.user.memberSince;
     $( '#message-ok-button' ).innerHTML = STRINGS.okButtonCaption;
     $( '#message-cancel-button' ).innerHTML = STRINGS.cancelButtonCaption;
     $( '#mobile-username' ).setAttribute( 'placeholder', STRINGS.usernameLabel );
     $( '#mobile-password' ).setAttribute( 'placeholder', STRINGS.passwordLabel );
     $( '#mobile-number' ).setAttribute( 'placeholder', STRINGS.mobileNumber );
+    $( '#post-caption' ).innerHTML = STRINGS.accountPage.postCaption;
     $( '#post-facebook-cancel' ).textContent = STRINGS.cancelButtonCaption;
     $( '#post-facebook-ok' ).textContent = STRINGS.facebook.postCaption;
     $( '#post-facebook-message' ).setAttribute( 'placeholder', STRINGS.facebook.postFacebookMessageCaption );

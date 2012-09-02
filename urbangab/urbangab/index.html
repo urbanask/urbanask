@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-version="1.22.2" manifest="cache.manifest">
+<html lang="en" data-version="1.22.26" manifest="cache.manifest">
 <head>
     <title>urbanAsk</title>
     
@@ -26,10 +26,12 @@
     <div id="view">
 
         <section id="questions-page" class="hide">
-            <form id="ask">
-                <input autocorrect="on" id="ask-text" maxlength="50" type="text" />
-                <button id="ask-button" class="ask-button-slide button-3d" type="submit"><span id="ask-button-image"></span></button>
-            </form>
+            <div id="ask-view">
+                <form id="ask">
+                    <input autocorrect="on" id="ask-text" maxlength="50" type="text" />
+                    <button id="ask-button" class="ask-button-slide button-3d" type="submit"><span id="ask-button-image"></span></button>
+                </form>
+            </div>
             <div id="questions-view">
                 <div id="questions-scroll" class="scroll">
                     <ul id="user-questions" class="list hide"></ul>
@@ -102,8 +104,8 @@
                 <div id="account-cancel" class="cancel"></div>
                 <div id="account-scroll">
                     <form id="account">
-                        <input id="edit-username" class="edit-input" placeholder="username">
-                        <input id="edit-tagline" class="edit-input" placeholder="tagline">
+                        <input id="edit-username" class="edit-input edit-input-top" placeholder="username">
+                        <input id="edit-tagline" class="edit-input edit-input-bottom" placeholder="tagline">
                         <div id="edit-phone-number-caption" class="edit-caption"></div>
                         <input id="edit-phone-number" class="edit-input" placeholder="mobile number">
                         <div id="phone-number-status-frame" class="height-slide height-zero hide">
@@ -112,11 +114,17 @@
                         <div id="add-contact" class="button-3d">add urbanAsk to contacts</div>
                         <div id="edit-region-caption" class="edit-caption"></div>
                         <select id="edit-region"></select>
-                        <button id="save-edit" class="button" type="submit">save</button>
+                        <button id="save-edit" class="dialog-button-3d button-3d" type="submit">save</button>
                         <div class="section-header-black"></div>
-                        <button id="invite" class="button">invite friends</button>
-                        <button id="post" class="button">post to wall</button>
-                        <button id="logout" class="button">log out</button>
+                        <div id="invite" class="dialog-button-3d button-3d facebook-button">
+                            <div class="facebook-button-image"></div>
+                            <div id="invite-caption">invite friends</div>
+                        </div>
+                        <div id="post" class="dialog-button-3d button-3d facebook-button">
+                            <div class="facebook-button-image"></div>
+                            <div id="post-caption">post to wall</div>
+                        </div>
+                        <div id="logout" class="dialog-button-3d button-3d">log out</div>
                     </form>
                 </div>
             </div>
@@ -155,19 +163,19 @@
             <div id="login-page-view">
                 <div id="login-page-cancel" class="cancel"></div>
                 <form id="auth-view">
-                    <div id="fb-login" class="login-button button-3d">
-                        <div id="login-facebook-image"></div>
+                    <div id="fb-login" class="dialog-button-3d button-3d facebook-button">
+                        <div class="facebook-button-image"></div>
                         <div id="login-facebook-caption">Login with Facebook</div>
                     </div>
-                    <div id="twitter-login" class="login-button button-3d">
+                    <div id="twitter-login" class="dialog-button-3d button-3d">
                         <div id="twitter-login-image"></div>
                         <div id="twitter-login-caption">Login with Twitter</div>
                     </div>
-                    <div id="create-email-account" class="login-button button-3d">
+                    <div id="create-email-account" class="dialog-button-3d button-3d">
                         <div id="create-email-account-image"></div>
                         <div id="create-email-account-caption">Signup with Email</div>
                     </div>
-                    <div id="login-mobile" class="login-button button-3d">
+                    <div id="login-mobile" class="dialog-button-3d button-3d">
                         <div id="login-mobile-image"></div>
                         <div id="login-mobile-caption">Signup with Email</div>
                     </div>
@@ -187,7 +195,7 @@
                 <input id="create-username" class="create-account-input" autocorrect="off" autocapitalize="none" type="text" maxlength="100" />
                 <input id="create-password" class="create-account-input" autocorrect="off" autocapitalize="none" type="text" maxlength="100" />
                 <input id="create-email" class="create-account-input" autocorrect="off" autocapitalize="none" type="text" maxlength="256" />
-                <input id="save-account" class="login-button button-3d" type="submit" value="create" />
+                <input id="save-account" class="dialog-button-3d button-3d" type="submit" value="create" />
                 <span id="error-create-account"></span>
                 <div id="create-account-cancel"></div>
             </form>
@@ -198,7 +206,7 @@
                 <input id="mobile-username" class="create-account-input" autocorrect="off" autocapitalize="none" type="text" maxlength="100" />
                 <input id="mobile-password" class="create-account-input" autocorrect="off" autocapitalize="none"  type="text" maxlength="100" />
                 <input id="mobile-number" class="create-account-input" autocorrect="off" autocapitalize="none" type="text" maxlength="256" />
-                <input id="save-mobile-account" class="login-button button-3d" type="submit" value="create" />
+                <input id="save-mobile-account" class="dialog-button-3d button-3d" type="submit" value="create" />
                 <span id="error-mobile-account"></span>
                 <div id="cancel-mobile-account"></div>
             </form>
