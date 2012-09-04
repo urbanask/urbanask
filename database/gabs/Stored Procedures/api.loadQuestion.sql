@@ -37,7 +37,8 @@ DECLARE @questions	TABLE
 	timestamp		DATETIME2,
 	resolved		INT,
 	bounty			INT,
-	votes			INT
+	votes			INT,
+	region          VARCHAR(100)
 	)
 
 
@@ -57,7 +58,8 @@ SELECT
 	question.timestamp						AS timestamp,
 	question.resolved						AS resolved,
 	question.bounty							AS bounty,
-	question.votes							AS votes
+	question.votes							AS votes,
+	question.region                         AS region
 	
 FROM
 	Gabs.dbo.question						AS question
@@ -96,6 +98,7 @@ SELECT
 	questions.bounty						AS bounty,
 	ISNULL( questionVote.vote, 0 )			AS voted,
 	questions.votes							AS votes,
+	questions.region                        AS region,
 	COUNT( answer.answerId )				AS answers
 	
 FROM
@@ -125,7 +128,8 @@ GROUP BY
 	questions.resolved,
 	questions.bounty,
 	ISNULL( questionVote.vote, 0 ),
-	questions.votes
+	questions.votes,
+	questions.region
 
 OPTION
 	  ( FORCE ORDER, LOOP JOIN, MAXDOP 1 )	

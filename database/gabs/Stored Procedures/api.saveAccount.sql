@@ -9,6 +9,7 @@ GO
 --DECLARE	@tagline			AS VARCHAR(256) = 'something'
 --DECLARE	@phoneNumber		AS VARCHAR(50) = '+19164022982'
 --DECLARE	@regionId			AS ForeignKey = 1
+--DECLARE		@error          AS VARCHAR(256) = '' 
 
 CREATE PROCEDURE [api].[saveAccount]
 	(
@@ -16,7 +17,8 @@ CREATE PROCEDURE [api].[saveAccount]
 	@username		AS VARCHAR(100),
 	@tagline		AS VARCHAR(256),
 	@phoneNumber 	AS VARCHAR(50),
-	@regionId		AS ForeignKey
+	@regionId		AS ForeignKey,
+	@error          AS VARCHAR(256) = '' OUTPUT
 	)
 AS
 
@@ -107,17 +109,67 @@ BEGIN
     
     
     
-        UPDATE
-            Gabs.dbo.userPhone
-        
-        SET
-            number                  = @phoneNumber
+        IF NOT EXISTS(
+
+            SELECT
+                userPhone.userPhoneId       AS userPhoneId
+                
+            FROM
+                Gabs.dbo.userPhone          AS userPhone
+                WITH                        ( NOLOCK, INDEX( ix_userPhone ) )
+                
+            WHERE
+                    userPhone.userId        <> @userId
+                AND userPhone.number        = @phoneNumber
+
+        )
+        BEGIN
+    
+    
+    
+            UPDATE
+                Gabs.dbo.userPhone
             
-        WHERE
-            userPhone.userId        = @userId
+            SET
+                number                  = @phoneNumber,
+                verified                = 0 --false
+                
+            WHERE
+                userPhone.userId        = @userId
+        
     
     
-    
+            INSERT INTO
+	            Gabs.login.verifyMobileNumber
+	            (
+	            userId,
+	            mobileNumber,
+	            timestamp
+	            )
+            	
+            VALUES
+	            (
+	            @userId,
+	            @phoneNumber,
+	            GETDATE()
+	            )
+	            
+	            
+	            
+	    END
+        ELSE
+        BEGIN
+        
+        
+        
+            SET @error = 'Mobile number is already in use.'
+            
+        
+        
+        END
+
+
+
     END
 
 
@@ -145,6 +197,23 @@ BEGIN
     
     
     
+    INSERT INTO
+	    Gabs.login.verifyMobileNumber
+	    (
+	    userId,
+	    mobileNumber,
+	    timestamp
+	    )
+    	
+    VALUES
+	    (
+	    @userId,
+	    @phoneNumber,
+	    GETDATE()
+	    )
+
+
+
 END
 
 

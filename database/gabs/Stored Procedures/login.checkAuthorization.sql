@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER OFF
 GO
 SET ANSI_NULLS OFF
@@ -55,7 +56,7 @@ FROM
 
 WHERE
 		[user].username						= @username
-	AND [user].authTypeId					= 1 --normal
+	AND [user].authTypeId					IN ( 1, 4 ) --normal, mobile
 
 OPTION
 	  ( FORCE ORDER, LOOP JOIN, MAXDOP 1 )

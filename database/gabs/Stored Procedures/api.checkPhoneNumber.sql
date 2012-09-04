@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER OFF
 GO
 SET ANSI_NULLS ON
@@ -39,7 +40,10 @@ FROM
 	WITH					( NOLOCK, INDEX( ix_userPhone_number ) )
 
 WHERE
-	userPhone.number        = @phoneNumber
+        userPhone.number        = @phoneNumber
+    OR  '1' + userPhone.number  = @phoneNumber
+    OR  '+' + userPhone.number  = @phoneNumber
+    OR  '+1' + userPhone.number = @phoneNumber
 
 OPTION
 	( FORCE ORDER, LOOP JOIN, MAXDOP 1 )

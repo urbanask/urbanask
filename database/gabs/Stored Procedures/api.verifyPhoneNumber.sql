@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER OFF
 GO
 SET ANSI_NULLS ON
@@ -28,14 +29,17 @@ SET @success = 0 --false
 IF EXISTS(
 
     SELECT
-	    userPhone.userPhoneId   AS userPhoneId
+	    userPhone.userPhoneId       AS userPhoneId
 
     FROM
-	    Gabs.dbo.userPhone		AS userPhone
-	    WITH					( NOLOCK, INDEX( ix_userPhone_number ) )
+	    Gabs.dbo.userPhone		    AS userPhone
+	    WITH					    ( NOLOCK, INDEX( ix_userPhone_number ) )
 
     WHERE
-	    userPhone.number        = @phoneNumber
+	        userPhone.number        = @phoneNumber
+	    OR  '1' + userPhone.number  = @phoneNumber
+	    OR  '+' + userPhone.number  = @phoneNumber
+	    OR  '+1' + userPhone.number = @phoneNumber
 
 )
 BEGIN
@@ -46,10 +50,13 @@ BEGIN
         Gabs.dbo.userPhone
         
     SET
-        userPhone.verified      = 1 --true
+        userPhone.verified          = 1 --true
 
     WHERE
-	    userPhone.number        = @phoneNumber
+	        userPhone.number        = @phoneNumber
+	    OR  '1' + userPhone.number  = @phoneNumber
+	    OR  '+' + userPhone.number  = @phoneNumber
+	    OR  '+1' + userPhone.number = @phoneNumber
 
 
 

@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER OFF
 GO
 SET ANSI_NULLS OFF
@@ -39,7 +40,7 @@ UPDATE
 	Gabs.dbo.userEmail
 	
 SET
-	userEmail.emailStatusId			= 4 -- verified
+	userEmail.emailStatusId			= 3 -- verified
 	
 WHERE
 		userEmail.userId			= @userId 
@@ -52,5 +53,6 @@ DELETE FROM
 WHERE
 	verifyEmail.userId				= @userId
 GO
+
 GRANT EXECUTE ON  [login].[verifyUserEmail] TO [api]
 GO

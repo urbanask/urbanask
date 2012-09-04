@@ -7,10 +7,10 @@ GO
 --GO 
 --DBCC DROPCLEANBUFFERS; 
 --GO
---DECLARE	@currentUserId		AS ForeignKey=1
---DECLARE	@regionId			AS ForeignKey=0
+--DECLARE	@currentUserId		AS ForeignKey=14
+--DECLARE	@regionId			AS ForeignKey=19
 --DECLARE	@count				AS INT=50
---DECLARE	@age				AS DATETIME2 = '5/25/2012'
+--DECLARE	@age				AS DATETIME2 = '8/3/2012'
 --DECLARE	@expirationDays		AS INT = 2
 
 CREATE PROCEDURE [api].[loadQuestionsByRegion]
@@ -56,38 +56,37 @@ INSERT INTO
 	@questions
 	
 SELECT
-	question.questionId									AS questionId,
-	question.userId										AS userId,
-	[user].username										AS username,
-	[user].reputation									AS reputation,
-	question.question									AS question,
-	question.link										AS link,
-	question.latitude									AS latitude,
-	question.longitude									AS longitude,
-	question.timestamp									AS timestamp,
-	question.resolved									AS resolved,
-	question.bounty										AS bounty,
-	question.votes										AS votes
+	question.questionId						AS questionId,
+	question.userId							AS userId,
+	[user].username							AS username,
+	[user].reputation						AS reputation,
+	question.question						AS question,
+	question.link							AS link,
+	question.latitude						AS latitude,
+	question.longitude						AS longitude,
+	question.timestamp						AS timestamp,
+	question.resolved						AS resolved,
+	question.bounty							AS bounty,
+	question.votes							AS votes
 	
 FROM
-	Gabs.dbo.question									AS question
-	WITH												( NOLOCK, INDEX( ix_question_regionId ) )
+	Gabs.dbo.question						AS question
+	WITH									( NOLOCK, INDEX( ix_question_regionId ) )
 
 	INNER JOIN
-	Gabs.dbo.[user]										AS [user]
-	WITH												( NOLOCK, INDEX( pk_user ) )
-	ON	question.userId									= [user].userId
+	Gabs.dbo.[user]							AS [user]
+	WITH									( NOLOCK, INDEX( pk_user ) )
+	ON	question.userId						= [user].userId
 	
 WHERE
-		(   question.regionId							= @regionId
-		OR  @regionId                                   = 0)
-	AND	question.userId									<> @currentUserId
-	AND	question.timestamp								> @age
-	AND	question.resolved								= 0 --false
-	AND DATEDIFF( D, question.timestamp, GETDATE() )	< @expirationDays 
+		(   question.regionId				= @regionId
+		OR  @regionId                       = 0)
+	AND	question.userId						<> @currentUserId
+	AND	question.timestamp					> @age
+	AND	question.resolved					= 0 --false
 
 ORDER BY
-	question.timestamp									DESC
+	question.timestamp						DESC
 
 OPTION
 	  ( FORCE ORDER, LOOP JOIN, MAXDOP 1 )
@@ -95,67 +94,6 @@ OPTION
 
 
 SET @rowcount = @@ROWCOUNT
-
-
-
---if questions < @count, try expired
-
-IF @rowcount < @count
-BEGIN
-
-
-
-	INSERT INTO	
-		@questions
-		
-	SELECT
-		question.questionId						AS questionId,
-		question.userId							AS userId,
-		[user].username							AS username,
-		[user].reputation						AS reputation,
-		question.question						AS question,
-		question.link							AS link,
-		question.latitude						AS latitude,
-		question.longitude						AS longitude,
-		question.timestamp						AS timestamp,
-		question.resolved						AS resolved,
-		question.bounty							AS bounty,
-		question.votes							AS votes
-		
-	FROM
-		Gabs.dbo.question						AS question
-		WITH									( NOLOCK, INDEX( ix_question_regionId ) )
-
-		INNER JOIN
-		Gabs.dbo.[user]							AS [user]
-		WITH									( NOLOCK, INDEX( pk_user ) )
-		ON	question.userId						= [user].userId
-		
-		LEFT JOIN
-		@questions								AS questions
-		ON question.questionId					= questions.questionId
-
-	WHERE
-		    (   question.regionId			    = @regionId
-		    OR  @regionId                       = 0)
-		AND	question.userId						<> @currentUserId
-		AND	question.timestamp					> @age
-		AND	question.resolved					= 0 --false
-		AND questions.questionId				IS NULL --not already there
-
-	ORDER BY
-		question.timestamp						DESC
-
-	OPTION
-		  ( FORCE ORDER, LOOP JOIN, MAXDOP 1 )
-
-
-
-END
-
-
-
-SET @rowcount = @@ROWCOUNT + @rowcount
 
 
 
@@ -329,10 +267,6 @@ GROUP BY
 	questions.votes
 
 ORDER BY
-	questions.resolved						ASC,
-	COUNT( answer.answerId )				ASC,
-	questions.votes							DESC,
-	questions.bounty						DESC,
 	questions.timestamp						DESC
 
 OPTION
