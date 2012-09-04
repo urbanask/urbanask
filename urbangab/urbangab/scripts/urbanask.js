@@ -21,7 +21,7 @@ function updateVersion( event ) {
 
 if ( window.applicationCache ) { window.applicationCache.addEventListener( 'updateready', updateVersion, false ); };
 
-var _hostname = window.location.hostname,
+var _account = [],
     _currentLocation = {},
     _dimensions = {
 
@@ -29,21 +29,21 @@ var _hostname = window.location.hostname,
         "questionMapHeightNormal": 140
 
     },
-    _session = {},
-    _account = [],
-    _userQuestions = [],
-    _questions = [],
-    _nearbyQuestions = [],
     _everywhereQuestions = [],
+    _geoTimer,
+    _hostname = window.location.hostname,
+    _instructionsTimer,
+    _nearbyQuestions = [],
+    _questions = [],
+    _questionTimer,
     _scrollQuestion,
     _scrollQuestions,
     _scrollTopUsers,
     _scrollUser,
+    _session = {},
     _swipeY = 0,
+    _userQuestions = [],
     _userQuestionTimer,
-    _questionTimer,
-    _geoTimer,
-    _instructionsTimer,
     _version = document.getElementsByTagName( 'html' )[0].getAttribute( 'data-version' ),
     ACCOUNT_COLUMNS = {
 
@@ -146,6 +146,7 @@ var _hostname = window.location.hostname,
     LOCATION_RADIUS = 50000,
     LOCATION_TYPES = 'establishment',
     MARGIN_X = 8,
+    MARGIN_Y = 10,
     MINUTE = 60000,
     NOTIFICATION_COLUMNS = {
 
@@ -556,7 +557,7 @@ function addEventListeners( page, previousPage ) {
         case 'top-page':
 
             var topUsers = document.getElementById( 'top-users' );
-            topUsers.addEventListener( 'click', userClick, false );
+                topUsers.addEventListener( 'click', userClick, false );
 
             var topType = document.getElementById( 'top-type' ),
                 topInterval = document.getElementById( 'top-interval' );
@@ -970,7 +971,9 @@ function formatNumber( number ) {
 
 function clearUser() {
 
-    $( '#user-picture' ).src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12P4DwQACfsD/WMmxY8AAAAASUVORK5CYII=';
+    var userPicture = document.getElementById( 'user-picture' );
+
+    userPicture.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12P4DwQACfsD/WMmxY8AAAAASUVORK5CYII=';
     $( '#username' ).textContent = '\u00a0';
     $( '#member-since' ).textContent = '\u00a0';
     $( '#user-id-value' ).textContent = '\u00a0';
@@ -1869,14 +1872,11 @@ function initializeDimensions() {
     var askTextWidth = view.clientWidth - ( 2 * MARGIN_X ) - ASK_BUTTON_WIDTH - ( ASK_TEXT_MARGIN_X * 2 );
     document.getElementById( 'ask-text' ).style.width = askTextWidth + 'px';
 
-    _dimensions.questionMapWidth = view.clientWidth - ( 2 * MARGIN_X ) - ASK_BUTTON_WIDTH;
+    _dimensions.questionMapWidth = view.clientWidth - ( 2 * MARGIN_X );
     document.getElementById( 'question-map' ).style.width = _dimensions.questionMapWidth + 'px';
 
     var topUsersViewHeight = view.clientHeight - 88;
     document.getElementById( 'top-users-view' ).style.height = topUsersViewHeight + 'px';
-
-    var userInfoViewHeight = view.clientHeight - 117;
-    document.getElementById( 'user-info-view' ).style.height = userInfoViewHeight + 'px';
 
     var answerMapCanvasWidth = view.clientWidth - ( 2 * MARGIN_X );
     document.getElementById( 'answer-map-canvas' ).style.width = answerMapCanvasWidth + 'px';
@@ -2121,7 +2121,7 @@ function initializeScrolling() {
                     _scrollQuestion = new iScroll( 'question-page' );
                     _scrollQuestions = new iScroll( 'questions-view' );
                     _scrollTopUsers = new iScroll( 'top-users-view' );
-                    _scrollUser = new iScroll( 'user-info-view' );
+                    _scrollUser = new iScroll( 'user-page' );
 
                 };
 
@@ -2130,40 +2130,6 @@ function initializeScrolling() {
         }, 100 );
 
     };
-
-};
-
-function roughSizeOfObject( object ) {
-
-    var objectList = [];
-
-    var recurse = function ( value ) {
-
-        var bytes = 0;
-
-        if ( typeof value === 'boolean' ) {
-            bytes = 4;
-        } else if ( typeof value === 'string' ) {
-            bytes = value.length * 2;
-        } else if ( typeof value === 'number' ) {
-            bytes = 8;
-        } else if ( typeof value === 'object'
-    && objectList.indexOf( value ) === -1 ) {
-
-            objectList[objectList.length] = value;
-
-            for ( i in value ) {
-                bytes += 8; // an assumed existence overhead
-                bytes += recurse( value[i] )
-            };
-
-        };
-
-        return bytes;
-
-    };
-
-    return recurse( object );
 
 };
 
@@ -2324,6 +2290,88 @@ function loadCachedData() {
 
     showQuestions( STRINGS.questionsNearby, _nearbyQuestions, document.getElementById( 'nearby-questions' ) );
     showQuestions( STRINGS.questionsEverywhere, _everywhereQuestions, document.getElementById( 'everywhere-questions' ) );
+
+};
+
+function LoadingItem( top, left, element ) {
+
+    var loading = document.getElementById( 'loading-item' ),
+        self = this,
+        angle = 0,
+        offsetLeft = 0,
+        offsetTop = 0,
+        timer,
+        failsafeTimer;
+
+    if ( loading.hasClass( 'hide' ) ) {
+
+        initialize();
+
+    };
+
+    function initialize() {
+
+        if ( element ) {
+
+            offsetLeft = element.offsetLeft;
+            offsetTop = element.offsetTop;
+
+        } else {
+
+            element = document.getElementById( 'view' );
+
+        };
+
+        loading.removeClass( 'hide' );
+
+        if ( top == 'center' ) {
+
+            top = Math.round( ( element.clientHeight - loading.clientHeight ) / 2 );
+
+        };
+
+        if ( left == 'center' ) {
+
+            left = Math.round( ( element.clientWidth - loading.clientWidth ) / 2 );
+
+        };
+
+        left += offsetLeft;
+        top += offsetTop;
+        loading.style.top = top + 'px';
+        loading.style.left = left + 'px';
+
+        window.setTimeout( function () { rotate(); }, 10 );
+
+        timer = window.setInterval( function () {
+
+            rotate();
+
+        }, 100 );
+
+        failsafeTimer = window.setInterval( function () {
+
+            self.close();
+
+        }, 10 * SECOND );
+
+    };
+
+    function rotate() {
+
+        angle = ( angle == 360 ? 45 : angle + 45 );
+        loading.style.webkitTransform = 'rotate(' + angle + 'deg)';
+
+    };
+
+    this.close = function () {
+
+        window.clearInterval( timer );
+        window.clearTimeout( failsafeTimer );
+        loading.addClass( 'hide' );
+        _loadingItem = undefined;
+
+    };
 
 };
 
@@ -2496,6 +2544,7 @@ function loadTopUsers() {
 
                 _cache.topUsers.refresh( data );
                 showTopUsers( _currentLocation.regionName );
+                hideLoading();
 
             },
             "error": function ( response, status, error ) {
@@ -4600,7 +4649,7 @@ function scrollUp() {
 
             } else {
 
-                document.getElementById( 'user-info-view' ).scrollTop = 0;
+                document.getElementById( 'user-page' ).scrollTop = 0;
 
             };
 
@@ -4933,7 +4982,7 @@ function getRegion( options, complete ) {
 
 function setUsersTop() {
 
-    var usersView = document.getElementById( 'user-info-view' ),
+    var userPage = document.getElementById( 'user-page' ),
         top = usersView.getDataset( 'scroll-top' );
 
     if ( window.deviceInfo.iscroll ) {
@@ -4942,7 +4991,7 @@ function setUsersTop() {
 
     } else {
 
-        usersView.scrollTop = top;
+        userPage.scrollTop = top;
 
     };
 
@@ -4950,7 +4999,7 @@ function setUsersTop() {
 
 function getUsersTop() {
 
-    var usersView = document.getElementById( 'user-info-view' ),
+    var userPage = document.getElementById( 'user-page' ),
         top;
 
     if ( window.deviceInfo.iscroll ) {
@@ -4959,17 +5008,17 @@ function getUsersTop() {
 
     } else {
 
-        top = usersView.scrollTop;
+        top = userPage.scrollTop;
 
     };
 
-    usersView.setDataset( 'scroll-top', top );
+    userPage.setDataset( 'scroll-top', top );
 
 };
 
 function resetUsersTop() {
 
-    document.getElementById( 'user-info-view' ).setDataset( 'scroll-top', 0 );
+    document.getElementById( 'user-page' ).setDataset( 'scroll-top', 0 );
 
 };
 
@@ -5935,15 +5984,13 @@ function showAnswer( answer, question, letter ) {
         mapCanvas = document.getElementById( 'answer-map-canvas' ),
         directions = document.getElementById( 'directions-page' ),
         answerView = document.getElementById( 'answer-view' ),
-        view = document.getElementById( 'view' ),
-        BORDER = 1,
-        MARGIN = 6;
+        view = document.getElementById( 'view' );
 
     document.getElementById( 'answer-page' ).setDataset( 'id', answerId );
     answerView.innerHTML = getAnswerItem( answer, question, { letter: letter } );
 
-    var mapCanvasTop = answerView.clientHeight + MARGIN + BORDER + BORDER,
-        mapCanvasHeight = view.clientHeight - mapCanvasTop - ( MARGIN + MARGIN + BORDER + BORDER );
+    var mapCanvasTop = answerView.clientHeight + MARGIN_Y,
+        mapCanvasHeight = view.clientHeight - mapCanvasTop - ( 2 * MARGIN_Y );
 
     mapCanvas.style.top = mapCanvasTop + 'px';
     mapCanvas.style.height = mapCanvasHeight + 'px';
@@ -6861,19 +6908,15 @@ function showLoading( top, left, element ) {
 
     loading.removeClass( 'hide' );
 
-    switch ( top ) {
-        case 'center':
+    if ( top == 'center' ) {
 
-            top = Math.round( ( element.clientHeight - loading.clientHeight ) / 2 );
-            break;
+        top = Math.round( ( element.clientHeight - loading.clientHeight ) / 2 );
 
     };
 
-    switch ( left ) {
-        case 'center':
+    if ( left == 'center' ) {
 
-            left = Math.round( ( element.clientWidth - loading.clientWidth ) / 2 );
-            break;
+        left = Math.round( ( element.clientWidth - loading.clientWidth ) / 2 );
 
     };
 
@@ -7492,7 +7535,6 @@ function showQuestion( question ) {
         questionMap = document.getElementById( 'question-map' ),
         questionRegion = document.getElementById( 'question-region' ),
         view = document.getElementById( 'view' ),
-        MARGIN = 6,
         BUTTON_HEIGHT = 42,
         QUESTION_HEIGHT = 50,
         QUESTION_HEIGHT_FULL = 70,
@@ -7530,11 +7572,11 @@ function showQuestion( question ) {
 
         if ( isMyQuestion( question ) ) {
 
-            mapHeight = view.clientHeight - questionViewHeight - ( 3 * MARGIN );
+            mapHeight = view.clientHeight - questionViewHeight - ( 3 * MARGIN_Y );
 
         } else {
 
-            mapHeight = view.clientHeight - questionViewHeight - BUTTON_HEIGHT - ( 4 * MARGIN );
+            mapHeight = view.clientHeight - questionViewHeight - BUTTON_HEIGHT - ( 4 * MARGIN_Y );
 
         };
 
@@ -8101,7 +8143,7 @@ function showUser( user ) {
 
         $( '#user-badges' ).innerHTML = html;
 
-        document.getElementById( 'signup-info' ).removeClass( 'hide' );
+        //document.getElementById( 'signup-info' ).removeClass( 'hide' );
         $( '#user-reputations' ).removeClass( 'hide' );
         $( '#users-questions' ).removeClass( 'hide' );
         $( '#user-answers' ).removeClass( 'hide' );
@@ -8632,7 +8674,7 @@ function topTypeClick( event ) {
 function totalAnswersClick( event ) {
 
     var answers = document.getElementById( 'user-answers' ),
-        frame = document.getElementById( 'user-info-view' );
+        frame = document.getElementById( 'user-page' );
 
     if ( window.deviceInfo.iscroll ) {
 
@@ -8649,7 +8691,7 @@ function totalAnswersClick( event ) {
 function totalBadgesClick( event ) {
 
     var badges = document.getElementById( 'user-badges' ),
-        frame = document.getElementById( 'user-info-view' );
+        frame = document.getElementById( 'user-page' );
 
     if ( window.deviceInfo.iscroll ) {
 
@@ -8678,7 +8720,7 @@ function travelModeClick( event ) {
 function totalQuestionsClick( event ) {
 
     var questions = document.getElementById( 'users-questions' ),
-        frame = document.getElementById( 'user-info-view' );
+        frame = document.getElementById( 'user-page' );
 
     if ( window.deviceInfo.iscroll ) {
 
@@ -8695,7 +8737,7 @@ function totalQuestionsClick( event ) {
 function totalReputationClick( event ) {
 
     var reputation = document.getElementById( 'user-reputations' ),
-        frame = document.getElementById( 'user-info-view' );
+        frame = document.getElementById( 'user-page' );
 
     if ( window.deviceInfo.iscroll ) {
 
