@@ -18,10 +18,10 @@ SELECT * FROM Gabs.lookup.region ORDER BY name
 SELECT * FROM Gabs.processRegions.regionNew
 
 /*
-INSERT INTO Gabs.lookup.region ( parentRegionId, name ) VALUES ( 1, 'Antelope, CA 95843, USA' );
-INSERT INTO Gabs.lookup.regionName VALUES ( 60, 'Antelope, CA 95843, USA' );
+INSERT INTO Gabs.lookup.region ( parentRegionId, name ) VALUES ( 22, 'San Mateo, CA, USA' );
+INSERT INTO Gabs.lookup.regionName VALUES ( 62, 'San Mateo, CA, USA' );
 DBCC CHECKIDENT( 'Gabs.dbo.[user]', RESEED, 127 )
-DELETE FROM question WHERE questionId = 1109137
+DELETE FROM question WHERE questionId = 1112813
 DELETE FROM answer WHERE answerId = 4250081
 UPDATE question SET bounty = 0 WHERE regionId = 14 AND bounty = 100
 SELECT username, authtypeId FROM [user] WHERE userId < 100

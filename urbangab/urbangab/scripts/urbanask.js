@@ -1841,7 +1841,8 @@ function initializeDimensions() {
         viewportHeight,
         ASK_HEIGHT = 47,
         ASK_TEXT_MARGIN_X = 5,
-        ASK_BUTTON_WIDTH = 58;
+        ASK_BUTTON_WIDTH = 58,
+        BORDER = 1;
 
     if ( window.deviceInfo.mobile ) {
 
@@ -1892,6 +1893,14 @@ function initializeDimensions() {
 
     var accountPageHeight = view.clientHeight - 54;
     document.getElementById( 'account-view' ).style.height = accountPageHeight + 'px';
+
+    var userStatWidth = Math.round( ( view.clientWidth - ( 2 * MARGIN_X ) - ( 3 * BORDER ) ) / 9 * 2 );
+    document.getElementById( 'total-questions' ).style.width = userStatWidth + 'px';
+    document.getElementById( 'total-answers' ).style.width = userStatWidth + 'px';
+    document.getElementById( 'total-badges' ).style.width = userStatWidth + 'px';
+
+    var userReputationWidth = view.clientWidth - ( 2 * MARGIN_X ) - ( 3 * BORDER ) - ( 3 * userStatWidth );
+    document.getElementById( 'reputation' ).style.width = userReputationWidth + 'px';
 
 };
 
@@ -2544,7 +2553,6 @@ function loadTopUsers() {
 
                 _cache.topUsers.refresh( data );
                 showTopUsers( _currentLocation.regionName );
-                hideLoading();
 
             },
             "error": function ( response, status, error ) {

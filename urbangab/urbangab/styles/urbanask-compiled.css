@@ -2797,10 +2797,6 @@ html {
     vertical-align: top;
 }
 
-#total-badges {
-    width: 64px !important;
-}
-
 #total-questions-value, 
 #total-answers-value, 
 #total-badges-value,
