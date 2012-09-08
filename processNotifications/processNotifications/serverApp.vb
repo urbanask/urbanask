@@ -18,16 +18,16 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
     Private _batchSize As Int32,
         _commandTimeout As Int32,
         _connectionString As String,
-        _copyToNotificationNew As String,
         _deleteFromWork As String,
-        _saveActions As String,
         _logProcedureStatitics As Boolean,
         _moveToWork As String,
+        _saveError As String,
         _smsApiUrl As String,
         _smsApiKey As String,
         _smsApiToken As String,
         _smsFrom As String,
         _smsBody As String,
+        _viewSmsActions As String,
         _workCount As Int32
 
 
@@ -52,15 +52,15 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         _batchSize = Parameters.Parameter.GetInt32Value("batchSize")
         _commandTimeout = Parameters.Parameter.GetInt32Value("commandTimeout")
         _connectionString = Parameters.Parameter.GetValue("connectionString")
-        _copyToNotificationNew = Parameters.Parameter.GetValue("copyToNotificationNew")
         _deleteFromWork = Parameters.Parameter.GetValue("deleteFromWork")
         _moveToWork = Parameters.Parameter.GetValue("moveToWork")
-        _saveActions = Parameters.Parameter.GetValue("saveActions")
+        _saveError = Parameters.Parameter.GetValue("saveError")
         _smsApiKey = Parameters.Parameter.GetValue("smsApiKey")
         _smsApiToken = Parameters.Parameter.GetValue("smsApiToken")
         _smsApiUrl = Parameters.Parameter.GetValue("smsApiUrl")
         _smsBody = Parameters.Parameter.GetValue("smsBody")
         _smsFrom = Parameters.Parameter.GetValue("smsFrom")
+        _viewSmsActions = Parameters.Parameter.GetValue("viewSmsActions")
 
     End Sub
 
@@ -87,13 +87,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
 
             If MyBase.IsAppActive() Then
 
-                Me.copyToNotificationNew(connection)
-
-            End If
-
-            If MyBase.IsAppActive() Then
-
-                Me.saveActions(connection)
+                Me.processSmsNotifications(connection)
 
             End If
 
@@ -128,41 +122,87 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
 
     End Sub
 
-    Private Sub copyToNotificationNew( _
+    Private Sub processSmsNotifications( _
         ByVal connection As Data.SqlClient.SqlConnection)
 
         Dim startTime As System.DateTime = System.DateTime.Now
 
-        Using command As New SqlClient.SqlCommand(_copyToNotificationNew, connection)
+        Using command As New SqlClient.SqlCommand(_viewSmsActions, connection),
+            errors As New Data.DataTable("errors")
 
             command.CommandType = CommandType.StoredProcedure
             command.CommandTimeout = _commandTimeout
+            errors.Columns.Add("userId")
+            errors.Columns.Add("phoneNumber")
 
-            command.ExecuteNonQuery()
+            Using actions As Data.SqlClient.SqlDataReader = command.ExecuteReader()
+
+                While (actions.Read())
+
+                    Dim phoneNumber As String = actions("phoneNumber").ToString(),
+                        body As String = String.Format(_smsBody, actions("body").ToString()),
+                        url As String = String.Format(_smsApiUrl, _smsApiKey),
+                        request As String = String.Concat(
+                            "From=", System.Web.HttpUtility.UrlEncode(_smsFrom),
+                            "&To=", System.Web.HttpUtility.UrlEncode(phoneNumber),
+                            "&Body=", System.Web.HttpUtility.UrlEncode(body)),
+                        web = New Net.WebClient(),
+                        token = Convert.ToBase64String(Text.Encoding.UTF8.GetBytes(String.Format("{0}:{1}", _smsApiKey, _smsApiToken))),
+                        header = String.Format("Basic {0}", token)
+
+                    web.Headers.Add(Net.HttpRequestHeader.Authorization, header)
+                    web.Headers(Net.HttpRequestHeader.ContentType) = "application/x-www-form-urlencoded"
+
+                    Try
+
+                        Dim jsonResponse As String = web.UploadString(url, request)
+
+                    Catch ex As Exception
+
+                        Dim errorRow As Data.DataRow = errors.NewRow()
+                        errorRow("notificationId") = actions("phoneNumber").ToString()
+                        errorRow("description") = request
+                        errorRow("error") = ex.Message
+                        errors.Rows.Add(errorRow)
+
+                    End Try
+
+                End While
+
+                Me.logProcedureStatistics(_viewSmsActions, startTime)
+
+            End Using
+
+            If errors.Rows.Count > 0 Then
+
+                Using errorCommand As New SqlClient.SqlCommand(_saveError, connection)
+
+                    errorCommand.CommandType = CommandType.StoredProcedure
+                    errorCommand.CommandTimeout = _commandTimeout
+                    errorCommand.UpdatedRowSource = UpdateRowSource.None
+
+                    errorCommand.Parameters.Add(New SqlClient.SqlParameter("@notificationId", Data.SqlDbType.Int, 0, "notificationId"))
+                    errorCommand.Parameters.Add(New SqlClient.SqlParameter("@description", Data.SqlDbType.VarChar, 255, "description"))
+                    errorCommand.Parameters.Add(New SqlClient.SqlParameter("@error", Data.SqlDbType.VarChar, 255, "error"))
+
+                    Using adapter As New Data.SqlClient.SqlDataAdapter()
+
+                        adapter.UpdateBatchSize = _batchSize
+                        adapter.InsertCommand = errorCommand
+
+                        adapter.Update(errors)
+
+                    End Using
+
+                    Me.logProcedureStatistics(_saveError, startTime)
+
+                End Using
+
+            End If
 
         End Using
 
-        Me.logProcedureStatistics(_copyToNotificationNew, startTime)
-        Me.logStatistics("copyToNotificationNew", startTime)
-
-    End Sub
-
-    Private Sub saveActions( _
-        ByVal connection As Data.SqlClient.SqlConnection)
-
-        Dim startTime As System.DateTime = System.DateTime.Now
-
-        Using command As New SqlClient.SqlCommand(_saveActions, connection)
-
-            command.CommandType = CommandType.StoredProcedure
-            command.CommandTimeout = _commandTimeout
-
-            command.ExecuteNonQuery()
-
-        End Using
-
-        Me.logProcedureStatistics(_saveActions, startTime)
-        Me.logStatistics("saveActions", startTime)
+        Me.logStatistics("processSmsNotifications", startTime)
 
     End Sub
 

@@ -1,5 +1,5 @@
 
-SELECT * FROM [user] WHERE userId < 100000 ORDER BY userId DESC
+SELECT * FROM [user] ORDER BY signupDate DESC
 SELECT * FROM [userFacebook] WHERE userId < 100000 ORDER BY userId DESC
 SELECT * FROM [userTwitter] WHERE userId < 100000 ORDER BY userId DESC
 SELECT * FROM [userEmail] WHERE userId < 100000 ORDER BY userId DESC
@@ -30,6 +30,7 @@ SELECT * FROM Gabs.login.verifyMobileNumber
 SELECT * FROM reputation WHERE itemId = 1105914
 SELECT * FROM answer WHERE location LIKE '%ace%'
 SELECT * FROM userFacebook WHERE email LIKE '%thinkingstiff%'
+INSERT INTO userPhone ( userId, number, notifications, verified ) VALUES ( 2, '19165488356', 1, 1 )
 DELETE FROM question WHERE questionId = 1110251
 UPDATE [user] SET 
 hash='bFxydZg4GPGQqojigQxzbIcQw62jD3C4WeyXvB0fpB+1YHMSgAh1PIPHvpOsqqpT+gxTKG2hRl30kVhumuRuQg==',
