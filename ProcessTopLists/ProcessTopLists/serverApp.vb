@@ -357,9 +357,12 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
 
                     If MyBase.IsAppActive() Then
 
+
                         For Each interval In _intervals
 
                             If MyBase.IsAppActive() Then
+
+                                If region.regionId = 1 And topType.topTypeId = 4 And interval.intervalId = 0 Then Stop
 
                                 Me.processRegionRollup(connection, region.regionId, topType.topTypeId, interval.intervalId)
 
@@ -367,9 +370,10 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
 
                         Next interval
 
+
                     End If
 
-                Next topType
+        Next topType
 
             End If
 

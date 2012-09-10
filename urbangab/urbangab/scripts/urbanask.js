@@ -7224,7 +7224,7 @@ function showNotifications( newItems ) {
 
     if ( notifications.length ) {
 
-        var button = '<button id="delete-notifications">' + STRINGS.xmarkDelete + '</button>',
+        var button = '<button id="delete-notifications"></button>',
             html = getListItemHeader( STRINGS.user.notifications, button );
 
         for ( var index = 0; index < notifications.length; index++ ) {
