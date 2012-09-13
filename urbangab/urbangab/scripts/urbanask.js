@@ -265,8 +265,13 @@ var _account = [],
 
         data: [],
         length: function () { return this.data.length },
-        last: function () { return this.data[this.data.length - 1] },
 
+        last: function ( count ) {
+
+            return this.data[this.data.length - ( count ? count : 1 ) ] 
+            
+        },
+        
         add: function ( name, options ) {
 
             this.data.push( new Page( name, options ) );
@@ -427,11 +432,8 @@ function addEventListeners( page, previousPage ) {
             backButton = document.getElementById( 'back-button' );
             backButton.addEventListener( 'click', goBack, false );
 
-            if ( window.deviceInfo.phonegap ) {
-
-                document.addEventListener( 'menubutton', onContactButtonClick, false );
-
-            };
+            answers = document.getElementById( 'answer-view' );
+            answers.addEventListener( 'click', answerItemClick, false );
 
             if ( window.deviceInfo.mobile ) {
 
@@ -684,9 +686,14 @@ function addEventListeners( page, previousPage ) {
 
 function answerClick( event ) {
 
+    var thisEvent = event,  
+        target = event.target;
+
+    selectItem( event );
+
     window.setTimeout( function () {
 
-        var answerItem = event.target.closestByClassName( 'answer-item' );
+        var answerItem = target.closestByClassName( 'answer-item' );
 
         if ( answerItem ) {
 
@@ -695,11 +702,11 @@ function answerClick( event ) {
                 answer = question[QUESTION_COLUMNS.answers].item( answerId ),
                 select = answerItem.getElementsByClassName( 'select-answer' );
 
-            if ( event.target.hasClass( 'vote-up-answer' ) ) {
+            if ( target.hasClass( 'vote-up-answer' ) ) {
 
                 saveAnswerUpvote( question, answer, answerItem );
 
-            } else if ( event.target.hasClass( 'vote-down-answer' ) ) {
+            } else if ( target.hasClass( 'vote-down-answer' ) ) {
 
                 saveAnswerDownvote( question, answer, answerItem );
 
@@ -707,10 +714,56 @@ function answerClick( event ) {
 
                 saveAnswerSelect( question, answer, answerItem );
 
+            } else if ( target.hasClass( 'answer-call' ) ) {
+
+                event.preventDefault();
+
+            } else if ( target.hasClass( 'answer-user' ) ) {
+
+                showPage( 'user-page', { id: answer[ANSWER_COLUMNS.userId] } );
+
+            } else if ( target.hasClass( 'answer-website' ) ) {
+
+                if ( answer[ANSWER_COLUMNS.link] ) {
+
+                    if ( window.deviceInfo.phonegap ) {
+
+                        window.plugins.childBrowser.showWebPage( answer[ANSWER_COLUMNS.link] );
+
+                    } else {
+
+                        var a = document.createElement( 'a' );
+                        a.setAttribute( 'href', answer[ANSWER_COLUMNS.link] );
+                        a.setAttribute( 'target', '_blank' );
+                        var event = document.createEvent( 'HTMLEvents' )
+                        event.initEvent( 'click', true, true );
+                        a.dispatchEvent( event );
+
+                    };
+
+                };
+
+            } else if ( target.hasClass( 'answer-google-maps' ) ) {
+
+                if ( window.deviceInfo.phonegap && window.deviceInfo.brand != 'ios' ) {
+
+                    event.preventDefault();
+                    window.plugins.childBrowser.showWebPage( 'http://' + url );
+
+                } else if ( !window.deviceInfo.phonegap ) {
+
+                    event.preventDefault();
+                    window.open( 'http://' + url );
+
+                //} else {
+
+                    //let click happen
+
+                };
+
             } else {
 
-                selectItem( event );
-                showPage(  
+                showPage( 
                     'answer-page',
                     {
                         id: answerId,
@@ -724,9 +777,62 @@ function answerClick( event ) {
 
         };
 
-        window.setTimeout( function () { unselectItem( event ); }, 100 );
+            window.setTimeout( function () { unselectItem( thisEvent ); }, 100 );
 
     }, 100 );
+
+};
+
+function answerItemClick( event ) {
+
+    var answerItem = event.target.closestByClassName( 'answer-item' );
+
+    if ( answerItem ) {
+
+        var question = _pages.last( 2 ).options.object,
+            answerId = answerItem.getDataset( 'id' ),
+            answer = question[QUESTION_COLUMNS.answers].item( answerId );
+
+        if ( event.target.hasClass( 'vote-up-answer' ) ) {
+
+            saveAnswerUpvote( question, answer, answerItem );
+
+        } else if ( event.target.hasClass( 'vote-down-answer' ) ) {
+
+            saveAnswerDownvote( question, answer, answerItem );
+
+        } else if ( event.target.hasClass( 'answer-call' ) ) {
+
+            
+
+        } else if ( event.target.hasClass( 'answer-user' ) ) {
+
+            showPage( 'user-page', { id: answer[ANSWER_COLUMNS.userId] } );
+
+        } else if ( event.target.hasClass( 'answer-website' ) ) {
+
+            if ( answer[ANSWER_COLUMNS.link] ) {
+
+                if ( window.deviceInfo.phonegap ) {
+
+                    window.plugins.childBrowser.showWebPage( answer[ANSWER_COLUMNS.link] );
+
+                } else {
+
+                    var a = document.createElement( 'a' );
+                    a.setAttribute( 'href', answer[ANSWER_COLUMNS.link] );
+                    a.setAttribute( 'target', '_blank' );
+                    var event = document.createEvent( 'HTMLEvents' )
+                    event.initEvent( 'click', true, true );
+                    a.dispatchEvent( event );
+
+                };
+
+            };
+
+        };
+
+    };
 
 };
 
@@ -1013,31 +1119,19 @@ function getAge( timestamp ) {
 
 };
 
-function getAnswerItem( answer, question, options ) {
+function getAnswerItem( answer, options ) {
 
     var classes = '',
         action = '',
         note = '',
         contact = '',
-        questionId = '',
-        voteUpClass = '',
-        voteDownClass = '';
+        voteClass = '',
+        toolbar = '',
+        number = '';
 
     if ( options.newItem ) {
 
-        if ( answer[ANSWER_COLUMNS.note] && ( answer[ANSWER_COLUMNS.phone] || answer[ANSWER_COLUMNS.link] ) ) {
-
-            classes = 'new-answer-tall list-item list-item-slide height-zero';
-
-        } else if ( answer[ANSWER_COLUMNS.note] || answer[ANSWER_COLUMNS.phone] || answer[ANSWER_COLUMNS.link] ) {
-
-            classes = 'new-answer-medium list-item list-item-slide height-zero';
-
-        } else {
-
-            classes = 'new-answer-short list-item list-item-slide height-zero';
-
-        };
+        classes = 'answer-item list-item list-item-slide height-zero';
 
     } else {
 
@@ -1055,49 +1149,92 @@ function getAnswerItem( answer, question, options ) {
 
         note = '<div class="note">' + answer[ANSWER_COLUMNS.note] + '</div>';
 
-    };
+    } else {
 
-    if ( answer[ANSWER_COLUMNS.phone] && answer[ANSWER_COLUMNS.link] ) {
-
-        contact = '<div class="location-contact">'
-            + answer[ANSWER_COLUMNS.phone]
-            + ' &#x2022; '
-            + answer[ANSWER_COLUMNS.link]
-            + '</div>';
-
-    } else if ( answer[ANSWER_COLUMNS.phone] || answer[ANSWER_COLUMNS.link] ) {
-
-        contact = '<div class="location-contact">'
-            + answer[ANSWER_COLUMNS.phone]
-            + answer[ANSWER_COLUMNS.link]
-            + '</div>';
+        note = '<div>&nbsp;</div>';
 
     };
 
-    if ( options.questionId ) {
+    if ( answer[ANSWER_COLUMNS.phone] ) {
 
-        questionId = 'data-question-id="' + answer[ANSWER_COLUMNS.questionId] + '" ';
+        contact = '<div class="location-contact">'
+            + answer[ANSWER_COLUMNS.phone]
+            + '</div>';
+
+    } else {
+
+        contact = '<div class="location-contact">&nbsp;</div>';
 
     };
 
     if ( answer[ANSWER_COLUMNS.voted] > 0 ) {
 
-        voteUpClass = ' vote-up-answer-selected';
+        voteClass = ' vote-up-answer-selected';
 
     } else if ( answer[ANSWER_COLUMNS.voted] < 0 ) {
 
-        voteDownClass = ' vote-down-answer-selected';
+        voteClass = ' vote-down-answer-selected';
+
+    };
+
+    if ( options.toolbar ) {
+
+        if ( answer[ANSWER_COLUMNS.phone] ) {
+
+            number = 'tel:' + answer[ANSWER_COLUMNS.phone];
+
+        };
+
+        var currentLatitude = ( _currentLocation.latitude ? _currentLocation.latitude : answer[ANSWER_COLUMNS.latitude] ),
+            currentLongitude = ( _currentLocation.longitude ? _currentLocation.longitude : answer[ANSWER_COLUMNS.longitude] ),
+            url = 'maps.google.com/?saddr=' + currentLatitude + ',' + currentLongitude
+                + '&daddr=' + answer[ANSWER_COLUMNS.latitude] + ',' + answer[ANSWER_COLUMNS.longitude];
+        map.href = 'maps://' + url;
+
+        getGeocode( currentLatitude, currentLongitude, function ( startAddress ) {
+
+            getGeocode( answer[ANSWER_COLUMNS.latitude], answer[ANSWER_COLUMNS.longitude], function ( endAddress ) {
+
+                if ( !startAddress ) {
+
+                    startAddress = currentLatitude + ',' + currentLongitude;
+
+                };
+
+                if ( !endAddress ) {
+
+                    endAddress = answer[ANSWER_COLUMNS.latitude] + ',' + answer[ANSWER_COLUMNS.longitude];
+
+                };
+
+                url = 'maps.google.com/?saddr=' + startAddress + '&daddr=' + endAddress;
+                map.href = 'maps://' + url;
+
+            } );
+
+        } );
+
+        toolbar = '<ul class="answer-toolbar">'
+            + '<li class="answer-toolbar-item answer-user"></li>'
+            + '<li class="answer-toolbar-item"><a href="' + number + '" class="answer-call"></a></li>'
+            + '<li class="answer-toolbar-item answer-website"></li>'
+            + '<li class="answer-toolbar-item answer-google-maps"></li>'
+            + '</ul>';
+
+    } else {
+
+        classes += ' answer-item-no-toolbar';
 
     };
 
     return '<li class="' + classes + '" '
         + 'data-id="' + answer[ANSWER_COLUMNS.answerId] + '" '
-        + questionId
+        + 'data-question-id="' + answer[ANSWER_COLUMNS.questionId] + '" '
         + 'data-letter="' + ( options.letter ? options.letter : '' ) + '">'
-        + '<div class="vote-answer-frame">'
-        + '<div class="vote-up-answer' + voteUpClass + '"></div>'
+        + '<div class="vote-answer-frame' + voteClass  + '">'
+        + '<div class="vote-up-answer"></div>'
         + getAnswerVotes( answer[ANSWER_COLUMNS.votes] )
-        + '<div class="vote-down-answer' + voteDownClass + '"></div>'
+        + '<div class="vote-down-answer"></div>'
         + '</div>'
         + action
         + '<div class="location-name">'
@@ -1113,7 +1250,41 @@ function getAnswerItem( answer, question, options ) {
         + '<li class="info-item">' + answer[ANSWER_COLUMNS.username] + '</li>'
         + '<li class="info-item">' + formatNumber( answer[ANSWER_COLUMNS.reputation] ) + '</li>'
         + '</ul>'
+        + toolbar
         + '</li>';
+
+    function getGeocode( latitude, longitude, complete ) {
+
+        var geocoder = new google.maps.Geocoder(),
+            request = { 'location': new google.maps.LatLng( latitude, longitude ) };
+
+        geocoder.geocode( request, function ( results, status ) {
+
+            if ( status == google.maps.GeocoderStatus.OK && results.length ) {
+
+                for ( var resultIndex = 0; resultIndex < results.length; resultIndex++ ) {
+
+                    if ( results[resultIndex].formatted_address ) {
+
+                        complete( results[resultIndex].formatted_address );
+                        return;
+
+                    };
+
+                };
+
+                //if it gets to here, no geo found                
+                complete();
+
+            } else {
+
+                complete();
+
+            };
+
+        } );
+
+    };
 
 };
 
@@ -1518,6 +1689,16 @@ function hideAddressBar() {
 
 };
 
+function hideAllPages() {
+
+    document.getElementById( 'questions-page' ).addClass( 'hide' );
+    document.getElementById( 'top-page' ).addClass( 'hide' );
+    document.getElementById( 'user-page' ).addClass( 'hide' );
+    document.getElementById( 'question-page' ).addClass( 'hide' );
+    document.getElementById( 'answer-page' ).addClass( 'hide' );
+
+};
+
 function hideAnswersSelect() {
 
     var answers = document.getElementById( 'answers' ).getElementsByClassName( 'select-answer' );
@@ -1551,16 +1732,6 @@ function hideAnswersSelect() {
         }, 600 );
 
     };
-
-};
-
-function hideContact() {
-
-    var contact = document.getElementById( 'contact' ),
-        event = document.createEvent( 'HTMLEvents' );
-
-    event.initEvent( 'close', false, false );
-    contact.dispatchEvent( event );
 
 };
 
@@ -2377,11 +2548,13 @@ function LoadingItem( top, left, element ) {
 
 function loadQuestion( questionId, complete ) {
 
-    var resource = '/api/questions/' + questionId;
+    var resource = '/api/questions/' + questionId,
+        data = ( isLoggedIn() ? 'currentUserId=' + _account[ACCOUNT_COLUMNS.userId] : '' );
 
     ajax( API_URL + resource, {
 
-        "type": "POST",
+        "type": "GET",
+        "data": data,
         "cache": false,
         "success": function ( data, status ) {
 
@@ -2652,9 +2825,6 @@ function localizeStrings() {
     $( '#answer-text' ).setAttribute( 'placeholder', STRINGS.answerLabel );
     $( '#ask-text' ).setAttribute( 'placeholder', STRINGS.questionLabel );
     $( '#cancel-answer-button' ).setAttribute( 'placeholder', STRINGS.addAnswer.cancel );
-    $( '#contact-call' ).innerHTML = STRINGS.contact.call;
-    $( '#contact-website' ).innerHTML = STRINGS.contact.website;
-    $( '#contact-map' ).innerHTML = STRINGS.contact.googleMaps;
     $( '#create-email' ).setAttribute( 'placeholder', STRINGS.emailLabel );
     $( '#create-email-account-caption' ).innerHTML = STRINGS.login.createEmailAccount;
     $( '#create-username' ).setAttribute( 'placeholder', STRINGS.usernameLabel );
@@ -2840,7 +3010,9 @@ function logoutApp() {
     _session.id = '';
     _session.key = '';
 
-    refresh();
+    //refresh();
+    hideAllPages();
+    showPage( 'questions-page' );
     showLoginPage( { logout: true } );
 
 };
@@ -3054,22 +3226,6 @@ function onAddNewAnswerClick() {
             logoutApp();
 
         } );
-
-    };
-
-};
-
-function onContactButtonClick() {
-
-    var contact = document.getElementById( 'contact' );
-
-    if ( contact.hasClass( 'hide' ) ) {
-
-        showContact();
-
-    } else {
-
-        hideContact();
 
     };
 
@@ -3561,11 +3717,8 @@ function removeEventListeners( page ) {
             backButton = document.getElementById( 'back-button' );
             backButton.removeEventListener( 'click', goBack, false );
 
-            if ( window.deviceInfo.phonegap ) {
-
-                document.removeEventListener( 'menubutton', onContactButtonClick, false );
-
-            };
+            answers = document.getElementById( 'answer-view' );
+            answers.removeEventListener( 'click', answerItemClick, false );
 
             if ( window.deviceInfo.mobile ) {
 
@@ -3838,7 +3991,15 @@ function reputationItemClick( event ) {
 
 function saveAnswerDownvote( question, answer, answerItem ) {
 
-    if ( isMyAnswer( answer ) ) {
+    if ( !isLoggedIn() ) {
+
+        showMessage( STRINGS.login.loginRequired.replace( '%1', STRINGS.login.loginRequiredAction.vote ), function () {
+
+            logoutApp();
+
+        } );
+
+    } else if ( isMyAnswer( answer ) ) {
 
         showMessage( STRINGS.error.voteOnOwnAnswer );
 
@@ -3865,17 +4026,31 @@ function saveAnswerDownvote( question, answer, answerItem ) {
                 voteElement.innerHTML = getAnswerVotes( newVotes );
                 votes.parentNode.replaceChild( voteElement.firstChild, votes );
 
+                if ( answer[ANSWER_COLUMNS.voted] > 0 ) {
+
+                    answerItem.getElementsByClassName( 'vote-answer-frame' )[0]
+                        .removeClass( 'vote-down-answer-selected' )
+                        .addClass( 'vote-up-answer-selected' );
+
+                } else if ( answer[ANSWER_COLUMNS.voted] < 0 ) {
+
+                    answerItem.getElementsByClassName( 'vote-answer-frame' )[0]
+                        .removeClass( 'vote-up-answer-selected' )
+                        .addClass( 'vote-down-answer-selected' );
+
+                } else {
+
+                    answerItem.getElementsByClassName( 'vote-answer-frame' )[0]
+                        .removeClass( 'vote-up-answer-selected' )
+                        .removeClass( 'vote-down-answer-selected' );
+
+                };
+
                 if ( voted != -1 ) { //downvote
 
                     showNotification( STRINGS.notificationDownvote, { tight: true } );
 
                 };
-
-                window.setTimeout( function () {
-
-                    showQuestion( question );
-
-                }, 100 );
 
             },
             "error": function ( response, status, error ) {
@@ -3914,7 +4089,15 @@ function saveAnswerDownvote( question, answer, answerItem ) {
 
 function saveAnswerUpvote( question, answer, answerItem ) {
 
-    if ( isMyAnswer( answer ) ) {
+    if ( !isLoggedIn() ) {
+
+        showMessage( STRINGS.login.loginRequired.replace( '%1', STRINGS.login.loginRequiredAction.vote ), function () {
+
+            logoutApp();
+
+        } );
+
+    } else if ( isMyAnswer( answer ) ) {
 
         showMessage( STRINGS.error.voteOnOwnAnswer );
 
@@ -3941,6 +4124,26 @@ function saveAnswerUpvote( question, answer, answerItem ) {
                 voteElement.innerHTML = getAnswerVotes( newVotes );
                 votes.parentNode.replaceChild( voteElement.firstChild, votes );
 
+                if ( answer[ANSWER_COLUMNS.voted] > 0 ) {
+
+                    answerItem.getElementsByClassName( 'vote-answer-frame' )[0]
+                        .removeClass( 'vote-down-answer-selected' )
+                        .addClass( 'vote-up-answer-selected' );
+
+                } else if ( answer[ANSWER_COLUMNS.voted] < 0 ) {
+
+                    answerItem.getElementsByClassName( 'vote-answer-frame' )[0]
+                        .removeClass( 'vote-up-answer-selected' )
+                        .addClass( 'vote-down-answer-selected' );
+
+                } else {
+
+                    answerItem.getElementsByClassName( 'vote-answer-frame' )[0]
+                        .removeClass( 'vote-up-answer-selected' )
+                        .removeClass( 'vote-down-answer-selected' );
+
+                };
+
                 if ( voted != 1 ) { //upvote
 
                     showNotification( STRINGS.notificationUpvote, { tight: true } );
@@ -3962,12 +4165,6 @@ function saveAnswerUpvote( question, answer, answerItem ) {
                     };
 
                 };
-
-                window.setTimeout( function () {
-
-                    showQuestion( question );
-
-                }, 100 );
 
             },
             "error": function ( response, status, error ) {
@@ -4588,7 +4785,7 @@ function scrollUp() {
 
             } else {
 
-                document.getElementById( 'question-scroll' ).scrollTop = 0;
+                document.getElementById( 'question-page' ).scrollTop = 0;
 
             };
 
@@ -5954,7 +6151,7 @@ function showAnswer( answer, question, letter ) {
         view = document.getElementById( 'view' );
 
     document.getElementById( 'answer-page' ).setDataset( 'id', answerId );
-    answerView.innerHTML = getAnswerItem( answer, question, { letter: letter } );
+    answerView.innerHTML = getAnswerItem( answer, { letter: letter, toolbar: true } );
 
     var mapCanvasTop = answerView.clientHeight + MARGIN_Y,
         mapCanvasHeight = view.clientHeight - mapCanvasTop - ( 2 * MARGIN_Y );
@@ -6109,8 +6306,6 @@ function showAskButton() {
 function showContact() {
 
     var contact = document.getElementById( 'contact' ),
-        call = document.getElementById( 'contact-call' ),
-        website = document.getElementById( 'contact-website' ),
         map = document.getElementById( 'contact-map' ),
         answer = _pages.last().options.object,
         url = '';
@@ -6149,66 +6344,9 @@ function showContact() {
 
         } );
 
-        contact.removeClass( 'hide' );
-        window.setTimeout( function () { contact.addClass( 'contact-slide' ); }, 20 );
-        addListeners();
-
-        if ( answer[ANSWER_COLUMNS.phone] ) {
-
-            call.href = 'tel:' + answer[ANSWER_COLUMNS.phone];
-
-        } else {
-
-            call.href = '';
-
-        };
-
-        if ( answer[ANSWER_COLUMNS.link] ) {
-
-            website.removeClass( 'hide' );
-
-        } else {
-
-            website.addClass( 'hide' );
-
-        };
-
-    };
-
-    function callLocation( event ) {
-
-        close();
-
-    };
-
-    function viewWebsite() {
-
-        close();
-
-        if ( answer[ANSWER_COLUMNS.link] ) {
-
-            if ( window.deviceInfo.phonegap ) {
-
-                window.plugins.childBrowser.showWebPage( answer[ANSWER_COLUMNS.link] );
-
-            } else {
-
-                var a = document.createElement( 'a' );
-                a.setAttribute( 'href', answer[ANSWER_COLUMNS.link] );
-                a.setAttribute( 'target', '_blank' );
-                var event = document.createEvent( 'HTMLEvents' )
-                event.initEvent( 'click', true, true );
-                a.dispatchEvent( event );
-
-            };
-
-        };
-
     };
 
     function showGoogleMaps( event ) {
-
-        close();
 
         if ( window.deviceInfo.phonegap && window.deviceInfo.brand != 'ios' ) {
 
@@ -6220,7 +6358,7 @@ function showContact() {
             event.preventDefault();
             window.open( 'http://' + url );
 
-            //} else {
+        //} else {
 
             //let click happen
 
@@ -6228,99 +6366,6 @@ function showContact() {
 
     };
 
-    function close() {
-
-        contact.removeClass( 'contact-slide' );
-        window.setTimeout( function () { contact.addClass( 'hide' ); }, 600 );
-
-        removeListeners();
-
-    };
-
-    function getGeocode( latitude, longitude, complete ) {
-
-        var geocoder = new google.maps.Geocoder(),
-            request = { 'location': new google.maps.LatLng( latitude, longitude ) };
-
-        geocoder.geocode( request, function ( results, status ) {
-
-            if ( status == google.maps.GeocoderStatus.OK && results.length ) {
-
-                for ( var resultIndex = 0; resultIndex < results.length; resultIndex++ ) {
-
-                    if ( results[resultIndex].formatted_address ) {
-
-                        complete( results[resultIndex].formatted_address );
-                        return;
-
-                    };
-
-                };
-
-                //if it gets to here, no geo found                
-                complete();
-
-            } else {
-
-                complete();
-
-            };
-
-        } );
-
-    };
-
-    function addListeners() {
-
-        contact.addEventListener( 'close', close, false );
-
-        call.addEventListener( 'click', callLocation, false );
-        call.addEventListener( 'touchstart', selectButton, false );
-        call.addEventListener( 'touchend', unselectButton, false );
-        call.addEventListener( 'mousedown', selectButton, false );
-        call.addEventListener( 'mouseup', unselectButton, false );
-
-        if ( answer[ANSWER_COLUMNS.link] ) {
-
-            website.addEventListener( 'click', viewWebsite, false );
-            website.addEventListener( 'touchstart', selectButton, false );
-            website.addEventListener( 'touchend', unselectButton, false );
-            website.addEventListener( 'mousedown', selectButton, false );
-            website.addEventListener( 'mouseup', unselectButton, false );
-
-        };
-
-        map.addEventListener( 'click', showGoogleMaps, false );
-        map.addEventListener( 'touchstart', selectButton, false );
-        map.addEventListener( 'touchend', unselectButton, false );
-        map.addEventListener( 'mousedown', selectButton, false );
-        map.addEventListener( 'mouseup', unselectButton, false );
-
-    };
-
-    function removeListeners() {
-
-        contact.removeEventListener( 'close', close, false );
-
-        call.removeEventListener( 'click', callLocation, false );
-        call.removeEventListener( 'touchstart', selectButton, false );
-        call.removeEventListener( 'touchend', unselectButton, false );
-        call.removeEventListener( 'mousedown', selectButton, false );
-        call.removeEventListener( 'mouseup', unselectButton, false );
-
-        website.removeEventListener( 'click', viewWebsite, false );
-        website.removeEventListener( 'touchstart', selectButton, false );
-        website.removeEventListener( 'touchend', unselectButton, false );
-        website.removeEventListener( 'mousedown', selectButton, false );
-        website.removeEventListener( 'mouseup', unselectButton, false );
-
-        map.removeEventListener( 'click', showGoogleMaps, false );
-        map.removeEventListener( 'touchstart', selectButton, false );
-        map.removeEventListener( 'touchend', unselectButton, false );
-        map.removeEventListener( 'mousedown', selectButton, false );
-        map.removeEventListener( 'mouseup', unselectButton, false );
-
-    };
 
 };
 
@@ -7274,7 +7319,6 @@ function showPage( page, options, back ) {
             slidePage( page, previousPage );
             showAnswer( answer, question, options.answerLetter );
 
-            hideContact();
             initializeBackButton();
             document.getElementById( 'directions-page' ).addClass( 'top-slide' );
             showToolbar( 'answer', { question: question, answer: answer } );
@@ -7579,7 +7623,7 @@ function showQuestion( question ) {
             var answer = question[QUESTION_COLUMNS.answers][index],
                 letter = STRINGS.letters.charAt( index );
 
-            html += getAnswerItem( answer, question, { letter: letter } );
+            html += getAnswerItem( answer, { letter: letter, toolbar: true } );
 
         };
 
@@ -7884,8 +7928,6 @@ function showToolbar( toolbar, options ) {
 
             //};
 
-            document.getElementById( 'answer-user-button' ).setDataset( 'user-id', options.answer[ANSWER_COLUMNS.userId] );
-
             break;
 
         case 'question':
@@ -8077,7 +8119,7 @@ function showUser( user ) {
 
             for ( index = 0; index < user[USER_COLUMNS.answers].length; index++ ) {
 
-                html += getAnswerItem( user[USER_COLUMNS.answers][index], [], { newItem: false, questionId: true } );
+                html += getAnswerItem( user[USER_COLUMNS.answers][index], { newItem: false } );
 
             };
 
@@ -8249,16 +8291,6 @@ function toolbarClick( event ) {
 
         switch ( item.id ) {
 
-            case 'answer-user-button':
-
-                showPage( 'user-page', { id: item.getDataset( 'user-id' ) } );
-                break;
-
-            case 'contact-button':
-
-                onContactButtonClick();
-                break;
-
             case 'delete-answer-button':
 
                 if ( isLoggedIn() ) {
@@ -8406,50 +8438,6 @@ function toolbarClick( event ) {
                         hideVoteDown();
 
                     };
-
-                } else {
-
-                    showMessage( STRINGS.login.loginRequired.replace( '%1', STRINGS.login.loginRequiredAction.vote ), function () {
-
-                        logoutApp();
-
-                    } );
-
-                };
-
-                break;
-
-            case 'vote-down-answer-button':
-
-                if ( isLoggedIn() ) {
-
-                    answer = _pages.last().options.object;
-                    question = _pages.last().options.question;
-                    answerItem = document.getElementById( 'answer-view' ).getElementsByClassName( 'answer-item' )[0];
-
-                    saveAnswerDownvote( question, answer, answerItem );
-
-                } else {
-
-                    showMessage( STRINGS.login.loginRequired.replace( '%1', STRINGS.login.loginRequiredAction.vote ), function () {
-
-                        logoutApp();
-
-                    } );
-
-                };
-
-                break;
-
-            case 'vote-up-answer-button':
-
-                if ( isLoggedIn() ) {
-
-                    answer = _pages.last().options.object;
-                    question = _pages.last().options.question;
-                    answerItem = document.getElementById( 'answer-view' ).getElementsByClassName( 'answer-item' )[0];
-
-                    saveAnswerUpvote( question, answer, answerItem );
 
                 } else {
 
@@ -8810,8 +8798,24 @@ function userAnswerClick( event ) {
 
         if ( answerItem ) {
 
-            showPage( 'question-page', { id: answerItem.getDataset( 'question-id' ) } );
-            scrollUp();
+            var question = _pages.last().options.object,
+                answerId = answerItem.getDataset( 'id' ),
+                answer = question[QUESTION_COLUMNS.answers].item( answerId );
+
+            if ( event.target.hasClass( 'vote-up-answer' ) ) {
+
+                saveAnswerUpvote( question, answer, answerItem );
+
+            } else if ( event.target.hasClass( 'vote-down-answer' ) ) {
+
+                saveAnswerDownvote( question, answer, answerItem );
+
+            } else {
+
+                showPage( 'question-page', { id: answerItem.getDataset( 'question-id' ) } );
+                scrollUp();
+
+            };
 
         };
 

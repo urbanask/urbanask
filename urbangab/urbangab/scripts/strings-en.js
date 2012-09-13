@@ -49,12 +49,6 @@
         "backButtonUser": "User",
         "cancelButtonCaption": "cancel",
         "checkmark": "&#10004;",
-        "contact":
-        {
-            "call": "call",
-            "website": "website",
-            "googleMaps": "Google Maps"
-        },
         "createAccount":
         {
             "cancelAccount": "cancel",
