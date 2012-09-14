@@ -433,7 +433,7 @@ function addEventListeners( page, previousPage ) {
             backButton.addEventListener( 'click', goBack, false );
 
             answers = document.getElementById( 'answer-view' );
-            answers.addEventListener( 'click', answerItemClick, false );
+            answers.addEventListener( 'click', answerClick, false );
 
             if ( window.deviceInfo.mobile ) {
 
@@ -686,7 +686,8 @@ function addEventListeners( page, previousPage ) {
 
 function answerClick( event ) {
 
-    var thisEvent = event,  
+    var that = this,
+        thisEvent = event,  
         target = event.target;
 
     selectItem( event );
@@ -697,7 +698,7 @@ function answerClick( event ) {
 
         if ( answerItem ) {
 
-            var question = _pages.last().options.object,
+            var question = ( that.id == 'answers' ? _pages.last().options.object : _pages.last( 2 ).options.object ),
                 answerId = answerItem.getDataset( 'id' ),
                 answer = question[QUESTION_COLUMNS.answers].item( answerId ),
                 select = answerItem.getElementsByClassName( 'select-answer' );
@@ -716,7 +717,11 @@ function answerClick( event ) {
 
             } else if ( target.hasClass( 'answer-call' ) ) {
 
-                event.preventDefault();
+                if ( that.id != 'answers' ) {
+
+                    thisEvent.preventDefault();
+
+                };
 
             } else if ( target.hasClass( 'answer-user' ) ) {
 
@@ -735,7 +740,7 @@ function answerClick( event ) {
                         var a = document.createElement( 'a' );
                         a.setAttribute( 'href', answer[ANSWER_COLUMNS.link] );
                         a.setAttribute( 'target', '_blank' );
-                        var event = document.createEvent( 'HTMLEvents' )
+                        var event = document.createEvent( 'HTMLEvents' );
                         event.initEvent( 'click', true, true );
                         a.dispatchEvent( event );
 
@@ -745,86 +750,66 @@ function answerClick( event ) {
 
             } else if ( target.hasClass( 'answer-google-maps' ) ) {
 
-                if ( window.deviceInfo.phonegap && window.deviceInfo.brand != 'ios' ) {
+                var currentLatitude = ( _currentLocation.latitude ? _currentLocation.latitude : answer[ANSWER_COLUMNS.latitude] ),
+                    currentLongitude = ( _currentLocation.longitude ? _currentLocation.longitude : answer[ANSWER_COLUMNS.longitude] );
 
-                    event.preventDefault();
-                    window.plugins.childBrowser.showWebPage( 'http://' + url );
+                getGeocode( currentLatitude, currentLongitude, function ( startAddress ) {
 
-                } else if ( !window.deviceInfo.phonegap ) {
+                    getGeocode( answer[ANSWER_COLUMNS.latitude], answer[ANSWER_COLUMNS.longitude], function ( endAddress ) {
 
-                    event.preventDefault();
-                    window.open( 'http://' + url );
+                        if ( !startAddress ) {
 
-                //} else {
+                            startAddress = currentLatitude + ',' + currentLongitude;
 
-                    //let click happen
+                        };
 
-                };
+                        if ( !endAddress ) {
+
+                            endAddress = answer[ANSWER_COLUMNS.latitude] + ',' + answer[ANSWER_COLUMNS.longitude];
+
+                        };
+
+                        var url = 'maps.google.com/?saddr=' + startAddress + '&daddr=' + endAddress;
+
+                        if ( window.deviceInfo.phonegap && window.deviceInfo.brand != 'ios' ) {
+
+                            thisEvent.preventDefault();
+                            window.plugins.childBrowser.showWebPage( 'http://' + url );
+
+                        } else if ( !window.deviceInfo.mobile ) {
+
+                            thisEvent.preventDefault();
+                            window.location = 'http://' + url;
+
+                        } else {
+
+                            thisEvent.preventDefault();
+                            var a = document.createElement( 'a' );
+                            a.setAttribute( 'href', 'maps://' + url );
+                            a.setAttribute( 'target', '_blank' );
+                            var event = document.createEvent( 'HTMLEvents' );
+                            event.initEvent( 'click', true, true );
+                            a.dispatchEvent( event );
+
+                        };
+
+                    } );
+
+                } );
 
             } else {
 
-                showPage( 
-                    'answer-page',
-                    {
-                        id: answerId,
-                        object: answer,
-                        question: question,
-                        answerLetter: answerItem.getDataset( 'letter' )
-                    }
-                );
+                if ( that.id == 'answers' ) {
 
-            };
-
-        };
-
-            window.setTimeout( function () { unselectItem( thisEvent ); }, 100 );
-
-    }, 100 );
-
-};
-
-function answerItemClick( event ) {
-
-    var answerItem = event.target.closestByClassName( 'answer-item' );
-
-    if ( answerItem ) {
-
-        var question = _pages.last( 2 ).options.object,
-            answerId = answerItem.getDataset( 'id' ),
-            answer = question[QUESTION_COLUMNS.answers].item( answerId );
-
-        if ( event.target.hasClass( 'vote-up-answer' ) ) {
-
-            saveAnswerUpvote( question, answer, answerItem );
-
-        } else if ( event.target.hasClass( 'vote-down-answer' ) ) {
-
-            saveAnswerDownvote( question, answer, answerItem );
-
-        } else if ( event.target.hasClass( 'answer-call' ) ) {
-
-            
-
-        } else if ( event.target.hasClass( 'answer-user' ) ) {
-
-            showPage( 'user-page', { id: answer[ANSWER_COLUMNS.userId] } );
-
-        } else if ( event.target.hasClass( 'answer-website' ) ) {
-
-            if ( answer[ANSWER_COLUMNS.link] ) {
-
-                if ( window.deviceInfo.phonegap ) {
-
-                    window.plugins.childBrowser.showWebPage( answer[ANSWER_COLUMNS.link] );
-
-                } else {
-
-                    var a = document.createElement( 'a' );
-                    a.setAttribute( 'href', answer[ANSWER_COLUMNS.link] );
-                    a.setAttribute( 'target', '_blank' );
-                    var event = document.createEvent( 'HTMLEvents' )
-                    event.initEvent( 'click', true, true );
-                    a.dispatchEvent( event );
+                    showPage( 
+                        'answer-page',
+                        {
+                            id: answerId,
+                            object: answer,
+                            question: question,
+                            answerLetter: answerItem.getDataset( 'letter' )
+                        }
+                    );
 
                 };
 
@@ -832,7 +817,44 @@ function answerItemClick( event ) {
 
         };
 
+        window.setTimeout( function () { unselectItem( thisEvent ); }, 100 );
+
+    }, 100 );
+
+    function getGeocode( latitude, longitude, complete ) {
+
+        var geocoder = new google.maps.Geocoder(),
+            request = { 'location': new google.maps.LatLng( latitude, longitude ) };
+
+        geocoder.geocode( request, function ( results, status ) {
+
+            if ( status == google.maps.GeocoderStatus.OK && results.length ) {
+
+                for ( var resultIndex = 0; resultIndex < results.length; resultIndex++ ) {
+
+                    if ( results[resultIndex].formatted_address ) {
+
+                        complete( results[resultIndex].formatted_address );
+                        return;
+
+                    };
+
+                };
+
+                //if it gets to here, no geo found                
+                complete();
+
+            } else {
+
+                complete();
+
+            };
+
+        } );
+
     };
+
+    return false;
 
 };
 
@@ -1185,35 +1207,6 @@ function getAnswerItem( answer, options ) {
 
         };
 
-        var currentLatitude = ( _currentLocation.latitude ? _currentLocation.latitude : answer[ANSWER_COLUMNS.latitude] ),
-            currentLongitude = ( _currentLocation.longitude ? _currentLocation.longitude : answer[ANSWER_COLUMNS.longitude] ),
-            url = 'maps.google.com/?saddr=' + currentLatitude + ',' + currentLongitude
-                + '&daddr=' + answer[ANSWER_COLUMNS.latitude] + ',' + answer[ANSWER_COLUMNS.longitude];
-        map.href = 'maps://' + url;
-
-        getGeocode( currentLatitude, currentLongitude, function ( startAddress ) {
-
-            getGeocode( answer[ANSWER_COLUMNS.latitude], answer[ANSWER_COLUMNS.longitude], function ( endAddress ) {
-
-                if ( !startAddress ) {
-
-                    startAddress = currentLatitude + ',' + currentLongitude;
-
-                };
-
-                if ( !endAddress ) {
-
-                    endAddress = answer[ANSWER_COLUMNS.latitude] + ',' + answer[ANSWER_COLUMNS.longitude];
-
-                };
-
-                url = 'maps.google.com/?saddr=' + startAddress + '&daddr=' + endAddress;
-                map.href = 'maps://' + url;
-
-            } );
-
-        } );
-
         toolbar = '<ul class="answer-toolbar">'
             + '<li class="answer-toolbar-item answer-user"></li>'
             + '<li class="answer-toolbar-item"><a href="' + number + '" class="answer-call"></a></li>'
@@ -1252,39 +1245,6 @@ function getAnswerItem( answer, options ) {
         + '</ul>'
         + toolbar
         + '</li>';
-
-    function getGeocode( latitude, longitude, complete ) {
-
-        var geocoder = new google.maps.Geocoder(),
-            request = { 'location': new google.maps.LatLng( latitude, longitude ) };
-
-        geocoder.geocode( request, function ( results, status ) {
-
-            if ( status == google.maps.GeocoderStatus.OK && results.length ) {
-
-                for ( var resultIndex = 0; resultIndex < results.length; resultIndex++ ) {
-
-                    if ( results[resultIndex].formatted_address ) {
-
-                        complete( results[resultIndex].formatted_address );
-                        return;
-
-                    };
-
-                };
-
-                //if it gets to here, no geo found                
-                complete();
-
-            } else {
-
-                complete();
-
-            };
-
-        } );
-
-    };
 
 };
 
@@ -3718,7 +3678,7 @@ function removeEventListeners( page ) {
             backButton.removeEventListener( 'click', goBack, false );
 
             answers = document.getElementById( 'answer-view' );
-            answers.removeEventListener( 'click', answerItemClick, false );
+            answers.removeEventListener( 'click', answerClick, false );
 
             if ( window.deviceInfo.mobile ) {
 
@@ -6305,67 +6265,39 @@ function showAskButton() {
 
 function showContact() {
 
-    var contact = document.getElementById( 'contact' ),
-        map = document.getElementById( 'contact-map' ),
+    var map = document.getElementById( 'contact-map' ),
         answer = _pages.last().options.object,
         url = '';
         
-    initialize();
-
-    function initialize() {
-
-        var currentLatitude = ( _currentLocation.latitude ? _currentLocation.latitude : answer[ANSWER_COLUMNS.latitude] ),
-            currentLongitude = ( _currentLocation.longitude ? _currentLocation.longitude : answer[ANSWER_COLUMNS.longitude] );
+    var currentLatitude = ( _currentLocation.latitude ? _currentLocation.latitude : answer[ANSWER_COLUMNS.latitude] ),
+        currentLongitude = ( _currentLocation.longitude ? _currentLocation.longitude : answer[ANSWER_COLUMNS.longitude] );
             
-        url = 'maps.google.com/?saddr=' + currentLatitude + ',' + currentLongitude
-            + '&daddr=' + answer[ANSWER_COLUMNS.latitude] + ',' + answer[ANSWER_COLUMNS.longitude];
-        map.href = 'maps://' + url;
+    url = 'maps.google.com/?saddr=' + currentLatitude + ',' + currentLongitude
+        + '&daddr=' + answer[ANSWER_COLUMNS.latitude] + ',' + answer[ANSWER_COLUMNS.longitude];
+    map.href = 'maps://' + url;
 
-        getGeocode( currentLatitude, currentLongitude, function ( startAddress ) {
+    getGeocode( currentLatitude, currentLongitude, function ( startAddress ) {
 
-            getGeocode( answer[ANSWER_COLUMNS.latitude], answer[ANSWER_COLUMNS.longitude], function ( endAddress ) {
+        getGeocode( answer[ANSWER_COLUMNS.latitude], answer[ANSWER_COLUMNS.longitude], function ( endAddress ) {
 
-                if ( !startAddress ) {
+            if ( !startAddress ) {
 
-                    startAddress = currentLatitude + ',' + currentLongitude;
+                startAddress = currentLatitude + ',' + currentLongitude;
 
-                };
+            };
 
-                if ( !endAddress ) {
+            if ( !endAddress ) {
 
-                    endAddress = answer[ANSWER_COLUMNS.latitude] + ',' + answer[ANSWER_COLUMNS.longitude]; 
+                endAddress = answer[ANSWER_COLUMNS.latitude] + ',' + answer[ANSWER_COLUMNS.longitude]; 
                     
-                };
+            };
 
-                url = 'maps.google.com/?saddr=' + startAddress + '&daddr=' + endAddress;
-                map.href = 'maps://' + url;
-
-            } );
+            url = 'maps.google.com/?saddr=' + startAddress + '&daddr=' + endAddress;
+            map.href = 'maps://' + url;
 
         } );
 
-    };
-
-    function showGoogleMaps( event ) {
-
-        if ( window.deviceInfo.phonegap && window.deviceInfo.brand != 'ios' ) {
-
-            event.preventDefault();
-            window.plugins.childBrowser.showWebPage( 'http://' + url );
-
-        } else if ( !window.deviceInfo.phonegap ) {
-
-            event.preventDefault();
-            window.open( 'http://' + url );
-
-        //} else {
-
-            //let click happen
-
-        };
-
-    };
-
+    } );
 
 };
 
