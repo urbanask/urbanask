@@ -1149,7 +1149,10 @@ function getAnswerItem( answer, options ) {
         contact = '',
         voteClass = '',
         toolbar = '',
-        number = '';
+        number = '',
+        votes = '',
+        votesInline = '',
+        icon = '';
 
     if ( options.newItem ) {
 
@@ -1199,6 +1202,20 @@ function getAnswerItem( answer, options ) {
 
     };
 
+    if ( options && options.votes ) {
+
+        votes = '<div class="vote-frame' + voteClass + '">'
+            + '<div class="vote-up"></div>'
+            + getVotes( answer[ANSWER_COLUMNS.votes] )
+            + '<div class="vote-down"></div>'
+            + '</div>';
+
+    } else {
+
+        votesInline = getVotesInline( answer[ANSWER_COLUMNS.votes] );
+
+    };
+
     if ( options.toolbar ) {
 
         if ( answer[ANSWER_COLUMNS.phone] ) {
@@ -1220,18 +1237,23 @@ function getAnswerItem( answer, options ) {
 
     };
 
+    if ( options && options.icon ) {
+
+        icon = '<li class="info-item">'
+            + '<img class="user-icon-16" src="' + API_URL + '/api/users/' + answer[ANSWER_COLUMNS.userId] + '/icon" />'
+            + '</li>';
+
+    };
+
     return '<li class="' + classes + '" '
         + 'data-id="' + answer[ANSWER_COLUMNS.answerId] + '" '
         + 'data-question-id="' + answer[ANSWER_COLUMNS.questionId] + '" '
         + 'data-letter="' + ( options.letter ? options.letter : '' ) + '">'
-        + '<div class="vote-frame' + voteClass  + '">'
-        + '<div class="vote-up"></div>'
-        + getVotes( answer[ANSWER_COLUMNS.votes] )
-        + '<div class="vote-down"></div>'
-        + '</div>'
+        + votes
         + action
         + '<div class="location-name">'
         + getLetter( options.letter )
+        + votesInline
         + getSelected( answer[ANSWER_COLUMNS.selected] )
         + answer[ANSWER_COLUMNS.location]
         + '</div>'
@@ -1242,6 +1264,7 @@ function getAnswerItem( answer, options ) {
         + '<li class="info-item">' + getDistance( answer[ANSWER_COLUMNS.distance] ) + '</li>'
         + '<li class="info-item">' + answer[ANSWER_COLUMNS.username] + '</li>'
         + '<li class="info-item">' + formatNumber( answer[ANSWER_COLUMNS.reputation] ) + '</li>'
+        + icon
         + '</ul>'
         + toolbar
         + '</li>';
@@ -1373,14 +1396,16 @@ function getNotificationItem( notifiction ) {
 
 function getQuestionItem( question, options ) {
 
-    var listClasses = '',
+    var answerCount = '', 
+        listClasses = '',
         bodyClass = '',
         count = '',
         resolved = '',
         bounty = '',
         voteClass = '',
         votes = '',
-        inlineVotes = '';
+        votesInline = '',
+        icon = '';
 
     if ( options && options.newItem ) {
 
@@ -1439,26 +1464,37 @@ function getQuestionItem( question, options ) {
 
     } else {
 
-        inlineVotes = '<div class="vote-frame' + voteClass + '">'
-            + '<div class="vote-up"></div>'
-            + getVotes( question[QUESTION_COLUMNS.votes] )
-            + '<div class="vote-down"></div>'
-            + '</div>';
+        votesInline = getVotesInline( question[QUESTION_COLUMNS.votes] );
+
+    };
+
+    if ( options && options.icon ) {
+
+        icon = '<li class="info-item">'
+            + '<img class="user-icon-16" src="' + API_URL + '/api/users/' + question[QUESTION_COLUMNS.userId] + '/icon" />'
+            + '</li>';
+
+    };
+
+    if ( options && options.answerCount ) {
+
+        answerCount = '<div class="answer-count-view' + resolved + '"><div class="answer-count">' + count + '</div></div>';
 
     };
 
     return '<li class="' + listClasses + '" '
         + 'data-id="' + question[QUESTION_COLUMNS.questionId] + '">'
         + votes
-        + '<div class="answer-count-view' + resolved + '"><div class="answer-count">' + count + '</div></div>'
+        + answerCount
         + '<div class="' + bodyClass + '">'
-        + inlineVotes
+        + votesInline
         + bounty
         + question[QUESTION_COLUMNS.question]
         + '</div>'
         + '<ul class="info">'
         + '<li class="info-item">' + question[QUESTION_COLUMNS.username] + '</li>'
         + '<li class="info-item">' + formatNumber( question[QUESTION_COLUMNS.reputation] ) + '</li>'
+        + icon
         + '</ul>'
         + '</li>';
 
@@ -1596,6 +1632,24 @@ function getVotes( votes ) {
     } else {
 
         return '<div class="votes votes-zero">' + getVoteCount( votes ) + '</div>';
+
+    };
+
+};
+
+function getVotesInline( votes ) {
+
+    if ( votes > 0 ) {
+
+        return '<span class="votes-inline votes-up">' + getVoteCount( votes ) + '</span>';
+
+    } else if ( votes < 0 ) {
+
+        return '<span class="votes-inline votes-down">' + getVoteCount( votes ) + '</span>';
+
+    } else {
+
+        return '';
 
     };
 
@@ -4439,7 +4493,7 @@ function saveQuestion( event ) {
 
                 };
 
-                html += getQuestionItem( question, { newItem: true } );
+                html += getQuestionItem( question, { newItem: true, votes: false, answerCount: true } );
                 document.getElementById( 'ask-text' ).value = '';
                 hideAskButton();
 
@@ -6072,7 +6126,7 @@ function showAnswer( answer, question, letter ) {
         view = document.getElementById( 'view' );
 
     document.getElementById( 'answer-page' ).setDataset( 'id', answerId );
-    answerView.innerHTML = getAnswerItem( answer, { letter: letter, toolbar: true } );
+    answerView.innerHTML = getAnswerItem( answer, { letter: letter, toolbar: true, votes: true, icon: true } );
 
     var mapCanvasTop = answerView.clientHeight + MARGIN_Y,
         mapCanvasHeight = view.clientHeight - mapCanvasTop - ( 2 * MARGIN_Y );
@@ -7437,33 +7491,21 @@ function showQuestion( question ) {
         questionRegion = document.getElementById( 'question-region' ),
         view = document.getElementById( 'view' ),
         BUTTON_HEIGHT = 42,
-        QUESTION_HEIGHT = 50,
-        QUESTION_HEIGHT_FULL = 70,
-        questionViewHeight,
+        QUESTION_HEIGHT = 98,
         html = '',
-        mapHeight = '';
+        mapHeight = 0;
 
     questionMap.removeClass( 'fadeable' ).addClass( 'fade' );
     questionRegion.removeClass( 'fadeable' ).addClass( 'fade' );
     window.setTimeout( function () {
 
         questionMap.addClass( 'fadeable' );
-        questionRegion.addClass( 'fadeable' ); 
-        
+        questionRegion.addClass( 'fadeable' );
+
     }, 10 );
+
     questionMap.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12P4DwQACfsD/WMmxY8AAAAASUVORK5CYII=';
-
-    if ( question[QUESTION_COLUMNS.question].length > 25 ) {
-
-        questionView.innerHTML = getQuestionItem( question, { full: true } );
-        questionViewHeight = QUESTION_HEIGHT_FULL;
-
-    } else {
-
-        questionView.innerHTML = getQuestionItem( question );
-        questionViewHeight = QUESTION_HEIGHT;
-
-    };
+    questionView.innerHTML = getQuestionItem( question, { full: true, votes: true, icon: true } );
 
     if ( question[QUESTION_COLUMNS.answers].length ) {
 
@@ -7473,11 +7515,11 @@ function showQuestion( question ) {
 
         if ( isMyQuestion( question ) ) {
 
-            mapHeight = view.clientHeight - questionViewHeight - ( 3 * MARGIN_Y );
+            mapHeight = view.clientHeight - QUESTION_HEIGHT - ( 3 * MARGIN_Y );
 
         } else {
 
-            mapHeight = view.clientHeight - questionViewHeight - BUTTON_HEIGHT - ( 4 * MARGIN_Y );
+            mapHeight = view.clientHeight - QUESTION_HEIGHT - BUTTON_HEIGHT - ( 4 * MARGIN_Y );
 
         };
 
@@ -7513,7 +7555,7 @@ function showQuestion( question ) {
             var answer = question[QUESTION_COLUMNS.answers][index],
                 letter = STRINGS.letters.charAt( index );
 
-            html += getAnswerItem( answer, { letter: letter, toolbar: true } );
+            html += getAnswerItem( answer, { letter: letter, toolbar: true, votes: true, icon: true } );
 
         };
 
@@ -7595,7 +7637,7 @@ function showQuestions( header, questions, element ) {
 
             for ( var index = 0; index < questions.length; index++ ) {
 
-                html += getQuestionItem( questions[index] );
+                html += getQuestionItem( questions[index], { votes: false, answerCount: true } );
 
             };
 
@@ -7990,7 +8032,7 @@ function showUser( user ) {
 
             for ( index = 0; index < user[USER_COLUMNS.questions].length; index++ ) {
 
-                html += getQuestionItem( user[USER_COLUMNS.questions][index] );
+                html += getQuestionItem( user[USER_COLUMNS.questions][index], { votes: false, answerCount: true } );
 
             };
 
@@ -8009,7 +8051,7 @@ function showUser( user ) {
 
             for ( index = 0; index < user[USER_COLUMNS.answers].length; index++ ) {
 
-                html += getAnswerItem( user[USER_COLUMNS.answers][index], { newItem: false } );
+                html += getAnswerItem( user[USER_COLUMNS.answers][index], { newItem: false, votes: false } );
 
             };
 
@@ -8554,24 +8596,8 @@ function userAnswerClick( event ) {
 
         if ( answerItem ) {
 
-            var question = _pages.last().options.object,
-                answerId = answerItem.getDataset( 'id' ),
-                answer = question[QUESTION_COLUMNS.answers].item( answerId );
-
-            if ( event.target.hasClass( 'vote-up' ) ) {
-
-                saveAnswerUpvote( question, answer, answerItem );
-
-            } else if ( event.target.hasClass( 'vote-down' ) ) {
-
-                saveAnswerDownvote( question, answer, answerItem );
-
-            } else {
-
-                showPage( 'question-page', { id: answerItem.getDataset( 'question-id' ) } );
-                scrollUp();
-
-            };
+            showPage( 'question-page', { id: answerItem.getDataset( 'question-id' ) } );
+            scrollUp();
 
         };
 

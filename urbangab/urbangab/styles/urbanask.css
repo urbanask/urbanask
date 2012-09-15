@@ -222,7 +222,7 @@
     float: left;
     font: bold 24px/36px Helvetica, Verdana, Tahoma;
     height: 36px; 
-    margin: 2px 4px 0 4px;
+    margin: 0 4px 0 8px;
     overflow: hidden;
     text-align: center;
     text-decoration: none;
@@ -231,7 +231,7 @@
 
 .answer-item {
     height: 113px;
-    padding: 4px 0;
+    padding: 8px 0;
 }
 
 .answer-item-no-toolbar {
@@ -283,7 +283,7 @@
     border-top: 1px solid lightgrey;
     height: 30px;
     list-style-type: none;
-    margin: 0;
+    margin: 4px 0 0 0;
     padding: 0;
     text-align: center;
 }
@@ -727,9 +727,9 @@ body {
     font-weight: bold;
     height: 16px;
     line-height: 16px;
-    margin: 2px 3px 0 0;
+    margin: 0 3px 0 0;
     text-align: center;
-    vertical-align: top;
+    vertical-align: text-bottom;
     width: 34px;
 }
 
@@ -1242,7 +1242,7 @@ html {
     height: 16px;
     margin: 0;
     overflow: hidden;
-    padding: 0; /* 0 0 0 4px;*/
+    padding: 0 4px 0 0;
     text-align: right;
 }
 
@@ -1969,16 +1969,16 @@ html {
 }
 
 .question-item {
-    padding: 4px 0;
+    padding: 8px 0;
 }
 
 .question-item-body {
-    margin: 4px 4px 0 0;
+    margin: 0 8px 0 0;
     overflow: hidden;
 }
 
 .question-item-body-full {
-    height: 40px;
+    height: 66px;
     white-space: normal;
 }
 
@@ -2871,6 +2871,12 @@ html {
     width: 32px;
 }
 
+.user-icon-16 {
+    border-radius: 3px;
+    height: 16px;
+    width: 16px;
+}
+
 #user-id-value::after {
     content: ')';
 }
@@ -3049,7 +3055,7 @@ html {
 
 .vote-frame {
     float: left;
-    margin-left: 4px;
+    margin: 0 8px 0 4px;
 }
 
 .votes {
@@ -3072,9 +3078,9 @@ html {
     font-weight: bold;
     height: 16px;
     line-height: 16px;
-    margin: 2px 3px 0 0;
+    margin: 0 3px 0 0;
     padding: 0 3px 0 3px;
-    vertical-align: top;
+    vertical-align: text-bottom;
 }
 
 .votes-down {
