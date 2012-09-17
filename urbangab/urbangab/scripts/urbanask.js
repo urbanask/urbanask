@@ -380,11 +380,9 @@ function Page( name, options ) {
 function addDefaultEventListeners() {
 
     var toolbar = document.getElementById( 'toolbar' ),
-        refreshButton = document.getElementById( 'refresh-button' ),
         title = document.getElementById( 'title' );
 
     toolbar.addEventListener( 'click', toolbarClick, false );
-    refreshButton.addEventListener( 'click', refresh, false );
     title.addEventListener( 'click', scrollUp, false );
 
     window.addEventListener( 'orientationchange', orientationChange, false );
@@ -400,16 +398,10 @@ function addDefaultEventListeners() {
         toolbar.addEventListener( 'touchstart', selectToolbarItem, false );
         toolbar.addEventListener( 'touchend', unselectToolbarItem, false );
 
-        refreshButton.addEventListener( 'touchstart', selectButton, false );
-        refreshButton.addEventListener( 'touchend', unselectButton, false );
-
     } else {
 
         toolbar.addEventListener( 'mousedown', selectToolbarItem, false );
         toolbar.addEventListener( 'mouseup', unselectToolbarItem, false );
-
-        refreshButton.addEventListener( 'mousedown', selectButton, false );
-        refreshButton.addEventListener( 'mouseup', unselectButton, false );
 
     };
 
@@ -440,10 +432,16 @@ function addEventListeners( page, previousPage ) {
                 backButton.addEventListener( 'touchstart', selectButton, false );
                 backButton.addEventListener( 'touchend', unselectButton, false );
 
+                answers.addEventListener( 'touchstart', selectElement );
+                answers.addEventListener( 'touchend', unselectElement );
+
             } else {
 
                 backButton.addEventListener( 'mousedown', selectButton, false );
                 backButton.addEventListener( 'mouseup', unselectButton, false );
+
+                answers.addEventListener( 'mousedown', selectElement );
+                answers.addEventListener( 'mouseup', unselectElement );
 
             };
 
@@ -465,16 +463,13 @@ function addEventListeners( page, previousPage ) {
 
             document.getElementById( 'question-map' ).addEventListener( 'click', questionItemClick, false );
 
-            if ( window.deviceInfo.phonegap ) {
-
-                document.addEventListener( 'menubutton', onQuestionShareButtonClick, false );
-
-            };
-
             if ( window.deviceInfo.mobile ) {
 
-                questionView.addEventListener( 'touchstart', selectItem, false );
-                questionView.addEventListener( 'touchend', unselectItem, false );
+                answers.addEventListener( 'touchstart', selectElement );
+                answers.addEventListener( 'touchend', unselectElement );
+
+                questionView.addEventListener( 'touchstart', selectElement, false );
+                questionView.addEventListener( 'touchend', unselectElement, false );
 
                 backButton.addEventListener( 'touchstart', selectButton, false );
                 backButton.addEventListener( 'touchend', unselectButton, false );
@@ -486,11 +481,11 @@ function addEventListeners( page, previousPage ) {
 
                 answers.addEventListener( 'mouseover', hoverItem, false );
                 answers.addEventListener( 'mouseout', unhoverItem, false );
+                answers.addEventListener( 'mousedown', selectElement );
+                answers.addEventListener( 'mouseup', unselectElement );
 
-                questionView.addEventListener( 'mousedown', selectItem, false );
-                questionView.addEventListener( 'mouseup', unselectItem, false );
-                questionView.addEventListener( 'mouseover', hoverItem, false );
-                questionView.addEventListener( 'mouseout', unhoverItem, false );
+                questionView.addEventListener( 'mousedown', selectElement, false );
+                questionView.addEventListener( 'mouseup', unselectElement, false );
 
                 backButton.addEventListener( 'mousedown', selectButton, false );
                 backButton.addEventListener( 'mouseup', unselectButton, false );
@@ -688,20 +683,25 @@ function answerClick( event ) {
 
     var that = this,
         thisEvent = event,  
-        target = event.target;
+        target = event.target,
+        answerItem = target.closestByClassName( 'answer-item' );
 
-    selectItem( event );
+    if ( that.id == 'answers'
+        && !target.hasClass( 'vote-up' )
+        && !target.hasClass( 'vote-down' )
+        && !target.hasClass( 'list-item-toolbar-item' ) ) {
+
+        selectItem( event ); 
+        
+    };
 
     window.setTimeout( function () {
-
-        var answerItem = target.closestByClassName( 'answer-item' );
 
         if ( answerItem ) {
 
             var question = ( that.id == 'answers' ? _pages.last().options.object : _pages.last( 2 ).options.object ),
                 answerId = answerItem.getDataset( 'id' ),
-                answer = question[QUESTION_COLUMNS.answers].item( answerId ),
-                select = answerItem.getElementsByClassName( 'select-answer' );
+                answer = question[QUESTION_COLUMNS.answers].item( answerId );
 
             if ( target.hasClass( 'vote-up' ) ) {
 
@@ -711,7 +711,7 @@ function answerClick( event ) {
 
                 saveAnswerDownvote( question, answer, answerItem );
 
-            } else if ( select.length && !select[0].hasClass( 'hide' ) ) {
+            } else if ( target.hasClass( 'answer-select' ) ) {
 
                 saveAnswerSelect( question, answer, answerItem );
 
@@ -723,7 +723,7 @@ function answerClick( event ) {
 
                 };
 
-            } else if ( target.hasClass( 'answer-user' ) ) {
+            } else if ( target.hasClass( 'list-item-toolbar-user' ) ) {
 
                 showPage( 'user-page', { id: answer[ANSWER_COLUMNS.userId] } );
 
@@ -796,6 +796,27 @@ function answerClick( event ) {
                     } );
 
                 } );
+
+            } else if ( target.hasClass( 'answer-directions' ) ) {
+
+                if ( isLocationAvailable() ) {
+
+                    toggleDirections();
+
+                } else {
+
+                    showMessage( STRINGS.answerPage.directionsLocation, function () {
+
+                        getGeolocation( function () {
+
+                            setTravelMode( document.getElementById( 'travel-mode-drive' ) );
+                            getGeolocation();
+
+                        }, { quick: true } );
+
+                    }, { wide: true } );
+
+                };
 
             } else {
 
@@ -1144,7 +1165,8 @@ function getAge( timestamp ) {
 function getAnswerItem( answer, options ) {
 
     var classes = '',
-        action = '',
+        select = '',
+        directions = '',
         note = '',
         contact = '',
         voteClass = '',
@@ -1154,7 +1176,7 @@ function getAnswerItem( answer, options ) {
         votesInline = '',
         icon = '';
 
-    if ( options.newItem ) {
+    if ( options && options.newItem ) {
 
         classes = 'answer-item list-item list-item-slide height-zero';
 
@@ -1164,19 +1186,13 @@ function getAnswerItem( answer, options ) {
 
     };
 
-    if ( !options.newItem && options.letter ) {
-
-        action = '<div class="select-answer width-zero fade hide">' + STRINGS.checkmark + '</div>';
-
-    };
-
     if ( answer[ANSWER_COLUMNS.note] ) {
 
         note = '<div class="note">' + answer[ANSWER_COLUMNS.note] + '</div>';
 
     } else {
 
-        note = '<div>&nbsp;</div>';
+        note = '<div class="no-note">&nbsp;</div>';
 
     };
 
@@ -1205,9 +1221,9 @@ function getAnswerItem( answer, options ) {
     if ( options && options.votes ) {
 
         votes = '<div class="vote-frame' + voteClass + '">'
-            + '<div class="vote-up"></div>'
+            + '<div class="vote-up selectable"></div>'
             + getVotes( answer[ANSWER_COLUMNS.votes] )
-            + '<div class="vote-down"></div>'
+            + '<div class="vote-down selectable"></div>'
             + '</div>';
 
     } else {
@@ -1216,7 +1232,7 @@ function getAnswerItem( answer, options ) {
 
     };
 
-    if ( options.toolbar ) {
+    if ( options && options.toolbar ) {
 
         if ( answer[ANSWER_COLUMNS.phone] ) {
 
@@ -1224,16 +1240,30 @@ function getAnswerItem( answer, options ) {
 
         };
 
-        toolbar = '<ul class="answer-toolbar">'
-            + '<li class="answer-toolbar-item answer-user"></li>'
-            + '<li class="answer-toolbar-item"><a href="' + number + '" class="answer-call"></a></li>'
-            + '<li class="answer-toolbar-item answer-website"></li>'
-            + '<li class="answer-toolbar-item answer-google-maps"></li>'
+        if ( options && options.question && isMyQuestion( options.question ) ) {
+
+            select = '<li class="list-item-toolbar-item answer-select selectable">' + STRINGS.checkmark + '</li>';
+
+        };
+
+        if ( options && options.directions ) {
+
+            directions = '<li class="list-item-toolbar-item answer-directions selectable"></li>';
+
+        };
+
+        toolbar = '<ul class="list-item-toolbar">'
+            + select
+            + directions
+            + '<li class="list-item-toolbar-item list-item-toolbar-user selectable"></li>'
+            + '<li class="list-item-toolbar-item selectable"><a href="' + number + '" class="answer-call"></a></li>'
+            + '<li class="list-item-toolbar-item answer-website selectable"></li>'
+            + '<li class="list-item-toolbar-item answer-google-maps selectable"></li>'
             + '</ul>';
 
     } else {
 
-        classes += ' answer-item-no-toolbar';
+        classes += ' list-item-no-toolbar';
 
     };
 
@@ -1250,7 +1280,6 @@ function getAnswerItem( answer, options ) {
         + 'data-question-id="' + answer[ANSWER_COLUMNS.questionId] + '" '
         + 'data-letter="' + ( options.letter ? options.letter : '' ) + '">'
         + votes
-        + action
         + '<div class="location-name">'
         + getLetter( options.letter )
         + votesInline
@@ -1396,7 +1425,7 @@ function getNotificationItem( notifiction ) {
 
 function getQuestionItem( question, options ) {
 
-    var answerCount = '', 
+    var answerCount = '',
         listClasses = '',
         bodyClass = '',
         count = '',
@@ -1405,7 +1434,8 @@ function getQuestionItem( question, options ) {
         voteClass = '',
         votes = '',
         votesInline = '',
-        icon = '';
+        icon = '',
+        toolbar = '';
 
     if ( options && options.newItem ) {
 
@@ -1457,9 +1487,9 @@ function getQuestionItem( question, options ) {
     if ( options && options.votes ) {
 
         votes = '<div class="vote-frame' + voteClass + '">'
-            + '<div class="vote-up"></div>'
+            + '<div class="vote-up selectable"></div>'
             + getVotes( question[QUESTION_COLUMNS.votes] )
-            + '<div class="vote-down"></div>'
+            + '<div class="vote-down selectable"></div>'
             + '</div>';
 
     } else {
@@ -1482,6 +1512,20 @@ function getQuestionItem( question, options ) {
 
     };
 
+    if ( options && options.toolbar ) {
+
+        toolbar = '<ul class="list-item-toolbar">'
+            + '<li class="list-item-toolbar-item list-item-toolbar-user selectable"></li>'
+            + '<li class="list-item-toolbar-item list-item-toolbar-facebook selectable"></li>'
+            + '<li class="list-item-toolbar-item list-item-toolbar-twitter selectable"></li>'
+            + '</ul>';
+
+    } else {
+
+        listClasses += ' list-item-no-toolbar';
+
+    };
+
     return '<li class="' + listClasses + '" '
         + 'data-id="' + question[QUESTION_COLUMNS.questionId] + '">'
         + votes
@@ -1496,6 +1540,7 @@ function getQuestionItem( question, options ) {
         + '<li class="info-item">' + formatNumber( question[QUESTION_COLUMNS.reputation] ) + '</li>'
         + icon
         + '</ul>'
+        + toolbar
         + '</li>';
 
 };
@@ -1718,42 +1763,6 @@ function hideAllPages() {
 
 };
 
-function hideAnswersSelect() {
-
-    var answers = document.getElementById( 'answers' ).getElementsByClassName( 'select-answer' );
-
-    for ( var index = 0; index < answers.length; index++ ) {
-
-        answers[index].addClass( 'fade' );
-
-    };
-
-    if ( answers.length ) {
-
-        window.setTimeout( function () {
-
-            for ( var index = 0; index < answers.length; index++ ) {
-
-                answers[index].addClass( 'width-zero' );
-
-            };
-
-        }, 100 );
-
-        window.setTimeout( function () {
-
-            for ( var index = 0; index < answers.length; index++ ) {
-
-                answers[index].addClass( 'hide' );
-
-            };
-
-        }, 600 );
-
-    };
-
-};
-
 function hideInstructions() {
 
     var instructions = document.getElementById( 'instructions' ),
@@ -1771,16 +1780,6 @@ function hideLoginPage() {
 
     event.initEvent( 'close', false, false );
     loginPage.dispatchEvent( event );
-
-};
-
-function hideQuestionShare() {
-
-    var share = document.getElementById( 'question-share' ),
-        event = document.createEvent( 'HTMLEvents' );
-
-    event.initEvent( 'close', false, false );
-    share.dispatchEvent( event );
 
 };
 
@@ -2839,8 +2838,6 @@ function localizeStrings() {
     $( '#post-facebook-cancel' ).textContent = STRINGS.cancelButtonCaption;
     $( '#post-facebook-ok' ).textContent = STRINGS.facebook.postCaption;
     $( '#post-facebook-message' ).setAttribute( 'placeholder', STRINGS.facebook.postFacebookMessageCaption );
-    $( '#question-share-facebook' ).textContent = STRINGS.facebook.postQuestionToFacebook;
-    $( '#question-share-twitter' ).textContent = STRINGS.facebook.postQuestionToTwitter;
     $( '#reputation-caption' ).textContent = STRINGS.reputation;
     $( '#save-edit' ).innerHTML = STRINGS.accountPage.saveCaption;
     $( '#save-account' ).value = STRINGS.createAccount.saveAccount;
@@ -2989,7 +2986,6 @@ function logoutApp() {
     _session.id = '';
     _session.key = '';
 
-    //refresh();
     hideAllPages();
     showPage( 'questions-page' );
     showLoginPage( { logout: true } );
@@ -3205,23 +3201,6 @@ function onAddNewAnswerClick() {
             logoutApp();
 
         } );
-
-    };
-
-};
-
-function onQuestionShareButtonClick() {
-
-    var question = _pages.last().options.object,
-        share = document.getElementById( 'question-share' );
-
-    if ( share.hasClass( 'hide' ) ) {
-
-        showQuestionShare( question[QUESTION_COLUMNS.question] );
-
-    } else {
-
-        hideQuestionShare();
 
     };
 
@@ -3588,6 +3567,40 @@ function questionItemClick( event ) {
 
             saveQuestionDownvote( question, questionItem );
 
+        } else if ( event.target.hasClass( 'list-item-toolbar-user' ) ) {
+
+            showPage( 'user-page', { id: question[QUESTION_COLUMNS.userId] } );
+
+        } else if ( event.target.hasClass( 'list-item-toolbar-facebook' ) ) {
+
+            postToFacebook( 'post-feed', 'question', { message: question[QUESTION_COLUMNS.question] } );
+            showNotification( STRINGS.notification.postedToFacebook, { size: 'tiny' } );
+
+        } else if ( event.target.hasClass( 'list-item-toolbar-twitter' ) ) {
+
+            var url = 'https://twitter.com/share'
+                + '?text=' + window.encodeURIComponent(  
+                          STRINGS.twitter.postQuestionBody.replace( '%1', question[QUESTION_COLUMNS.question] )
+                        + ( question[QUESTION_COLUMNS.region] ? ' @ ' + question[QUESTION_COLUMNS.region] : '' )
+                    )
+                + '&url=' + window.encodeURIComponent( ROOT_URL )
+                + '&hashtags=' + window.encodeURIComponent( 'urbanask' );
+
+            if ( window.deviceInfo.phonegap ) {
+
+                window.plugins.childBrowser.showWebPage( url );
+
+            } else {
+
+                var a = document.createElement( 'a' );
+                a.setAttribute( 'href', url );
+                a.setAttribute( 'target', '_blank' );
+                var event = document.createEvent( 'HTMLEvents' )
+                event.initEvent( 'click', true, true );
+                a.dispatchEvent( event );
+
+            };
+
         };
 
     };
@@ -3702,10 +3715,16 @@ function removeEventListeners( page ) {
                 backButton.removeEventListener( 'touchstart', selectButton, false );
                 backButton.removeEventListener( 'touchend', unselectButton, false );
 
+                answers.removeEventListener( 'touchstart', selectElement );
+                answers.removeEventListener( 'touchend', unselectElement );
+
             } else {
 
                 backButton.removeEventListener( 'mousedown', selectButton, false );
                 backButton.removeEventListener( 'mouseup', unselectButton, false );
+
+                answers.removeEventListener( 'mousedown', selectElement );
+                answers.removeEventListener( 'mouseup', unselectElement );
 
             };
 
@@ -3727,16 +3746,13 @@ function removeEventListeners( page ) {
 
             document.getElementById( 'question-map' ).removeEventListener( 'click', questionItemClick, false );
 
-            if ( window.deviceInfo.phonegap ) {
-
-                document.removeEventListener( 'menubutton', onQuestionShareButtonClick, false );
-
-            };
-
             if ( window.deviceInfo.mobile ) {
 
-                questionView.removeEventListener( 'touchstart', selectItem, false );
-                questionView.removeEventListener( 'touchend', unselectItem, false );
+                answers.removeEventListener( 'touchstart', selectElement );
+                answers.removeEventListener( 'touchend', unselectElement );
+
+                questionView.removeEventListener( 'touchstart', selectElement, false );
+                questionView.removeEventListener( 'touchend', unselectElement, false );
 
                 backButton.removeEventListener( 'touchstart', selectButton, false );
                 backButton.removeEventListener( 'touchend', unselectButton, false );
@@ -3748,11 +3764,11 @@ function removeEventListeners( page ) {
 
                 answers.removeEventListener( 'mouseover', hoverItem, false );
                 answers.removeEventListener( 'mouseout', unhoverItem, false );
+                answers.removeEventListener( 'mousedown', selectElement );
+                answers.removeEventListener( 'mouseup', unselectElement );
 
-                questionView.removeEventListener( 'mousedown', selectItem, false );
-                questionView.removeEventListener( 'mouseup', unselectItem, false );
-                questionView.removeEventListener( 'mouseover', hoverItem, false );
-                questionView.removeEventListener( 'mouseout', unhoverItem, false );
+                questionView.removeEventListener( 'mousedown', selectElement, false );
+                questionView.removeEventListener( 'mouseup', unselectElement, false );
 
                 backButton.removeEventListener( 'mousedown', selectButton, false );
                 backButton.removeEventListener( 'mouseup', unselectButton, false );
@@ -4176,106 +4192,116 @@ function saveAnswerUpvote( question, answer, answerItem ) {
 
 function saveAnswerSelect( question, answer, answerItem ) {
 
-    var resource = '/api/answers/' + answer[ANSWER_COLUMNS.answerId] + '/select',
-        data = 'questionId=' + question.questionId,
-        session = getSession( resource );
+    if ( !isLoggedIn() ) {
 
-    hideAnswersSelect();
+        showMessage( STRINGS.login.loginRequired.replace( '%1', STRINGS.login.loginRequiredAction.selectAnswer ), function () {
 
-    ajax( API_URL + resource, {
+            logoutApp();
 
-        "type": "GET",
-        "data": data,
-        "headers": { "x-session": session },
-        "success": function ( data, status ) {
+        } );
 
-            var location = answerItem.getElementsByClassName( 'location-name' )[0],
-                selected = window.Math.abs( answer[ANSWER_COLUMNS.selected] - 1 ),
-                questionItem = _userQuestions.item( question.questionId );
+    } else {
 
-            question.resolved = selected;
-            if ( questionItem ) questionItem[QUESTION_COLUMNS.resolved] = selected;
+        var resource = '/api/answers/' + answer[ANSWER_COLUMNS.answerId] + '/select',
+            data = 'questionId=' + question.questionId,
+            session = getSession( resource );
 
-            var previous = question[QUESTION_COLUMNS.answers].item( 1, [ANSWER_COLUMNS.selected] );
-            if ( previous ) previous[ANSWER_COLUMNS.selected] = 0; //false
-            answer[ANSWER_COLUMNS.selected] = selected;
+        ajax( API_URL + resource, {
 
-            if ( selected ) {
+            "type": "GET",
+            "data": data,
+            "headers": { "x-session": session },
+            "success": function ( data, status ) {
 
-                var reputation = STRINGS.notificationReputation.replace( "%1", REPUTATION_ACTION.resolvedQuestion );
-                showNotification( STRINGS.checkmark, { footer: reputation } );
+                var location = answerItem.getElementsByClassName( 'location-name' )[0],
+                    selected = window.Math.abs( answer[ANSWER_COLUMNS.selected] - 1 ),
+                    questionItem = _userQuestions.item( question.questionId );
 
-                if ( location ) {
+                question.resolved = selected;
+                if ( questionItem ) questionItem[QUESTION_COLUMNS.resolved] = selected;
 
-                    location.lastChild.previousSibling.insertAdjacentHTML( 'afterEnd', getSelected( selected, true ) );
+                var previous = question[QUESTION_COLUMNS.answers].item( 1, [ANSWER_COLUMNS.selected] );
+                if ( previous ) previous[ANSWER_COLUMNS.selected] = 0; //false
+                answer[ANSWER_COLUMNS.selected] = selected;
+
+                if ( selected ) {
+
+                    var reputation = STRINGS.notificationReputation.replace( "%1", REPUTATION_ACTION.resolvedQuestion );
+                    showNotification( STRINGS.checkmark, { footer: reputation } );
+
+                    if ( location ) {
+
+                        location.lastChild.previousSibling.insertAdjacentHTML( 'afterEnd', getSelected( selected, true ) );
+                        window.setTimeout( function () {
+
+                            location.childByClassName( 'selected' ).removeClass( 'width-zero' );
+
+                        }, 50 );
+
+                    };
+
+                    if ( question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.openGraphId] ) {
+
+                        postToFacebook( 
+                            'post-open-graph',
+                            'comment',
+                            {
+                                questionId: question.questionId,
+                                openGraphId: question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.openGraphId],
+                                comment: STRINGS.facebook.openGraphComment
+                                    .replace( '%1', answer[ANSWER_COLUMNS.location] )
+                                    .replace( '%2', answer[ANSWER_COLUMNS.locationAddress] )
+
+                            }
+                        );
+
+                    } else {
+
+                        postToFacebook( 'post-open-graph', 'answer', { value: question[QUESTION_COLUMNS.question], id: question.questionId } );
+
+                    };
+
+                } else {
+
                     window.setTimeout( function () {
 
-                        location.childByClassName( 'selected' ).removeClass( 'width-zero' );
+                        if ( location ) {
+
+                            location.childByClassName( 'selected' ).addClass( 'width-zero' );
+                            window.setTimeout( function () {
+
+                                location.removeChild( location.childByClassName( 'selected' ) );
+
+                            }, 500 );
+
+                        };
 
                     }, 50 );
 
                 };
 
-                if ( question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.openGraphId] ) {
-
-                    postToFacebook( 
-                        'post-open-graph',
-                        'comment',
-                        {
-                            questionId: question.questionId,
-                            openGraphId: question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.openGraphId],
-                            comment: STRINGS.facebook.openGraphComment
-                                .replace( '%1', answer[ANSWER_COLUMNS.location] )
-                                .replace( '%2', answer[ANSWER_COLUMNS.locationAddress] )
-
-                        }
-                    );
-
-                } else {
-
-                    postToFacebook( 'post-open-graph', 'answer', { value: question[QUESTION_COLUMNS.question], id: question.questionId } );
-
-                };
-
-            } else {
-
                 window.setTimeout( function () {
 
-                    if ( location ) {
+                    showQuestion( question );
 
-                        location.childByClassName( 'selected' ).addClass( 'width-zero' );
-                        window.setTimeout( function () {
+                    if ( questionItem ) {
 
-                            location.removeChild( location.childByClassName( 'selected' ) );
-
-                        }, 500 );
+                        showQuestions( _account[ACCOUNT_COLUMNS.username], _userQuestions, document.getElementById( 'user-questions' ) );
 
                     };
 
-                }, 50 );
+                }, 100 );
 
-            };
+            },
+            "error": function ( response, status, error ) {
 
-            window.setTimeout( function () {
+                if ( error == 'Unauthorized' ) { logoutApp(); };
 
-                showQuestion( question );
+            }
 
-                if ( questionItem ) {
+        } );
 
-                    showQuestions( _account[ACCOUNT_COLUMNS.username], _userQuestions, document.getElementById( 'user-questions' ) );
-
-                };
-
-            }, 100 );
-
-        },
-        "error": function ( response, status, error ) {
-
-            if ( error == 'Unauthorized' ) { logoutApp(); };
-
-        }
-
-    } );
+    };
 
 };
 
@@ -4834,14 +4860,14 @@ function selectItem( event ) {
 function selectElement( event ) {
 
     var item = event.target.closestByClassName( 'selectable' );
-    if ( item ) item.addClass( 'select' );
+    if ( item ) { item.addClass( 'select' ); };
 
 };
 
 function selectToolbarItem( event ) {
 
     var item = event.target.closestByClassName( 'toolbar-item' );
-    if ( item ) item.addClass( 'toolbar-item-selected' );
+    if ( item ) { item.addClass( 'toolbar-item-selected' ); };
 
 };
 
@@ -6126,7 +6152,9 @@ function showAnswer( answer, question, letter ) {
         view = document.getElementById( 'view' );
 
     document.getElementById( 'answer-page' ).setDataset( 'id', answerId );
-    answerView.innerHTML = getAnswerItem( answer, { letter: letter, toolbar: true, votes: true, icon: true } );
+    answerView.innerHTML = getAnswerItem(
+        answer, 
+        { letter: letter, toolbar: true, votes: true, icon: true, question: question, directions: true } );
 
     var mapCanvasTop = answerView.clientHeight + MARGIN_Y,
         mapCanvasHeight = view.clientHeight - mapCanvasTop - ( 2 * MARGIN_Y );
@@ -6224,48 +6252,6 @@ function showAnswerMap( answer, travelMode ) {
         };
 
     } );
-
-};
-
-function showAnswersSelect( question ) {
-
-    var answers = document.getElementById( 'answers' ).getElementsByClassName( 'select-answer' );
-
-    for ( var index = 0; index < answers.length; index++ ) {
-
-        if ( question[QUESTION_COLUMNS.answers][index][ANSWER_COLUMNS.selected] ) {
-
-            answers[index].addClass( 'select-answer-selected' );
-
-        } else {
-
-            answers[index].removeClass( 'select-answer-selected' );
-
-        };
-
-        answers[index].removeClass( 'hide' );
-
-    };
-
-    window.setTimeout( function () {
-
-        for ( var index = 0; index < answers.length; index++ ) {
-
-            answers[index].removeClass( 'width-zero' );
-
-        };
-
-    }, 50 );
-
-    window.setTimeout( function () {
-
-        for ( var index = 0; index < answers.length; index++ ) {
-
-            answers[index].removeClass( 'fade' );
-
-        };
-
-    }, 250 );
 
 };
 
@@ -7265,7 +7251,6 @@ function showPage( page, options, back ) {
 
             initializeBackButton();
             document.getElementById( 'directions-page' ).addClass( 'top-slide' );
-            showToolbar( 'answer', { question: question, answer: answer } );
 
             break;
 
@@ -7302,7 +7287,6 @@ function showPage( page, options, back ) {
             resetQuestionsTop();
             resetUsersTop();
             initializeBackButton();
-            showToolbar( 'main' );
 
             slidePage( page, previousPage );
             updateScrollTopUsers();
@@ -7352,7 +7336,6 @@ function showPage( page, options, back ) {
                 hideAccountPage();
                 resetUsersTop();
                 initializeBackButton();
-                showToolbar( 'main' );
 
                 updateScrollQuestions( function () {
 
@@ -7372,9 +7355,7 @@ function initializeQuestionPage( question, page, previousPage ) {
 
     getQuestionsTop();
     getUsersTop();
-    hideQuestionShare()
     initializeBackButton();
-    showToolbar( 'question', { question: question } );
 
     slidePage( page, previousPage );
     updateScrollQuestion();
@@ -7386,7 +7367,6 @@ function initializeUserPage( user, page, previousPage ) {
     slidePage( page, previousPage );
 
     resetQuestionsTop();
-    showToolbar( 'main' );
     initializeBackButton();
 
     if ( isMe( user ) ) {
@@ -7491,7 +7471,7 @@ function showQuestion( question ) {
         questionRegion = document.getElementById( 'question-region' ),
         view = document.getElementById( 'view' ),
         BUTTON_HEIGHT = 42,
-        QUESTION_HEIGHT = 98,
+        QUESTION_HEIGHT = 125,
         html = '',
         mapHeight = 0;
 
@@ -7505,7 +7485,7 @@ function showQuestion( question ) {
     }, 10 );
 
     questionMap.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12P4DwQACfsD/WMmxY8AAAAASUVORK5CYII=';
-    questionView.innerHTML = getQuestionItem( question, { full: true, votes: true, icon: true } );
+    questionView.innerHTML = getQuestionItem( question, { full: true, votes: true, icon: true, toolbar: true } );
 
     if ( question[QUESTION_COLUMNS.answers].length ) {
 
@@ -7555,7 +7535,7 @@ function showQuestion( question ) {
             var answer = question[QUESTION_COLUMNS.answers][index],
                 letter = STRINGS.letters.charAt( index );
 
-            html += getAnswerItem( answer, { letter: letter, toolbar: true, votes: true, icon: true } );
+            html += getAnswerItem( answer, { letter: letter, toolbar: true, votes: true, icon: true, question: question } );
 
         };
 
@@ -7656,99 +7636,6 @@ function showQuestions( header, questions, element ) {
 
 };
 
-function showQuestionShare( question ) {
-
-    var share = document.getElementById( 'question-share' ),
-        facebook = document.getElementById( 'question-share-facebook' ),
-        twitter = document.getElementById( 'question-share-twitter' );
-
-    share.removeClass( 'hide' );
-    window.setTimeout( function () { share.addClass( 'question-share-slide' ); }, 20 );
-
-    addListeners();
-
-    function postFacebook() {
-
-        close();
-
-        postToFacebook( 'post-feed', 'question', { message: question } );
-        showNotification( STRINGS.notification.postedToFacebook, { size: 'tiny' } );
-
-    };
-
-    function postToTwitter() {
-
-        close();
-
-        var url = 'https://twitter.com/share'
-                + '?text=' + window.encodeURIComponent( 'Can you help me find: ' + question + ' @ ' )
-                + '&url=' + window.encodeURIComponent( 'http://urbanAsk.com' )
-                + '&hashtags=' + window.encodeURIComponent( 'urbanask' );
-
-        if ( window.deviceInfo.phonegap ) {
-
-            window.plugins.childBrowser.showWebPage( url );
-
-        } else {
-
-            var a = document.createElement( 'a' );
-            a.setAttribute( 'href', url );
-            a.setAttribute( 'target', '_blank' );
-            var event = document.createEvent( 'HTMLEvents' )
-            event.initEvent( 'click', true, true );
-            a.dispatchEvent( event );
-
-        };
-
-    };
-
-    function close() {
-
-        share.removeClass( 'question-share-slide' );
-        window.setTimeout( function () { share.addClass( 'hide' ); }, 600 );
-
-        removeListeners();
-
-    };
-
-    function removeListeners() {
-
-        share.removeEventListener( 'close', close, false );
-
-        facebook.removeEventListener( 'click', postFacebook, false );
-        facebook.removeEventListener( 'touchstart', selectButton, false );
-        facebook.removeEventListener( 'touchend', unselectButton, false );
-        facebook.removeEventListener( 'mousedown', selectButton, false );
-        facebook.removeEventListener( 'mouseup', unselectButton, false );
-
-        twitter.removeEventListener( 'click', postToTwitter, false );
-        twitter.removeEventListener( 'touchstart', selectButton, false );
-        twitter.removeEventListener( 'touchend', unselectButton, false );
-        twitter.removeEventListener( 'mousedown', selectButton, false );
-        twitter.removeEventListener( 'mouseup', unselectButton, false );
-
-    };
-
-    function addListeners() {
-
-        share.addEventListener( 'close', close, false );
-
-        facebook.addEventListener( 'click', postFacebook, false );
-        facebook.addEventListener( 'touchstart', selectButton, false );
-        facebook.addEventListener( 'touchend', unselectButton, false );
-        facebook.addEventListener( 'mousedown', selectButton, false );
-        facebook.addEventListener( 'mouseup', unselectButton, false );
-
-        twitter.addEventListener( 'click', postToTwitter, false );
-        twitter.addEventListener( 'touchstart', selectButton, false );
-        twitter.addEventListener( 'touchend', unselectButton, false );
-        twitter.addEventListener( 'mousedown', selectButton, false );
-        twitter.addEventListener( 'mouseup', unselectButton, false );
-
-    };
-
-};
-
 function showSocialButtons() {
 
     if ( !window.deviceInfo.mobile ) {
@@ -7807,88 +7694,6 @@ function showExternalFooter() {
             document.getElementById( 'external-footer' ).removeClass( 'fade' );
 
         }, 4000 );
-
-    };
-
-};
-
-function showRefreshButton() {
-
-    document.getElementById( 'refresh-button' ).removeClass( 'hide' );
-
-};
-
-function showToolbar( toolbar, options ) {
-
-    var disabled,
-        button;
-
-    switch ( toolbar ) {
-        case 'main':
-
-            document.getElementById( 'toolbar-main' ).removeClass( 'hide' );
-            document.getElementById( 'toolbar-answer' ).addClass( 'hide' );
-            document.getElementById( 'toolbar-question' ).addClass( 'hide' );
-
-            document.getElementById( 'user-button' ).setDataset( 'user-id', _account[ACCOUNT_COLUMNS.userId] );
-
-            break;
-
-        case 'answer':
-
-            document.getElementById( 'toolbar-answer' ).removeClass( 'hide' );
-            document.getElementById( 'toolbar-main' ).addClass( 'hide' );
-            document.getElementById( 'toolbar-question' ).addClass( 'hide' );
-
-            if ( isMyQuestion( options.question ) ) {
-
-                document.getElementById( 'select-answer-button' ).removeClass( 'hide' );
-
-            } else {
-
-                document.getElementById( 'select-answer-button' ).addClass( 'hide' );
-
-            };
-
-            //if ( isMyAnswer( options.answer ) ) {
-
-            //    document.getElementById( 'delete-answer-button' ).removeClass( 'hide' );
-
-            //} else {
-
-            //    document.getElementById( 'delete-answer-button' ).addClass( 'hide' );
-
-            //};
-
-            break;
-
-        case 'question':
-
-            var question = options.question;
-
-            document.getElementById( 'toolbar-question' ).removeClass( 'hide' );
-            document.getElementById( 'toolbar-answer' ).addClass( 'hide' );
-            document.getElementById( 'toolbar-main' ).addClass( 'hide' );
-
-            if ( isMyQuestion( options.question ) ) {
-
-                document.getElementById( 'select-answers-button' ).removeClass( 'hide' );
-                document.getElementById( 'question-share-button' ).removeClass( 'hide' );
-
-                document.getElementById( 'question-user-button' ).addClass( 'hide' );
-
-            } else {
-
-                document.getElementById( 'question-user-button' ).removeClass( 'hide' );
-
-                document.getElementById( 'select-answers-button' ).addClass( 'hide' );
-                document.getElementById( 'question-share-button' ).addClass( 'hide' );
-
-                document.getElementById( 'question-user-button' ).setDataset( 'user-id', question.userId );
-
-            };
-
-            break;
 
     };
 
@@ -8110,7 +7915,6 @@ function startApp() {
 
         refreshQuestions();
         refreshUserQuestions();
-        showRefreshButton();
 
         if ( window.location.queryString()['question-id'] ) {
 
@@ -8142,115 +7946,14 @@ function toolbarClick( event ) {
 
     var item = event.target.closestByTagName( 'li' );
 
-    if ( item && !item.disabled ) {
-
-        var answerItem,
-            question;
+    if ( item ) {
 
         switch ( item.id ) {
-
-            case 'delete-answer-button':
-
-                if ( isLoggedIn() ) {
-
-                    deleteAnswer();
-
-                } else {
-
-                    showMessage( STRINGS.login.loginRequired.replace( '%1', STRINGS.login.loginRequiredAction.deleteAnswer ), function () {
-
-                        logoutApp();
-
-                    } );
-
-                };
-
-                break;
-
-            case 'directions-button':
-
-                if ( isLocationAvailable() ) {
-
-                    toggleDirections();
-
-                } else {
-
-                    showMessage( STRINGS.answerPage.directionsLocation, function () {
-
-                        getGeolocation( function () {
-
-                            setTravelMode( document.getElementById( 'travel-mode-drive' ) );
-                            getGeolocation();
-
-                        }, { quick: true } );
-
-                    }, { wide: true } );
-
-                };
-
-                break;
-
-            case 'question-share-button':
-
-                onQuestionShareButtonClick();
-                break;
 
             case 'questions-button':
 
                 showPage( 'questions-page' );
                 scrollUp();
-                break;
-
-            case 'question-user-button':
-
-                showPage( 'user-page', { id: item.getDataset( 'user-id' ) } );
-                break;
-
-            case 'select-answer-button':
-
-                if ( isLoggedIn() ) {
-
-                    var answer = _pages.last().options.object;
-                    question = _pages.last().options.question;
-                    answerItem = document.getElementById( 'answer-view' ).getElementsByClassName( 'answer-item' )[0];
-
-                    saveAnswerSelect( question, answer, answerItem );
-
-                } else {
-
-                    showMessage( STRINGS.login.loginRequired.replace( '%1', STRINGS.login.loginRequiredAction.deleteAnswer ), function () {
-
-                        logoutApp();
-
-                    } );
-
-                };
-
-                break;
-
-            case 'select-answers-button':
-
-                question = _pages.last().options.object;
-                var selects = document.getElementById( 'answers' ).getElementsByClassName( 'select-answer' );
-
-                if ( selects.length == 0 ) {
-
-                    showMessage( STRINGS.error.noAnswersToSelect );
-
-                } else {
-
-                    if ( selects[0].hasClass( 'hide' ) ) {
-
-                        showAnswersSelect( question );
-
-                    } else {
-
-                        hideAnswersSelect();
-
-                    };
-
-                };
-
                 break;
 
             case 'top-button':
@@ -8263,7 +7966,7 @@ function toolbarClick( event ) {
 
                 if ( isLoggedIn() ) {
 
-                    showPage( 'user-page', { id: item.getDataset( 'user-id' ), top: true } );
+                    showPage( 'user-page', { id: _account[ACCOUNT_COLUMNS.userId], top: true } );
                     scrollUp();
 
                 } else {

@@ -85,7 +85,6 @@
             "loadQuestions": "There was an error loading the questions.",
             "loadRegions": "There was an error loading regions.",
             "loadUser": "There was an error loading this user.",
-            "noAnswersToSelect": "There are no answers to select.",
             "questionLocationNotFound": "Location '%1' not found. Check your spelling or be more specific.",
             "saveAnswer": "There was an error saving this answer.",
             "saveQuestion": "There was an error saving this question.",
@@ -100,8 +99,6 @@
             "loginCaption": "Login with Facebook",
             "openGraphComment": "found this at %1 (%2).",
             "openGraphAnswerAsComment": "suggested %1 (%2).",
-            "postQuestionToFacebook": "Post Question",
-            "postQuestionToTwitter": "Tweet Question",
             "postFacebookMessageCaption": "optional message",
             "postCaption": "post"
         },
@@ -217,6 +214,10 @@
         "totalBadgesOne": "badge",
         "totalQuestions": "questions",
         "totalQuestionsOne": "question",
+        "twitter": {
+            "postQuestionBody": "Someone's looking for: %1",
+            "postQuestionBodyMyQuestion": "Can you help me find: %1"
+        },
         "userIdCaption": "id",
         "user":
         {
