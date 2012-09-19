@@ -123,7 +123,8 @@ var _account = [],
         viewQuestions: { id: 1, name: 'viewQuestions' },
         viewQuestion: { id: 2, name: 'viewQuestion' },
         addAnswer: { id: 3, name: 'addAnswer' },
-        toolbar: { id: 4, name: 'toolbar' }
+        toolbar: { id: 4, name: 'toolbar' },
+        askedQuestionSMSNotification: { id: 5, name: 'askedQuestionSMSNotification' }
 
     },
     INTERVALS = {
@@ -4535,13 +4536,29 @@ function saveQuestion( event ) {
 
                 _userQuestions.unshift( question );
                 window.setTimeout( function () { questions.childNodes[1].removeClass( 'height-zero' ) }, 50 );
-                showNotification( STRINGS.notificationAskQuestion, { footer: STRINGS.notification.questionSaved } );
+                //showNotification( STRINGS.notificationAskQuestion, { footer: STRINGS.notification.questionSaved } );
 
                 getNewQuestionId( questionText, function ( questionId ) {
 
                     postToFacebook( 'post-open-graph', 'question', { value: questionText, id: questionId } );
 
                 } );
+
+                if ( !_account[ACCOUNT_COLUMNS.instructions][INSTRUCTION_TYPES.askedQuestionSMSNotification.id] ) {
+
+                    if ( !_account[ACCOUNT_COLUMNS.phone].number ) {
+
+                        showMessage( STRINGS.questionsPage.smsNotification, function () {
+
+                            showAccountPage();
+
+                        } );
+
+                    };
+
+                    saveInstructionViewed( INSTRUCTION_TYPES.askedQuestionSMSNotification );
+
+                };
 
             },
             "error": function ( response, status, error ) {
@@ -7642,7 +7659,7 @@ function showSocialButtons() {
 
         var html =
                     '<div id="social-buttons" class="fadeable fade">'
-                + '<div class="fb-like" data-href="http://urbanAsk.com" data-send="true" data-layout="box_count" data-width="50" data-show-faces="true" data-colorscheme="dark"></div>'
+                + '<div class="fb-like" data-href="http://urbanask.com" data-send="true" data-layout="box_count" data-width="50" data-show-faces="true" data-colorscheme="dark"></div>'
                 + '<div class="g-plusone-frame"><div class="g-plusone" data-size="tall" data-href="http://urbanAsk.com"></div></div>'
                 + '<a href="https://twitter.com/share" class="twitter-share-button" data-url="http://urbanAsk.com" data-text="urbanAsk - The addicting game of helping people find things." data-count="vertical">Tweet</a>'
                 + '<div id="fb-root"></div>'

@@ -185,7 +185,8 @@
                 + "Your device may also ask permission.",
             "viewNearbyQuestions": "view questions near me",
             "nearbyQuestionsInstructions": "urbanAsk needs access to your location to display questions near you.<br /><br />"
-                + "Is this OK?<br /><br /> Your device may also ask permission."
+                + "Is this OK?<br /><br /> Your device may also ask permission.",
+            "smsNotification": "Would you like to add your mobile number and be notified by SMS when your question is answered?"
 
         },
         "questionsEverywhere": "everywhere",

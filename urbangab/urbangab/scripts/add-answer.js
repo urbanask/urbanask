@@ -315,20 +315,23 @@ function showAddAnswer( question ) {
                 questionMap.setAttribute( 'src', mapUrl + markers );
 
                 //show answer count
-                answerCount.addClass( 'fadeable' ).addClass( 'fade' );
-                window.setTimeout( function () {
+                if ( answerCount ) {
 
-                    answerCount.textContent = question[QUESTION_COLUMNS.answerCount];
-                    answerCount.removeClass( 'fade' );
-                    window.setTimeout( function () { answerCount.removeClass( 'fadeable' ); }, 1000 );
+                    answerCount.addClass( 'fadeable' ).addClass( 'fade' );
+                    window.setTimeout( function () {
 
-                }, 750 );
+                        answerCount.textContent = question[QUESTION_COLUMNS.answerCount];
+                        answerCount.removeClass( 'fade' );
+                        window.setTimeout( function () { answerCount.removeClass( 'fadeable' ); }, 1000 );
+
+                    }, 750 );
+
+                };
 
                 hideAddNewAnswerButton();
                 resizeQuestionMap();
 
                 showNotification( STRINGS.notificationAnswerQuestion, { footer: STRINGS.notification.answerSaved } );
-                showToolbar( 'question', { question: question } );
 
                 if ( questionItem ) {
 
