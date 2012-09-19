@@ -70,20 +70,24 @@ function showAddAnswer( question ) {
 
             var html = '';
 
-            for ( var index = 0; index < results.length; index++ ) {
+            if ( results ) {
 
-                var options = '';
+                for ( var index = 0; index < results.length; index++ ) {
 
-                if ( question[QUESTION_COLUMNS.answers].item( results[index].id, ANSWER_COLUMNS.locationId ) ) {
+                    var options = '';
 
-                    options = {
-                        existingClass: 'existing-answer',
-                        existingAnswer: '<div class="existing-answer-caption">' + STRINGS.existingAnswer + '</div>'
+                    if ( question[QUESTION_COLUMNS.answers].item( results[index].id, ANSWER_COLUMNS.locationId ) ) {
+
+                        options = {
+                            existingClass: 'existing-answer',
+                            existingAnswer: '<div class="existing-answer-caption">' + STRINGS.existingAnswer + '</div>'
+                        };
+
                     };
 
-                };
+                    html += getLocationItem( results[index], options );
 
-                html += getLocationItem( results[index], options );
+                };
 
             };
 

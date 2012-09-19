@@ -1,3 +1,5 @@
 1.23
 
 new - interface improvements
+new - post to FB/Twitter any question (not just yours)
+

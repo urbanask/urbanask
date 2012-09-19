@@ -1,5 +1,5 @@
 
-SELECT * FROM [user] ORDER BY signupDate DESC
+SELECT * FROM [user] WHERE userId < 100000 ORDER BY signupDate DESC
 SELECT * FROM [userFacebook] WHERE userId < 100000 ORDER BY userId DESC
 SELECT * FROM [userTwitter] WHERE userId < 100000 ORDER BY userId DESC
 SELECT * FROM [userEmail] WHERE userId < 100000 ORDER BY userId DESC
