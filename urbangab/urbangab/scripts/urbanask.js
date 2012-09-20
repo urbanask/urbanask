@@ -3574,31 +3574,55 @@ function questionItemClick( event ) {
 
         } else if ( event.target.hasClass( 'list-item-toolbar-facebook' ) ) {
 
-            postToFacebook( 'post-feed', 'question', { message: question[QUESTION_COLUMNS.question] } );
-            showNotification( STRINGS.notification.postedToFacebook, { size: 'tiny' } );
+            if ( !isLoggedIn() ) {
 
-        } else if ( event.target.hasClass( 'list-item-toolbar-twitter' ) ) {
+                showMessage( STRINGS.login.loginRequired.replace( '%1', STRINGS.login.loginRequiredAction.postToFacebook ), function () {
 
-            var url = 'https://twitter.com/share'
-                + '?text=' + window.encodeURIComponent(  
-                          STRINGS.twitter.postQuestionBody.replace( '%1', question[QUESTION_COLUMNS.question] )
-                        + ( question[QUESTION_COLUMNS.region] ? ' @ ' + question[QUESTION_COLUMNS.region] : '' )
-                    )
-                + '&url=' + window.encodeURIComponent( ROOT_URL )
-                + '&hashtags=' + window.encodeURIComponent( 'urbanask' );
+                    logoutApp();
 
-            if ( window.deviceInfo.phonegap ) {
-
-                window.plugins.childBrowser.showWebPage( url );
+                } );
 
             } else {
 
-                var a = document.createElement( 'a' );
-                a.setAttribute( 'href', url );
-                a.setAttribute( 'target', '_blank' );
-                var event = document.createEvent( 'HTMLEvents' )
-                event.initEvent( 'click', true, true );
-                a.dispatchEvent( event );
+                postToFacebook( 'post-feed', 'question', { message: question[QUESTION_COLUMNS.question] } );
+                showNotification( STRINGS.notification.postedToFacebook, { size: 'tiny' } );
+
+            };
+
+        } else if ( event.target.hasClass( 'list-item-toolbar-twitter' ) ) {
+
+            if ( !isLoggedIn() ) {
+
+                showMessage( STRINGS.login.loginRequired.replace( '%1', STRINGS.login.loginRequiredAction.postToTwitter ), function () {
+
+                    logoutApp();
+
+                } );
+
+            } else {
+
+                var url = 'https://twitter.com/share'
+                        + '?text=' + window.encodeURIComponent( 
+                                  STRINGS.twitter.postQuestionBody.replace( '%1', question[QUESTION_COLUMNS.question] )
+                                + ( question[QUESTION_COLUMNS.region] ? ' @ ' + question[QUESTION_COLUMNS.region] : '' )
+                            )
+                        + '&url=' + window.encodeURIComponent( ROOT_URL )
+                        + '&hashtags=' + window.encodeURIComponent( 'urbanask' );
+
+                if ( window.deviceInfo.phonegap ) {
+
+                    window.plugins.childBrowser.showWebPage( url );
+
+                } else {
+
+                    var a = document.createElement( 'a' );
+                    a.setAttribute( 'href', url );
+                    a.setAttribute( 'target', '_blank' );
+                    var event = document.createEvent( 'HTMLEvents' )
+                    event.initEvent( 'click', true, true );
+                    a.dispatchEvent( event );
+
+                };
 
             };
 
@@ -4136,7 +4160,7 @@ function saveAnswerUpvote( question, answer, answerItem ) {
 
                 if ( voted != 1 ) { //upvote
 
-                    showNotification( STRINGS.notificationUpvote, { tight: true } );
+                    //showNotification( STRINGS.notificationUpvote, { tight: true } );
 
                     if ( _account[ACCOUNT_COLUMNS.facebook][FACEBOOK_COLUMNS.facebookId]
                         && question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.facebookId]
@@ -4722,7 +4746,7 @@ function saveQuestionUpvote( question, questionItem ) {
 
                 if ( voted != 1 ) { //upvote
 
-                    showNotification( STRINGS.notificationUpvote, { tight: true } );
+                    //showNotification( STRINGS.notificationUpvote, { tight: true } );
 
                     if ( _account[ACCOUNT_COLUMNS.facebook][FACEBOOK_COLUMNS.facebookId]
                         && question[QUESTION_COLUMNS.facebook][FACEBOOK_COLUMNS.facebookId]
@@ -8330,6 +8354,8 @@ function userAnswerClick( event ) {
 function viewNearbyQuestionsClick( event ) {
 
     showMessage( STRINGS.questionsPage.nearbyQuestionsInstructions, function () {
+
+        showNotification( STRINGS.notification.loadingNearbyQuestions, { size: 'tiny' } );
 
         getGeolocation( function () {
 

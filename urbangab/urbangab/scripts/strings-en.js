@@ -140,6 +140,8 @@
                 "profile": "view your profile",
                 "addAnswer": "add an answer",
                 "deleteAnswer": "delete an answer",
+                "postToFacebook": "post to Facebook",
+                "postToTwitter": "post to Twitter",
                 "selectAnswer": "select an answer",
                 "vote": "vote"    
             },
@@ -161,6 +163,7 @@
             "contactUpdated": "The urbanAsk contact has been updated",
             "contactExists": "The urbanAsk contact already exists",
             "downloading": "downloading...",
+            "loadingNearbyQuestions": "Loading nearby questions.",
             "newVersion": "There is a new version of urbanAsk.",
             "postedToFacebook": "Successfully posted to your wall.",
             "questionSaved": "question saved",
