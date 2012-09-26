@@ -3,8 +3,8 @@
     xmlns       = "http://www.w3.org/ns/widgets"
     xmlns:gap   = "http://phonegap.com/ns/1.0"
     id          = "com.urbanask"
-    versionCode = "20"
-    version     = "1.23.6">
+    versionCode = "21"
+    version     = "1.24.6">
 
     <name>urbanAsk</name>
     <description>Find it. Share it.</description>
@@ -18,6 +18,8 @@
     <preference name="ios-statusbarstyle"   value="black-opaque" />
     <preference name="webviewbounce"        value="false" />
 
+    <icon src="icon.png" />
+    
     <icon gap:platform="ios"        src="images/ios/icon-57.png"            width="57"  height="57"     />
     <icon gap:platform="ios"        src="images/ios/icon-72.png"            width="72"  height="72"     />
     <icon gap:platform="ios"        src="images/ios/icon-114.png"           width="114" height="114"    />

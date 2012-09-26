@@ -11,8 +11,8 @@ SELECT * FROM answer WHERE userId < 100000 ORDER BY timestamp DESC
 SELECT * FROM answerVote WHERE userId < 100000
 SELECT * FROM answerVote WHERE vote< 0 AND userId < 100000
 SELECT * FROM questionVote WHERE userId < 100
-SELECT * FROM userBadge WHERE userId < 100
-SELECT * FROM reputation WHERE userId < 100
+SELECT * FROM Gabs.login.verifyMobileNumber
+SELECT * FROM Gabs.login.verifyMobileNumberError
 
 SELECT * FROM Gabs.lookup.region ORDER BY name
 SELECT * FROM Gabs.processRegions.regionNew

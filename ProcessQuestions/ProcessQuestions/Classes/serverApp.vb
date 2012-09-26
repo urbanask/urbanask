@@ -156,15 +156,28 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
 
                     If message.Length = MESSAGE_LENGTH Then
 
-                        Dim row As Data.DataRow = questions.NewRow()
-                        row("questionId") = messages("questionId")
-                        row("userId") = message(messageColumns.userId)
-                        row("latitude") = message(messageColumns.latitude)
-                        row("longitude") = message(messageColumns.longitude)
-                        row("region") = message(messageColumns.region)
-                        row("question") = message(messageColumns.question)
-                        row("timestamp") = messages("timestamp")
-                        questions.Rows.Add(row)
+                        If Not Double.IsNaN(System.Convert.ToDouble(message(messageColumns.latitude))) _
+                            AndAlso Not Double.IsNaN(System.Convert.ToDouble(message(messageColumns.longitude))) Then
+
+                            Dim row As Data.DataRow = questions.NewRow()
+                            row("questionId") = messages("questionId")
+                            row("userId") = message(messageColumns.userId)
+                            row("latitude") = message(messageColumns.latitude)
+                            row("longitude") = message(messageColumns.longitude)
+                            row("region") = message(messageColumns.region)
+                            row("question") = message(messageColumns.question)
+                            row("timestamp") = messages("timestamp")
+                            questions.Rows.Add(row)
+
+                        Else
+
+                            Dim row As Data.DataRow = errors.NewRow()
+                            row("questionId") = messages("questionId")
+                            row("message") = messages("message")
+                            row("timestamp") = messages("timestamp")
+                            errors.Rows.Add(row)
+
+                        End If
 
                     Else
 

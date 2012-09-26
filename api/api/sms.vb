@@ -47,7 +47,7 @@ Public Class sms : Implements System.Web.IHttpHandler
         Dim params As Collections.Specialized.NameValueCollection = context.Request.Params,
             body As String = params("Body")
 
-        Select Case body.ToUpper()
+        Select Case body.ToUpper().Trim()
             Case "STOP", "QUIT"
 
             Case "START"
@@ -137,7 +137,8 @@ Public Class sms : Implements System.Web.IHttpHandler
                 sendResponse(context, String.Concat(
                     "Your number, ",
                     phoneNumber,
-                    ", has been verified. You can now text questions to urbanAsk."))
+                    ", is verified. Text questions in the format: ",
+                    "question @ location (ex: veggie tacos @ San Francisco, CA)"))
 
             Else
 

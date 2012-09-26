@@ -2840,7 +2840,7 @@ html {
     display: block;
     height: 40px;
     line-height: 40px;
-    margin: 3px 5px 6px 5px;
+    margin: 3px 8px 6px 8px;
     position: relative;
 }
 
@@ -2865,11 +2865,11 @@ html {
 }
 
 .vote-down-selected {
-    background-image:             radial-gradient( center 75%, circle closest-side, red 0%, rgba( 255, 255, 255, .5 ) 100% );
-        background-image:    -moz-radial-gradient( center 75%, circle closest-side, red 0%, rgba( 255, 255, 255, .5 ) 100% );
-        background-image:     -ms-radial-gradient( center 75%, circle closest-side, red 0%, rgba( 255, 255, 255, .5 ) 100% );
-        background-image:      -o-radial-gradient( center 75%, circle closest-side, red 0%, rgba( 255, 255, 255, .5 ) 100% );
-        background-image: -webkit-radial-gradient( center 75%, circle closest-side, red 0%, rgba( 255, 255, 255, .5 ) 100% );
+    background-image:             radial-gradient( center 75%, circle closest-side, red 0%, rgba( 255, 255, 255, 0 ) 100% );
+        background-image:    -moz-radial-gradient( center 75%, circle closest-side, red 0%, rgba( 255, 255, 255, 0 ) 100% );
+        background-image:     -ms-radial-gradient( center 75%, circle closest-side, red 0%, rgba( 255, 255, 255, 0 ) 100% );
+        background-image:      -o-radial-gradient( center 75%, circle closest-side, red 0%, rgba( 255, 255, 255, 0 ) 100% );
+        background-image: -webkit-radial-gradient( center 75%, circle closest-side, red 0%, rgba( 255, 255, 255, 0 ) 100% );
 }
 
 .vote-frame {
@@ -2931,11 +2931,11 @@ html {
 }
 
 .vote-up-selected {
-    background-image:             radial-gradient( center 25%, circle closest-side, green 0%, rgba( 255, 255, 255, .5 ) 100% );
-        background-image:    -moz-radial-gradient( center 25%, circle closest-side, green 0%, rgba( 255, 255, 255, .5 ) 100% );
-        background-image:     -ms-radial-gradient( center 25%, circle closest-side, green 0%, rgba( 255, 255, 255, .5 ) 100% );
-        background-image:      -o-radial-gradient( center 25%, circle closest-side, green 0%, rgba( 255, 255, 255, .5 ) 100% );
-        background-image: -webkit-radial-gradient( center 25%, circle closest-side, green 0%, rgba( 255, 255, 255, .5 ) 100% );
+    background-image:             radial-gradient( center 25%, circle closest-side, green 0%, rgba( 255, 255, 255, 0 ) 100% );
+        background-image:    -moz-radial-gradient( center 25%, circle closest-side, green 0%, rgba( 255, 255, 255, 0 ) 100% );
+        background-image:     -ms-radial-gradient( center 25%, circle closest-side, green 0%, rgba( 255, 255, 255, 0 ) 100% );
+        background-image:      -o-radial-gradient( center 25%, circle closest-side, green 0%, rgba( 255, 255, 255, 0 ) 100% );
+        background-image: -webkit-radial-gradient( center 25%, circle closest-side, green 0%, rgba( 255, 255, 255, 0 ) 100% );
 }
 
 .width-slide {

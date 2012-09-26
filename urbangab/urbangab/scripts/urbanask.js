@@ -32,6 +32,7 @@ var _account = [],
     _everywhereQuestions = [],
     _geoTimer,
     _hostname = window.location.hostname,
+    _instructions = [],
     _instructionsTimer,
     _nearbyQuestions = [],
     _questions = [],
@@ -1175,7 +1176,9 @@ function getAnswerItem( answer, options ) {
         number = '',
         votes = '',
         votesInline = '',
-        icon = '';
+        icon = '',
+        phone = '',
+        website = '';
 
     if ( options && options.newItem ) {
 
@@ -1253,12 +1256,24 @@ function getAnswerItem( answer, options ) {
 
         };
 
+        if ( answer[ANSWER_COLUMNS.phone] ) {
+
+            phone = '<li class="list-item-toolbar-item selectable"><a href="' + number + '" class="answer-call"></a></li>';
+
+        };
+
+        if ( answer[ANSWER_COLUMNS.link] ) {
+
+            website = '<li class="list-item-toolbar-item answer-website selectable"></li>';
+
+        };
+
         toolbar = '<ul class="list-item-toolbar">'
             + select
             + directions
             + '<li class="list-item-toolbar-item list-item-toolbar-user selectable"></li>'
-            + '<li class="list-item-toolbar-item selectable"><a href="' + number + '" class="answer-call"></a></li>'
-            + '<li class="list-item-toolbar-item answer-website selectable"></li>'
+            + phone
+            + website
             + '<li class="list-item-toolbar-item answer-google-maps selectable"></li>'
             + '</ul>';
 
@@ -1756,6 +1771,7 @@ function hideAddressBar() {
 
 function hideAllPages() {
 
+    document.getElementById( 'viewport' ).setDataset( 'page', '' );
     document.getElementById( 'questions-page' ).addClass( 'hide' );
     document.getElementById( 'top-page' ).addClass( 'hide' );
     document.getElementById( 'user-page' ).addClass( 'hide' );
@@ -2375,6 +2391,7 @@ function loadAccount( complete ) {
                     : 0;
                 _account = window.JSON.parse( data )[0];
                 initializeAccount();
+                initializeInstructions();
 
                 showNotifications( _account[ACCOUNT_COLUMNS.notifications].length > count );
                 if ( complete ) { complete(); };
@@ -2426,7 +2443,7 @@ function loadCachedData() {
     var latitude = window.getLocalStorage( 'current-latitude' ),
         longitude = window.getLocalStorage( 'current-longitude' );
 
-    if ( latitude ) {
+    if ( latitude && !window.isNaN( latitude ) ) {
 
         _currentLocation.latitude = window.parseFloat( latitude );
         _currentLocation.longitude = window.parseFloat( longitude );
@@ -2600,36 +2617,34 @@ function loadNearbyQuestions( complete ) {
 
         document.getElementById( 'view-nearby-questions' ).addClass( 'hide' );
 
-        getGeolocation( function () {
+        var data = 'latitude=' + _currentLocation.latitude
+                + '&longitude=' + _currentLocation.longitude
+                + ( isLoggedIn() ? '&currentUserId=' + _account[ACCOUNT_COLUMNS.userId] : '' ),
+            resource = '/api/questions';
 
-            var data = 'latitude=' + _currentLocation.latitude
-                    + '&longitude=' + _currentLocation.longitude
-                    + ( isLoggedIn() ? '&currentUserId=' + _account[ACCOUNT_COLUMNS.userId] : '' ),
-                resource = '/api/questions';
+        ajax( API_URL + resource, {
 
-            ajax( API_URL + resource, {
+            "type": "GET",
+            "data": data,
+            "cache": false,
+            "async": true,
+            "success": function ( data, status ) {
 
-                "type": "GET",
-                "data": data,
-                "cache": false,
-                "async": true,
-                "success": function ( data, status ) {
+                _nearbyQuestions = window.JSON.parse( data );
+                window.setLocalStorage( 'nearby-questions', data );
+                showQuestions( STRINGS.questionsNearby, _nearbyQuestions, document.getElementById( 'nearby-questions' ) );
+                if ( complete ) { complete(); };
 
-                    _nearbyQuestions = window.JSON.parse( data );
-                    window.setLocalStorage( 'nearby-questions', data );
-                    showQuestions( STRINGS.questionsNearby, _nearbyQuestions, document.getElementById( 'nearby-questions' ) );
-                    if ( complete ) { complete(); };
+            },
+            "error": function ( response, status, error ) {
 
-                },
-                "error": function ( response, status, error ) {
+                if ( error == 'Unauthorized' ) { logoutApp() };
 
-                    if ( error == 'Unauthorized' ) { logoutApp() };
-
-                }
-
-            } );
+            }
 
         } );
+
+        getGeolocation();
 
     } else {
 
@@ -2921,6 +2936,26 @@ function initializeFacebook( options ) {
         setFacebookButtonUnauthorized();
 
     }, 12 * SECOND );
+
+};
+
+function initializeInstructions() {
+
+    _instructions = _account[ACCOUNT_COLUMNS.instructions];
+
+    _account[ACCOUNT_COLUMNS.instructions].unviewed = function () {
+
+        var instuctions = [];
+
+        for ( var index = 0; index < _account[ACCOUNT_COLUMNS.instructions].length; index++ ) {
+
+            if ( !_account[ACCOUNT_COLUMNS.instructions][index] ) { instuctions.push( index ); };
+
+        };
+
+        return instuctions;
+
+    };
 
 };
 
@@ -5248,9 +5283,19 @@ function getGeolocation( geoComplete, options ) {
 
         var geo = window.navigator.geolocation.watchPosition( function ( position ) {
 
-            _currentLocation.latitude = window.parseFloat( position.coords.latitude );
-            _currentLocation.longitude = window.parseFloat( position.coords.longitude );
-            _currentLocation.accuracy = position.coords.accuracy;
+            if ( position.coords.latitude && !window.isNaN( position.coords.latitude ) ) {
+
+                _currentLocation.latitude = window.parseFloat( position.coords.latitude );
+                _currentLocation.longitude = window.parseFloat( position.coords.longitude );
+                _currentLocation.accuracy = position.coords.accuracy;
+
+            } else {
+
+                _currentLocation.latitude = 0;
+                _currentLocation.longitude = 0;
+                _currentLocation.accuracy = 0;
+
+            };
 
         },
         function ( error ) {
@@ -5262,7 +5307,7 @@ function getGeolocation( geoComplete, options ) {
             };
 
         },
-        { maximumAge: 60000, enableHighAccuracy: true } );  //must be valid within a minute
+        { maximumAge: 60000, enableHighAccuracy: true } );     //must be valid within a minute
 
         window.setTimeout( function () {
 
@@ -5280,9 +5325,19 @@ function getGeolocation( geoComplete, options ) {
 
         var geo = window.navigator.geolocation.getCurrentPosition( function ( position ) {
 
-            _currentLocation.latitude = window.parseFloat( position.coords.latitude );
-            _currentLocation.longitude = window.parseFloat( position.coords.longitude );
-            _currentLocation.accuracy = position.coords.accuracy;
+            if ( position.coords.latitude && !window.isNaN( position.coords.latitude ) ) {
+
+                _currentLocation.latitude = window.parseFloat( position.coords.latitude );
+                _currentLocation.longitude = window.parseFloat( position.coords.longitude );
+                _currentLocation.accuracy = position.coords.accuracy;
+
+            } else {
+
+                _currentLocation.latitude = 0;
+                _currentLocation.longitude = 0;
+                _currentLocation.accuracy = 0;
+
+            };
 
             window.setLocalStorage( 'current-latitude', _currentLocation.latitude ),
             window.setLocalStorage( 'current-longitude', _currentLocation.longitude );
@@ -6387,8 +6442,8 @@ function showCreateEmailAccount( event ) {
                         document.getElementById( 'login-username' ).value = username;
                         document.getElementById( 'login-password' ).value = password.value;
 
-                        close();
                         startApp();
+                        close();
 
                     } else {
 
@@ -6850,7 +6905,7 @@ function showInstruction( text, position, bubble, options ) {
                 var styles = document.getElementById( 'instruction-styles' );
                 styles.parentNode.removeChild( styles );
 
-            }, 1000 );
+            }, 1 * SECOND );
 
         };
 
@@ -6961,8 +7016,8 @@ function showCreateMobileAccount( event ) {
                             document.getElementById( 'login-username' ).value = data.username;
                             document.getElementById( 'login-password' ).value = password.value;
 
-                            close();
                             startApp();
+                            close();
 
                             showMessage( STRINGS.login.verifyMobile );
 
@@ -8355,12 +8410,15 @@ function viewNearbyQuestionsClick( event ) {
 
     showMessage( STRINGS.questionsPage.nearbyQuestionsInstructions, function () {
 
-        showNotification( STRINGS.notification.loadingNearbyQuestions, { size: 'tiny' } );
-
         getGeolocation( function () {
 
+            if ( isLocationAvailable() ) {
+
+                showNotification( STRINGS.notification.loadingNearbyQuestions, { size: 'tiny' } );
+
+            };
+
             loadNearbyQuestions();
-            getGeolocation();
 
         }, { quick: true } );
 

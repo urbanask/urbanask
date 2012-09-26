@@ -83,6 +83,7 @@
     <Content Include="download.html" />
     <Content Include="fb-login.html" />
     <Content Include="frame.html" />
+    <Content Include="icon.png" />
     <Content Include="icon-72.png" />
     <Content Include="images\download\amazon.png" />
     <Content Include="images\android.png" />

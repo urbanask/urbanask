@@ -3,7 +3,7 @@ build instructions
 1. change version in cache.manifest
 2. change versionCode in config.xml
 3. compile Release
-4. change PhoneGap key to UrbanAsk App Store
+4. change PhoneGap key to Production
 5. turn off Debug build on PhoneGap
 6. upload urbanask.zip file to PhoneGap
 7. download Android and iOS binaries and save to /builds
