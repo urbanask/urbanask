@@ -5,7 +5,8 @@
             "logoutCaption": "logout",
             "numberUnverified": "Number Unverified",
             "postCaption": "post to wall",
-            "saveCaption": "save"
+            "saveCaption": "save",
+            "viewTutorial": "view tutorial"
         },
         "addAnswer":
         {
@@ -84,7 +85,7 @@
             "loadQuestion": "There was an error loading this question.",
             "loadQuestions": "There was an error loading the questions.",
             "loadRegions": "There was an error loading regions.",
-            "loadUser": "There was an error loading this user.",
+            "loadUser": "There was an error loading this user. urbanAsk has been notified",
             "questionLocationNotFound": "Location '%1' not found. Check your spelling or be more specific.",
             "saveAnswer": "There was an error saving this answer.",
             "saveQuestion": "There was an error saving this question.",
@@ -104,28 +105,33 @@
         },
         "headerBadges": "badges",
         "instructions": {
+            "addAnswer": "Suggest your own location!",
             "tap": "tap",
             "click": "click",
-            "postQuestion": "Type something you're looking for here.",
+            "postQuestion": "Enter something you're looking for.",
             "postQuestionSend": "Then %1 here to send it.",
             "tryItNow": "Try it now!",
-            "viewQuestions": "This is what people around you are looking for.",
+            "viewAnswer": "Suggested locations from others, if any, are down here.",
+            "viewQuestions": "This is what people near you are looking for.",
             "viewMyQuestions": "Anything you're looking for will be up top.",
-            "viewQuestion": "To add an answer, %1 a question.",
+            "viewQuestion": "To suggest a location, %1 a question.",
             "viewQuestionWho": "This is who is looking.",
             "viewQuestionWhat": "This is what they want.",
             "viewQuestionWhere": "This is where they want it.",
-            "viewAnswer": "Answers to this question are here.",
-            "addAnswer": "To add an answer, %1 here.",
-            "toolbarQuestions": "To view questions, %1 here.",
-            "toolbarTop": "To view the leaderboard, %1 here.",
-            "toolbarUser": "To view your profile, %1 here."
+            "toolbarQuestions": "Questions",
+            "toolbarTop": "Leaderboard",
+            "toolbarUser": "Your profile",
+            "voteQuestion": "If you like this question, upvote it!"
         },
         "intervalDayCaption": "day",
         "intervalWeekCaption": "week",
         "intervalMonthCaption": "month",
         "intervalYearCaption": "year",
         "intervalAllCaption": "all",
+        "intro": "Looking for Chimay on draft? Dog park near your office? Live music tonight? "
+            + "Ask your neighbors!<br /><br />"
+            + "Return the favor by helping them find things. <br /><br />"
+            + "It's fun and simple!",
         "iphone": "iPhone",
         "letters": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
         "login":
@@ -176,11 +182,11 @@
         "questionLabel": "Where can I find...",
         "questionPage": {
 
-            "addNewAnswerCaption": "Add an Answer"
+            "addNewAnswerCaption": "suggest a location"
 
         },
         "questionPosted": "Posted",
-        "questionsNearby": "nearby",
+        "questionsNearby": "Others nearby are looking for...",
         "questionsPage": {
 
             "askQuestionLocation": "urbanAsk needs to access your location to post this question.<br /><br />"
@@ -192,7 +198,9 @@
             "smsNotification": "Would you like to add your mobile number and be notified by SMS when your question is answered?"
 
         },
-        "questionsEverywhere": "everywhere",
+        "questionsEverywhere": "Others are looking for...",
+        "questionsSubHeader": "Answer these to earn reputation!",
+        "questionsUser": "I'm looking for...",
         "rightAngleBracket": "&#9002;",
         "toolbar":
         {

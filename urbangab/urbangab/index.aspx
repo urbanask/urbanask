@@ -10,15 +10,15 @@
     <meta name="viewport"                               content="width=device-width, initial-scale=1, user-scalable=no" />
     <meta name="apple-mobile-web-app-status-bar-style"  content="black" />
 
-    <meta property="og:url"                             content="http://urbanAsk.com" />
+    <meta property="og:url"                             content="http://urbanask.com" />
     <meta property="og:title"                           content="urbanAsk" />
     <meta property="og:type"                            content="website" />
     <meta property="og:site_name"                       content="urbanAsk" />
     <meta property="og:description"                     content="The exciting new way to find things locally and help others do the same." />
-    <meta property="og:image"                           content="http://urbanAsk.com/images/icon-large.png" />
+    <meta property="og:image"                           content="http://urbanask.com/images/icon-large.png" />
     <meta itemprop="name"                               content="urbanAsk" />
     <meta itemprop="description"                        content="The exciting new way to find things locally and help others do the same." />
-    <meta itemprop="image"                              content="http://urbanAsk.com/images/icon-large.png" />
+    <meta itemprop="image"                              content="http://urbanask.com/images/icon-large.png" />
 
     <link rel="apple-touch-startup-image"               href="images/splash.png" /> 
     <link rel="apple-touch-icon"                        href="images/icon.png" />

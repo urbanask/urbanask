@@ -8,7 +8,7 @@
 
     <meta property="fb:app_id"      content="267603823260704" /> 
     <meta property="og:type"        content="urbanask:question" /> 
-    <meta property="og:image"       content="http://urbanAsk.com/images/icon-large.png" />
+    <meta property="og:image"       content="http://urbanask.com/images/icon-large.png" />
     <meta property="og:url"         content="<% =getUrl() %>" /> 
     <meta property="og:title"       content="&quot;<% =getTitle() %>&quot;" />
     <meta property="og:description" content="Can you help me find this?" /> 

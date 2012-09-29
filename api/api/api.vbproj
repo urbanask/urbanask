@@ -86,6 +86,7 @@
     <Compile Include="account.vb" />
     <Compile Include="answers.vb" />
     <Compile Include="authorization.vb" />
+    <Compile Include="errors.vb" />
     <Compile Include="lookups.vb" />
     <Compile Include="messageHandler.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />

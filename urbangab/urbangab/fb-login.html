@@ -543,11 +543,11 @@
                             '/me/feed',
                             'post',
                             {
-                                message: 'Help me find: ' + window.decodeURIComponent( message ),
+                                message: 'Help me find: ' + window.decodeURIComponent( message.message ),
                                 name: NAME,
                                 caption: TAGLINE,
                                 description: DESCRIPTION,
-                                link: ROOT_HTTPS_URL,
+                                link: REDIRECT_URL + ( message.id ? '?' + 'question-id=' + message.id : '' ),
                                 picture: ICON
                             },
                             function ( response ) {
@@ -666,7 +666,7 @@
 
                                     case 'question':
 
-                                        postFeedQuestion( message.message, event );
+                                        postFeedQuestion( message, event );
                                         break;
 
                                 };

@@ -61,7 +61,6 @@ GO
 
 /*
 SELECT * FROM Messaging.answers.answerQueue
-WHere message LIKE '1~1104261~%'
 SELECT * FROM Messaging.answers.answerWork
 SELECT * FROM Messaging.answers.answerError
 SELECT TOP 1000 * FROM Gabs.dbo.answer ORDER BY answerId DESC
@@ -69,7 +68,8 @@ TRUNCATE TABLE Messaging.answers.answerQueue
 TRUNCATE TABLE Messaging.answers.answerWork
 TRUNCATE TABLE Messaging.answers.answerError
 TRUNCATE TABLE Gabs.dbo.answer
+UPDATE Messaging.answers.answerWork SET answerWorkId = answerWorkId + 10
 DELETE FROM Messaging.answers.answerWork WHERE answerWorkId = 1543135
-DBCC CHECKIDENT( 'Messaging.answers.answerQueue', RESEED, 0 )
+DBCC CHECKIDENT( 'Messaging.answers.answerQueue', RESEED, 4252743 )
 */
 

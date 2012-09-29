@@ -23,11 +23,6 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         _saveActions As String,
         _logProcedureStatitics As Boolean,
         _moveToWork As String,
-        _smsApiUrl As String,
-        _smsApiKey As String,
-        _smsApiToken As String,
-        _smsFrom As String,
-        _smsBody As String,
         _workCount As Int32
 
 
@@ -56,11 +51,6 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         _deleteFromWork = Parameters.Parameter.GetValue("deleteFromWork")
         _moveToWork = Parameters.Parameter.GetValue("moveToWork")
         _saveActions = Parameters.Parameter.GetValue("saveActions")
-        _smsApiKey = Parameters.Parameter.GetValue("smsApiKey")
-        _smsApiToken = Parameters.Parameter.GetValue("smsApiToken")
-        _smsApiUrl = Parameters.Parameter.GetValue("smsApiUrl")
-        _smsBody = Parameters.Parameter.GetValue("smsBody")
-        _smsFrom = Parameters.Parameter.GetValue("smsFrom")
 
     End Sub
 

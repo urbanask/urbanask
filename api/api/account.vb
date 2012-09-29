@@ -19,6 +19,7 @@ Public Class account : Inherits api.messageHandler
         SAVE_ACCOUNT As String = "Gabs.api.saveAccount",
         SAVE_NOTIFICATION_VIEWED As String = "Gabs.api.saveNotificationViewed",
         SAVE_INSTRUCTION_VIEWED As String = "Gabs.api.saveInstructionViewed",
+        RESET_INSTRUCTIONS As String = "Gabs.api.resetInstructions",
         JSON_ACCOUNT_COLUMNS As String =
               "[" _
             & """userId""," _
@@ -65,6 +66,10 @@ Public Class account : Inherits api.messageHandler
             Case "/instructions/save" '/api/account/instructions/save
 
                 saveInstructionViewed(context, connection, queries, userId)
+
+            Case "/instructions/reset" '/api/account/instructions/reset
+
+                resetInstructions(context, connection, queries, userId)
 
             Case "/columns" '/api/account/columns
 
@@ -169,6 +174,25 @@ Public Class account : Inherits api.messageHandler
 
             command.Parameters.AddWithValue("@userId", userId)
             command.Parameters.AddWithValue("@type", type)
+
+            command.ExecuteNonQuery()
+
+        End Using
+
+    End Sub
+
+    Private Sub resetInstructions(
+        context As Web.HttpContext,
+        connection As SqlClient.SqlConnection,
+        queries As Collections.Specialized.NameValueCollection,
+        userId As Int32)
+
+        Using command As New SqlClient.SqlCommand(RESET_INSTRUCTIONS, connection)
+
+            command.CommandType = CommandType.StoredProcedure
+            command.CommandTimeout = COMMAND_TIMEOUT
+
+            command.Parameters.AddWithValue("@userId", userId)
 
             command.ExecuteNonQuery()
 
@@ -285,7 +309,8 @@ Public Class account : Inherits api.messageHandler
                             user("viewQuestion"), ",",
                             user("addAnswer"), ",",
                             user("toolbar"), ",",
-                            user("askedQuestionSMSNotification")
+                            user("askedQuestionSMSNotification"), ",",
+                            user("intro")
                             )
 
                     End If

@@ -20,7 +20,8 @@ Public MustInherit Class messageHandler : Implements System.Web.IHttpHandler
 
 #End If
 
-    Protected Const COMMAND_TIMEOUT As Int32 = 60
+    Protected Const COMMAND_TIMEOUT As Int32 = 60,
+        SAVE_LOG As String = "Gabs.api.saveLog"
 
 #End Region
 
@@ -49,6 +50,7 @@ Public MustInherit Class messageHandler : Implements System.Web.IHttpHandler
 
                     connection.Open()
                     processMessage(connection, context, message, userId)
+                    saveLog(connection, context, message, userId)
 
                 End Using
 
@@ -63,6 +65,29 @@ Public MustInherit Class messageHandler : Implements System.Web.IHttpHandler
             sendErrorResponse(context, 401, "Unauthorized")
 
         End If
+
+    End Sub
+
+    Private Sub saveLog( _
+        connection As System.Data.SqlClient.SqlConnection,
+        context As Web.HttpContext,
+        request As String,
+        userId As Int32)
+
+        Using command As New Data.SqlClient.SqlCommand(SAVE_LOG, connection)
+
+            command.CommandType = Data.CommandType.StoredProcedure
+            command.CommandTimeout = COMMAND_TIMEOUT
+
+            command.Parameters.AddWithValue("@userId", userId)
+            command.Parameters.AddWithValue("@path", context.Request.Path)
+            command.Parameters.AddWithValue("@query", context.Request.Url.Query)
+            command.Parameters.AddWithValue("@request", request)
+            command.Parameters.AddWithValue("@ipAddress", context.Request.UserHostAddress)
+
+            command.ExecuteNonQuery()
+
+        End Using
 
     End Sub
 
