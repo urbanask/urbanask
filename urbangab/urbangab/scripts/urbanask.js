@@ -8280,7 +8280,7 @@ function startApp() {
         };
 
         initializeInstructions()
-        window.setTimeout( showInstructions, 4 * SECOND );
+        window.setTimeout( showInstructions, 3 * SECOND );
         showIntro();
 
     } );

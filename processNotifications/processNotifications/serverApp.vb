@@ -27,8 +27,15 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         _smsApiToken As String,
         _smsFrom As String,
         _smsBody As String,
+        _twitterApiKey As String,
+        _twitterApiSecret As String,
+        _twitterToken As String,
+        _twitterTokenSecret As String,
         _viewSmsActions As String,
-        _workCount As Int32
+        _viewTwitterActions As String,
+        _twitterBody As String,
+        _workCount As Int32,
+        _questionUrl As String
 
 
 #Region "    functions "
@@ -60,7 +67,14 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         _smsApiUrl = Parameters.Parameter.GetValue("smsApiUrl")
         _smsBody = Parameters.Parameter.GetValue("smsBody")
         _smsFrom = Parameters.Parameter.GetValue("smsFrom")
+        _twitterApiKey = Parameters.Parameter.GetValue("twitterApiKey")
+        _twitterApiSecret = Parameters.Parameter.GetValue("twitterApiSecret")
+        _twitterToken = Parameters.Parameter.GetValue("twitterToken")
+        _twitterTokenSecret = Parameters.Parameter.GetValue("twitterTokenSecret")
+        _twitterBody = Parameters.Parameter.GetValue("twitterBody")
         _viewSmsActions = Parameters.Parameter.GetValue("viewSmsActions")
+        _viewTwitterActions = Parameters.Parameter.GetValue("viewTwitterActions")
+        _questionUrl = Parameters.Parameter.GetValue("questionUrl")
 
     End Sub
 
@@ -88,6 +102,12 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
             If MyBase.IsAppActive() Then
 
                 Me.processSmsNotifications(connection)
+
+            End If
+
+            If MyBase.IsAppActive() Then
+
+                Me.processTwitterNotifications(connection)
 
             End If
 
@@ -132,8 +152,10 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
 
             command.CommandType = CommandType.StoredProcedure
             command.CommandTimeout = _commandTimeout
-            errors.Columns.Add("userId")
-            errors.Columns.Add("phoneNumber")
+
+            errors.Columns.Add("notificationId")
+            errors.Columns.Add("description")
+            errors.Columns.Add("error")
 
             Using actions As Data.SqlClient.SqlDataReader = command.ExecuteReader()
 
@@ -160,7 +182,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
                     Catch ex As Exception
 
                         Dim errorRow As Data.DataRow = errors.NewRow()
-                        errorRow("notificationId") = actions("phoneNumber").ToString()
+                        errorRow("notificationId") = CInt(actions("notificationId"))
                         errorRow("description") = request
                         errorRow("error") = ex.Message
                         errors.Rows.Add(errorRow)
@@ -173,36 +195,113 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
 
             End Using
 
-            If errors.Rows.Count > 0 Then
-
-                Using errorCommand As New SqlClient.SqlCommand(_saveError, connection)
-
-                    errorCommand.CommandType = CommandType.StoredProcedure
-                    errorCommand.CommandTimeout = _commandTimeout
-                    errorCommand.UpdatedRowSource = UpdateRowSource.None
-
-                    errorCommand.Parameters.Add(New SqlClient.SqlParameter("@notificationId", Data.SqlDbType.Int, 0, "notificationId"))
-                    errorCommand.Parameters.Add(New SqlClient.SqlParameter("@description", Data.SqlDbType.VarChar, 255, "description"))
-                    errorCommand.Parameters.Add(New SqlClient.SqlParameter("@error", Data.SqlDbType.VarChar, 255, "error"))
-
-                    Using adapter As New Data.SqlClient.SqlDataAdapter()
-
-                        adapter.UpdateBatchSize = _batchSize
-                        adapter.InsertCommand = errorCommand
-
-                        adapter.Update(errors)
-
-                    End Using
-
-                    Me.logProcedureStatistics(_saveError, startTime)
-
-                End Using
-
-            End If
+            saveErrors(connection, errors, startTime)
 
         End Using
 
         Me.logStatistics("processSmsNotifications", startTime)
+
+    End Sub
+
+    Private Sub processTwitterNotifications( _
+        ByVal connection As Data.SqlClient.SqlConnection)
+
+        Dim startTime As System.DateTime = System.DateTime.Now
+
+        Using command As New SqlClient.SqlCommand(_viewTwitterActions, connection),
+            errors As New Data.DataTable("errors")
+
+            command.CommandType = CommandType.StoredProcedure
+            command.CommandTimeout = _commandTimeout
+
+            errors.Columns.Add("notificationId")
+            errors.Columns.Add("description")
+            errors.Columns.Add("error")
+
+            Using actions As Data.SqlClient.SqlDataReader = command.ExecuteReader()
+
+                While (actions.Read())
+
+                    Dim twitterId As String = actions("twitterId").ToString(),
+                        questionId As String = actions("questionId").ToString(),
+                        latitude As Double = System.Convert.ToDouble(actions("latitude")),
+                        longitude As Double = System.Convert.ToDouble(actions("longitude")),
+                        link As String = String.Format(_questionUrl, questionId),
+                        body As String = String.Format(_twitterBody, twitterId, actions("body").ToString(), link),
+                        tokens As New Twitterizer.OAuthTokens(),
+                        options As New Twitterizer.StatusUpdateOptions
+
+                    tokens.AccessToken = _twitterToken
+                    tokens.AccessTokenSecret = _twitterTokenSecret
+                    tokens.ConsumerKey = _twitterApiKey
+                    tokens.ConsumerSecret = _twitterApiSecret
+
+                    options.Latitude = latitude
+                    options.Longitude = longitude
+
+                    Dim response As Twitterizer.TwitterResponse(Of Twitterizer.TwitterStatus) _
+                            = Twitterizer.TwitterStatus.Update(tokens, body, options)
+
+                    If response.Result = Twitterizer.RequestResult.Success Then
+
+                        'save post id
+
+                    Else
+
+                        Dim errorRow As Data.DataRow = errors.NewRow()
+                        errorRow("notificationId") = CInt(actions("notificationId"))
+                        errorRow("description") = body
+                        errorRow("error") = response.ErrorMessage
+                        errors.Rows.Add(errorRow)
+
+                    End If
+
+                End While
+
+                Me.logProcedureStatistics(_viewTwitterActions, startTime)
+
+            End Using
+
+            saveErrors(connection, errors, startTime)
+
+        End Using
+
+        Me.logStatistics("processTwitterNotifications", startTime)
+
+    End Sub
+
+    Private Sub saveErrors( _
+        ByVal connection As Data.SqlClient.SqlConnection, _
+        ByVal errors As Data.DataTable,
+        ByVal startTime As System.DateTime)
+
+        If errors.Rows.Count > 0 Then
+
+            Using errorCommand As New SqlClient.SqlCommand(_saveError, connection)
+
+                errorCommand.CommandType = CommandType.StoredProcedure
+                errorCommand.CommandTimeout = _commandTimeout
+                errorCommand.UpdatedRowSource = UpdateRowSource.None
+
+                errorCommand.Parameters.Add(New SqlClient.SqlParameter("@notificationId", Data.SqlDbType.Int, 0, "notificationId"))
+                errorCommand.Parameters.Add(New SqlClient.SqlParameter("@description", Data.SqlDbType.VarChar, 255, "description"))
+                errorCommand.Parameters.Add(New SqlClient.SqlParameter("@error", Data.SqlDbType.VarChar, 255, "error"))
+
+                Using adapter As New Data.SqlClient.SqlDataAdapter()
+
+                    adapter.UpdateBatchSize = _batchSize
+                    adapter.InsertCommand = errorCommand
+
+                    adapter.Update(errors)
+
+                End Using
+
+                Me.logProcedureStatistics(_saveError, startTime)
+
+            End Using
+
+        End If
+
 
     End Sub
 
