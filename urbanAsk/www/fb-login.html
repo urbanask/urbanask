@@ -1,0 +1,891 @@
+﻿<!doctype html />
+<html lang="en">
+<head>
+    <title>urbanAsk</title>
+
+    <meta name="apple-mobile-web-app-capable"   content="yes" />
+    <meta name="viewport"                       content="initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+
+    <meta property="og:title"       content="urbanAsk" />
+    <meta property="og:type"        content="website" />
+    <meta property="og:site_name"   content="urbanAsk" />
+    <meta property="og:description" content="The exciting new way to find things locally and help others do the same." />
+    <meta property="og:image"       content="http://urbanAsk.com/images/icon-large.png"/>
+
+    <link rel="stylesheet" href="styles/urbanask.css" />
+
+    <style>
+
+        body {
+            height: 480px;
+            text-align: center;
+        }
+
+        #viewport {
+            height: 480px;
+            width: 320px;
+        }
+        
+        .fb-button {
+            background-color: #3b5998;   
+            background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAAZCAYAAADqrKTxAAABqklEQVQ4y5WTTW8SURSG568bF93owlgX2pWk6qYxMXHR2EVLDR8lbapBNJFBBYQpH0OBgTBw55zHxUyHmYIFTnJzc5PznHPe995rAda6lfnwhVK5gV3v0+qMaPc9urcTrn/erAe+1zr8LwaT2SqQ+9oAQMQgoogqgSgLEwDguKM08OjFGb4xgCIaVlYU0LiT603T0PtPlTBRNbX3bj0+nnzj6LjCwdF1Gspf1cLRVOPaqsKzTIFkXlrPpR3pUYKoS3c45r5u60kmz/5hib2Dz5TtVlQdRA0gDEdTXr4r8vR1nudvCjx+dYrlA2DiUZaiFVVBJUgYAs2uizVdCIgiokmTUqGqBIEA0HB6WAt2i3bPxWoPZ4wmM9zxDH8+X1aPdhMsGEx83PGM6TygXHPSrpyXQvdUFNFQS6c/WHUveTjJ/UhAEkHjh6GzQjW+J5EIcjdA2RQUAMqNu1OnrSF7zXjeBqhYW0K6JZS9+LV7p2zxT/w17qDuJuj84g5ie+i0+Dt8OsZgTOies+lyc1f1ey8PXM9/GHp7bNPsD6k2Xap/e9SdAZeV1gr0D8TTcK2PhdoZAAAAAElFTkSuQmCC);
+            background-repeat: no-repeat;
+            background-position: 10px center;
+            border: 1px solid white;
+            color: white;
+            cursor: pointer;
+            display: block;
+            font-size: 17px;
+            height: 45px; 
+            margin: 10px auto;
+            padding: 0 10px 0 32px;
+            text-align: center;
+            width: 180px;  
+        }
+        
+        @media only screen and (min-device-width: 481px) { 
+            .fb_dialog {
+                left: -100px !important;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div id="viewport">
+        <img id="logo" alt="" src="images/logo.png" />
+        <button id="fb-login" class="fb-button hide">Login</button>
+        <button id="fb-invite" class="fb-button hide">Invite Friends</button>
+        <button id="fb-post-question" class="fb-button hide">Post Question</button>
+    </div>
+
+    <div id="fb-root"></div>
+
+    <script>
+
+        window.onload = function () {
+
+            var _hostname = window.location.hostname,
+                DESCRIPTION = 'The exciting new way to find things locally and help others do the same.',
+                TAGLINE = 'Find it. Share it.',
+                ICON = 'http://urbanask.com/images/icon.png',
+                NAME = 'urbanAsk',
+                ROOT_URL = 'http://urbanask.com',
+                ROOT_HTTPS_URL = 'https://urbanask.com',
+                QUESTION_URL = 'https://urbanask.com/questions.aspx',
+                SOURCE_URL = 'http://75.144.228.69:55555',
+                FILE_URL = 'file://',
+                LOCALHOST_URL = 'http://localhost',
+                REDIRECT_URL = 'http://urbanask.com/index.html',
+                URL_NOTHING = 'http://urbanask.com/nothing.html',
+                APP_ID = '267603823260704',
+                _initialized = false;
+
+            initializeEnvironment();
+            window.addEventListener( "message", onMessage, false );
+
+            var script = document.createElement( 'script' );
+            script.async = true;
+            script.src = document.location.protocol + '//connect.facebook.net/en_US/all.js';
+            document.getElementById( 'fb-root' ).appendChild( script );
+
+            window.fbAsyncInit = function () {
+
+                FB.init( {
+                    appId: APP_ID,
+                    cookie: true,
+                    status: true,
+                    xfbml: true,
+                    oauth: true
+                } );
+
+                _initialized = true;
+
+                if ( window.getLocalStorage( 'facebook-login' ) ) {
+
+                    window.removeLocalStorage( 'facebook-login' );
+
+                    if ( window.deviceInfo.mobile ) {
+
+                        if ( window.location.queryString()['version'] ) {
+
+                            var button = window.location.queryString()['button'];
+                            window.location.href = URL_NOTHING + '?button=' + button;
+
+                        } else {
+
+                            window.location.href = REDIRECT_URL;
+
+                        };
+
+                    } else {
+
+                        window.location.href = REDIRECT_URL;
+
+                    };
+
+                };
+
+            };
+
+            function login() {
+
+                window.setLocalStorage( 'facebook-login', true );
+
+                if ( window.deviceInfo.mobile ) {
+
+                    FB.login( 
+                        complete,
+                        {
+                            scope: 'email,publish_actions',
+                            redirect_uri: window.location.href,
+                            cancel_url: window.location.href
+                        }
+                    );
+
+                } else {
+
+                    FB.login( 
+                        complete,
+                        {
+                            scope: 'email,publish_actions'
+                        }
+                    );
+
+                };
+
+            };
+
+            function complete( response ) {
+
+                window.removeLocalStorage( 'facebook-login' );
+                window.location.href = REDIRECT_URL;
+
+            };
+
+            function invite() {
+
+                window.setLocalStorage( 'facebook-login', true );
+
+                if ( window.deviceInfo.mobile ) {
+
+                    FB.ui( 
+                        {
+
+                            method: 'apprequests',
+                            message: DESCRIPTION,
+                            data: '',
+                            title: NAME,
+                            redirect_uri: URL_NOTHING,
+                            cancel_url: URL_NOTHING
+
+                        },
+                        complete
+                    );
+
+
+                } else {
+
+                    FB.ui( 
+                        {
+
+                            method: 'apprequests',
+                            message: DESCRIPTION,
+                            data: '',
+                            title: NAME
+
+                        },
+                        complete
+                    );
+
+                };
+
+            };
+
+            function postQuestion() {
+
+                window.setLocalStorage( 'facebook-login', true );
+
+                if ( window.deviceInfo.mobile ) {
+
+                    FB.ui( 
+                        {
+
+                            method: 'feed',
+                            name: NAME,
+                            description: DESCRIPTION,
+                            caption: 'Help me find: ' + window.location.queryString()['question'],
+                            link: 'https://apps.facebook.com/urbanask/',
+                            picture: ICON,
+                            redirect_uri: window.location.href
+
+                        },
+                        complete
+                    );
+
+                } else {
+
+                    FB.ui( 
+                        {
+
+                            method: 'feed',
+                            name: NAME,
+                            description: DESCRIPTION,
+                            caption: 'Help me find: ' + window.location.queryString()['question'],
+                            link: 'https://apps.facebook.com/urbanask/',
+                            picture: ICON
+
+                        },
+                        complete
+                    );
+
+                };
+
+            };
+
+            function postOpenGraphQuestion( message, event ) {
+
+                FB.getLoginStatus( function ( response ) {
+
+                    if ( response.authResponse ) {
+
+                        var questionUrl = QUESTION_URL
+                                + '?title=' + window.decodeURIComponent( message.value )
+                                + '&question-id=' + message.id;
+
+                        FB.api( 
+                            '/me/urbanask:search',
+                            'post',
+                            {
+                                question: questionUrl,
+                                expires_in: 48 * 60 * 60
+                            },
+                            function ( response ) {
+
+                                if ( response.id ) {
+
+                                    event.source.postMessage( 
+                                          '{'
+                                        + '"type":"success",'
+                                        + '"id":"' + response.id + '",'
+                                        + '"requestMessage":' + window.JSON.stringify( message )
+                                        + '}',
+                                        event.origin
+                                    );
+
+                                } else {
+
+                                    event.source.postMessage( 
+                                        '{"type":"error","error":"' + response.error.message + '"}',
+                                        event.origin
+                                    );
+
+                                };
+
+                            }
+                        );
+
+                    };
+
+                } );
+
+            };
+
+            function postOpenGraphAnswer( message, event ) {
+
+                FB.getLoginStatus( function ( response ) {
+
+                    if ( response.authResponse ) {
+
+                        var questionUrl = QUESTION_URL
+                                + '?title=' + window.decodeURIComponent( message.value )
+                                + '&question-id=' + message.id;
+
+                        FB.api( 
+                            '/me/urbanask:find',
+                            'post',
+                            {
+                                question: questionUrl
+                            },
+                            function ( response ) {
+
+                                if ( response.id ) {
+
+                                    event.source.postMessage( 
+                                          '{'
+                                        + '"type":"success",'
+                                        + '"id":"' + response.id + '",'
+                                        + '"requestMessage":' + window.JSON.stringify( message )
+                                        + '}',
+                                        event.origin
+                                    );
+
+                                } else {
+
+                                    event.source.postMessage( 
+                                        '{"type":"error","error":"' + response.error.message + '"}',
+                                        event.origin
+                                    );
+
+                                };
+
+                            }
+                        );
+
+                    };
+
+                } );
+
+            };
+
+            function postOpenGraphComment( message, event ) {
+
+                FB.getLoginStatus( function ( response ) {
+
+                    if ( response.authResponse ) {
+
+                        FB.api( 
+                            '/' + message.openGraphId + '/comments',
+                            'post',
+                            {
+                                message: window.decodeURIComponent( message.comment )
+                            },
+                            function ( response ) {
+
+                                if ( response.id ) {
+
+                                    event.source.postMessage( 
+                                          '{'
+                                        + '"type":"success",'
+                                        + '"id":"' + response.id + '",'
+                                        + '"requestMessage":' + window.JSON.stringify( message )
+                                        + '}',
+                                        event.origin
+                                    );
+
+                                } else {
+
+                                    event.source.postMessage( 
+                                        '{"type":"error","error":"' + response.error.message + '"}',
+                                        event.origin
+                                    );
+
+                                };
+
+                            }
+                        );
+
+                    };
+
+                } );
+
+            };
+
+            function postOpenGraphLike( message, event ) {
+
+                FB.getLoginStatus( function ( response ) {
+
+                    if ( response.authResponse ) {
+
+                        isMyFriend( message, function () {
+
+                            FB.api( 
+                                '/' + message.openGraphId + '/likes',
+                                'post',
+                                function ( response ) {
+
+                                    event.source.postMessage( 
+                                            '{'
+                                        + '"type":"success",'
+                                        + '"requestMessage":' + window.JSON.stringify( message )
+                                        + '}',
+                                        event.origin
+                                    );
+
+                                }
+                            );
+
+                        } );
+
+                    };
+
+                } );
+
+            };
+
+            function postOpenGraphAnswerAsComment( message, event ) {
+
+                FB.getLoginStatus( function ( response ) {
+
+                    if ( response.authResponse ) {
+
+                        isMyFriend( message, function () {
+
+                            FB.api( 
+                                '/' + message.openGraphId + '/comments',
+                                'post',
+                                {
+                                    message: window.decodeURIComponent( message.comment )
+                                },
+                                function ( response ) {
+
+                                    if ( response.id ) {
+
+                                        event.source.postMessage( 
+                                              '{'
+                                            + '"type":"success",'
+                                            + '"id":"' + response.id + '",'
+                                            + '"requestMessage":' + window.JSON.stringify( message )
+                                            + '}',
+                                            event.origin
+                                        );
+
+                                    } else {
+
+                                        event.source.postMessage( 
+                                            '{"type":"error","error":"' + response.error.message + '"}',
+                                            event.origin
+                                        );
+
+                                    };
+
+                                }
+                            );
+
+                        } );
+
+                    };
+
+                } );
+
+            };
+
+            function isMyFriend( message, complete ) {
+
+                FB.api( 
+                    '/me/friends/' + message.questionFacebookId + '',
+                    function ( response ) {
+
+                        if ( response.data && response.data.length ) {
+
+                            complete();
+
+                        } else {
+
+                            FB.api( 
+                                '/me',
+                                function ( response ) {
+
+                                    if ( response && response.id == message.questionFacebookId ) {
+
+                                        complete();
+
+                                    };
+
+                                }
+                            );
+
+                        };
+
+                    }
+                );
+
+            };
+
+            function postFeedApp( message, event ) {
+
+                FB.getLoginStatus( function ( response ) {
+
+                    if ( response.authResponse ) {
+
+                        FB.api( 
+                            '/me/feed',
+                            'post',
+                            {
+                                message: window.decodeURIComponent( message ),
+                                name: NAME,
+                                caption: TAGLINE,
+                                description: DESCRIPTION,
+                                link: ROOT_HTTPS_URL,
+                                picture: ICON
+                            },
+                            function ( response ) {
+
+                                if ( response.id ) {
+
+                                    event.source.postMessage( '{"type":"success", "id":"' + response.id + '"}', event.origin );
+
+                                } else {
+
+                                    event.source.postMessage( '{"type":"error", "error":' + window.JSON.stringify( response.error ) + '}', event.origin );
+
+                                };
+
+                            }
+                        );
+
+                    };
+
+                } );
+
+            };
+
+            function postFeedQuestion( message, event ) {
+
+                FB.getLoginStatus( function ( response ) {
+
+                    if ( response.authResponse ) {
+
+                        FB.api( 
+                            '/me/feed',
+                            'post',
+                            {
+                                message: 'Help me find: ' + window.decodeURIComponent( message.message ),
+                                name: NAME,
+                                caption: TAGLINE,
+                                description: DESCRIPTION,
+                                link: REDIRECT_URL + ( message.id ? '?' + 'question-id=' + message.id : '' ),
+                                picture: ICON
+                            },
+                            function ( response ) {
+
+                                if ( response.id ) {
+
+                                    event.source.postMessage( '{"type":"success", "id":"' + response.id + '"}', event.origin );
+
+                                } else {
+
+                                    event.source.postMessage( 
+                                        '{"type":"error", "error":' + window.JSON.stringify( response.error ) + '}',
+                                        event.origin
+                                    );
+
+                                };
+
+                            }
+                        );
+
+                    };
+
+                } );
+
+            };
+
+            function onMessage( event ) {
+
+                if ( event.origin == SOURCE_URL
+                    || event.origin == ROOT_URL
+                    || event.origin == ROOT_HTTPS_URL
+                    || event.origin == LOCALHOST_URL
+                    || event.origin == FILE_URL ) {
+
+                    var message = window.JSON.parse( event.data );
+
+                    if ( typeof FB == "undefined" || !_initialized ) {
+
+                        event.source.postMessage( '{"type":"not-ready","retry":"' + message.type + '"}', event.origin );
+
+                    } else {
+
+                        switch ( message.type ) {
+                            case 'authorize':
+
+                                FB.getLoginStatus( function ( response ) {
+
+                                    if ( response.authResponse ) {
+
+                                        var facebookId = response.authResponse.userID,
+                                            password = response.authResponse.accessToken;
+
+                                        FB.api( '/me', function ( response ) {
+
+                                            event.source.postMessage( '{'
+                                                + '"type":"authorized",'
+                                                + '"facebookId":"' + facebookId + '",'
+                                                + '"username":"' + ( response.username ? response.username : response.name ) + '",'
+                                                + '"password":"' + password + '",'
+                                                + '"location":"' + ( response.location ? response.location.name : '' ) + '",'
+                                                + '"email":"' + ( response.email ? response.email : '' ) + '"'
+                                                + '}',
+                                                event.origin );
+
+                                        } );
+
+                                    } else {
+
+                                        event.source.postMessage( '{"type":"unauthorized"}', event.origin );
+
+                                    };
+
+                                } );
+
+                                break;
+
+                            case 'post-open-graph':
+
+                                switch ( message.object ) {
+                                    case 'question':
+
+                                        postOpenGraphQuestion( message, event );
+                                        break;
+
+                                    case 'answer':
+
+                                        postOpenGraphAnswer( message, event );
+                                        break;
+
+                                    case 'comment':
+
+                                        postOpenGraphComment( message, event );
+                                        break;
+
+                                    case 'answer-as-comment':
+
+                                        postOpenGraphAnswerAsComment( message, event );
+                                        break;
+
+                                    case 'like':
+
+                                        postOpenGraphLike( message, event );
+                                        break;
+
+                                };
+
+                                break;
+
+                            case 'post-feed':
+
+                                switch ( message.object ) {
+                                    case 'app':
+
+                                        postFeedApp( message.message, event );
+                                        break;
+
+                                    case 'question':
+
+                                        postFeedQuestion( message, event );
+                                        break;
+
+                                };
+
+                                break;
+
+                            case 'logout':
+
+                                FB.logout()
+                                break;
+
+                        };
+
+                    };
+
+                };
+
+            };
+
+            function initialize() {
+
+                window.checkLocalStorage();
+
+                var loginButton = document.getElementById( 'fb-login' ),
+                    inviteButton = document.getElementById( 'fb-invite' ),
+                    postQuestionButton = document.getElementById( 'fb-post-question' );
+
+                loginButton.addEventListener( 'click', login, false );
+                inviteButton.addEventListener( 'click', invite, false );
+                postQuestionButton.addEventListener( 'click', postQuestion, false );
+
+                switch ( window.location.queryString()['button'] ) {
+                    case 'login':
+
+                        loginButton.className = 'fb-button';
+                        break;
+
+                    case 'invite':
+
+                        inviteButton.className = 'fb-button';
+                        break;
+
+                    case 'post-question':
+
+                        postQuestionButton.className = 'fb-button';
+                        break;
+
+                    default:
+
+                        loginButton.className = 'fb-button';
+                        inviteButton.className = 'fb-button';
+                        postQuestionButton.className = 'fb-button';
+
+                };
+
+            };
+
+            window.location.queryString = function () {
+
+                var result = {},
+                    queryString = location.search.substring( 1 ),
+                    re = /([^&=]+)=([^&]*)/g,
+                    m;
+
+                while ( m = re.exec( queryString ) ) {
+
+                    if ( typeof result[decodeURIComponent( m[1] )] == 'undefined' ) {
+
+                        result[decodeURIComponent( m[1] )] = decodeURIComponent( m[2] );
+
+                    } else {
+
+                        if ( typeof result[decodeURIComponent( m[1] )] == 'string' ) {
+
+                            result[decodeURIComponent( m[1] )] = [result[decodeURIComponent( m[1] )]];
+
+                        };
+
+                        result[decodeURIComponent( m[1] )].push( decodeURIComponent( m[2] ) )
+
+                    };
+
+                };
+
+                return result;
+
+            };
+
+            function initializeEnvironment() {
+
+                var userAgent = window.navigator.userAgent.toLowerCase();
+                window.deviceInfo = {};
+
+                //window.deviceInfo.type - handheld, tablet, desktop
+                //window.deviceInfo.brand - ios, android, microsoft, webos, blackberry
+                //window.deviceInfo.mode - browser, standalone, webview
+
+                //window.deviceInfo.mobile - window.deviceInfo.type == handheld || window.deviceInfo.type == tablet
+                //window.deviceInfo.phonegap - ( window.deviceInfo.type == ios || android ) && window.deviceInfo.mode == webview
+
+                if ( /ipad/.test( userAgent ) || ( /android/.test( userAgent ) && !/mobile/.test( userAgent ) ) ) {
+
+                    window.deviceInfo.type = 'tablet';
+
+                } else if ( /iphone|ipod|webos|blackberry|android/.test( userAgent ) ) {
+
+                    window.deviceInfo.type = 'handheld';
+
+                } else {
+
+                    window.deviceInfo.type = 'desktop';
+
+                };
+
+                if ( /iphone|ipod|ipad/.test( userAgent ) ) {
+
+                    var safari = /safari/.test( userAgent );
+
+                    window.deviceInfo.brand = 'ios';
+
+                    if ( window.navigator.standalone ) {
+
+                        window.deviceInfo.mode = 'standalone';
+
+                    } else if ( safari ) {
+
+                        window.deviceInfo.mode = 'browser';
+
+                    } else if ( !safari ) {
+
+                        window.deviceInfo.mode = 'webview';
+
+                    };
+
+                } else if ( /android/.test( userAgent ) ) {
+
+                    window.deviceInfo.brand = 'android';
+                    window.deviceInfo.mode = 'browser';
+
+                } else if ( /webos/.test( userAgent ) ) {
+
+                    window.deviceInfo.brand = 'webos';
+                    window.deviceInfo.mode = 'browser';
+
+                } else if ( /blackberry/.test( userAgent ) ) {
+
+                    window.deviceInfo.brand = 'blackberry';
+                    window.deviceInfo.mode = 'browser';
+
+                } else {
+
+                    window.deviceInfo.brand = 'unknown';
+                    window.deviceInfo.mode = 'browser';
+
+                };
+
+                window.deviceInfo.mobile = ( window.deviceInfo.type == 'handheld' || window.deviceInfo.type == 'tablet' );
+                window.deviceInfo.phonegap = ( window.deviceInfo.brand == 'ios' && window.deviceInfo.mode == 'webview' );
+
+            };
+
+            window.checkLocalStorage = function () {
+
+                try {
+
+                    window.localStorage.setItem( 'checkLocalStorage', true );
+                    window.hasLocalStorage = true;
+
+                } catch ( error ) {
+
+                    window.hasLocalStorage = false;
+
+                };
+
+            };
+
+            window.removeLocalStorage = function ( name ) {
+
+                if ( window.hasLocalStorage ) {
+
+                    return window.localStorage.removeItem( name );
+
+                };
+
+                return this;
+
+            };
+
+            window.getLocalStorage = function ( name ) {
+
+                if ( window.hasLocalStorage ) {
+
+                    return window.localStorage.getItem( name );
+
+                } else {
+
+                    return '';
+
+                };
+
+            };
+
+            window.setLocalStorage = function ( name, value ) {
+
+                if ( window.hasLocalStorage ) {
+
+                    window.localStorage.setItem( name, value );
+
+                };
+
+                return this;
+
+            };
+
+            initialize();
+
+        };
+
+    </script>
+
+</body>
+</html>
