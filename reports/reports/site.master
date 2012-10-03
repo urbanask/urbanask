@@ -1,0 +1,71 @@
+﻿<%@ master language="VB" autoeventwireup="false" codebehind="site.master.vb" inherits="reports.Site" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+
+<head runat="server">
+    <title></title>
+    <link href="~/styles/site.css" rel="stylesheet" type="text/css" />
+    <asp:contentplaceholder id="headContent" runat="server">
+    </asp:contentplaceholder>
+</head>
+
+<body>
+
+    <form runat="server">
+
+    <div class="page">
+
+        <div class="header">
+            
+            <div class="title">
+                <h1>
+                    urbanAsk Reports
+                </h1>
+            </div>
+            
+            <div class="loginDisplay">
+                <asp:loginview id="headLoginView" runat="server" enableviewstate="false">
+                    <anonymoustemplate>
+                        [ <a href="~/account/login.aspx" id="headLoginStatus" runat="server">Log In</a>
+                        ]
+                    </anonymoustemplate>
+                    <loggedintemplate>
+                        Welcome <span class="bold">
+                            <asp:loginname id="headLoginName" runat="server" />
+                        </span>! [
+                        <asp:loginstatus id="headLoginStatus" runat="server" logoutaction="Redirect" logouttext="Log Out"
+                            logoutpageurl="~/" />
+                        ]
+                    </loggedintemplate>
+                </asp:loginview>
+            </div>
+            
+            <div class="clear hideSkiplink">
+                <asp:menu id="navigationMenu" runat="server" cssclass="menu" enableviewstate="false"
+                    includestyleblock="false" orientation="Horizontal">
+                    <items>
+                        <asp:menuitem navigateurl="~/default.aspx" text="Home" />
+                        <asp:menuitem navigateurl="~/dailymetrics.aspx" text="Daily Metrics" />
+                    </items>
+                </asp:menu>
+            </div>
+
+        </div>
+        
+        <div class="main">
+            <asp:contentplaceholder id="mainContent" runat="server" />
+        </div>
+        
+        <div class="clear">
+        </div>
+
+    </div>
+    
+    <div class="footer">
+    </div>
+    
+    </form>
+
+</body>
+</html>
