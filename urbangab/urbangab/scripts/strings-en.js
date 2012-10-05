@@ -195,6 +195,8 @@
             "viewNearbyQuestions": "view questions near me",
             "nearbyQuestionsInstructions": "urbanAsk needs access to your location to display questions near you.<br /><br />"
                 + "Is this OK?<br /><br /> Your device may also ask permission.",
+            "pushNotification": "Would you like to be notified when your question is answered?<br /><br />"
+                + "Your device may also ask permission.",
             "smsNotification": "Would you like to add your mobile number and be notified by SMS when your question is answered?"
 
         },

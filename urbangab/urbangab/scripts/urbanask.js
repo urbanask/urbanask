@@ -126,7 +126,8 @@ var _account = [],
         addAnswer: { id: 3, name: 'addAnswer' },
         toolbar: { id: 4, name: 'toolbar' },
         askedQuestionSMSNotification: { id: 5, name: 'askedQuestionSMSNotification' },
-        intro: { id: 5, name: 'intro' }
+        intro: { id: 6, name: 'intro' },
+        push: { id: 7, name: 'push' }
 
     },
     INTERVALS = {
@@ -405,6 +406,30 @@ function addDefaultEventListeners() {
 
         toolbar.addEventListener( 'mousedown', selectToolbarItem, false );
         toolbar.addEventListener( 'mouseup', unselectToolbarItem, false );
+
+    };
+
+    if ( window.pushNotification && window.deviceInfo.brand == 'ios' ) {
+
+        window.pushNotification.registerEvent( 'push', function ( push ) {
+
+            loadAccount( function () {
+
+                window.pushNotification.resetBadge();
+
+            } );
+
+        } );
+
+        document.addEventListener( 'resume', function () {
+
+            if ( window.pushNotification ) {
+
+                window.pushNotification.resetBadge();
+
+            };
+
+        } );
 
     };
 
@@ -2257,6 +2282,34 @@ function initializePhoneGap( complete ) {
 
 };
 
+function initializePushNotifications() {
+
+    if ( isLoggedIn() && window.pushNotification && window.deviceInfo.brand == 'ios' ) {
+
+        alert( 'init push' );
+
+        window.pushNotification.enablePush();
+        window.pushNotification.registerForNotificationTypes( 
+              window.pushNotification.notificationType.badge
+            | window.pushNotification.notificationType.sound
+            | window.pushNotification.notificationType.alert );
+
+        window.pushNotification.getIncoming( function ( incoming ) {
+
+            if ( incoming.message ) {
+
+                window.pushNotification.resetBadge();
+
+            };
+
+        } );
+
+        window.pushNotification.setAlias( _account[ACCOUNT_COLUMNS.userId].toString(), function () { } );
+
+    };
+
+};
+
 function initializeInterface() {
 
     initializeScrolling();
@@ -2994,7 +3047,7 @@ function initializeFacebook( options ) {
 };
 
 function initializeInstructions() {
-
+    debugger;
     var instructions = window.getLocalStorage( 'instructions' );
 
     if ( instructions ) {
@@ -4713,7 +4766,16 @@ function saveQuestion( event ) {
 
                 } );
 
-                if ( !_instructions[INSTRUCTION_TYPES.askedQuestionSMSNotification.id] ) {
+                if ( !_instructions[INSTRUCTION_TYPES.push.id] ) {
+
+                    showMessage( STRINGS.questionsPage.pushNotification, function () {
+
+                        initializePushNotifications();
+                        saveInstructionViewed( INSTRUCTION_TYPES.push );
+
+                    } );
+
+                } else if ( !_instructions[INSTRUCTION_TYPES.askedQuestionSMSNotification.id] ) {
 
                     if ( !_account[ACCOUNT_COLUMNS.phone].number ) {
 
@@ -8280,10 +8342,16 @@ function startApp() {
 
         initializeInstructions()
 
+        if ( _instructions[INSTRUCTION_TYPES.push.id] ) {
+
+            initializePushNotifications();
+
+        };
+
         window.setTimeout( function () {
 
-            showInstructions();
             showIntro();
+            showInstructions();
 
         }, 3 * SECOND );
 

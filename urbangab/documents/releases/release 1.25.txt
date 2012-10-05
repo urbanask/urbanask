@@ -1,5 +1,6 @@
 1.25
 
+new - iOS push notifications!!!
 new - updated tutorial
 new - get notified of new answers on Twitter
 

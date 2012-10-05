@@ -310,7 +310,8 @@ Public Class account : Inherits api.messageHandler
                             user("addAnswer"), ",",
                             user("toolbar"), ",",
                             user("askedQuestionSMSNotification"), ",",
-                            user("intro")
+                            user("intro"), ",",
+                            user("push")
                             )
 
                     End If
