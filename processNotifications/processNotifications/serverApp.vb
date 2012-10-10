@@ -35,7 +35,12 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         _viewTwitterActions As String,
         _twitterBody As String,
         _workCount As Int32,
-        _questionUrl As String
+        _questionUrl As String,
+        _pushApiUrl As String,
+        _pushApplicationKey As String,
+        _pushMasterSecret As String,
+        _pushBody As String,
+        _viewPushActions As String
 
 
 #Region "    functions "
@@ -75,6 +80,11 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         _viewSmsActions = Parameters.Parameter.GetValue("viewSmsActions")
         _viewTwitterActions = Parameters.Parameter.GetValue("viewTwitterActions")
         _questionUrl = Parameters.Parameter.GetValue("questionUrl")
+        _pushApiUrl = Parameters.Parameter.GetValue("pushApiUrl")
+        _pushApplicationKey = Parameters.Parameter.GetValue("pushApplicationKey")
+        _pushMasterSecret = Parameters.Parameter.GetValue("pushMasterSecret")
+        _pushBody = Parameters.Parameter.GetValue("pushBody")
+        _viewPushActions = Parameters.Parameter.GetValue("viewPushActions")
 
     End Sub
 
@@ -96,6 +106,12 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
             If MyBase.IsAppActive() Then
 
                 Me.moveToWork(connection)
+
+            End If
+
+            If MyBase.IsAppActive() Then
+
+                Me.processPushNotifications(connection)
 
             End If
 
@@ -139,6 +155,63 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
 
         Me.logProcedureStatistics(_moveToWork, startTime)
         Me.logStatistics("moveToWork", startTime)
+
+    End Sub
+
+    Private Sub processPushNotifications( _
+        ByVal connection As Data.SqlClient.SqlConnection)
+
+        Dim startTime As System.DateTime = System.DateTime.Now
+
+        Using command As New SqlClient.SqlCommand(_viewPushActions, connection),
+            errors As New Data.DataTable("errors")
+
+            command.CommandType = CommandType.StoredProcedure
+            command.CommandTimeout = _commandTimeout
+
+            errors.Columns.Add("notificationId")
+            errors.Columns.Add("description")
+            errors.Columns.Add("error")
+
+            Using actions As Data.SqlClient.SqlDataReader = command.ExecuteReader()
+
+                While (actions.Read())
+
+                    Dim userId As String = actions("userId").ToString(),
+                        badgeCount As String = actions("badgeCount").ToString(),
+                        request As String = String.Format(_pushBody, userId, badgeCount, jsonEncode(actions("body").ToString())),
+                        web = New Net.WebClient(),
+                        token = Convert.ToBase64String(Text.Encoding.UTF8.GetBytes(String.Format("{0}:{1}", _pushApplicationKey, _pushMasterSecret))),
+                        header = String.Format("Basic {0}", token)
+
+                    web.Headers.Add(Net.HttpRequestHeader.Authorization, header)
+                    web.Headers(Net.HttpRequestHeader.ContentType) = "application/json"
+
+                    Try
+
+                        Dim jsonResponse As String = web.UploadString(_pushApiUrl, request)
+
+                    Catch ex As Exception
+
+                        Dim errorRow As Data.DataRow = errors.NewRow()
+                        errorRow("notificationId") = CInt(actions("notificationId"))
+                        errorRow("description") = request
+                        errorRow("error") = ex.Message
+                        errors.Rows.Add(errorRow)
+
+                    End Try
+
+                End While
+
+                Me.logProcedureStatistics(_viewPushActions, startTime)
+
+            End Using
+
+            saveErrors(connection, errors, startTime)
+
+        End Using
+
+        Me.logStatistics("processPushNotifications", startTime)
 
     End Sub
 
@@ -364,6 +437,18 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         End If
 
     End Sub
+
+    Private Function jsonEncode(
+        json As String) As String
+
+        Return json _
+            .Replace("&", "&amp;") _
+            .Replace("\", "&#92;") _
+            .Replace("""", "\""") _
+            .Replace("<", "&lt;") _
+            .Replace(">", "&gt;")
+
+    End Function
 
 #End Region
 

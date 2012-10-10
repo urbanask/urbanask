@@ -59,7 +59,8 @@ var _account = [],
         "notifications": 8,
         "instructions": 9,
         "facebook": 10,
-        "phone": 11
+        "phone": 11,
+        "pushNotifications": 12
 
     },
     ANSWER_COLUMNS = {
@@ -2286,8 +2287,6 @@ function initializePushNotifications() {
 
     if ( isLoggedIn() && window.pushNotification && window.deviceInfo.brand == 'ios' ) {
 
-        alert( 'init push' );
-
         window.pushNotification.enablePush();
         window.pushNotification.registerForNotificationTypes( 
               window.pushNotification.notificationType.badge
@@ -2305,6 +2304,7 @@ function initializePushNotifications() {
         } );
 
         window.pushNotification.setAlias( _account[ACCOUNT_COLUMNS.userId].toString(), function () { } );
+        savePushNotifications();
 
     };
 
@@ -3047,7 +3047,7 @@ function initializeFacebook( options ) {
 };
 
 function initializeInstructions() {
-    debugger;
+
     var instructions = window.getLocalStorage( 'instructions' );
 
     if ( instructions ) {
@@ -4191,6 +4191,83 @@ function reputationItemClick( event ) {
 
 };
 
+function saveAccount( username, tagline, regionId, regionName, phoneNumber, pushNotifications, complete, errorCallback ) {
+
+    var resource = '/api/account/save',
+        data = 'username=' + username
+            + '&tagline=' + tagline
+            + '&regionId=' + regionId
+            + '&phoneNumber=' + window.encodeURIComponent( unformatPhoneNumber( phoneNumber ) )
+            + '&pushNotifications=' + pushNotifications,
+        session = getSession( resource );
+
+    ajax( API_URL + resource, {
+
+        "type": "GET",
+        "data": data,
+        "headers": { "x-session": session },
+        "success": function ( data, status ) {
+
+            var newRegion = false;
+
+            _account[ACCOUNT_COLUMNS.username] = username;
+            _account[ACCOUNT_COLUMNS.tagline] = tagline;
+            _account[ACCOUNT_COLUMNS.pushNotifications] = pushNotifications;
+
+            if ( _account[ACCOUNT_COLUMNS.phone].length ) {
+
+                _account[ACCOUNT_COLUMNS.phone].number = unformatPhoneNumber( phoneNumber );
+
+            } else {
+
+                _account[ACCOUNT_COLUMNS.phone].number = unformatPhoneNumber( phoneNumber );
+                _account[ACCOUNT_COLUMNS.phone][PHONE_COLUMNS.notifications] = 1;
+                _account[ACCOUNT_COLUMNS.phone][PHONE_COLUMNS.verified] = 0;
+
+            };
+
+            if ( regionId == -1 ) {
+
+                if ( _account[ACCOUNT_COLUMNS.regions].length ) { newRegion = true; };
+                _account[ACCOUNT_COLUMNS.regions] = [];
+
+            } else {
+
+                if ( !_account[ACCOUNT_COLUMNS.regions].length
+                    || ( _account[ACCOUNT_COLUMNS.regions].length
+                    && _account[ACCOUNT_COLUMNS.regions][0][REGION_COLUMNS.id] != regionId ) ) {
+
+                    newRegion = true;
+
+                };
+
+                _account[ACCOUNT_COLUMNS.regions] = [[regionId, regionName]];
+
+            };
+
+            if ( complete ) { complete( newRegion ); };
+
+        },
+        "error": function ( response, status, error ) {
+
+            logError( status, error );
+
+            if ( error == 'Unauthorized' ) {
+
+                logoutApp();
+
+            } else {
+
+                if ( errorCallback ) { errorCallback( status, error ); };
+
+            };
+
+        }
+
+    } );
+
+};
+
 function saveAnswerDownvote( question, answer, answerItem ) {
 
     if ( !isLoggedIn() ) {
@@ -4766,7 +4843,7 @@ function saveQuestion( event ) {
 
                 } );
 
-                if ( !_instructions[INSTRUCTION_TYPES.push.id] ) {
+                if ( !_instructions[INSTRUCTION_TYPES.push.id] && window.pushNotification && window.deviceInfo.brand == 'ios' ) {
 
                     showMessage( STRINGS.questionsPage.pushNotification, function () {
 
@@ -4800,6 +4877,32 @@ function saveQuestion( event ) {
                     : showMessage( STRINGS.error.saveQuestion + ' ( error: ' + status + ', ' + error + ')' );
 
             }
+
+        } );
+
+    };
+
+};
+
+function savePushNotifications() {
+
+    if ( !_account[ACCOUNT_COLUMNS.pushNotifications] ) {
+
+        window.pushNotification.isPushEnabled( function ( enabled ) {
+
+            if ( enabled ) {
+
+                var username = _account[ACCOUNT_COLUMNS.username],
+                        tagline = _account[ACCOUNT_COLUMNS.tagline],
+                        region = ( _account[ACCOUNT_COLUMNS.regions].length ? _account[ACCOUNT_COLUMNS.regions][0] : null ),
+                        regionId = ( region ? region[REGION_COLUMNS.id] : -1 ),
+                        regionName = ( region ? region[REGION_COLUMNS.name] : '' ),
+                        phoneNumber = _account[ACCOUNT_COLUMNS.phone],
+                        pushNotifications = 1;
+
+                saveAccount( username, tagline, regionId, regionName, phoneNumber, pushNotifications );
+
+            };
 
         } );
 
@@ -5175,7 +5278,7 @@ function getQuestionsTop() {
 
     if ( window.deviceInfo.iscroll ) {
 
-        top = _scrollQuestions.y;
+        top = ( _scrollQuestions ? _scrollQuestions.y : 0 );
 
     } else {
 
@@ -5422,7 +5525,7 @@ function getUsersTop() {
 
     if ( window.deviceInfo.iscroll ) {
 
-        top = _scrollUser.y;
+        top = ( _scrollUser ? _scrollUser.y : 0 );
 
     } else {
 
@@ -5992,7 +6095,7 @@ function showAccountPage() {
         phoneNumber = document.getElementById( 'edit-phone-number' ),
         addContact = document.getElementById( 'add-contact' ),
         region = document.getElementById( 'edit-region' ),
-        save = document.getElementById( 'save-edit' ),
+        saveButton = document.getElementById( 'save-edit' ),
         cancel = document.getElementById( 'account-cancel' ),
         inviteButton = document.getElementById( 'invite' ),
         postButton = document.getElementById( 'post' ),
@@ -6081,10 +6184,40 @@ function showAccountPage() {
 
     };
 
-    function saveAccount( event ) {
+    function save( event ) {
 
         event.preventDefault();
 
+        var regionId = region.options[region.selectedIndex].value,
+            regionName = region.options[region.selectedIndex].text.trim(),
+            pushNotifications = _account[ACCOUNT_COLUMNS.pushNotifications];
+
+        saveAccount( username.value, tagline.value, regionId, regionName, phoneNumber.value.trim(), pushNotifications, function ( newRegion ) {
+
+            close();
+
+            if ( newRegion ) {
+
+                loadAllQuestions();
+                loadTopUsers();
+
+            };
+
+        }, function ( status, error ) {
+
+            if ( status == 412 ) {
+
+                showPhoneNumberError( error );
+
+            } else {
+
+                close();
+
+            };
+
+        } );
+
+        /*
         var resource = '/api/account/save',
             regionId = region.options[region.selectedIndex].value,
             regionName = region.options[region.selectedIndex].text.trim(),
@@ -6168,6 +6301,7 @@ function showAccountPage() {
             }
 
         } );
+        */
 
     };
 
@@ -6365,7 +6499,7 @@ function showAccountPage() {
     function addEventListeners() {
 
         accountPage.addEventListener( 'close', close, false );
-        account.addEventListener( 'submit', saveAccount, false );
+        account.addEventListener( 'submit', save, false );
         cancel.addEventListener( 'click', close, false );
         window.addEventListener( 'message', authorizeFacebook, false );
 
@@ -6378,11 +6512,11 @@ function showAccountPage() {
 
         };
 
-        save.addEventListener( 'click', saveAccount, false );
-        save.addEventListener( 'touchstart', selectButton, false );
-        save.addEventListener( 'touchend', unselectButton, false );
-        save.addEventListener( 'mousedown', selectButton, false );
-        save.addEventListener( 'mouseup', unselectButton, false );
+        saveButton.addEventListener( 'click', save, false );
+        saveButton.addEventListener( 'touchstart', selectButton, false );
+        saveButton.addEventListener( 'touchend', unselectButton, false );
+        saveButton.addEventListener( 'mousedown', selectButton, false );
+        saveButton.addEventListener( 'mouseup', unselectButton, false );
 
         addContact.addEventListener( 'click', addToContacts, false );
         addContact.addEventListener( 'touchstart', selectButton, false );
@@ -6419,7 +6553,7 @@ function showAccountPage() {
     function removeEventListeners() {
 
         accountPage.removeEventListener( 'close', close, false );
-        account.removeEventListener( 'submit', saveAccount, false );
+        account.removeEventListener( 'submit', save, false );
         cancel.removeEventListener( 'click', close, false );
         window.removeEventListener( 'message', authorizeFacebook, false );
 
@@ -6432,11 +6566,11 @@ function showAccountPage() {
 
         };
 
-        save.removeEventListener( 'click', saveAccount, false );
-        save.removeEventListener( 'touchstart', selectButton, false );
-        save.removeEventListener( 'touchend', unselectButton, false );
-        save.removeEventListener( 'mousedown', selectButton, false );
-        save.removeEventListener( 'mouseup', unselectButton, false );
+        saveButton.removeEventListener( 'click', save, false );
+        saveButton.removeEventListener( 'touchstart', selectButton, false );
+        saveButton.removeEventListener( 'touchend', unselectButton, false );
+        saveButton.removeEventListener( 'mousedown', selectButton, false );
+        saveButton.removeEventListener( 'mouseup', unselectButton, false );
 
         addContact.removeEventListener( 'click', addToContacts, false );
         addContact.removeEventListener( 'touchstart', selectButton, false );
@@ -6635,7 +6769,7 @@ function showCreateEmailAccount( event ) {
 
     var createAccountPage = document.getElementById( 'create-account-page' ),
         createAccount = document.getElementById( 'create-account' ),
-        save = document.getElementById( 'save-account' ),
+        saveButton = document.getElementById( 'save-account' ),
         cancel = document.getElementById( 'create-account-cancel' ),
         username = document.getElementById( 'create-username' ),
         password = document.getElementById( 'create-password' ),
@@ -6644,7 +6778,7 @@ function showCreateEmailAccount( event ) {
     createAccountPage.removeClass( 'hide' );
     addEventListeners();
 
-    function saveAccount( event ) {
+    function save( event ) {
 
         event.preventDefault();
 
@@ -6711,13 +6845,13 @@ function showCreateEmailAccount( event ) {
 
     function addEventListeners() {
 
-        createAccount.addEventListener( 'submit', saveAccount, false );
+        createAccount.addEventListener( 'submit', save, false );
 
-        save.addEventListener( 'click', saveAccount, false );
-        save.addEventListener( 'touchstart', selectButton, false );
-        save.addEventListener( 'touchend', unselectButton, false );
-        save.addEventListener( 'mousedown', selectButton, false );
-        save.addEventListener( 'mouseup', unselectButton, false );
+        saveButton.addEventListener( 'click', save, false );
+        saveButton.addEventListener( 'touchstart', selectButton, false );
+        saveButton.addEventListener( 'touchend', unselectButton, false );
+        saveButton.addEventListener( 'mousedown', selectButton, false );
+        saveButton.addEventListener( 'mouseup', unselectButton, false );
 
         cancel.addEventListener( 'click', close, false );
         cancel.addEventListener( 'touchstart', selectButton, false );
@@ -6729,13 +6863,13 @@ function showCreateEmailAccount( event ) {
 
     function removeEventListeners() {
 
-        createAccount.removeEventListener( 'submit', saveAccount, false );
+        createAccount.removeEventListener( 'submit', save, false );
 
-        save.removeEventListener( 'click', saveAccount, false );
-        save.removeEventListener( 'touchstart', selectButton, false );
-        save.removeEventListener( 'touchend', unselectButton, false );
-        save.removeEventListener( 'mousedown', selectButton, false );
-        save.removeEventListener( 'mouseup', unselectButton, false );
+        saveButton.removeEventListener( 'click', save, false );
+        saveButton.removeEventListener( 'touchstart', selectButton, false );
+        saveButton.removeEventListener( 'touchend', unselectButton, false );
+        saveButton.removeEventListener( 'mousedown', selectButton, false );
+        saveButton.removeEventListener( 'mouseup', unselectButton, false );
 
         cancel.removeEventListener( 'click', close, false );
         cancel.removeEventListener( 'touchstart', selectButton, false );
@@ -7289,7 +7423,7 @@ function showCreateMobileAccount( event ) {
     createAccountPage.removeClass( 'hide' );
     addEventListeners();
 
-    function saveAccount( event ) {
+    function save( event ) {
 
         event.preventDefault();
 
@@ -7367,9 +7501,9 @@ function showCreateMobileAccount( event ) {
 
     function addEventListeners() {
 
-        createAccount.addEventListener( 'submit', saveAccount, false );
+        createAccount.addEventListener( 'submit', save, false );
 
-        save.addEventListener( 'click', saveAccount, false );
+        save.addEventListener( 'click', save, false );
         save.addEventListener( 'touchstart', selectButton, false );
         save.addEventListener( 'touchend', unselectButton, false );
         save.addEventListener( 'mousedown', selectButton, false );
@@ -7385,9 +7519,9 @@ function showCreateMobileAccount( event ) {
 
     function removeEventListeners() {
 
-        createAccount.removeEventListener( 'submit', saveAccount, false );
+        createAccount.removeEventListener( 'submit', save, false );
 
-        save.removeEventListener( 'click', saveAccount, false );
+        save.removeEventListener( 'click', save, false );
         save.removeEventListener( 'touchstart', selectButton, false );
         save.removeEventListener( 'touchend', unselectButton, false );
         save.removeEventListener( 'mousedown', selectButton, false );
@@ -7760,7 +7894,6 @@ function initializeQuestionPage( question, page, previousPage ) {
     getQuestionsTop();
     getUsersTop();
     initializeBackButton();
-
     slidePage( page, previousPage );
     updateScrollQuestion();
 
@@ -8327,6 +8460,9 @@ function startApp() {
 
         refreshQuestions();
         refreshUserQuestions();
+
+        alert( 'document.referrer: ' + document.referrer );
+        alert( 'startApp():window.location.search: ' + window.location.search );
 
         if ( window.location.queryString()['question-id'] ) {
 

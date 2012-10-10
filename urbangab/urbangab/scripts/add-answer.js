@@ -9,7 +9,10 @@ function showAddAnswer( question ) {
         locations = document.getElementById( 'locations' ),
         locationsView = document.getElementById( 'locations-view' ),
         places = new google.maps.places.PlacesService( document.createElement( 'div' ) ),
-        scrollLocations;
+        scrollLocations,
+        lastSearch = new window.Date(),
+        duration = 200,
+        lastKeyTimer;
 
     places.searchRequest = {
 
@@ -63,41 +66,71 @@ function showAddAnswer( question ) {
 
     };
 
-    function autocompleteLocations() {
+    function keyUp( event ) {
 
-        places.searchRequest.name = answerText.value;
-        places.search( places.searchRequest, function ( results, status ) {
+        var searchDelay = new window.Date();
 
-            var html = '';
+        if ( searchDelay.getTime() - lastSearch.getTime() > duration ) {
 
-            if ( results ) {
+            lastSearch = new window.Date();
+            autocompleteLocations( answerText.value );
 
-                for ( var index = 0; index < results.length; index++ ) {
+        } else {
 
-                    var options = '';
+            if ( !lastKeyTimer ) {
 
-                    if ( question[QUESTION_COLUMNS.answers].item( results[index].id, ANSWER_COLUMNS.locationId ) ) {
+                lastKeyTimer = window.setTimeout( function () {
 
-                        options = {
-                            existingClass: 'existing-answer',
-                            existingAnswer: '<div class="existing-answer-caption">' + STRINGS.existingAnswer + '</div>'
-                        };
+                    lastKeyTimer = undefined;
+                    autocompleteLocations( answerText.value );
 
-                    };
-
-                    html += getLocationItem( results[index], options );
-
-                };
+                }, duration );
 
             };
 
-            html += '<li class="location-add list-item">'
-                + '<div class="location-add-button button-3d">+</div>'
-                + '<div class="location-add-body">' + STRINGS.addAnswer.addLocation + '</div>'
-                + '</li>';
+        };
 
-            locations.innerHTML = html;
-            updateScrollLocations();
+    };
+
+    function autocompleteLocations( value ) {
+
+        places.searchRequest.name = value;
+        places.search( places.searchRequest, function ( results, status ) {
+
+            if ( status == 'OK' ) {
+
+                var html = '';
+
+                if ( results ) {
+
+                    for ( var index = 0; index < results.length; index++ ) {
+
+                        var options = '';
+
+                        if ( question[QUESTION_COLUMNS.answers].item( results[index].id, ANSWER_COLUMNS.locationId ) ) {
+
+                            options = {
+                                existingClass: 'existing-answer',
+                                existingAnswer: '<div class="existing-answer-caption">' + STRINGS.existingAnswer + '</div>'
+                            };
+
+                        };
+
+                        html += getLocationItem( results[index], options );
+
+                    };
+
+                };
+
+                html += '<li class="location-add list-item">'
+                    + '<div class="location-add-button button-3d">+</div>'
+                    + '<div class="location-add-body">' + STRINGS.addAnswer.addLocation + '</div>'
+                    + '</li>';
+
+                locations.innerHTML = html;
+                updateScrollLocations();
+
+            };
 
         } );
 
@@ -197,7 +230,7 @@ function showAddAnswer( question ) {
         addAnswer.removeEventListener( 'close', close, false );
         locations.removeEventListener( 'click', locationsClick, false );
         cancelButton.removeEventListener( 'click', close, false );
-        answerText.removeEventListener( 'keyup', autocompleteLocations, false );
+        answerText.removeEventListener( 'keyup', keyUp, false );
         document.getElementById( 'answer' ).removeEventListener( 'submit', answerSubmit, false );
 
         if ( window.deviceInfo.brand == 'ios'
@@ -222,7 +255,7 @@ function showAddAnswer( question ) {
         addAnswer.addEventListener( 'close', close, false );
         locations.addEventListener( 'click', locationsClick, false );
         cancelButton.addEventListener( 'click', close, false );
-        answerText.addEventListener( 'keyup', autocompleteLocations, false );
+        answerText.addEventListener( 'keyup', keyUp, false );
         document.getElementById( 'answer' ).addEventListener( 'submit', answerSubmit, false );
 
         if ( window.deviceInfo.brand == 'ios'

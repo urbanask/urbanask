@@ -111,7 +111,8 @@ Public Class account : Inherits api.messageHandler
         Dim username As String = queries("username"),
             tagline As String = queries("tagline"),
             phoneNumber As String = unformatPhoneNumber(queries("phoneNumber")),
-            regionId As String = queries("regionId")
+            regionId As String = queries("regionId"),
+            pushNotifications As Int32 = Convert.ToInt32(queries("pushNotifications"))
 
         Using command As New SqlClient.SqlCommand(SAVE_ACCOUNT, connection)
 
@@ -123,6 +124,7 @@ Public Class account : Inherits api.messageHandler
             command.Parameters.AddWithValue("@tagline", tagline)
             command.Parameters.AddWithValue("@phoneNumber", phoneNumber)
             command.Parameters.AddWithValue("@regionId", regionId)
+            command.Parameters.AddWithValue("@pushNotifications", pushNotifications)
             command.Parameters.Add("@error", SqlDbType.VarChar, 256).Direction = ParameterDirection.Output
 
             command.ExecuteNonQuery()
@@ -245,6 +247,8 @@ Public Class account : Inherits api.messageHandler
                     user("languageId"), ",""",
                     user("tagline"), """,[")
 
+                Dim pushNotifications As String = CStr(user("pushNotifications"))
+
                 'regions
                 If user.NextResult() Then
 
@@ -354,7 +358,12 @@ Public Class account : Inherits api.messageHandler
 
                 End If
 
-                response &= "]]"
+                response &= "],"
+
+                'additional account fields
+                response &= pushNotifications
+
+                response &= "]"
 
             End If
 

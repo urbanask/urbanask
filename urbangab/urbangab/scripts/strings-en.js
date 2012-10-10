@@ -130,7 +130,7 @@
         "intervalAllCaption": "all",
         "intro": "Looking for Chimay on draft? Dog park near your office? Live music tonight? "
             + "Ask your neighbors!<br /><br />"
-            + "Return the favor by helping them find things. <br /><br />"
+            + "Return the favor by helping them find things. <br />"
             + "It's fun and simple!",
         "iphone": "iPhone",
         "letters": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
@@ -192,7 +192,7 @@
             "askQuestionLocation": "urbanAsk needs to access your location to post this question.<br /><br />"
                 + "Is this OK?<br /><br />"
                 + "Your device may also ask permission.",
-            "viewNearbyQuestions": "view questions near me",
+            "viewNearbyQuestions": "show me questions nearby",
             "nearbyQuestionsInstructions": "urbanAsk needs access to your location to display questions near you.<br /><br />"
                 + "Is this OK?<br /><br /> Your device may also ask permission.",
             "pushNotification": "Would you like to be notified when your question is answered?<br /><br />"

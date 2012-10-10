@@ -9,8 +9,15 @@ build instructions
 7. download Android and iOS binaries and save to /builds
 
 iOS
-8. add new version at iTunes Connect
-9. send binary using Application Loader
+8. copy urbanask.zip to Dropbox/Projects/urbanAsk/www and unzip
+9. open in Xcode, click on urbanAsk project in sidebar, target urbanAsk, Info tab
+10. Change bundle version
+11. Click on Resources/AirshipConfig.plist in sidebar, change APP_STORE_OR_AD_HOC_BUILD to YES
+12. Compile app: Project menu, Archive
+13. If not already open, open Organizer (Window menu, Organizer)
+14. click latest archive, select Distribute, then iOS app store
+15. add new version at iTunes Connect
+16. send binary using Application Loader
 
 Android
 8. run android zipalign on .apk file
