@@ -31,8 +31,8 @@
 
         window.onload = function () {
 
-            alert( 'window.location.search: ' + window.location.search );
-            alert( 'window.location.queryString()[question-id]: ' + window.location.queryString()['question-id'] );
+//            alert( 'window.location.search: ' + window.location.search );
+//            alert( 'window.location.queryString()[question-id]: ' + window.location.queryString()['question-id'] );
 
             var questionId = window.location.queryString()['question-id'];
             window.location.href = APP_URL + '?question-id=' + questionId;
@@ -82,7 +82,7 @@
                 
                 Dim url As String = APP_URL
                 
-                url += "#testing" + "?title=" + Request.QueryString.Item("title") _
+                url += "?title=" + Request.QueryString.Item("title") _
                     + "&question-id=" + Request.QueryString.Item("question-id")
                 
                 Return url

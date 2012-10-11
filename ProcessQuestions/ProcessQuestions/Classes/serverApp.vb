@@ -27,6 +27,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
     Private _moveToError As String
     Private _moveToWork As String
     Private _viewQuestionMessage As String
+    Private _addExistingAnswers As String
     Private _workCount As Int32
 
     Private Enum messageColumns
@@ -67,6 +68,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         _moveToError = Parameters.Parameter.GetValue("MoveToError")
         _moveToWork = Parameters.Parameter.GetValue("MoveToWork")
         _viewQuestionMessage = Parameters.Parameter.GetValue("ViewQuestionMessage")
+        _addExistingAnswers = Parameters.Parameter.GetValue("addExistingAnswers")
 
     End Sub
 
@@ -221,6 +223,15 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
                     End Using
 
                     Me.logProcedureStatistics(_insertQuestion, startTime)
+
+                End Using
+
+                Using addExisting As New SqlClient.SqlCommand(_addExistingAnswers, messaging)
+
+                    addExisting.CommandType = CommandType.StoredProcedure
+                    addExisting.CommandTimeout = _commandTimeout
+
+                    addExisting.ExecuteNonQuery()
 
                 End Using
 

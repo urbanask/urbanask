@@ -8461,8 +8461,8 @@ function startApp() {
         refreshQuestions();
         refreshUserQuestions();
 
-        alert( 'document.referrer: ' + document.referrer );
-        alert( 'startApp():window.location.search: ' + window.location.search );
+//        alert( 'document.referrer: ' + document.referrer );
+//        alert( 'startApp():window.location.search: ' + window.location.search );
 
         if ( window.location.queryString()['question-id'] ) {
 
