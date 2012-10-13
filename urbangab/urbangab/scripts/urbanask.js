@@ -4698,14 +4698,15 @@ function saveNotificationViewed( notificationItem ) {
 function saveQuestion( event ) {
 
     event.preventDefault();
+    var askText = document.getElementById( 'ask-text' );
 
-    if ( document.getElementById( 'ask-text' ).value.trim() ) {
+    if ( askText.value.trim() ) {
 
         document.getElementById( 'ask-button' ).focus();
 
         if ( isLoggedIn() ) {
 
-            var questionText = document.getElementById( 'ask-text' ).value.trim(),
+            var questionText = askText.value.trim(),
                 latitude,
                 longitude;
 
@@ -4718,6 +4719,7 @@ function saveQuestion( event ) {
 
                 getGeocode( { location: location }, function ( result ) {
 
+                    askText.value = '';
                     save( questionText, result.latitude, result.longitude, result.region );
 
                 }, function ( error ) {
@@ -4728,6 +4730,7 @@ function saveQuestion( event ) {
 
             } else if ( isLocationAvailable() ) {
 
+                askText.value = '';
                 showNotification( STRINGS.notificationAskQuestion, { footer: STRINGS.notification.savingQuestion } );
 
                 getGeolocation( function () {
@@ -4744,6 +4747,8 @@ function saveQuestion( event ) {
                 } );
 
             } else {
+
+                askText.value = '';
 
                 showMessage( STRINGS.questionsPage.askQuestionLocation, function () {
 
@@ -4767,6 +4772,8 @@ function saveQuestion( event ) {
             };
 
         } else {
+
+            askText.value = '';
 
             showMessage( STRINGS.login.loginRequired.replace( '%1', STRINGS.login.loginRequiredAction.askQuestion ), function () {
 
@@ -4820,7 +4827,6 @@ function saveQuestion( event ) {
                 };
 
                 html += getQuestionItem( question, { newItem: true, votes: false, answerCount: true } );
-                document.getElementById( 'ask-text' ).value = '';
                 hideAskButton();
 
                 if ( _userQuestions.length == 0 ) {

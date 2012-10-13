@@ -20,7 +20,6 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
     Private _commandTimeout As Int32
     Private _deleteErrorsFromWork As String
     Private _deleteFromWork As String
-    Private _gabsConnectionString As String
     Private _insertQuestion As String
     Private _logProcedureStatitics As Boolean
     Private _messagingConnectionString As String
@@ -62,7 +61,6 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         _commandTimeout = Parameters.Parameter.GetInt32Value("CommandTimeout")
         _deleteErrorsFromWork = Parameters.Parameter.GetValue("deleteErrorsFromWork")
         _deleteFromWork = Parameters.Parameter.GetValue("deleteFromWork")
-        _gabsConnectionString = Parameters.Parameter.GetValue("gabsConnectionString")
         _insertQuestion = Parameters.Parameter.GetValue("InsertQuestion")
         _messagingConnectionString = Parameters.Parameter.GetValue("messagingConnectionString")
         _moveToError = Parameters.Parameter.GetValue("MoveToError")
@@ -83,8 +81,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
 
     Protected Overrides Sub process()
 
-        Using messaging As New Data.SqlClient.SqlConnection(_messagingConnectionString), _
-            gabs As New Data.SqlClient.SqlConnection(_gabsConnectionString)
+        Using messaging As New Data.SqlClient.SqlConnection(_messagingConnectionString)
 
             messaging.Open()
 
@@ -96,7 +93,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
 
             If MyBase.IsAppActive() Then
 
-                Me.processQuestions(messaging, gabs)
+                Me.processQuestions(messaging)
 
             End If
 
@@ -126,8 +123,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
     End Sub
 
     Private Sub processQuestions( _
-        ByVal messaging As Data.SqlClient.SqlConnection, _
-        ByVal gabs As Data.SqlClient.SqlConnection)
+        ByVal messaging As Data.SqlClient.SqlConnection)
 
         Dim startTime As System.DateTime = System.DateTime.Now
 
@@ -199,7 +195,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
 
             If questions.Rows.Count > 0 Then
 
-                Using insertQuestions As New SqlClient.SqlCommand(_insertQuestion, gabs)
+                Using insertQuestions As New SqlClient.SqlCommand(_insertQuestion, messaging)
 
                     insertQuestions.CommandType = CommandType.StoredProcedure
                     insertQuestions.CommandTimeout = _commandTimeout
@@ -231,9 +227,11 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
                     addExisting.CommandType = CommandType.StoredProcedure
                     addExisting.CommandTimeout = _commandTimeout
 
-                    addExisting.ExecuteNonQuery()
+                    addExisting.ExecuteScalar()
 
                 End Using
+
+                Me.logProcedureStatistics(_addExistingAnswers, startTime)
 
                 Using delete As New SqlClient.SqlCommand(_deleteFromWork, messaging)
 
@@ -250,7 +248,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
 
             If errors.Rows.Count > 0 Then
 
-                Using moveErrors As New SqlClient.SqlCommand(_moveToError, gabs)
+                Using moveErrors As New SqlClient.SqlCommand(_moveToError, messaging)
 
                     moveErrors.CommandType = CommandType.StoredProcedure
                     moveErrors.CommandTimeout = _commandTimeout

@@ -11,7 +11,7 @@ build instructions
 iOS
 8. copy urbanask.zip to Dropbox/Projects/urbanAsk/www and unzip
 9. open in Xcode, click on urbanAsk project in sidebar, target urbanAsk, Info tab
-10. Change bundle version
+10. Change bundle version	
 11. Click on Resources/AirshipConfig.plist in sidebar, change APP_STORE_OR_AD_HOC_BUILD to YES
 12. Compile app: Project menu, Archive
 13. If not already open, open Organizer (Window menu, Organizer)

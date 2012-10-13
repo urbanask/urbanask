@@ -1739,8 +1739,7 @@ html {
 }
 
 .new-question {
-    height: 40px;
-    padding: 4px 0;
+    padding: 8px 0;
 }
 
 .no-items {
