@@ -128,7 +128,7 @@
         "intervalMonthCaption": "month",
         "intervalYearCaption": "year",
         "intervalAllCaption": "all",
-        "intro": "Looking for Chimay on draft? Dog park near your office? Live music tonight? "
+        "intro": "Looking for Chimay on draft? Vegan food for kids? Good date restaurant? "
             + "Ask your neighbors!<br /><br />"
             + "Return the favor by helping them find things. <br />"
             + "It's fun and simple!",

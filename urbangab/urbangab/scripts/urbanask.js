@@ -1950,9 +1950,11 @@ function hideSplashPage() {
 
     window.setTimeout( function () {
 
-        var splash = document.getElementById( 'splash' );
+        var splash = document.getElementById( 'splash' ),
+            timemout = ( window.deviceInfo.mobile ? 500 : 0 );
+
         splash.addClass( 'fade' );
-        window.setTimeout( function () { splash.addClass( 'hide' ); }, 500 );
+        window.setTimeout( function () { splash.addClass( 'hide' ); }, timemout );
 
     }, 1 );
 
@@ -2044,7 +2046,13 @@ function initializeDimensions() {
 
     } else {
 
-        document.body.addClass( 'body-desktop' );
+        window.setTimeout( function () {
+
+            document.getElementById( 'splash' ).addClass( 'hide' );
+            document.body.addClass( 'body-desktop' );
+
+        }, 1 );
+
         viewport.addClass( 'viewport-desktop' );
         viewportWidth = viewport.clientWidth;
         viewportHeight = viewport.clientHeight;
@@ -2322,9 +2330,6 @@ function initializeInterface() {
 
     document.getElementById( 'app-version-user' ).textContent = STRINGS.versionCaption + ' ' + _version;
     document.getElementById( 'app-version-login' ).textContent = STRINGS.versionCaption + ' ' + _version;
-
-    showSocialButtons();
-    showExternalFooter();
 
 };
 
@@ -3617,7 +3622,7 @@ function postToFacebook( type, object, options ) {
 
     function deleteFrame() {
 
-        facebookFrame.parentNode.removeChild( facebookFrame );
+        if ( facebookFrame && facebookFrame.parentNode ) { facebookFrame.parentNode.removeChild( facebookFrame ); };
         facebookFrame = undefined;
 
     };
@@ -6770,8 +6775,8 @@ function showContact() {
 
 function showCreateEmailAccount( event ) {
 
-    hideLoginPage();
     event.preventDefault();
+    hideLoginPage();
 
     var createAccountPage = document.getElementById( 'create-account-page' ),
         createAccount = document.getElementById( 'create-account' ),
@@ -7420,7 +7425,7 @@ function showCreateMobileAccount( event ) {
 
     var createAccountPage = document.getElementById( 'create-mobile-account-page' ),
         createAccount = document.getElementById( 'create-mobile-account' ),
-        save = document.getElementById( 'save-mobile-account' ),
+        saveButton = document.getElementById( 'save-mobile-account' ),
         cancel = document.getElementById( 'cancel-mobile-account' ),
         username = document.getElementById( 'mobile-username' ),
         password = document.getElementById( 'mobile-password' ),
@@ -7509,11 +7514,11 @@ function showCreateMobileAccount( event ) {
 
         createAccount.addEventListener( 'submit', save, false );
 
-        save.addEventListener( 'click', save, false );
-        save.addEventListener( 'touchstart', selectButton, false );
-        save.addEventListener( 'touchend', unselectButton, false );
-        save.addEventListener( 'mousedown', selectButton, false );
-        save.addEventListener( 'mouseup', unselectButton, false );
+        saveButton.addEventListener( 'click', save, false );
+        saveButton.addEventListener( 'touchstart', selectButton, false );
+        saveButton.addEventListener( 'touchend', unselectButton, false );
+        saveButton.addEventListener( 'mousedown', selectButton, false );
+        saveButton.addEventListener( 'mouseup', unselectButton, false );
 
         cancel.addEventListener( 'click', close, false );
         cancel.addEventListener( 'touchstart', selectButton, false );
@@ -7527,11 +7532,11 @@ function showCreateMobileAccount( event ) {
 
         createAccount.removeEventListener( 'submit', save, false );
 
-        save.removeEventListener( 'click', save, false );
-        save.removeEventListener( 'touchstart', selectButton, false );
-        save.removeEventListener( 'touchend', unselectButton, false );
-        save.removeEventListener( 'mousedown', selectButton, false );
-        save.removeEventListener( 'mouseup', unselectButton, false );
+        saveButton.removeEventListener( 'click', save, false );
+        saveButton.removeEventListener( 'touchstart', selectButton, false );
+        saveButton.removeEventListener( 'touchend', unselectButton, false );
+        saveButton.removeEventListener( 'mousedown', selectButton, false );
+        saveButton.removeEventListener( 'mouseup', unselectButton, false );
 
         cancel.removeEventListener( 'click', close, false );
         cancel.removeEventListener( 'touchstart', selectButton, false );
@@ -8190,63 +8195,117 @@ function showQuestions( header, questions, element ) {
 
 function showSocialButtons() {
 
+    var html = '<div id="social-buttons" class="fadeable fade">'
+            + '<div class="fb-like" data-href="http://urbanask.com" data-layout="box_count" data-width="50" data-show-faces="true" data-colorscheme="dark"></div>'
+            + '<div class="g-plusone-frame"><div class="g-plusone" data-size="tall" data-href="http://urbanAsk.com"></div></div>'
+            + '<a href="https://twitter.com/share" class="twitter-share-button" data-url="http://urbanAsk.com" data-text="urbanAsk - The addicting game of helping people find things." data-count="vertical">Tweet</a>'
+            + '<div id="fb-root"></div>'
+            + '</div>';
+
+    document.getElementById( 'viewport' ).insertAdjacentHTML( 'beforeEnd', html );
+
+    var script = document.createElement( 'script' );
+    script.async = true;
+    script.src = document.location.protocol + '//connect.facebook.net/en_US/all.js#xfbml=1&appId=267603823260704';
+    document.getElementById( 'fb-root' ).appendChild( script );
+
+    script = document.createElement( 'script' );
+    script.async = true;
+    script.src = document.location.protocol + '//platform.twitter.com/widgets.js';
+    document.getElementById( 'social-buttons' ).appendChild( script );
+
+    script = document.createElement( 'script' );
+    script.async = true;
+    script.src = document.location.protocol + '//apis.google.com/js/plusone.js';
+    document.getElementById( 'social-buttons' ).appendChild( script );
+
+    window.setTimeout( function () {
+
+        document.getElementById( 'social-buttons' ).removeClass( 'fade' );
+
+    }, 4000 );
+
+};
+
+function initializeDesktop() {
+
+    if ( !window.deviceInfo.mobile && isNewAccount() ) {
+
+        //showDesktopText();
+        showDesktopLinks();
+
+    };
+
     if ( !window.deviceInfo.mobile ) {
 
-        var html = '<div id="social-buttons" class="fadeable fade">'
-                + '<div class="fb-like" data-href="http://urbanask.com" data-layout="box_count" data-width="50" data-show-faces="true" data-colorscheme="dark"></div>'
-                + '<div class="g-plusone-frame"><div class="g-plusone" data-size="tall" data-href="http://urbanAsk.com"></div></div>'
-                + '<a href="https://twitter.com/share" class="twitter-share-button" data-url="http://urbanAsk.com" data-text="urbanAsk - The addicting game of helping people find things." data-count="vertical">Tweet</a>'
-                + '<div id="fb-root"></div>'
-                + '</div>';
-
-        document.getElementById( 'viewport' ).insertAdjacentHTML( 'beforeEnd', html );
-
-        var script = document.createElement( 'script' );
-        script.async = true;
-        script.src = document.location.protocol + '//connect.facebook.net/en_US/all.js#xfbml=1&appId=267603823260704';
-        document.getElementById( 'fb-root' ).appendChild( script );
-
-        script = document.createElement( 'script' );
-        script.async = true;
-        script.src = document.location.protocol + '//platform.twitter.com/widgets.js';
-        document.getElementById( 'social-buttons' ).appendChild( script );
-
-        script = document.createElement( 'script' );
-        script.async = true;
-        script.src = document.location.protocol + '//apis.google.com/js/plusone.js';
-        document.getElementById( 'social-buttons' ).appendChild( script );
-
-        window.setTimeout( function () {
-
-            document.getElementById( 'social-buttons' ).removeClass( 'fade' );
-
-        }, 4000 );
+        showSocialButtons();
 
     };
 
 };
 
-function showExternalFooter() {
+function showDesktopText() {
 
-    if ( !window.deviceInfo.mobile ) {
+    var html = '<div id="desktop-text" class="fadeable fade">'
+            + '<img id="desktop-text-logo" src="images/logo.png">'
+            + '<p class="desktop-text-body">'
+            + 'Looking for Chimey Red on draft within walking distance? Fresh porcinis? The best vegan pizza? Good ambience for a date or a meeting?'
+            + '</p>'
+            + '<p class="desktop-text-body">'
+            + 'Someone near you will know the answer. urbanAsk is drop-dead simple and fun to use.'
+            + '</p>'
+            + '<ul class="desktop-text-body">'
+            + '<li>Ask questions in the app, on the web, via SMS or on Twitter</li>'
+            + '<li>Get real-time recommendations from other users</li>'
+            + '<li>Share your knowledge with others</li>'
+            + '<li>Vote on questions and answers</li>'
+            + '<li>Earn reputation points</li>'
+            + '</ul>'
+            + '<p class="desktop-text-body">'
+            + 'Finding food in your own city has never been so easy and fun!'
+            + '</p>'
+            + '</div>';
 
-        var html = '<div id="external-footer" class="fadeable fade">'
-                + STRINGS.externalFooter
-                + '<a class="external-footer-link" href="download.html">'
-                + '<img class="external-footer-image" src="images/apple.png" alt="apple" />' + STRINGS.iphone + '</a>'
-                + '<a class="external-footer-link" href="download.html">'
-                + '<img class="external-footer-image" src="images/android.png" alt="android" />' + STRINGS.android + '</a>'
-                + '</div>';
+    document.getElementById( 'viewport' ).insertAdjacentHTML( 'beforeEnd', html );
 
-        document.getElementById( 'viewport' ).insertAdjacentHTML( 'afterEnd', html );
+    window.setTimeout( function () {
 
-        window.setTimeout( function () {
+        document.getElementById( 'desktop-text' ).removeClass( 'fade' );
 
-            document.getElementById( 'external-footer' ).removeClass( 'fade' );
+    }, 4000 );
 
-        }, 4000 );
+};
 
-    };
+function showDesktopLinks() {
+
+    var html = '<ul id="desktop-links" class="fadeable fade">'
+            + STRINGS.externalFooter
+            + '<li>'
+            + '<a class="desktop-link" href="http://itunes.apple.com/app/urbanask/id518976199?mt=8">'
+            + '<img class="desktop-link-image" src="images/apple.png" alt="apple" />' + STRINGS.iphone
+            + '</a>'
+            + '<a class="qr-code-link" href="http://itunes.apple.com/app/urbanask/id518976199?mt=8">'
+            + '<img class="qr-code" src="images/download/qr-apple.png" alt="Available on the App Store" />'
+            + '</a>'
+            + '</li>'
+            + '<li>'
+            + '<a class="desktop-link" href="https://play.google.com/store/apps/details?id=com.urbanask">'
+            + '<img class="desktop-link-image" src="images/android.png" alt="android" />' + STRINGS.android
+            + '</a>'
+            + '<a class="qr-code-link" href="https://play.google.com/store/apps/details?id=com.urbanask">'
+            + '<img class="qr-code" src="images/download/qr-google.png" alt="Android App on Google Play" />'
+            + '</a>'
+            + '</li>'
+            + '</ul>'
+
+
+    document.getElementById( 'viewport' ).insertAdjacentHTML( 'beforeEnd', html );
+
+    window.setTimeout( function () {
+
+        document.getElementById( 'desktop-links' ).removeClass( 'fade' );
+
+    }, 4000 );
 
 };
 
@@ -8482,6 +8541,7 @@ function startApp() {
 
         };
 
+        initializeDesktop();
         initializeInstructions()
 
         if ( _instructions[INSTRUCTION_TYPES.push.id] ) {

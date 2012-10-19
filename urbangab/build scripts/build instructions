@@ -1,17 +1,17 @@
 build instructions
 
 1. change version in cache.manifest
-2. change versionCode in config.xml
+2. change version*Code* in config.xml
 3. compile Release
-4. change PhoneGap key to Production
+4. change iOS PhoneGap key to Production (latest date), Android key to UrbanAsk
 5. turn off Debug build on PhoneGap
 6. upload urbanask.zip file to PhoneGap
 7. download Android and iOS binaries and save to /builds
 
 iOS
 8. copy urbanask.zip to Dropbox/Projects/urbanAsk/www and unzip
-9. open in Xcode, click on urbanAsk project in sidebar, target urbanAsk, Info tab
-10. Change bundle version	
+9. open in Xcode, click on urbanAsk project in sidebar, target urbanAsk, Summary tab, change Version
+10. In Xcode, click on Resources/urbanAsk-Info.plist in sidebar, change Bundle version
 11. Click on Resources/AirshipConfig.plist in sidebar, change APP_STORE_OR_AD_HOC_BUILD to YES
 12. Compile app: Project menu, Archive
 13. If not already open, open Organizer (Window menu, Organizer)

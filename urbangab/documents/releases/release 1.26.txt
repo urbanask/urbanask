@@ -1,0 +1,7 @@
+1.26
+
+new - iOS push notifications!!!
+new - updated tutorial
+new - get notified of new answers on Twitter
+
+various bug fixes

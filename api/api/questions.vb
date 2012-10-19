@@ -45,7 +45,7 @@ Public Class questions : Inherits api.messageHandler
             & "]",
         MESSAGE_LENGTH_MAX As Int32 = 600,
         RANGE_MAX As Int32 = 50,
-        RANGE_DEFAULT As Int32 = 10,
+        RANGE_DEFAULT As Int32 = 7,
         ROW_COUNT_MAX As Int32 = 400,
         ROW_COUNT_DEFAULT As Int32 = 50,
         AGE_DAYS_MAX As Int32 = 30,

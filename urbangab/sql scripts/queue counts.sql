@@ -28,8 +28,8 @@ SELECT * FROM Messaging.questions.questionError
 SELECT TOP 1000 * FROM Gabs.dbo.question ORDER BY questionId DESC
 INSERT INTO Messaging.questions.questionQueue SELECT message, timestamp FROM Messaging.questions.questionError
 TRUNCATE TABLE Messaging.questions.questionQueue
-TRUNCATE TABLE Messaging.questions.questionWork
-TRUNCATE TABLE Messaging.questions.questionError
+DELETE FROM  Messaging.questions.questionWork
+DELETE FROM Messaging.questions.questionError
 TRUNCATE TABLE Gabs.dbo.question
 DELETE FROM Gabs.dbo.question WHERE question='undefined'
 UPDATE Messaging.questions.questionWork SET message = '105~23.0395369~72.56596830~Pepper' WHERE questionWorkId = 3

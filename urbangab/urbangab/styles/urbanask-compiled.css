@@ -694,7 +694,7 @@ body {
 }
 
 .body-desktop {
-    padding: 20px;
+    padding-top: 20px;
 }
 
 .bounty {
@@ -851,6 +851,64 @@ body {
     position: absolute;
     right: 0;
     width: 18px;
+}
+
+.desktop-link {
+    color: white;
+    display: block;
+    margin: 5px 0 4px 0;
+    text-decoration: none;
+}
+
+.desktop-link-image {
+    border: 0;
+    margin: 0 4px 0 0;
+    vertical-align: text-bottom;
+}
+
+#desktop-links {
+    color: white;
+    font-size: 12px;
+    list-style-type: none;
+    margin: 44px 0 0 0;
+    padding: 0;
+    position: absolute;
+    right: -175px;
+    text-align: center;
+    top: 0;
+}
+
+#desktop-text {
+    height: 600px;
+    left: -440px;
+    margin-top: 10px;
+    position: absolute;
+    top: 0;
+    width: 300px;
+}
+
+.qr-code {
+    border: none;   
+    border-radius: 5px;
+    display: block;
+    height: 125px;
+    width: 125px; 
+}
+
+.qr-code-link {
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.desktop-text-body {
+    color: white;
+    font-size: 16px;
+}
+
+#desktop-text-logo {
+    display: block;
+    height: 80px;
+    margin: 0 auto 20px auto;
 }
 
 .dialog-button-3d {
@@ -1053,24 +1111,6 @@ body {
     top: 0;
     width: 100%;
     z-index: 1;
-}
-
-#external-footer {
-    color: white;
-    font-size: 12px;
-    margin-top: 10px;
-    text-align: center;
-}
-
-.external-footer-link {
-    color: white;
-    text-decoration: none;
-}
-
-.external-footer-image {
-    border: 0;
-    margin: 0 4px 0 7px;
-    vertical-align: text-bottom;
 }
 
 .facebook-button {
@@ -2225,6 +2265,7 @@ html {
 #social-buttons {
     height: 300px;
     left: -100px;
+    margin-top: 34px;
     position: absolute;
     top: 0;
     width: 90px;

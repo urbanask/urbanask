@@ -1,0 +1,6 @@
+
+- Push notifications
+- Updated tutorial
+- Get notified of new answers on Twitter
+- Various bug fixes
+

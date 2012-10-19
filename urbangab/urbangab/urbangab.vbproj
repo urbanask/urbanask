@@ -123,6 +123,7 @@
     <Content Include="images\download\qr-google.png" />
     <Content Include="images\download\qr-web.png" />
     <Content Include="images\download\red_foil_sticker.png" />
+    <Content Include="images\logo-text.png" />
     <Content Include="images\share-logo.png" />
     <Content Include="images\splash-320x480.png" />
     <Content Include="images\splash-fullscreen.png" />
