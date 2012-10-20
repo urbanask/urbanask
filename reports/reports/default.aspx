@@ -5,10 +5,10 @@
 </asp:content>
 <asp:content id="bodyContent" runat="server" contentplaceholderid="mainContent">
     <h2>
-        Welcome to ASP.NET!
+        Welcome to urbanAsk Reports!
     </h2>
     <p>
-        To learn more about ASP.NET visit <a href="http://www.asp.net" title="ASP.NET Website">
-            www.asp.net</a>.
+        <a href="dailymetrics.aspx" title="Daily Metrics">
+            Daily Metrics</a>.
     </p>
 </asp:content>

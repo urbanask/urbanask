@@ -12,4 +12,22 @@ Option Explicit On
 
 
 Partial Public Class dailymetrics
+
+    '''<summary>
+    '''DataSource control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents DataSource As Global.System.Web.UI.WebControls.SqlDataSource
+
+    '''<summary>
+    '''DailyMetrics control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents DailyMetrics As Global.System.Web.UI.WebControls.GridView
 End Class

@@ -26,10 +26,6 @@
             
             <div class="loginDisplay">
                 <asp:loginview id="headLoginView" runat="server" enableviewstate="false">
-                    <anonymoustemplate>
-                        [ <a href="~/account/login.aspx" id="headLoginStatus" runat="server">Log In</a>
-                        ]
-                    </anonymoustemplate>
                     <loggedintemplate>
                         Welcome <span class="bold">
                             <asp:loginname id="headLoginName" runat="server" />
@@ -41,16 +37,6 @@
                 </asp:loginview>
             </div>
             
-            <div class="clear hideSkiplink">
-                <asp:menu id="navigationMenu" runat="server" cssclass="menu" enableviewstate="false"
-                    includestyleblock="false" orientation="Horizontal">
-                    <items>
-                        <asp:menuitem navigateurl="~/default.aspx" text="Home" />
-                        <asp:menuitem navigateurl="~/dailymetrics.aspx" text="Daily Metrics" />
-                    </items>
-                </asp:menu>
-            </div>
-
         </div>
         
         <div class="main">

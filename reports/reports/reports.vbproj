@@ -94,7 +94,9 @@
     <Content Include="scripts\jquery-1.4.1-vsdoc.js" />
     <Content Include="scripts\jquery-1.4.1.js" />
     <Content Include="scripts\jquery-1.4.1.min.js" />
-    <Content Include="web.config" />
+    <Content Include="web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </Content>
