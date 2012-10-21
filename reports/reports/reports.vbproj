@@ -86,6 +86,7 @@
     <Import Include="System.Web.UI.HtmlControls" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="questions.aspx" />
     <Content Include="dailymetrics.aspx" />
     <Content Include="account\login.aspx" />
     <Content Include="styles\site.css" />
@@ -105,12 +106,19 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="questions.aspx.designer.vb">
+      <DependentUpon>questions.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="questions.aspx.vb">
+      <DependentUpon>questions.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="dailymetrics.aspx.designer.vb">
       <DependentUpon>dailymetrics.aspx</DependentUpon>
     </Compile>
     <Compile Include="dailymetrics.aspx.vb">
       <DependentUpon>dailymetrics.aspx</DependentUpon>
-      <SubType>ASPXCodebehind</SubType>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="account\login.aspx.designer.vb">
       <DependentUpon>login.aspx</DependentUpon>

@@ -9,6 +9,8 @@
     </h2>
     <p>
         <a href="dailymetrics.aspx" title="Daily Metrics">
-            Daily Metrics</a>.
+            Daily Metrics</a>
+        <a href="questions.aspx" title="Daily Metrics">
+            Questions</a>
     </p>
 </asp:content>
