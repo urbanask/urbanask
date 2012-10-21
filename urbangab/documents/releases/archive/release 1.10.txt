@@ -1,0 +1,10 @@
+1.10
+
+new - FB Open Graph integration for selecting answers
+bug - being in a region with no questions shows no results
+
+
+
+
+
+	

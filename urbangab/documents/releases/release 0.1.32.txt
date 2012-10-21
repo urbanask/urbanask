@@ -1,6 +1,0 @@
-0.1.32
-
-bug - account edit dialog not visible on smaller screens (or horizontal)
-bug - answer posting twice
-
-

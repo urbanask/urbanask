@@ -1,7 +1,0 @@
-0.1.31
-
-new - if no gps, uses center of region to post questions
-
-bug - lat/lon occasionally failing
-bug - website button showing when no website
-

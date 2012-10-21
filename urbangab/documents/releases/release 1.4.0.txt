@@ -1,8 +1,0 @@
-1.4.0
-
-maintenance release for region removal
-
-bug - share buttons not showing on question
-bug - android account edit not visible
-various bug fixes
-

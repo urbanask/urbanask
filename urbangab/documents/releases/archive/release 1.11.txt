@@ -1,0 +1,6 @@
+1.11
+
+new - FB notification when one of your friends answers on urbanAsk
+new - FB Open Graph integration for answering questions
+
+

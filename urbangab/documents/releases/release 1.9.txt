@@ -1,4 +1,0 @@
-1.9
-
-new - FB open graph for answers
-new - Android 1.7.1 released to GooglePlay/Amazon

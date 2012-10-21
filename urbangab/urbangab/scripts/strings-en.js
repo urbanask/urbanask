@@ -182,13 +182,16 @@
         "questionLabel": "Where can I find...",
         "questionPage": {
 
-            "addNewAnswerCaption": "suggest a location"
+            "addNewAnswerCaption": "suggest a location",
+            "bountyBody": "answer to earn this reputation bounty"
 
         },
         "questionPosted": "Posted",
         "questionsNearby": "Others nearby are looking for...",
         "questionsPage": {
 
+            "answerCountCaptionSingular": "answer",
+            "answerCountCaptionPlural": "answers",
             "askQuestionLocation": "urbanAsk needs to access your location to post this question.<br /><br />"
                 + "Is this OK?<br /><br />"
                 + "Your device may also ask permission.",
@@ -197,7 +200,10 @@
                 + "Is this OK?<br /><br /> Your device may also ask permission.",
             "pushNotification": "Would you like to be notified when your question is answered?<br /><br />"
                 + "Your device may also ask permission.",
-            "smsNotification": "Would you like to add your mobile number and be notified by SMS when your question is answered?"
+            "reputationCaption": "reputation",
+            "smsNotification": "Would you like to add your mobile number and be notified by SMS when your question is answered?",
+            "votesInlineSingular": "vote",
+            "votesInlinePlural": "votes"
 
         },
         "questionsEverywhere": "Others are looking for...",

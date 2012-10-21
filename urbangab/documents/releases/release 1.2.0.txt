@@ -1,7 +1,0 @@
-1.2.0
-
-new - tutorial
-bug - twitter auth location using default
-various bug fixes
-
-

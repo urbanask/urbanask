@@ -1,8 +1,0 @@
-1.7.1
-
-bug - switching from down to up vote wrong color
-bug - debug dialog displaying on Android menu button
-bug - twitter auth not logging in
-
-
-

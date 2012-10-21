@@ -1481,11 +1481,13 @@ function getQuestionItem( question, options ) {
         count = '',
         resolved = '',
         bounty = '',
+        bountyFull = '',
         voteClass = '',
         votes = '',
         votesInline = '',
         icon = '',
-        toolbar = '';
+        toolbar = '',
+        reputationCaption = '';
 
     if ( options && options.newItem ) {
 
@@ -1499,7 +1501,15 @@ function getQuestionItem( question, options ) {
 
     if ( options && options.full ) {
 
-        bodyClass = 'question-item-body question-item-body-full';
+        if ( question[QUESTION_COLUMNS.bounty] ) {
+
+            bodyClass = 'question-item-body question-item-body-bounty';
+
+        } else {
+
+            bodyClass = 'question-item-body question-item-body-full';
+
+        };
 
     } else {
 
@@ -1520,7 +1530,18 @@ function getQuestionItem( question, options ) {
 
     if ( question[QUESTION_COLUMNS.bounty] ) {
 
-        bounty = '<span class="bounty">+' + question[QUESTION_COLUMNS.bounty] + '</span>';
+        if ( options && options.fullBounty ) {
+
+            bountyFull = '<div class="bounty">'
+                + '<span class="bounty-amount">+' + question[QUESTION_COLUMNS.bounty] + '</span>'
+                + '<span class="bounty-body">' + STRINGS.questionPage.bountyBody + '</span>'
+                + '</div>';
+
+        } else {
+
+            bounty = '<span class="bounty-amount">+' + question[QUESTION_COLUMNS.bounty] + '</span>';
+
+        };
 
     };
 
@@ -1546,6 +1567,23 @@ function getQuestionItem( question, options ) {
 
         votesInline = getVotesInline( question[QUESTION_COLUMNS.votes] );
 
+        if ( votesInline && options && options.fullInlineVotes ) {
+
+            votesInline = '<div class="votes-inline-frame '
+                + ( question[QUESTION_COLUMNS.votes] > 0
+                    ? 'votes-up-inline-frame'
+                    : 'votes-down-inline-frame' )
+                + '">'
+                + votesInline
+                + '<span class="votes-inline-body">'
+                + ( Math.abs( question[QUESTION_COLUMNS.votes] ) == 1
+                    ? STRINGS.questionsPage.votesInlineSingular
+                    : STRINGS.questionsPage.votesInlinePlural )
+                + '</span>'
+                + '</div>'
+
+        };
+
     };
 
     if ( options && options.icon ) {
@@ -1558,7 +1596,24 @@ function getQuestionItem( question, options ) {
 
     if ( options && options.answerCount ) {
 
-        answerCount = '<div class="answer-count-view' + resolved + '"><div class="answer-count">' + count + '</div></div>';
+        if ( options.answerCountCaption ) {
+
+            answerCount = '<div class="answer-count-view' + resolved + '">'
+                + '<div class="answer-count-small">' + count + '</div>' 
+                + '<div class="answer-count-caption">'
+                + ( question[QUESTION_COLUMNS.answerCount] == 1
+                    ? STRINGS.questionsPage.answerCountCaptionSingular 
+                    : STRINGS.questionsPage.answerCountCaptionPlural ) 
+                + '</div>'
+                + '</div>';
+
+        } else {
+
+            answerCount = '<div class="answer-count-view' + resolved + '">'
+                + '<div>' + count + '</div>'
+                + '</div>';
+
+        };
 
     };
 
@@ -1576,10 +1631,17 @@ function getQuestionItem( question, options ) {
 
     };
 
+    if ( options && options.reputationCaption ) {
+
+        reputationCaption = ' ' + STRINGS.questionsPage.reputationCaption;
+
+    };
+
     return '<li class="' + listClasses + '" '
         + 'data-id="' + question[QUESTION_COLUMNS.questionId] + '">'
         + votes
         + answerCount
+        + bountyFull
         + '<div class="' + bodyClass + '">'
         + votesInline
         + bounty
@@ -1587,7 +1649,9 @@ function getQuestionItem( question, options ) {
         + '</div>'
         + '<ul class="info">'
         + '<li class="info-item">' + question[QUESTION_COLUMNS.username] + '</li>'
-        + '<li class="info-item">' + formatNumber( question[QUESTION_COLUMNS.reputation] ) + '</li>'
+        + '<li class="info-item">'
+        + formatNumber( question[QUESTION_COLUMNS.reputation] ) + reputationCaption
+        + '</li>'
         + icon
         + '</ul>'
         + toolbar
@@ -1943,6 +2007,12 @@ function slidePage( currentPageName, previousPageName ) {
         //                }, 10 );
 
     };
+
+};
+
+function hideSignupButton() {
+
+    document.getElementById( 'signup-button' ).addClass( 'hide' );
 
 };
 
@@ -2476,8 +2546,10 @@ function loadAccount( complete ) {
                 _account = window.JSON.parse( data )[0];
                 initializeAccount();
                 initializeInstructions();
+                hideSignupButton();
 
                 showNotifications( _account[ACCOUNT_COLUMNS.notifications].length > count );
+
                 if ( complete ) { complete(); };
 
             },
@@ -6913,43 +6985,11 @@ function showInstructions() {
                         STRINGS.instructions.postQuestion,
                         { x: 20, y: 55, from: { x: "left", y: "top"} },
                         { x: 50, from: { x: "left", y: "top"} },
-                        { timeout: 4 * SECOND }
+                        { timeout: 3.5 * SECOND }
                     );
 
-                    window.setTimeout( function () {
-
-                        if ( !document.getElementById( 'questions-page' ).hasClass( 'hide' ) && canShow() ) {
-
-                            showAskButton();
-                            var text = STRINGS.instructions.postQuestionSend;
-
-                            if ( window.deviceInfo.mobile ) {
-
-                                text = text.replace( '%1', STRINGS.instructions.tap );
-
-                            } else {
-
-                                text = text.replace( '%1', STRINGS.instructions.click );
-
-                            };
-
-                            showInstruction( 
-                                text,
-                                { x: 20, y: 55, from: { x: "right", y: "top"} },
-                                { x: 20, from: { x: "right", y: "top"} },
-                                { timeout: 2 * SECOND }
-                            );
-
-                            saveInstructionViewed( INSTRUCTION_TYPES.postQuestion );
-                            showNext();
-
-                        } else {
-
-                            showNext();
-
-                        };
-
-                    }, 5.5 * SECOND );
+                    saveInstructionViewed( INSTRUCTION_TYPES.postQuestion );
+                    showNext();
 
                 } else {
 
@@ -6963,65 +7003,27 @@ function showInstructions() {
 
                 if ( !document.getElementById( 'questions-page' ).hasClass( 'hide' ) && canShow() ) {
 
-//                    showInstruction( 
-//                        STRINGS.instructions.viewQuestions,
-//                        { x: 20, y: 10, from: { x: "left", y: "bottom"} },
-//                        { x: 90, from: { x: "left", y: "top"} },
-//                        { timeout: 6 * SECOND }
-//                    );
+                    var text = STRINGS.instructions.viewQuestion;
 
-//                    window.setTimeout( function () {
+                    if ( window.deviceInfo.mobile ) {
 
-//                        if ( !document.getElementById( 'questions-page' ).hasClass( 'hide' ) && canShow() ) {
+                        text = text.replace( '%1', STRINGS.instructions.tap );
 
-//                            showInstruction( 
-//                                STRINGS.instructions.viewMyQuestions,
-//                                { x: 20, y: 150, from: { x: "left", y: "top"} },
-//                                { x: 90, from: { x: "left", y: "top"} },
-//                                { timeout: 6 * SECOND }
-//                            );
+                    } else {
 
-//                            window.setTimeout( function () {
+                        text = text.replace( '%1', STRINGS.instructions.click );
 
-//                                if ( !document.getElementById( 'questions-page' ).hasClass( 'hide' ) && canShow() ) {
+                    };
 
-                                    var text = STRINGS.instructions.viewQuestion;
+                    showInstruction( 
+                        text,
+                        { x: 20, y: 10, from: { x: "left", y: "bottom"} },
+                        { x: 90, from: { x: "left", y: "top"} },
+                        { timeout: 6 * SECOND }
+                    );
 
-                                    if ( window.deviceInfo.mobile ) {
-
-                                        text = text.replace( '%1', STRINGS.instructions.tap );
-
-                                    } else {
-
-                                        text = text.replace( '%1', STRINGS.instructions.click );
-
-                                    };
-
-                                    showInstruction( 
-                                        text,
-                                        { x: 20, y: 10, from: { x: "left", y: "bottom"} },
-                                        { x: 90, from: { x: "left", y: "top"} },
-                                        { timeout: 6 * SECOND }
-                                    );
-
-                                    saveInstructionViewed( INSTRUCTION_TYPES.viewQuestions );
-                                    showNext();
-
-//                                } else {
-
-//                                    showNext();
-
-//                                };
-
-//                            }, 7.5 * SECOND );
-
-//                        } else {
-
-//                            showNext();
-
-//                        };
-
-//                    }, 7.5 * SECOND );
+                    saveInstructionViewed( INSTRUCTION_TYPES.viewQuestions );
+                    showNext();
 
                 } else {
 
@@ -7042,47 +7044,27 @@ function showInstructions() {
                         { timeout: 4 * SECOND }
                     );
 
-//                    window.setTimeout( function () {
+                    window.setTimeout( function () {
 
-//                        if ( !document.getElementById( 'question-page' ).hasClass( 'hide' ) && canShow() ) {
+                        if ( !document.getElementById( 'question-page' ).hasClass( 'hide' ) && canShow() ) {
 
-//                            showInstruction( 
-//                                STRINGS.instructions.viewQuestionWhat,
-//                                { x: 20, y: 80, from: { x: "left", y: "top"} },
-//                                { x: 125, from: { x: "left", y: "top"} },
-//                                { timeout: 4 * SECOND }
-//                            );
+                            showInstruction( 
+                                STRINGS.instructions.viewQuestionWhere,
+                                { x: 20, y: 80, from: { x: "left", y: "top"} },
+                                { x: 125, from: { x: "left", y: "bottom"} },
+                                { timeout: 3 * SECOND }
+                            );
 
+                            saveInstructionViewed( INSTRUCTION_TYPES.viewQuestion );
+                            showNext();
 
-                            window.setTimeout( function () {
+                        } else {
 
-                                if ( !document.getElementById( 'question-page' ).hasClass( 'hide' ) && canShow() ) {
+                            showNext();
 
-                                    showInstruction( 
-                                        STRINGS.instructions.viewQuestionWhere,
-                                        { x: 20, y: 80, from: { x: "left", y: "top"} },
-                                        { x: 125, from: { x: "left", y: "bottom"} },
-                                        { timeout: 3 * SECOND }
-                                    );
+                        };
 
-                                    saveInstructionViewed( INSTRUCTION_TYPES.viewQuestion );
-                                    showNext();
-
-                                } else {
-
-                                    showNext();
-
-                                };
-
-                            }, 5.5 * SECOND );
-
-//                        } else {
-
-//                            showNext();
-
-//                        };
-
-//                    }, 5.5 * SECOND );
+                    }, 5.5 * SECOND );
 
                 } else {
 
@@ -7094,63 +7076,44 @@ function showInstructions() {
 
             case INSTRUCTION_TYPES.addAnswer.id:
 
-//                if ( !document.getElementById( 'question-page' ).hasClass( 'hide' ) && canShow() ) {
+                if ( !document.getElementById( 'question-page' ).hasClass( 'hide' ) && canShow() ) {
 
-//                    showInstruction( 
-//                        STRINGS.instructions.viewAnswer,
-//                        { y: 90, from: { x: "center", y: "bottom"} },
-//                        { x: 90, from: { x: "left", y: "bottom"} },
-//                        { timeout: 6 * SECOND }
-//                    );
+                    var text = STRINGS.instructions.addAnswer;
 
-//                    window.setTimeout( function () {
+                    if ( window.deviceInfo.mobile ) {
+
+                        text = text.replace( '%1', STRINGS.instructions.tap );
+
+                    } else {
+
+                        text = text.replace( '%1', STRINGS.instructions.click );
+
+                    };
+
+                    if ( !document.getElementById( 'add-new-answer' ).hasClass( 'hide' ) && canShow() ) {
+
+                        showInstruction( 
+                            text,
+                            { y: 90, from: { x: "center", y: "bottom"} },
+                            { x: 90, from: { x: "left", y: "bottom"} },
+                            { timeout: 4 * SECOND }
+                        );
+
+                    };
+
+                    window.setTimeout( function () {
 
                         if ( !document.getElementById( 'question-page' ).hasClass( 'hide' ) && canShow() ) {
 
-                            var text = STRINGS.instructions.addAnswer;
+                            showInstruction( 
+                                STRINGS.instructions.voteQuestion,
+                                { x: 5, y: 115, from: { x: "left", y: "top"} },
+                                { x: 12, from: { x: "left", y: "top"} },
+                                { timeout: 4 * SECOND }
+                            );
 
-                            if ( window.deviceInfo.mobile ) {
-
-                                text = text.replace( '%1', STRINGS.instructions.tap );
-
-                            } else {
-
-                                text = text.replace( '%1', STRINGS.instructions.click );
-
-                            };
-
-                            if ( !document.getElementById( 'add-new-answer' ).hasClass( 'hide' ) && canShow() ) {
-
-                                showInstruction( 
-                                    text,
-                                    { y: 90, from: { x: "center", y: "bottom"} },
-                                    { x: 90, from: { x: "left", y: "bottom"} },
-                                    { timeout: 4 * SECOND }
-                                );
-
-                            };
-
-                            window.setTimeout( function () {
-
-                                if ( !document.getElementById( 'question-page' ).hasClass( 'hide' ) && canShow() ) {
-
-                                    showInstruction( 
-                                        STRINGS.instructions.voteQuestion,
-                                        { x: 5, y: 115, from: { x: "left", y: "top"} },
-                                        { x: 12, from: { x: "left", y: "top"} },
-                                        { timeout: 4 * SECOND }
-                                    );
-
-                                    saveInstructionViewed( INSTRUCTION_TYPES.addAnswer );
-                                    showNext();
-
-                                } else {
-
-                                    showNext();
-
-                                };
-
-                            }, 5.5 * SECOND );
+                            saveInstructionViewed( INSTRUCTION_TYPES.addAnswer );
+                            showNext();
 
                         } else {
 
@@ -7158,13 +7121,13 @@ function showInstructions() {
 
                         };
 
-//                    }, 7.5 * SECOND );
+                    }, 5.5 * SECOND );
 
-//                } else {
+                } else {
 
-//                    showNext();
+                    showNext();
 
-//                };
+                };
 
                 break;
 
@@ -7684,7 +7647,7 @@ function showNotification( notice, options ) {
     notification.style.top = ( ( view.clientHeight - notification.clientHeight ) / 2 ) + 'px';
     notification.style.left = ( ( view.clientWidth - notification.clientWidth ) / 2 ) + 'px';
     window.setTimeout( function () { notification.removeClass( 'fade' ); }, 50 );
-    window.setTimeout( function () { close(); }, 3000 );
+    window.setTimeout( function () { close(); }, 2500 );
 
     function close() {
 
@@ -8033,7 +7996,7 @@ function showQuestion( question ) {
     }, 10 );
 
     questionMap.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12P4DwQACfsD/WMmxY8AAAAASUVORK5CYII=';
-    questionView.innerHTML = getQuestionItem( question, { full: true, votes: true, icon: true, toolbar: true } );
+    questionView.innerHTML = getQuestionItem( question, { full: true, votes: true, icon: true, toolbar: true, fullBounty: true } );
 
     if ( question[QUESTION_COLUMNS.answers].length ) {
 
@@ -8157,10 +8120,17 @@ function showQuestions( header, questions, element ) {
 
     window.setTimeout( function () {
 
-        var html = '',
-            subHeader;
+        var html = '';
 
         if ( questions.length ) {
+
+            var subHeader,
+                newAccount = isNewAccount(),
+                userQuestions = ( header != STRINGS.questionsUser ),
+                shownFullBounty = false,
+                shownFullInlineVotes = false,
+                fullBounty = false,
+                fullInlineVotes = false;
 
             if ( ( header == STRINGS.questionsNearby
                 || header == STRINGS.questionsEverywhere )
@@ -8174,7 +8144,57 @@ function showQuestions( header, questions, element ) {
 
             for ( var index = 0; index < questions.length; index++ ) {
 
-                html += getQuestionItem( questions[index], { votes: false, answerCount: true } );
+                if ( newAccount && userQuestions ) {
+
+                    var question = questions[index],
+                        bounty = question[QUESTION_COLUMNS.bounty],
+                        votes = question[QUESTION_COLUMNS.votes];
+
+                    if ( !shownFullBounty && bounty ) {
+
+                        fullBounty = true;
+                        shownFullBounty = true;
+
+                    };
+
+                    if ( !shownFullInlineVotes && votes ) {
+
+                        fullInlineVotes = true;
+                        shownFullInlineVotes = true;
+
+                    };
+
+                    if ( index == 0 ) {
+
+                        html += getQuestionItem( question, {
+                            votes: false,
+                            answerCount: true,
+                            icon: true,
+                            answerCountCaption: true,
+                            reputationCaption: true,
+                            fullBounty: fullBounty,
+                            fullInlineVotes: fullInlineVotes
+                        } );
+
+                    } else {
+
+                        html += getQuestionItem( question, {
+                            votes: false,
+                            answerCount: true,
+                            fullBounty: fullBounty,
+                            fullInlineVotes: fullInlineVotes
+                        } );
+
+                    };
+
+                    fullBounty = false;
+                    fullInlineVotes = false;
+
+                } else {
+
+                    html += getQuestionItem( questions[index], { votes: false, answerCount: true } );
+
+                };
 
             };
 
@@ -8617,6 +8637,11 @@ function toolbarClick( event ) {
 
                 };
 
+                break;
+
+            case 'signup-button':
+
+                logoutApp();
                 break;
 
         };

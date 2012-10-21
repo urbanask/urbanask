@@ -1,8 +1,0 @@
-1.12
-
-new - question upvotes on urbanAsk become likes on FB
-new - answer upvotes on urbanAsk become likes on FB
-
-bug - typo in instructions
-bug - no back button when linked to question from FB
-
