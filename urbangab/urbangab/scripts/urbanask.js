@@ -7033,6 +7033,98 @@ function showInstructions() {
 
                 break;
 
+            case INSTRUCTION_TYPES.toolbar.id:
+
+                if ( canShow() ) {
+
+                    var questionsX = 35,
+                        topX = 130,
+                        userX = 35;
+
+                    if ( !document.getElementById( 'signup-button' ).hasClass( 'hide' ) ) {
+
+                        questionsX = 18;
+                        topX = 93;
+                        userX = 93;
+
+                    };
+
+                    showInstruction( 
+                        STRINGS.instructions.toolbarQuestions,
+                        { y: 15, from: { x: "center", y: "bottom"} },
+                        { x: questionsX, from: { x: "left", y: "bottom"} },
+                        { timeout: 1.5 * SECOND }
+                    );
+
+                    window.setTimeout( function () {
+
+                        if ( canShow() ) {
+
+                            showInstruction( 
+                                STRINGS.instructions.toolbarTop,
+                                { y: 15, from: { x: "center", y: "bottom"} },
+                                { x: topX, from: { x: "left", y: "bottom"} },
+                                { timeout: 1.5 * SECOND }
+                            );
+
+                            window.setTimeout( function () {
+
+                                if ( canShow() ) {
+
+                                    showInstruction( 
+                                        STRINGS.instructions.toolbarUser,
+                                        { y: 15, from: { x: "center", y: "bottom"} },
+                                        { x: userX, from: { x: "right", y: "bottom"} },
+                                        { timeout: 1.5 * SECOND }
+                                    );
+
+                                    window.setTimeout( function () {
+
+                                        if ( canShow() && !document.getElementById( 'signup-button' ).hasClass( 'hide' ) ) {
+
+                                            showInstruction( 
+                                                STRINGS.instructions.toolbarSignup,
+                                                { y: 15, from: { x: "center", y: "bottom"} },
+                                                { x: 18, from: { x: "right", y: "bottom"} },
+                                                { timeout: 5 * SECOND }
+                                            );
+
+                                            saveInstructionViewed( INSTRUCTION_TYPES.toolbar );
+                                            showNext();
+
+                                        } else {
+
+                                            saveInstructionViewed( INSTRUCTION_TYPES.toolbar );
+                                            showNext();
+
+                                        };
+
+                                    }, 3 * SECOND );
+
+                                } else {
+
+                                    showNext();
+
+                                };
+
+                            }, 3 * SECOND );
+
+                        } else {
+
+                            showNext();
+
+                        };
+
+                    }, 3 * SECOND );
+
+                } else {
+
+                    showNext();
+
+                };
+
+                break;
+
             case INSTRUCTION_TYPES.viewQuestion.id:
 
                 if ( !document.getElementById( 'question-page' ).hasClass( 'hide' ) && canShow() ) {
@@ -7122,66 +7214,6 @@ function showInstructions() {
                         };
 
                     }, 5.5 * SECOND );
-
-                } else {
-
-                    showNext();
-
-                };
-
-                break;
-
-            case INSTRUCTION_TYPES.toolbar.id:
-
-                if ( canShow() ) {
-
-                    showInstruction(
-                        STRINGS.instructions.toolbarQuestions,
-                        { y: 15, from: { x: "center", y: "bottom"} },
-                        { x: 35, from: { x: "left", y: "bottom"} },
-                        { timeout: 2 * SECOND }
-                    );
-
-                    window.setTimeout( function () {
-
-                        if ( canShow() ) {
-
-                            showInstruction(
-                                STRINGS.instructions.toolbarTop,
-                                { y: 15, from: { x: "center", y: "bottom"} },
-                                { x: 130, from: { x: "left", y: "bottom"} },
-                                { timeout: 2 * SECOND }
-                            );
-
-                            window.setTimeout( function () {
-
-                                if ( canShow() ) {
-
-                                    showInstruction(
-                                        STRINGS.instructions.toolbarUser,
-                                        { y: 15, from: { x: "center", y: "bottom"} },
-                                        { x: 35, from: { x: "right", y: "bottom"} },
-                                        { timeout: 2 * SECOND }
-                                    );
-
-                                    saveInstructionViewed( INSTRUCTION_TYPES.toolbar );
-                                    showNext();
-
-                                } else {
-
-                                    showNext();
-
-                                };
-
-                            }, 3.5 * SECOND );
-
-                        } else {
-
-                            showNext();
-
-                        };
-
-                    }, 3.5 * SECOND );
 
                 } else {
 

@@ -121,6 +121,7 @@
             "toolbarQuestions": "Questions",
             "toolbarTop": "Leaderboard",
             "toolbarUser": "Your profile",
+            "toolbarSignup": "Signup to get a FREE kitty! <sup>*</sup><br /><br /><sub><sub>*not really</sub></sub>",
             "voteQuestion": "If you like this question, upvote it!"
         },
         "intervalDayCaption": "day",
