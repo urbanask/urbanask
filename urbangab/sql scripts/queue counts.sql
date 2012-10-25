@@ -62,11 +62,11 @@ GO
 /*
 SELECT * FROM Messaging.answers.answerQueue
 SELECT * FROM Messaging.answers.answerWork
-SELECT * FROM Messaging.answers.answerError
+SELECT * FROM Messaging.answers.answerError ORDER BY timestamp DESC
 SELECT TOP 1000 * FROM Gabs.dbo.answer ORDER BY answerId DESC
 TRUNCATE TABLE Messaging.answers.answerQueue
 TRUNCATE TABLE Messaging.answers.answerWork
-TRUNCATE TABLE Messaging.answers.answerError
+DELETE FROM Messaging.answers.answerError
 TRUNCATE TABLE Gabs.dbo.answer
 UPDATE Messaging.answers.answerWork SET answerWorkId = answerWorkId + 10
 DELETE FROM Messaging.answers.answerWork WHERE answerWorkId = 1543135

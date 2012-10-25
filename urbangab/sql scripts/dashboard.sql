@@ -27,7 +27,7 @@ INSERT INTO Gabs.lookup.regionName VALUES ( 82, 'Venice Beach Park, Venice, CA 9
 INSERT INTO question ( questionId, userId, question, latitude, longitude, region, regionId, timestamp, resolved, bounty, votes )
 VALUES ( 1114309, 327, 'shoe cobbler', 37.7441077, -122.4296783, 'San Francisco, CA, USA', 2, GETDATE(), 0, 0, 0 )
 DBCC CHECKIDENT( 'Gabs.dbo.[user]', RESEED, 127 )
-DELETE FROM question WHERE question LIKE '%pink thermos%'
+DELETE FROM question WHERE questionId = 1115879
 DELETE FROM Gabs.processRegions.regionNew WHERE regionNewId = 48
 DELETE FROM answer WHERE answerId IN (
 4252789,
@@ -40,6 +40,7 @@ SELECT * FROM question WHERE question LIKE '%pink thermos%'
 SELECT * FROM Gabs.login.verifyMobileNumber
 SELECT * FROM reputation WHERE itemId = 1105914
 SELECT * FROM answer WHERE location LIKE '%ace%'
+SELECT * FROM answer WHERE questionId = 1115585
 SELECT * FROM userFacebook WHERE email LIKE '%thinkingstiff%'
 INSERT INTO userPhone ( userId, number, notifications, verified ) VALUES ( 2, '19165488356', 1, 1 )
 DELETE FROM question WHERE questionId = 1110251
