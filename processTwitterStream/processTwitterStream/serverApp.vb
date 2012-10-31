@@ -26,6 +26,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         _twitterTokenSecret As String,
         _userAgent As String,
         _hashTag As String,
+        _saveNewTweet As String,
         _tokens As Twitterizer.OAuthTokens,
         _streamOptions As Twitterizer.Streaming.StreamOptions,
         _stream As Twitterizer.Streaming.TwitterStream,
@@ -54,6 +55,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         _connectionString = Parameters.Parameter.GetValue("connectionString")
         _userAgent = Parameters.Parameter.GetValue("userAgent")
         _hashTag = Parameters.Parameter.GetValue("hashTag")
+        _saveNewTweet = Parameters.Parameter.GetValue("saveNewTweet")
         _twitterApiKey = Parameters.Parameter.GetValue("twitterApiKey")
         _twitterApiSecret = Parameters.Parameter.GetValue("twitterApiSecret")
         _twitterToken = Parameters.Parameter.GetValue("twitterToken")
@@ -66,7 +68,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         _tokens.AccessTokenSecret = _twitterTokenSecret
 
         _streamOptions = New Twitterizer.Streaming.StreamOptions()
-        _streamOptions.Track.Add("#urbanask")
+        _streamOptions.Track.Add(_hashTag)
         _streamOptions.Track.Add("where can I find")
         _streamOptions.Track.Add("where can I get")
         _streamOptions.Track.Add("where can I buy")
@@ -133,19 +135,20 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
 
     Private Sub newTweet(tweet As Twitterizer.TwitterStatus)
 
-        Dim twitterId As String = "",
+        Dim startTime As System.DateTime = System.DateTime.Now,
+            twitterId As String = "",
             screenName As String = "",
             message As String = tweet.Text,
             tweetId As String = "",
-            tweetLatitude As String = "",
-            tweetLongitude As String = "",
+            tweetLatitude As Double = 0,
+            tweetLongitude As Double = 0,
             tweetLocation As String = "",
             userLocation As String = ""
 
         If (Not IsNothing(tweet.Geo)) AndAlso (tweet.Geo.Coordinates.Count > 0) Then
 
-            tweetLatitude = tweet.Geo.Coordinates(0).Latitude.ToString()
-            tweetLongitude = tweet.Geo.Coordinates(0).Longitude.ToString()
+            tweetLatitude = tweet.Geo.Coordinates(0).Latitude
+            tweetLongitude = tweet.Geo.Coordinates(0).Longitude
 
         End If
 
@@ -161,7 +164,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
 
         End If
 
-        If tweetLatitude <> "" Or tweetLocation <> "" Or userLocation <> "" Or message.ToLower.IndexOf(_hashTag) > -1 Then
+        If tweetLatitude > 0 Or tweetLocation <> "" Or userLocation <> "" Or message.ToLower.IndexOf(_hashTag) > -1 Then
 
             twitterId = tweet.User.Id.ToString()
             screenName = tweet.User.ScreenName
@@ -169,32 +172,29 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
 
             initializeConnection()
 
-            Using saveMessage As New SqlClient.SqlCommand(_saveError, _connection)
+            Using saveNewTweet As New SqlClient.SqlCommand(_saveNewTweet, _connection)
 
-                errorCommand.CommandType = CommandType.StoredProcedure
-                errorCommand.CommandTimeout = _commandTimeout
-                errorCommand.UpdatedRowSource = UpdateRowSource.None
+                saveNewTweet.CommandType = CommandType.StoredProcedure
+                saveNewTweet.CommandTimeout = _commandTimeout
 
-                errorCommand.Parameters.Add(New SqlClient.SqlParameter("@notificationId", Data.SqlDbType.Int, 0, "notificationId"))
-                errorCommand.Parameters.Add(New SqlClient.SqlParameter("@description", Data.SqlDbType.VarChar, 255, "description"))
-                errorCommand.Parameters.Add(New SqlClient.SqlParameter("@error", Data.SqlDbType.VarChar, 255, "error"))
+                saveNewTweet.Parameters.AddWithValue("@twitterId", twitterId)
+                saveNewTweet.Parameters.AddWithValue("@screenName", screenName)
+                saveNewTweet.Parameters.AddWithValue("@tweet", message)
+                saveNewTweet.Parameters.AddWithValue("@tweetId", tweetId)
+                saveNewTweet.Parameters.AddWithValue("@tweetLatitude", tweetLatitude)
+                saveNewTweet.Parameters.AddWithValue("@tweetLongitude", tweetLongitude)
+                saveNewTweet.Parameters.AddWithValue("@tweetLocation", tweetLocation)
+                saveNewTweet.Parameters.AddWithValue("@userLocation", userLocation)
 
-                Using adapter As New Data.SqlClient.SqlDataAdapter()
+                saveNewTweet.ExecuteNonQuery()
 
-                    adapter.UpdateBatchSize = _batchSize
-                    adapter.InsertCommand = errorCommand
-
-                    adapter.Update(errors)
-
-                End Using
-
-                Me.logProcedureStatistics(_saveError, startTime)
+                Me.logProcedureStatistics(_saveNewTweet, startTime)
 
             End Using
 
-            Console.WriteLine(String.Format("New tweet: @{0}: {1}", screenName, message))
-
         End If
+
+        Me.logStatistics("newTweet", startTime)
 
     End Sub
 
