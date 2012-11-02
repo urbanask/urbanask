@@ -1,5 +1,6 @@
 
 -- $8.40
+--PAID 11/1/2012 $8.40
 
 SELECT
     answer.userId,
@@ -9,7 +10,7 @@ FROM
     Gabs.dbo.answer         AS answer
 WHERE 
         answer.userId              = 18 -- molly
-    AND timestamp           >= '08/20/2012 20:42:00'
+    AND timestamp           >= '11/1/2012 14:30:00'
     
 GROUP BY
     answer.userId 

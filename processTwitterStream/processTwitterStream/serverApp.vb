@@ -17,6 +17,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
 
     Private _batchSize As Int32,
         _commandTimeout As Int32,
+        _connection As Data.SqlClient.SqlConnection,
         _connectionString As String,
         _logProcedureStatitics As Boolean,
         _streaming As Boolean = False,
@@ -30,7 +31,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         _tokens As Twitterizer.OAuthTokens,
         _streamOptions As Twitterizer.Streaming.StreamOptions,
         _stream As Twitterizer.Streaming.TwitterStream,
-        _connection As Data.SqlClient.SqlConnection
+        _urbanAskApp As String
 
 #Region "    functions "
 
@@ -60,6 +61,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         _twitterApiSecret = Parameters.Parameter.GetValue("twitterApiSecret")
         _twitterToken = Parameters.Parameter.GetValue("twitterToken")
         _twitterTokenSecret = Parameters.Parameter.GetValue("twitterTokenSecret")
+        _urbanAskApp = Parameters.Parameter.GetValue("urbanAskApp")
 
         _tokens = New Twitterizer.OAuthTokens()
         _tokens.ConsumerKey = _twitterApiKey
@@ -137,7 +139,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
 
         Dim startTime As System.DateTime = System.DateTime.Now,
             twitterId As String = "",
-            screenName As String = "",
+            screenName As String = tweet.User.ScreenName,
             message As String = tweet.Text,
             tweetId As String = "",
             tweetLatitude As Double = 0,
@@ -145,52 +147,55 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
             tweetLocation As String = "",
             userLocation As String = ""
 
-        If (Not IsNothing(tweet.Geo)) AndAlso (tweet.Geo.Coordinates.Count > 0) Then
+        If screenName.ToLower() <> _urbanAskApp Then
 
-            tweetLatitude = tweet.Geo.Coordinates(0).Latitude
-            tweetLongitude = tweet.Geo.Coordinates(0).Longitude
+            If (Not IsNothing(tweet.Geo)) AndAlso (tweet.Geo.Coordinates.Count > 0) Then
 
-        End If
+                tweetLatitude = tweet.Geo.Coordinates(0).Latitude
+                tweetLongitude = tweet.Geo.Coordinates(0).Longitude
 
-        If (Not IsNothing(tweet.Place)) AndAlso (tweet.Place.FullName <> "") Then
+            End If
 
-            tweetLocation = tweet.Place.FullName
+            If (Not IsNothing(tweet.Place)) AndAlso (tweet.Place.FullName <> "") Then
 
-        End If
+                tweetLocation = tweet.Place.FullName
 
-        If (Not IsNothing(tweet.User.Location)) AndAlso (tweet.User.Location <> "") Then
+            End If
 
-            userLocation = tweet.User.Location
+            If (Not IsNothing(tweet.User.Location)) AndAlso (tweet.User.Location <> "") Then
 
-        End If
+                userLocation = tweet.User.Location
 
-        If tweetLatitude > 0 Or tweetLocation <> "" Or userLocation <> "" Or message.ToLower.IndexOf(_hashTag) > -1 Then
+            End If
 
-            twitterId = tweet.User.Id.ToString()
-            screenName = tweet.User.ScreenName
-            tweetId = tweet.Id.ToString()
+            If tweetLatitude <> 0 OrElse tweetLocation <> "" OrElse userLocation <> "" OrElse message.ToLower.IndexOf(_hashTag) > -1 Then
 
-            initializeConnection()
+                twitterId = tweet.User.Id.ToString()
+                tweetId = tweet.Id.ToString()
 
-            Using saveNewTweet As New SqlClient.SqlCommand(_saveNewTweet, _connection)
+                initializeConnection()
 
-                saveNewTweet.CommandType = CommandType.StoredProcedure
-                saveNewTweet.CommandTimeout = _commandTimeout
+                Using saveNewTweet As New SqlClient.SqlCommand(_saveNewTweet, _connection)
 
-                saveNewTweet.Parameters.AddWithValue("@twitterId", twitterId)
-                saveNewTweet.Parameters.AddWithValue("@screenName", screenName)
-                saveNewTweet.Parameters.AddWithValue("@tweet", message)
-                saveNewTweet.Parameters.AddWithValue("@tweetId", tweetId)
-                saveNewTweet.Parameters.AddWithValue("@tweetLatitude", tweetLatitude)
-                saveNewTweet.Parameters.AddWithValue("@tweetLongitude", tweetLongitude)
-                saveNewTweet.Parameters.AddWithValue("@tweetLocation", tweetLocation)
-                saveNewTweet.Parameters.AddWithValue("@userLocation", userLocation)
+                    saveNewTweet.CommandType = CommandType.StoredProcedure
+                    saveNewTweet.CommandTimeout = _commandTimeout
 
-                saveNewTweet.ExecuteNonQuery()
+                    saveNewTweet.Parameters.AddWithValue("@twitterId", twitterId)
+                    saveNewTweet.Parameters.AddWithValue("@screenName", screenName)
+                    saveNewTweet.Parameters.AddWithValue("@tweet", message)
+                    saveNewTweet.Parameters.AddWithValue("@tweetId", tweetId)
+                    saveNewTweet.Parameters.AddWithValue("@tweetLatitude", tweetLatitude)
+                    saveNewTweet.Parameters.AddWithValue("@tweetLongitude", tweetLongitude)
+                    saveNewTweet.Parameters.AddWithValue("@tweetLocation", tweetLocation)
+                    saveNewTweet.Parameters.AddWithValue("@userLocation", userLocation)
 
-                Me.logProcedureStatistics(_saveNewTweet, startTime)
+                    saveNewTweet.ExecuteNonQuery()
 
-            End Using
+                    Me.logProcedureStatistics(_saveNewTweet, startTime)
+
+                End Using
+
+            End If
 
         End If
 
