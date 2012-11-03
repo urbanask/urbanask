@@ -26,6 +26,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         _deleteFromWork As String,
         _hashTag As String,
         _loadSession As String,
+        _loadUser As String,
         _logProcedureStatitics As Boolean,
         _messagingUrl As String,
         _moveToWork As String,
@@ -66,6 +67,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         _moveToWork = Parameters.Parameter.GetValue("moveToWork")
         _deleteFromWork = Parameters.Parameter.GetValue("deleteFromWork")
         _loadSession = Parameters.Parameter.GetValue("loadSession")
+        _loadUser = Parameters.Parameter.GetValue("loadUser")
         _viewTweets = Parameters.Parameter.GetValue("viewTweets")
         _questionPrefix1 = Parameters.Parameter.GetValue("questionPrefix1")
         _questionPrefix2 = Parameters.Parameter.GetValue("questionPrefix2")
@@ -184,7 +186,14 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
 
                             If getGeocode(location, latitude, longitude, region) Then
 
-                                saveQuestion(connection, latitude, longitude, region, strippedTweet.Split("@"c)(0).Trim())
+                                saveQuestion(
+                                    connection,
+                                    twitterId,
+                                    screenName,
+                                    latitude,
+                                    longitude,
+                                    region,
+                                    strippedTweet.Split("@"c)(0).Trim())
                                 posted = True
 
                             End If
@@ -198,7 +207,14 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
                                 latitude = tweetLatitude
                                 longitude = tweetLongitude
 
-                                saveQuestion(connection, latitude, longitude, region, strippedTweet)
+                                saveQuestion(
+                                    connection,
+                                    twitterId,
+                                    screenName,
+                                    latitude,
+                                    longitude,
+                                    region,
+                                    strippedTweet)
                                 posted = True
 
                             End If
@@ -209,7 +225,14 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
 
                             If getGeocode(userLocation, latitude, longitude, region) Then
 
-                                saveQuestion(connection, latitude, longitude, region, strippedTweet)
+                                saveQuestion(
+                                    connection,
+                                    twitterId,
+                                    screenName,
+                                    latitude,
+                                    longitude,
+                                    region,
+                                    strippedTweet)
                                 posted = True
 
                             End If
@@ -270,31 +293,68 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
 
     Private Sub saveQuestion(
         connection As SqlClient.SqlConnection,
+        twitterId As String,
+        screenName As String,
         latitude As Double,
         longitude As Double,
         region As String,
         question As String)
 
-        'check user, create if needed
-
         Dim userId As String = "",
             sessionId As String = "",
             sessionKey As String = ""
 
-        loadSession(connection, userId, sessionId, sessionKey)
+        If loadUser(connection, twitterId, screenName, userId) Then
 
-        Dim message As String = String.Join("~", latitude, longitude, region, question),
-            url As String = String.Concat(_baseUrl, _messagingUrl),
-            hmac As New Cryptography.HMACSHA1(UTF8.GetBytes(sessionKey)),
-            digest As String = toBase64UrlString(
-                System.Convert.ToBase64String(hmac.ComputeHash(UTF8.GetBytes(String.Concat(_messagingUrl, sessionId))))),
-            session As String = String.Join(":", sessionId, digest),
-            web As New Net.WebClient()
+            loadSession(connection, userId, sessionId, sessionKey)
 
-        web.Headers.Add("x-session", session)
-        Dim post As String = web.UploadString(url, message)
+            Dim message As String = String.Join("~", latitude, longitude, region, question),
+                url As String = String.Concat(_baseUrl, _messagingUrl),
+                hmac As New Cryptography.HMACSHA1(UTF8.GetBytes(sessionKey)),
+                digest As String = toBase64UrlString(
+                    System.Convert.ToBase64String(hmac.ComputeHash(UTF8.GetBytes(String.Concat(_messagingUrl, sessionId))))),
+                session As String = String.Join(":", sessionId, digest),
+                web As New Net.WebClient()
+
+            web.Headers.Add("x-session", session)
+            Dim post As String = web.UploadString(url, message)
+
+        End If
 
     End Sub
+
+    Private Function loadUser(
+        connection As SqlClient.SqlConnection,
+        twitterId As String,
+        screenName As String,
+        ByRef userId As String) As Boolean
+
+        Dim returnValue As Boolean = False
+
+        Using load As New SqlClient.SqlCommand(_loadUser, connection)
+
+            load.CommandType = CommandType.StoredProcedure
+            load.CommandTimeout = _commandTimeout
+
+            load.Parameters.AddWithValue("@twitterId", twitterId)
+            load.Parameters.AddWithValue("@username", screenName)
+            load.Parameters.Add("@userId", SqlDbType.Int).Direction = ParameterDirection.Output
+            load.Parameters.Add("@enabled", SqlDbType.Int).Direction = ParameterDirection.Output
+
+            load.ExecuteNonQuery()
+
+            If CBool(load.Parameters("@enabled").Value) Then
+
+                userId = load.Parameters("@userId").Value.ToString()
+                returnValue = True
+
+            End If
+
+        End Using
+
+        Return returnValue
+
+    End Function
 
     Private Sub loadSession(
         connection As SqlClient.SqlConnection,
