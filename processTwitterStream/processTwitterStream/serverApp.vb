@@ -31,7 +31,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         _tokens As Twitterizer.OAuthTokens,
         _streamOptions As Twitterizer.Streaming.StreamOptions,
         _stream As Twitterizer.Streaming.TwitterStream,
-        _urbanAskApp As String
+        _urbanAskTwitter As String
 
 #Region "    functions "
 
@@ -61,7 +61,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         _twitterApiSecret = Parameters.Parameter.GetValue("twitterApiSecret")
         _twitterToken = Parameters.Parameter.GetValue("twitterToken")
         _twitterTokenSecret = Parameters.Parameter.GetValue("twitterTokenSecret")
-        _urbanAskApp = Parameters.Parameter.GetValue("urbanAskApp")
+        _urbanAskTwitter = Parameters.Parameter.GetValue("urbanAskTwitter")
 
         _tokens = New Twitterizer.OAuthTokens()
         _tokens.ConsumerKey = _twitterApiKey
@@ -147,7 +147,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
             tweetLocation As String = "",
             userLocation As String = ""
 
-        If screenName.ToLower() <> _urbanAskApp Then
+        If screenName.ToLower() <> _urbanAskTwitter Then
 
             If (Not IsNothing(tweet.Geo)) AndAlso (tweet.Geo.Coordinates.Count > 0) Then
 
@@ -294,9 +294,23 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
 
     Protected Overrides Sub Finalize()
 
-        _stream.EndStream(Twitterizer.Streaming.StopReasons.StoppedByRequest, "manually shutting down application")
-        _connection.Close()
-        _connection.Dispose()
+        If Not IsNothing(_stream) Then
+
+            _stream.EndStream(Twitterizer.Streaming.StopReasons.StoppedByRequest, "manually shutting down application")
+
+        End If
+
+        If Not IsNothing(_connection) Then
+
+            If _connection.State = ConnectionState.Open Then
+
+                _connection.Close()
+
+            End If
+
+            _connection.Dispose()
+
+        End If
 
     End Sub
 
