@@ -69,16 +69,12 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         _tokens.AccessToken = _twitterToken
         _tokens.AccessTokenSecret = _twitterTokenSecret
 
+
         _streamOptions = New Twitterizer.Streaming.StreamOptions()
-        _streamOptions.Track.Add(_hashTag)
+        '_streamOptions.Track.Add(_hashTag)
+        _streamOptions.Track.Add("where can I buy")
         _streamOptions.Track.Add("where can I find")
         _streamOptions.Track.Add("where can I get")
-        _streamOptions.Track.Add("where can I buy")
-        _streamOptions.Track.Add("where can I eat")
-        _streamOptions.Track.Add("where I can find")
-        _streamOptions.Track.Add("where I can get")
-        _streamOptions.Track.Add("where I can buy")
-        _streamOptions.Track.Add("where I can eat")
 
     End Sub
 
@@ -105,7 +101,6 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         If Not _streaming Then
 
             Dim startTime As System.DateTime = System.DateTime.Now
-
             _stream = New Twitterizer.Streaming.TwitterStream(_tokens, _userAgent, _streamOptions)
             _stream.StartUserStream(
                 AddressOf init,
@@ -168,7 +163,13 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
 
             End If
 
-            If tweetLatitude <> 0 OrElse tweetLocation <> "" OrElse userLocation <> "" OrElse message.ToLower.IndexOf(_hashTag) > -1 Then
+            If ( _
+                (tweetLatitude <> 0 OrElse tweetLocation <> "" OrElse userLocation <> "") _
+                AndAlso (message.ToLower.Contains("where can i") OrElse message.ToLower.Contains("where i can")) _
+                ) _
+                OrElse message.ToLower.Contains(_hashTag) Then
+
+                Diagnostics.Debug.WriteLine(message)
 
                 twitterId = tweet.User.Id.ToString()
                 tweetId = tweet.Id.ToString()
@@ -189,7 +190,13 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
                     saveNewTweet.Parameters.AddWithValue("@tweetLocation", tweetLocation)
                     saveNewTweet.Parameters.AddWithValue("@userLocation", userLocation)
 
-                    saveNewTweet.ExecuteNonQuery()
+                    Try
+
+                        saveNewTweet.ExecuteNonQuery()
+
+                    Catch ex As Exception
+
+                    End Try
 
                     Me.logProcedureStatistics(_saveNewTweet, startTime)
 
@@ -302,13 +309,19 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
 
         If Not IsNothing(_connection) Then
 
-            If _connection.State = ConnectionState.Open Then
+            Try
 
-                _connection.Close()
+                If _connection.State = ConnectionState.Open Then
 
-            End If
+                    _connection.Close()
 
-            _connection.Dispose()
+                End If
+
+                _connection.Dispose()
+
+            Catch ex As Exception
+
+            End Try
 
         End If
 

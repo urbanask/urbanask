@@ -140,13 +140,13 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
 
             If MyBase.IsAppActive() Then
 
-                Me.processTweets(connection)
+                Me.processNewTweets(connection)
 
             End If
 
             If MyBase.IsAppActive() Then
 
-                'Me.deleteFromWork(connection)
+                Me.deleteFromWork(connection)
 
             End If
 
@@ -175,11 +175,12 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
 
     End Sub
 
-    Private Sub processTweets( _
+    Private Sub processNewTweets( _
         ByVal connection As Data.SqlClient.SqlConnection)
 
         Dim startTime As System.DateTime = System.DateTime.Now, _
-            questions As New System.Collections.Generic.List(Of Question)
+            questions As New System.Collections.Generic.List(Of Question), _
+            wait As New ServerAppBase.Wait
 
         Using command As New SqlClient.SqlCommand(_viewTweets, connection),
             pending As New Data.DataTable("pending")
@@ -211,11 +212,12 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
                         tweetLongitude As Double = System.Convert.ToDouble(tweets("tweetLongitude")),
                         tweetLocation As String = tweets("tweetLocation").ToString(),
                         userLocation As String = tweets("userLocation").ToString(),
-                        latitude As Double,
-                        longitude As Double,
+                        latitude As Double = 0,
+                        longitude As Double = 0,
                         region As String = "",
                         question As String = "",
-                        post As Boolean = False
+                        post As Boolean = False,
+                        pend As Boolean = False
 
                     If tweet.ToLower.Contains(_hashTag) Then
 
@@ -235,60 +237,57 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
                                 question = strippedTweet.Split("@"c)(0).Trim()
                                 post = True
 
+                                wait.Start(1) '1 second pause for google maps api limit
+
                             End If
 
                         End If
 
                         If Not post AndAlso tweetLatitude <> 0 AndAlso tweetLocation <> "" Then
 
-                            If getGeocode(tweetLocation, latitude, longitude, region) Then
-
-                                latitude = tweetLatitude
-                                longitude = tweetLongitude
-                                question = strippedTweet
-                                post = True
-
-                            End If
+                            latitude = tweetLatitude
+                            longitude = tweetLongitude
+                            region = tweetLocation
+                            question = strippedTweet
+                            post = True
 
                         End If
 
-                        If Not post AndAlso userLocation <> "" Then
+                        'If Not post AndAlso userLocation <> "" Then
 
-                            If getGeocode(userLocation, latitude, longitude, region) Then
+                        '    If getGeocode(userLocation, latitude, longitude, region) Then
 
-                                question = strippedTweet
-                                post = True
+                        '        question = strippedTweet
+                        '        post = True
 
-                            End If
+                        '    End If
 
-                        End If
+                        'End If
 
                     Else
 
                         If tweetLatitude <> 0 AndAlso tweetLocation <> "" Then
 
-                            If getGeocode(tweetLocation, latitude, longitude, region) Then
-
-                                latitude = tweetLatitude
-                                longitude = tweetLongitude
-
-                            End If
+                            latitude = tweetLatitude
+                            longitude = tweetLongitude
+                            region = tweetLocation
+                            pend = True
 
                         End If
 
-                        If userLocation <> "" Then
+                        'If region = "" AndAlso userLocation <> "" Then
 
-                            getGeocode(userLocation, latitude, longitude, region)
+                        '    getGeocode(userLocation, latitude, longitude, region)
 
-                        End If
+                        'End If
 
                     End If
 
                     If post Then
 
-                        questions.Add(New Question( twitterId, screenName, latitude, longitude, region, question))
+                        questions.Add(New Question(twitterId, screenName, latitude, longitude, region, question))
 
-                    Else
+                    ElseIf pend Then
 
                         Dim pendingRow As Data.DataRow = pending.NewRow()
                         pendingRow("twitterId") = twitterId
@@ -328,7 +327,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
 
         For Each question As serverApp.Question In questions
 
-            saveQuestion( connection, question)
+            saveQuestion(connection, question)
 
         Next question
 
@@ -368,34 +367,34 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
     Private Sub repostQuestion( _
         question As serverApp.Question)
 
-        Dim startTime As System.DateTime = System.DateTime.Now
+        'Dim startTime As System.DateTime = System.DateTime.Now
 
-        Dim questionId As String = actions("questionId").ToString(),
-            latitude As Double = System.Convert.ToDouble(actions("latitude")),
-            longitude As Double = System.Convert.ToDouble(actions("longitude")),
-            link As String = String.Format(_questionUrl, questionId),
-            body As String = String.Format(_twitterBody, question.twitterId, actions("body").ToString(), link),
-            tokens As New Twitterizer.OAuthTokens(),
-            options As New Twitterizer.StatusUpdateOptions
+        'Dim questionId As String = actions("questionId").ToString(),
+        '    latitude As Double = System.Convert.ToDouble(actions("latitude")),
+        '    longitude As Double = System.Convert.ToDouble(actions("longitude")),
+        '    link As String = String.Format(_questionUrl, questionId),
+        '    body As String = String.Format(_twitterBody, question.twitterId, actions("body").ToString(), link),
+        '    tokens As New Twitterizer.OAuthTokens(),
+        '    options As New Twitterizer.StatusUpdateOptions
 
-        tokens.AccessToken = _twitterToken
-        tokens.AccessTokenSecret = _twitterTokenSecret
-        tokens.ConsumerKey = _twitterApiKey
-        tokens.ConsumerSecret = _twitterApiSecret
+        'tokens.AccessToken = _twitterToken
+        'tokens.AccessTokenSecret = _twitterTokenSecret
+        'tokens.ConsumerKey = _twitterApiKey
+        'tokens.ConsumerSecret = _twitterApiSecret
 
-        options.Latitude = latitude
-        options.Longitude = longitude
+        'options.Latitude = latitude
+        'options.Longitude = longitude
 
-        Dim response As Twitterizer.TwitterResponse(Of Twitterizer.TwitterStatus) _
-                = Twitterizer.TwitterStatus.Update(tokens, body, options)
+        'Dim response As Twitterizer.TwitterResponse(Of Twitterizer.TwitterStatus) _
+        '        = Twitterizer.TwitterStatus.Update(tokens, body, options)
 
-        If response.Result = Twitterizer.RequestResult.Success Then
+        'If response.Result = Twitterizer.RequestResult.Success Then
 
-            'save post id
+        '    'save post id
 
-        End If
+        'End If
 
-        Me.logStatistics("repostQuestion", startTime)
+        'Me.logStatistics("repostQuestion", startTime)
 
     End Sub
 
@@ -550,7 +549,7 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         ByRef longitude As Double,
         ByRef region As String) As Boolean
 
-        Dim url As String = GOOGLE_GEOCODE_URL.Replace("%1", location),
+        Dim url As String = GOOGLE_GEOCODE_URL.Replace("%1", System.Web.HttpUtility.UrlEncode(location)),
             json As String = New Net.WebClient().DownloadString(url),
             returnValue As Boolean = False
 

@@ -80,7 +80,8 @@ Public Class loginTwitter : Implements System.Web.IHttpHandler
 
                 checkAuthorization.ExecuteNonQuery()
 
-                If System.Convert.ToInt32(checkAuthorization.Parameters("@userId").Value) > 0 Then
+                If System.Convert.ToInt32(checkAuthorization.Parameters("@userId").Value) > 0 _
+                    AndAlso checkAuthorization.Parameters("@hashType").Value.ToString() <> "" Then
 
                     If System.Convert.ToBoolean(checkAuthorization.Parameters("@enabled").Value) Then
 

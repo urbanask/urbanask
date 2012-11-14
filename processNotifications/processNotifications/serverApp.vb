@@ -19,6 +19,9 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         _commandTimeout As Int32,
         _connectionString As String,
         _deleteFromWork As String,
+        _googleApiKey As String,
+        _googleApiUrl As String,
+        _googleJsonMessage As String,
         _logProcedureStatitics As Boolean,
         _moveToWork As String,
         _saveError As String,
@@ -65,6 +68,9 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         _commandTimeout = Parameters.Parameter.GetInt32Value("commandTimeout")
         _connectionString = Parameters.Parameter.GetValue("connectionString")
         _deleteFromWork = Parameters.Parameter.GetValue("deleteFromWork")
+        _googleApiKey = Parameters.Parameter.GetValue("googleApiKey")
+        _googleApiUrl = Parameters.Parameter.GetValue("googleApiUrl")
+        _googleJsonMessage = Parameters.Parameter.GetValue("googleJsonMessage")
         _moveToWork = Parameters.Parameter.GetValue("moveToWork")
         _saveError = Parameters.Parameter.GetValue("saveError")
         _smsApiKey = Parameters.Parameter.GetValue("smsApiKey")
@@ -300,9 +306,11 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
                         latitude As Double = System.Convert.ToDouble(actions("latitude")),
                         longitude As Double = System.Convert.ToDouble(actions("longitude")),
                         link As String = String.Format(_questionUrl, questionId),
-                        body As String = String.Format(_twitterBody, twitterId, actions("body").ToString(), link),
                         tokens As New Twitterizer.OAuthTokens(),
                         options As New Twitterizer.StatusUpdateOptions
+
+                    link = shortUrl(link)
+                    Dim body As String = String.Format(_twitterBody, twitterId, actions("body").ToString(), link)
 
                     tokens.AccessToken = _twitterToken
                     tokens.AccessTokenSecret = _twitterTokenSecret
@@ -396,6 +404,42 @@ Public Class serverApp : Inherits Utility.ServerAppBase.ServerAppBase
         Me.logStatistics("deleteFromWork", startTime)
 
     End Sub
+
+    Private ReadOnly Property shortUrl(
+        longUrl As String) As String
+
+        Get
+
+            Dim apiUrl = String.Format(_googleApiUrl, _googleApiKey),
+                request As String = String.Format(_googleJsonMessage, longUrl),
+                web = New Net.WebClient(),
+                shortendUrl As String = longUrl
+
+            web.Headers(Net.HttpRequestHeader.ContentType) = "application/json"
+
+            Try
+
+                Dim jsonResponse As String = web.UploadString(apiUrl, request)
+
+                Dim serializer As New Web.Script.Serialization.JavaScriptSerializer,
+                    jsonObject As System.Collections.Generic.Dictionary(Of String, Object) =
+                        DirectCast(serializer.DeserializeObject(jsonResponse), System.Collections.Generic.Dictionary(Of String, Object))
+
+                If jsonObject("id").ToString() <> "" Then
+
+                    shortendUrl = jsonObject("id").ToString()
+
+                End If
+
+            Catch ex As Exception
+
+            End Try
+
+            Return shortendUrl
+
+        End Get
+
+    End Property
 
     Private Sub logStatistics( _
             ByVal description As String, _
